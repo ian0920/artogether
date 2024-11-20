@@ -42,7 +42,6 @@ public class GeneralController {
             驗證碼
         */
 
-        member.setStatus((byte) 0);
         memberService.save(member);
 
 
