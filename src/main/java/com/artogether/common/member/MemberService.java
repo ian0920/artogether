@@ -25,6 +25,10 @@ public class MemberService {
     }
 
     public Member save(Member member) {
+
+        if(member.getStatus() == null)
+            member.setStatus((byte) 0);
+
         return memberRepo.save(member);
     }
 
