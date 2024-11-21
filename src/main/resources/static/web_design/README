@@ -1,0 +1,10 @@
+各個組件請至 component 資料夾找，內有純靜態的html檔
+
+如需互動功能，component資料夾內的js有寫好一些javascript
+
+樣式方面，style資料夾內請引入各自的style
+- 商家後臺：style_business.css
+- 前台：style_homepage.css
+- 共用組件：style_general.css (但基本上應該用不到，目前沒什麼寫)
+
+(那些scss、map檔是我寫css用的，不用管他)

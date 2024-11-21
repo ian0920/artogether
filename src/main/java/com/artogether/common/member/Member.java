@@ -1,5 +1,6 @@
 package com.artogether.common.member;
 
+import com.artogether.common.platform_msg.Platform_msg;
 import com.artogether.event.evt_order.EvtOrder;
 import com.artogether.event.evt_track.EvtTrackVO;
 import com.artogether.event.my_evt_coup.MyEvtCoup;
@@ -9,6 +10,7 @@ import com.artogether.product.prd_order.Prd_Order;
 import com.artogether.product.prd_report.Prd_Report;
 import com.artogether.product.prd_review.Prd_Review;
 import com.artogether.product.prd_track.Prd_Track;
+import com.artogether.venue.vne_track.Vne_track;
 import com.artogether.venue.vneorder.VneOrder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -96,6 +98,12 @@ public class Member {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL)
     private Set<VneOrder> vneOrders;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL)
+    private Set<Vne_track> vneTracks;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL)
+    private Set<Platform_msg> platformMsgs;
 
 
     /*    Event    */

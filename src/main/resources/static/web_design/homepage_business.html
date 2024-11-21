@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="../style/style_business.css" />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="bs-navbar">
+      <div class="bs-navbar-main">
+        <div class="bs-navbar-logo">
+          <img src="../asset/images/ARTOGETHER.svg" alt="" />
+          <div id="div_back_to_homepage" class="link-button">
+            <a href="#">返回首頁</a
+            ><span class="material-icons">exit_to_app</span>
+          </div>
+        </div>
+        <hr />
+        <nav>
+          <ul>
+            <li clickable class="bs-navbar-item -open">
+              <span class="material-icons">storefront</span>
+              <a href="#">商家基本資訊</a>
+            </li>
+            <li clickable class="bs-navbar-item">
+              <span class="material-icons">inbox</span>
+              <a href="#">收件匣</a>
+            </li>
+            <li clickable class="bs-navbar-item">
+              <span class="material-icons">admin_panel_settings</span>
+              <a href="#">管理員權限設定</a>
+            </li>
+          </ul>
+        </nav>
+        <hr />
+        <nav>
+          <ul>
+            <li clickable class="bs-navbar-item">
+              <span class="material-icons">sell</span>
+              <a href="#">商品管理</a>
+            </li>
+            <li clickable class="bs-navbar-item">
+              <span class="material-icons">roofing</span>
+              <a href="#">場地管理</a>
+            </li>
+            <li clickable class="bs-navbar-item">
+              <span class="material-icons">local_activity</span>
+              <a href="#">活動管理</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <div class="bs-navbar-user-control">
+        <div class="bs-navbar-user-menu -hidden">
+          <div class="bs-navbar-user-item">
+            <div class="bs-navbar-user-thumbnail">
+              <img src="../asset/images/bgimg.png" alt="" />
+            </div>
+            <p>商家名稱</p>
+            <input type="radio" name="choose_business" id="" />
+          </div>
+          <hr />
+          <div class="bs-navbar-user-item">
+            <div class="bs-navbar-user-thumbnail">
+              <img src="../asset/images/bgimg.png" alt="" />
+            </div>
+            <p>商家名稱</p>
+            <input type="radio" name="choose_business" id="" />
+          </div>
+          <hr />
+          <div class="bs-navbar-user-item">
+            <div class="bs-navbar-user-thumbnail">
+              <img src="../asset/images/bgimg.png" alt="" />
+            </div>
+            <p>商家名稱</p>
+            <input type="radio" name="choose_business" id="" />
+          </div>
+          <hr />
+          <div class="bs-navbar-user-item">
+            <div class="bs-navbar-user-thumbnail">
+              <img src="../asset/images/bgimg.png" alt="" />
+            </div>
+            <p>商家名稱</p>
+            <input type="radio" name="choose_business" id="" />
+          </div>
+        </div>
+        <div clickable class="bs-navbar-user-field">
+          <div class="bs-navbar-user-item">
+            <div class="bs-navbar-user-thumbnail">
+              <img src="../asset/images/bgimg.png" alt="" />
+            </div>
+            <p>商家名稱</p>
+            <span class="material-icons unfold" id="icon_unfold"
+              >unfold_more</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 設定最下方的user control菜單收合
+      var el_nav_user_control = document.querySelector(".bs-navbar-user-field");
+      el_nav_user_control.addEventListener("click", function () {
+        let el_nav_user_menu = document.querySelector(".bs-navbar-user-menu");
+        el_nav_user_menu.classList.toggle("-hidden");
+        let el_field_icon = document.querySelector(
+          ".bs-navbar-user-field #icon_unfold"
+        );
+        if (el_field_icon.classList.contains("unfold")) {
+          el_field_icon.classList.remove("unfold");
+          el_field_icon.innerHTML = "unfold_less";
+        } else {
+          el_field_icon.classList.add("unfold");
+          el_field_icon.innerHTML = "unfold_more";
+        }
+      });
+
+      // 設定nav-item的選取效果
+      var els_nav_item = document.querySelectorAll(".bs-navbar-item");
+      for (let i = 0; i < els_nav_item.length; i++) {
+        els_nav_item[i].addEventListener("click", function () {
+          els_nav_item.forEach((e) => e.classList.remove("-open"));
+          this.classList.add("-open");
+          // 觸發a tag點擊事件
+          this.lastElementChild.click();
+        });
+      }
+    </script>
+  </body>
+</html>
