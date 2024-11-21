@@ -1,5 +1,7 @@
 package com.artogether.event.evt_order;
 
+import com.artogether.common.member.Member;
+import com.artogether.event.event.Event;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,12 +21,13 @@ public class EvtOrder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "evt_id", nullable = false)
-    private Integer evtId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "evt_id", referencedColumnName = "id")
+    private Event event;
 
-    @Column(name = "member_id", nullable = false)
-    private Integer memberId;
-
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "member_id", referencedColumnName = "id")
+    private Member member;
 
     private Byte status;
 

@@ -1,5 +1,7 @@
 package com.artogether.event.my_evt_coup;
 
+import com.artogether.common.member.Member;
+import com.artogether.event.evt_coup.EvtCoup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,12 +19,16 @@ import java.sql.Timestamp;
 public class MyEvtCoup {
 
     @Id
-    @Column(name = "member_id")
-    private Integer memberId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", referencedColumnName = "id")
+    private Member member;
 
     @Id
-    @Column(name = "evt_coup_id")
-    private Integer evtCoupId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "evt_coup_id", referencedColumnName = "id")
+    private EvtCoup evtCoup;
+
+
     private Byte status;
 
     @Column(name = "receive_date")
@@ -33,12 +39,12 @@ public class MyEvtCoup {
 
 
     public Composite getComposite() {
-        return new Composite(memberId, evtCoupId);
+        return new Composite(member.getId(), evtCoup.getId());
     }
 
     public void setComposite(Composite composite) {
-        this.memberId = composite.memberId;
-        this.evtCoupId = composite.evtCoupId;
+        this.member.setId(composite.memberId);
+        this.evtCoup.setId(composite.evtCoupId);
     }
 
     /*

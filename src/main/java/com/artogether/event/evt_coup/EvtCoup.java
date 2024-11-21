@@ -1,10 +1,13 @@
 package com.artogether.event.evt_coup;
 
+import com.artogether.event.event.Event;
+import com.artogether.event.my_evt_coup.MyEvtCoup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -17,12 +20,9 @@ public class EvtCoup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "evt_id")
-    private Integer evtId;
-
-//    @ManyToOne(fetch = FetchType.EAGER)
-//    @JoinColumn(name = "evt_id", referencedColumnName = "id")
-//    private Event event;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "evt_id", referencedColumnName = "id")
+    private Event event;
 
     @Column(name = "evt_coup_name", nullable = false)
     private String evtCoupName;
@@ -40,4 +40,8 @@ public class EvtCoup {
 
     private Integer duration;
     private Integer threshold;
+
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "evtCoup", cascade = CascadeType.ALL)
+    private Set<MyEvtCoup> myEvtCoups;
 }

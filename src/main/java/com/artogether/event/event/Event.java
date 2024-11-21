@@ -1,11 +1,16 @@
 package com.artogether.event.event;
 
+import com.artogether.event.evt_coup.EvtCoup;
+import com.artogether.event.evt_img.EvtImgVO;
+import com.artogether.event.evt_order.EvtOrder;
+import com.artogether.event.evt_track.EvtTrackVO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -43,4 +48,15 @@ public class Event {
     private Integer enrolled;
 
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "event", cascade = CascadeType.ALL)
+    private Set<EvtTrackVO> tracks;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "event", cascade = CascadeType.ALL)
+    private Set<EvtImgVO> images;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "event", cascade = CascadeType.ALL)
+    private Set<EvtCoup> evtCoups;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "event", cascade = CascadeType.ALL)
+    private Set<EvtOrder> evtOrders;
 }

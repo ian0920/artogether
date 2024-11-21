@@ -1,5 +1,8 @@
 package com.artogether.common.business_member;
 
+import com.artogether.product.prd_coup.Prd_Coup;
+import com.artogether.product.product.Product;
+import com.artogether.venue.venue.Venue;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,6 +11,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -43,5 +47,22 @@ public class BusinessMember {
 
 
     private Byte status;
+
+
+    //以下為hibernate一對多設定
+
+    /*    Product    */
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "business_member", cascade = CascadeType.ALL)
+    private Set<Product> products;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "business_member", cascade = CascadeType.ALL)
+    private Set<Prd_Coup> prdCoups;
+
+
+    /*    Venue    */
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "businessMember", cascade = CascadeType.ALL)
+    private Set<Venue> venues;
+
 
 }

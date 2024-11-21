@@ -30,7 +30,7 @@ public class GeneralController {
     public String hello2() {
 
 
-        return "home";
+        return "Test_homepage";
     }
 
     @PostMapping("register")
@@ -45,7 +45,7 @@ public class GeneralController {
         memberService.save(member);
 
 
-        return "success";
+        return "Test_success";
     }
 
 }
