@@ -40,31 +40,31 @@ public class Cart {
 
 	public static class CartId implements Serializable {
 
-        private Integer product_id; 
-        private Integer member_id;
+        private Integer product;
+        private Integer member;
 		public CartId() {
 			
 		}
 		public CartId(Integer product_id, Integer member_id) {
 			super();
-			this.product_id = product_id;
-			this.member_id = member_id;
+			this.product = product_id;
+			this.member = member_id;
 		}
 		public Integer getProduct_id() {
-			return product_id;
+			return product;
 		}
 		public void setProduct_id(Integer product_id) {
-			this.product_id = product_id;
+			this.product = product_id;
 		}
 		public Integer getMember_id() {
-			return member_id;
+			return member;
 		}
 		public void setMember_id(Integer member_id) {
-			this.member_id = member_id;
+			this.member = member_id;
 		}
 		@Override
 		public int hashCode() {
-			return Objects.hash(member_id, product_id);
+			return Objects.hash(member, product);
 		}
 		@Override
 		public boolean equals(Object obj) {
@@ -75,7 +75,7 @@ public class Cart {
 			if (getClass() != obj.getClass())
 				return false;
 			CartId other = (CartId) obj;
-			return Objects.equals(member_id, other.member_id) && Objects.equals(product_id, other.product_id);
+			return Objects.equals(member, other.member) && Objects.equals(product, other.product);
 		} 
 
             }

@@ -9,6 +9,9 @@ public class ArtogetherApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(ArtogetherApplication.class, args);
+
+
     }
+
 
 }

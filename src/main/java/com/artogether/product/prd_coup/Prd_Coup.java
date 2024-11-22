@@ -58,7 +58,7 @@ public class Prd_Coup {
 	@Column(name = "threshold")
 	private Integer threshold;
 
-	@OneToMany(mappedBy = "prd_Coup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "prd_coup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<My_Prd_Coup> my_prd_coups;
 
 	@ManyToMany(mappedBy = "coupons")

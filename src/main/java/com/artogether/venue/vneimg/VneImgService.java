@@ -12,11 +12,11 @@ public class VneImgService {
     @Autowired
     private VneImgRepository vneImgRepository;
 
-    public List<VneImg> getAllImg(Integer vneId){
-        Venue venue = new Venue();
-        venue.setId(vneId);
-        return vneImgRepository.findAllByVneId(venue);
-    }
+//    public List<VneImg> getAllImg(Integer vneId){
+//        Venue venue = new Venue();
+//        venue.setId(vneId);
+//        return vneImgRepository.findAllByVneId(venue);
+//    }
 
 
 }

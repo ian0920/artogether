@@ -62,7 +62,7 @@ public class Prd_Order {
     @OneToMany(mappedBy = "prd_order", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private Set<Prd_Return> prd_returns;
     
-    @OneToMany(mappedBy = "prd_order", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "prd_Order", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private Set<Prd_Order_Detail> prd_order_details;
 
 
