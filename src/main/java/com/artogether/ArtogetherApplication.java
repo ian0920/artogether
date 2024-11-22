@@ -1,7 +1,10 @@
 package com.artogether;
 
+import com.artogether.common.member.MemberService;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class ArtogetherApplication {
@@ -13,5 +16,14 @@ public class ArtogetherApplication {
 
     }
 
+    //以下為測試用
+
+    @Bean
+    CommandLineRunner runner(MemberService service){
+        return args -> {
+
+            System.out.println(service.findAll().size());
+        };
+    }
 
 }
