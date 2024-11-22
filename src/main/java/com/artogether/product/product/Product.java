@@ -64,9 +64,8 @@ public class Product {
 	@OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Prd_Order_Detail> prd_order_details;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "id", referencedColumnName = "prd_id")
-	private Prd_Track prd_track;
+	@OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<Prd_Track> prd_track;
 	
 	@OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Cart> carts;

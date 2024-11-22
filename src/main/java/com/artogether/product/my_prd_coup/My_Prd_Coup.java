@@ -42,6 +42,7 @@ public class My_Prd_Coup {
 
 	/********************************
 	 以下複合主鍵的用法建議再老師確認是否正確
+	 缺少複合主鍵的getter setter
 	 *********************************/
 
 
@@ -62,8 +63,8 @@ public class My_Prd_Coup {
 	public static class CompositeCoup implements Serializable {
 		private static final long serialVersionUID = 1L;
 
-		private Integer memberId;
-		private Integer couponId;
+		private Integer member;
+		private Integer prd_coup;
 
 		public CompositeCoup() {
 			super();
@@ -71,33 +72,33 @@ public class My_Prd_Coup {
 
 		public CompositeCoup(Integer memberId, Integer prdCouponId) {
 			super();
-			this.memberId = memberId;
-			this.couponId = prdCouponId;
+			this.member = memberId;
+			this.prd_coup = prdCouponId;
 		}
 
 		// Getters 和 Setters
 		public Integer getMemberId() {
-			return memberId;
+			return member;
 		}
 
 		public void setMemberId(Integer memberId) {
-			this.memberId = memberId;
+			this.member = memberId;
 		}
 
 		public Integer getPrdCouponId() {
-			return couponId;
+			return prd_coup;
 		}
 
 		public void setPrdCouponId(Integer prdCouponId) {
-			this.couponId = prdCouponId;
+			this.prd_coup = prdCouponId;
 		}
 
 		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + ((memberId == null) ? 0 : memberId.hashCode());
-			result = prime * result + ((couponId == null) ? 0 : couponId.hashCode());
+			result = prime * result + ((member == null) ? 0 : member.hashCode());
+			result = prime * result + ((prd_coup == null) ? 0 : prd_coup.hashCode());
 			return result;
 		}
 
@@ -110,7 +111,7 @@ public class My_Prd_Coup {
 				return false;
 			}
 			CompositeCoup other = (CompositeCoup) obj;
-			return memberId.equals(other.memberId) && couponId.equals(other.couponId);
+			return member.equals(other.member) && prd_coup.equals(other.prd_coup);
 		}
 
 	}

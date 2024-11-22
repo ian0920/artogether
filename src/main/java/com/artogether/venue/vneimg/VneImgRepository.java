@@ -1,14 +1,12 @@
 package com.artogether.venue.vneimg;
 
-import com.artogether.venue.venue.Venue;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 public interface VneImgRepository extends JpaRepository<VneImg, Integer> {
-    List<VneImg> findAllByVneId(Venue vneId);
-    VneImg findByVneId(Venue vneId);
+    /* 以下方法缺少Query查詢語句，請補上後再解開註解 */
+//    List<VneImg> findAllByVneId(Venue vneId);
+//    VneImg findByVneId(Venue vneId);
 
 }

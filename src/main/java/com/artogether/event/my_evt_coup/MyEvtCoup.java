@@ -19,12 +19,12 @@ import java.sql.Timestamp;
 public class MyEvtCoup {
 
     @Id
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "member_id", referencedColumnName = "id")
     private Member member;
 
     @Id
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "evt_coup_id", referencedColumnName = "id")
     private EvtCoup evtCoup;
 
@@ -43,8 +43,8 @@ public class MyEvtCoup {
     }
 
     public void setComposite(Composite composite) {
-        this.member.setId(composite.memberId);
-        this.evtCoup.setId(composite.evtCoupId);
+        this.member.setId(composite.member);
+        this.evtCoup.setId(composite.evtCoup);
     }
 
     /*
@@ -60,8 +60,8 @@ public class MyEvtCoup {
         private static final long serialVersionUID = 1L;
 
 
-        private Integer memberId;
-        private Integer evtCoupId;
+        private Integer member;
+        private Integer evtCoup;
 
 
     }

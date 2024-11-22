@@ -77,8 +77,8 @@ public class Vne_track {
 
 	static class Vne_trackCom implements Serializable {
 
-		private int vne_id;
-		private int member_id;
+		private int venue;
+		private int member;
 
 		public Vne_trackCom() {
 			super();
@@ -86,29 +86,29 @@ public class Vne_track {
 
 		public Vne_trackCom(int vne_id, int member_id) {
 			super();
-			this.vne_id = vne_id;
-			this.member_id = member_id;
+			this.venue = vne_id;
+			this.member = member_id;
 		}
 
 		public int getVne_id() {
-			return vne_id;
+			return venue;
 		}
 
 		public void setVne_id(int vne_id) {
-			this.vne_id = vne_id;
+			this.venue = vne_id;
 		}
 
 		public int getMember_id() {
-			return member_id;
+			return member;
 		}
 
 		public void setMember_id(int member_id) {
-			this.member_id = member_id;
+			this.member = member_id;
 		}
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(member_id, vne_id);
+			return Objects.hash(member, venue);
 		}
 
 		@Override
@@ -120,7 +120,7 @@ public class Vne_track {
 			if (getClass() != obj.getClass())
 				return false;
 			Vne_trackCom other = (Vne_trackCom) obj;
-			return member_id == other.member_id && vne_id == other.vne_id;
+			return member == other.member && venue == other.venue;
 		}
 
 	}

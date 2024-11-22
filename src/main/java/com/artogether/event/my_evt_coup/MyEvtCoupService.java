@@ -15,7 +15,7 @@ public class MyEvtCoupService {
     //null handling not be done
     public MyEvtCoup findById(MyEvtCoup myEvtCoup) {
 
-        MyEvtCoup.Composite composite = new MyEvtCoup.Composite(myEvtCoup.getMemberId(), myEvtCoup.getEvtCoupId());
+        MyEvtCoup.Composite composite = new MyEvtCoup.Composite(myEvtCoup.getMember().getId(), myEvtCoup.getEvtCoup().getId());
         return repo.findById(composite).orElse(new MyEvtCoup());
 
     }
