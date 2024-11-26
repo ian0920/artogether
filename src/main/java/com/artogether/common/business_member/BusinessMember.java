@@ -1,7 +1,7 @@
 package com.artogether.common.business_member;
 
 import com.artogether.common.platform_msg.Platform_msg;
-import com.artogether.product.prd_coup.Prd_Coup;
+import com.artogether.product.prd_coup.PrdCoup;
 import com.artogether.product.product.Product;
 import com.artogether.venue.venue.Venue;
 import lombok.AllArgsConstructor;
@@ -53,11 +53,11 @@ public class BusinessMember {
     //以下為hibernate一對多設定
 
     /*    Product    */
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "business_member", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "businessMember", cascade = CascadeType.ALL)
     private Set<Product> products;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "business_member", cascade = CascadeType.ALL)
-    private Set<Prd_Coup> prdCoups;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "businessMember", cascade = CascadeType.ALL)
+    private Set<PrdCoup> prdCoup;
 
 
     /*    Venue    */

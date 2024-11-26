@@ -3,11 +3,11 @@ package com.artogether.product.product;
 
 import com.artogether.common.business_member.BusinessMember;
 import com.artogether.product.cart.Cart;
-import com.artogether.product.prd_catalog.Prd_Catalog;
-import com.artogether.product.prd_img.Prd_Img;
-import com.artogether.product.prd_order_detail.Prd_Order_Detail;
-import com.artogether.product.prd_review.Prd_Review;
-import com.artogether.product.prd_track.Prd_Track;
+import com.artogether.product.prd_catalog.PrdCatalog;
+import com.artogether.product.prd_img.PrdImg;
+import com.artogether.product.prd_order_detail.PrdOrderDetail;
+import com.artogether.product.prd_review.PrdReview;
+import com.artogether.product.prd_track.PrdTrack;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,14 +28,14 @@ public class Product {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "business_id", referencedColumnName = "id")
-	private BusinessMember business_member;
+	private BusinessMember businessMember;
 	
 	@Column(name = "name")
 	private String name;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "catalog_id", referencedColumnName = "id")
-	private Prd_Catalog prd_catalog;
+	private PrdCatalog prdCatalog;
 
 	@Column(name = "price")
 	private Integer price;
@@ -50,25 +50,25 @@ public class Product {
 	private Integer status;
 
 	@Column(name = "all_stars")
-	private Integer all_stars;
+	private Integer allStars;
 
 	@Column(name = "all_reviews")
-	private Integer all_reviews;
+	private Integer allReviews;
 
 	@OneToMany(mappedBy = "product",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<Prd_Img> prd_imgs;
+	private Set<PrdImg> prdImg;
 	
 	@OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<Prd_Review> prd_reviews;
+	private Set<PrdReview> prdReviews;
 	
 	@OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<Prd_Order_Detail> prd_order_details;
+	private Set<PrdOrderDetail> prdOrderDetail;
 
 	@OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<Prd_Track> prd_track;
+	private Set<PrdTrack> prdTrack;
 	
 	@OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<Cart> carts;
+	private Set<Cart> cart;
 
 
 

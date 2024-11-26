@@ -2,9 +2,7 @@ package com.artogether.product.cart;
 
 import com.artogether.common.member.Member;
 import com.artogether.product.product.Product;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -33,11 +31,13 @@ public class Cart {
     @Column(name = "qty", nullable = false)
     private Integer qty;
 
+
 	/**************************
-	  缺少複合主鍵的Getter Setter
+	  缺少複合主鍵的Getter Setter Done
 	***************************/
 
-
+    @Getter
+    @Setter
 	public static class CartId implements Serializable {
 
         private Integer product;
@@ -45,22 +45,22 @@ public class Cart {
 		public CartId() {
 			
 		}
-		public CartId(Integer product_id, Integer member_id) {
+		public CartId(Integer productId, Integer memberId) {
 			super();
-			this.product = product_id;
-			this.member = member_id;
+			this.product = productId;
+			this.member = memberId;
 		}
-		public Integer getProduct_id() {
+		public Integer getProductId() {
 			return product;
 		}
-		public void setProduct_id(Integer product_id) {
-			this.product = product_id;
+		public void setProductId(Integer productId) {
+			this.product = productId;
 		}
-		public Integer getMember_id() {
+		public Integer getMemberId() {
 			return member;
 		}
-		public void setMember_id(Integer member_id) {
-			this.member = member_id;
+		public void setMemberId(Integer memberId) {
+			this.member = memberId;
 		}
 		@Override
 		public int hashCode() {
