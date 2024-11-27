@@ -5,11 +5,11 @@ import com.artogether.event.evt_order.EvtOrder;
 import com.artogether.event.evt_track.EvtTrackVO;
 import com.artogether.event.my_evt_coup.MyEvtCoup;
 import com.artogether.product.cart.Cart;
-import com.artogether.product.my_prd_coup.My_Prd_Coup;
-import com.artogether.product.prd_order.Prd_Order;
-import com.artogether.product.prd_report.Prd_Report;
-import com.artogether.product.prd_review.Prd_Review;
-import com.artogether.product.prd_track.Prd_Track;
+import com.artogether.product.my_prd_coup.MyPrdCoup;
+import com.artogether.product.prd_order.PrdOrder;
+import com.artogether.product.prd_report.PrdReport;
+import com.artogether.product.prd_review.PrdReview;
+import com.artogether.product.prd_track.PrdTrack;
 import com.artogether.venue.vne_track.Vne_track;
 import com.artogether.venue.vneorder.VneOrder;
 import lombok.AllArgsConstructor;
@@ -77,19 +77,19 @@ public class Member {
 
     /*    Product    */
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL)
-    private Set<Prd_Track> prdTracks;
+    private Set<PrdTrack> prdTracks;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL)
-    private Set<Prd_Review> prdReviews;
+    private Set<PrdReview> prdReviews;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL)
-    private Set<Prd_Report> prdReports;
+    private Set<PrdReport> prdReports;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL)
-    private Set<Prd_Order> prdOrders;
+    private Set<PrdOrder> prdOrders;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL)
-    private Set<My_Prd_Coup> myPrdCoups;
+    private Set<MyPrdCoup> myPrdCoups;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL)
     private Set<Cart> carts;
