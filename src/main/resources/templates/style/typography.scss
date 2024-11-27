@@ -1,0 +1,162 @@
+@font-face {
+  font-family: "Noto Sans TC";
+  src: url(../asset/fonts/NotoSansTC-VariableFont_wght.ttf) format("opentype");
+}
+
+@mixin font-display-large {
+  // Title Hero //
+  font-family: "Noto Sans TC";
+  font-weight: 700;
+  font-size: 57pt;
+  /* Recommend for responsive css clamp(mobile, mid, desktop) - 
+   you can change 5vw value
+    font-size:clamp(50px, 5vw, 72px); */
+  line-height: 120%;
+  text-decoration: none;
+  letter-spacing: -3%;
+}
+@mixin font-display-medium {
+  // Title Hero //
+  font-family: "Noto Sans TC";
+  font-weight: 700;
+  font-size: 45pt;
+  /* Recommend for responsive css clamp(mobile, mid, desktop) - 
+   you can change 5vw value
+    font-size:clamp(50px, 5vw, 72px); */
+  line-height: 120%;
+  text-decoration: none;
+  letter-spacing: -3%;
+}
+@mixin font-display-large {
+  // Title Hero //
+  font-family: "Noto Sans TC";
+  font-weight: 700;
+  font-size: 36pt;
+  /* Recommend for responsive css clamp(mobile, mid, desktop) - 
+   you can change 5vw value
+    font-size:clamp(50px, 5vw, 72px); */
+  line-height: 120%;
+  text-decoration: none;
+  letter-spacing: -3%;
+}
+
+@mixin font-headline-large {
+  // Heading //
+  font-family: "Noto Sans TC";
+  font-weight: 400;
+  font-size: 32pt;
+  line-height: 120%;
+  text-decoration: none;
+  letter-spacing: -2%;
+}
+
+@mixin font-headline-medium {
+  // Heading //
+  font-family: "Noto Sans TC";
+  font-weight: 400;
+  font-size: 28pt;
+  line-height: 120%;
+  text-decoration: none;
+  letter-spacing: -2%;
+}
+
+@mixin font-headline-small {
+  // Heading //
+  font-family: "Noto Sans TC";
+  font-weight: 400;
+  font-size: 24pt;
+  line-height: 120%;
+  text-decoration: none;
+  letter-spacing: -2%;
+}
+
+@mixin font-title-large {
+  // Subheading //
+  font-family: "Noto Sans TC";
+  font-weight: 400;
+  font-size: 22pt;
+  line-height: 120%;
+  text-decoration: none;
+  letter-spacing: normal;
+}
+@mixin font-title-medium {
+  // Subheading //
+  font-family: "Noto Sans TC";
+  font-weight: 400;
+  font-size: 16pt;
+  line-height: 120%;
+  text-decoration: none;
+  letter-spacing: normal;
+}
+@mixin font-title-small {
+  // Subheading //
+  font-family: "Noto Sans TC";
+  font-weight: 400;
+  font-size: 14pt;
+  line-height: 120%;
+  text-decoration: none;
+  letter-spacing: normal;
+}
+
+@mixin font-body-large {
+  font-family: "Noto Sans TC";
+  font-weight: 400;
+  font-size: 16pt;
+  line-height: 140%;
+  text-decoration: none;
+  letter-spacing: normal;
+}
+@mixin font-body-medium {
+  font-family: "Noto Sans TC";
+  font-weight: 400;
+  font-size: 14pt;
+  line-height: 140%;
+  text-decoration: none;
+  letter-spacing: normal;
+}
+@mixin font-body-small {
+  font-family: "Noto Sans TC";
+  font-weight: 400;
+  font-size: 12pt;
+  line-height: 140%;
+  text-decoration: none;
+  letter-spacing: normal;
+}
+
+@mixin font-body-code {
+  // Body Code //
+  font-family: "Roboto Mono";
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 100%;
+  text-decoration: none;
+  letter-spacing: normal;
+}
+
+@mixin font-label-large {
+  // Single Line/Body Base //
+  font-family: "Noto Sans TC";
+  font-weight: 400;
+  font-size: 14pt;
+  line-height: 100%;
+  text-decoration: none;
+  letter-spacing: normal;
+}
+@mixin font-label-medium {
+  // Single Line/Body Base //
+  font-family: "Noto Sans TC";
+  font-weight: 400;
+  font-size: 12pt;
+  line-height: 100%;
+  text-decoration: none;
+  letter-spacing: normal;
+}
+@mixin font-label-small {
+  // Single Line/Body Base //
+  font-family: "Noto Sans TC";
+  font-weight: 400;
+  font-size: 11pt;
+  line-height: 100%;
+  text-decoration: none;
+  letter-spacing: normal;
+}
