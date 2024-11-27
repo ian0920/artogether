@@ -1,5 +1,6 @@
 package com.artogether.event.event;
 
+import com.artogether.common.business_member.BusinessMember;
 import com.artogether.event.evt_coup.EvtCoup;
 import com.artogether.event.evt_img.EvtImgVO;
 import com.artogether.event.evt_order.EvtOrder;
@@ -23,8 +24,9 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "business_id")
-    private Integer businessId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "business_id", referencedColumnName = "id")
+    private BusinessMember businessMember;
 
     @Column(nullable = false)
     private String name;

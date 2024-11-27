@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>會員註冊</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css"> <!-- Custom CSS -->
+
+  <style>
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+    }
+
+    .register {
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #ffffff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .title h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+      color: #343a40;
+    }
+
+    .mb-3 label {
+      font-weight: bold;
+      color: #495057;
+    }
+
+    .mb-3 input,
+    .mb-3 select {
+      border: 1px solid #ced4da;
+      border-radius: 5px;
+      padding: 10px;
+    }
+
+    .mb-3 input:focus,
+    .mb-3 select:focus {
+      border-color: #80bdff;
+      box-shadow: 0 0 3px rgba(128, 189, 255, 0.5);
+    }
+
+    .mb-3 input[type="checkbox"] {
+      margin-right: 8px;
+    }
+
+    .mb-3 .form-control {
+      font-size: 1rem;
+    }
+
+    .mb-3 div[style="color: red;"] {
+      font-size: 0.9rem;
+      margin-top: 5px;
+    }
+
+    .btn {
+      background-color: #007bff;
+      color: white;
+      font-size: 1.1rem;
+      font-weight: bold;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #0056b3;
+    }
+
+    .d-grid {
+      margin-top: 20px;
+    }
+
+    input[type="checkbox"] + label {
+      margin-right: 15px;
+      font-weight: 500;
+      color: #495057;
+    }
+
+    input[type="checkbox"]:checked + label {
+      color: #007bff;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(0.5);
+    }
+
+    div[style="color: red;"] {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+
+  </style>
+
+</head>
+<body class="bg-light">
+
+<div class="container">
+  <div class="register shadow-lg rounded p-4 bg-white mt-5">
+    <form id="register-form" action="/register" method="post">
+
+      <div class="text-center mb-4">
+        <h2 class="fw-bold text-primary">會員註冊</h2>
+        <p class="text-muted">填寫以下表單完成註冊</p>
+      </div>
+
+      <div class="mb-3">
+        <label for="account" class="form-label">姓名：</label>
+        <input type="text" class="form-control" id="account" name="name" th:field="*{member.name}"
+               th:classappend="${errors != null && errors.containsKey('name')} ? 'is-invalid' : ''" required>
+        <div class="text-danger small"
+             th:if="${errors != null && errors.containsKey('name')}"
+             th:text="${errors.get('name')}"></div>
+      </div>
+
+      <div class="mb-3">
+        <label for="email" class="form-label">Email帳號：</label>
+        <input type="email" class="form-control" id="email" name="email" th:field="*{member.email}"
+               th:classappend="${errors != null && errors.containsKey('email')} ? 'is-invalid' : ''" required>
+        <div class="text-danger small"
+             th:if="${errors != null && errors.containsKey('email')}"
+             th:text="${errors.get('email')}"></div>
+      </div>
+
+      <div class="mb-3">
+        <label for="password" class="form-label">密碼：</label>
+        <input type="password" class="form-control" id="password" name="password"
+               th:classappend="${errors != null && errors.containsKey('password')} ? 'is-invalid' : ''" required>
+        <div class="text-danger small"
+             th:if="${errors != null && errors.containsKey('password')}"
+             th:text="${errors.get('password')}"></div>
+      </div>
+
+      <div class="mb-3">
+        <label for="phone" class="form-label">電話號碼：</label>
+        <input type="number" class="form-control" id="phone" name="phone" th:field="*{member.phone}"
+               th:classappend="${errors != null && errors.containsKey('phone')} ? 'is-invalid' : ''" required>
+        <div class="text-danger small"
+             th:if="${errors != null && errors.containsKey('phone')}"
+             th:text="${errors.get('phone')}"></div>
+      </div>
+
+      <div class="mb-3">
+        <label for="gender" class="form-label">性別：</label>
+        <select class="form-select" id="gender" name="gender" th:field="*{member.gender}" required>
+          <option value="">請選擇</option>
+          <option value="男生">男生</option>
+          <option value="女生">女生</option>
+          <option value="其他">其他</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="birthday" class="form-label">生日：</label>
+        <input type="date" class="form-control" id="birthday" name="birthday" th:field="*{member.birthday}"
+               th:classappend="${errors != null && errors.containsKey('birthday')} ? 'is-invalid' : ''" required>
+        <div class="text-danger small"
+             th:if="${errors != null && errors.containsKey('birthday')}"
+             th:text="${errors.get('birthday')}"></div>
+        </div>
+
+      <div class="mb-3">
+        <label class="form-label">興趣：</label>
+        <div class="row">
+          <div class="col-md-6">
+            <input type="checkbox" id="outdoor" name="prefer" value="戶外活動">
+            <label for="outdoor" class="ms-2">戶外活動</label>
+          </div>
+          <div class="col-md-6">
+            <input type="checkbox" id="indoor" name="prefer" value="室內活動">
+            <label for="indoor" class="ms-2">室內活動</label>
+          </div>
+          <div class="col-md-6">
+            <input type="checkbox" id="self-growth" name="prefer" value="個人成長">
+            <label for="self-growth" class="ms-2">個人成長</label>
+          </div>
+          <div class="col-md-6">
+            <input type="checkbox" id="exhibition" name="prefer" value="展覽">
+            <label for="exhibition" class="ms-2">展覽</label>
+          </div>
+          <div class="col-md-6">
+            <input type="checkbox" id="painting" name="prefer" value="繪畫">
+            <label for="painting" class="ms-2">繪畫</label>
+          </div>
+          <div class="col-md-6">
+            <input type="checkbox" id="art" name="prefer" value="藝文">
+            <label for="art" class="ms-2">藝文</label>
+          </div>
+          <div class="col-md-6">
+            <input type="checkbox" id="food" name="prefer" value="美食">
+            <label for="food" class="ms-2">美食</label>
+          </div>
+          <div class="col-md-6">
+            <input type="checkbox" id="music" name="prefer" value="音樂">
+            <label for="music" class="ms-2">音樂</label>
+          </div>
+          <div class="col-md-6">
+            <input type="checkbox" id="literature" name="prefer" value="文學">
+            <label for="literature" class="ms-2">文學</label>
+          </div>
+          <div class="col-md-6">
+            <input type="checkbox" id="learn" name="prefer" value="學習">
+            <label for="learn" class="ms-2">學習</label>
+          </div>
+          <div class="col-md-6">
+            <input type="checkbox" id="movie" name="prefer" value="電影">
+            <label for="movie" class="ms-2">電影</label>
+          </div>
+          <div class="col-md-6">
+            <input type="checkbox" id="charity" name="prefer" value="公益">
+            <label for="charity" class="ms-2">公益</label>
+          </div>
+
+        </div>
+      </div>
+
+
+
+      <div class="text-center">
+        <button type="submit" class="btn btn-primary btn-lg w-100">註冊</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  // Dynamically check for backend validation status 以下暫時用不到
+  document.addEventListener("DOMContentLoaded", () => {
+    const status = /*[[${status}]]*/ 'none'; // Thymeleaf replaces this dynamically
+
+    if (status === 'success') {
+      // Display success message
+      Swal.fire({
+        title: '提交成功！',
+        text: '您的資料已成功提交！',
+        icon: 'success',
+        confirmButtonText: '確認',
+        confirmButtonColor: '#007bff'
+      });
+    } else if (status === 'error') {
+      // Display error message
+      Swal.fire({
+        title: '提交失敗！',
+        icon: 'error',
+        confirmButtonText: '確認',
+        confirmButtonColor: '#dc3545'
+      });
+    }
+  });
+</script>
+
+</body>
+</html>

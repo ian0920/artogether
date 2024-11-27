@@ -23,6 +23,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
+import javax.validation.constraints.Pattern;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Set;
@@ -59,11 +60,15 @@ public class Member {
     private String prefer;
 
     @Length(min=10,max=10, message = "手機號碼長度有誤")
+    @Pattern(regexp = "^09\\d{8}$", message = "手機號碼需為09開頭的10位數字")
     private String phone;
 
     @Column(nullable = false)
     @NotBlank(message = "密碼請勿空白")
+    @Length(min=8, message = "密碼長度不足，至少8位數密碼以上")
     private String password;
+
+    //0->驗證中 1->啟用 2->停用
     private Byte status;
 
     @Column(name = "oath_provider")
