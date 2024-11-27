@@ -7,10 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 
 @Entity
@@ -31,16 +28,26 @@ public class Tslot implements Serializable {
     @JoinColumn(name = "vne_id",referencedColumnName = "id")
     private Venue venue;
 
-    @Column(name = "day_of_week")
-    @Enumerated(EnumType.STRING)
-    private DayOfWeek dayOfWeek;
+    @Column(name = "hour_of_mon")
+    private String hourOfMon;
 
-    @Column(name = "hour_of_day")
-    private String hourOfDay;
+    @Column(name = "hour_of_tue")
+    private String hourOfTue;
 
-    @NotNull
-    @Min(1)
-    private Integer price;
+    @Column(name = "hour_of_wed")
+    private String hourOfWed;
+
+    @Column(name = "hour_of_thu")
+    private String hourOfThu;
+
+    @Column(name = "hour_of_fri")
+    private String hourOfFri;
+
+    @Column(name = "hour_of_sat")
+    private String hourOfSat;
+
+    @Column(name = "hour_of_sun")
+    private String hourOfSun;
 
     private LocalDateTime effectiveTime;
     private LocalDateTime expirationTime;

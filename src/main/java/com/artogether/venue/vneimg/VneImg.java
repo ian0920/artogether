@@ -30,6 +30,8 @@ public class VneImg implements Serializable {
 
     @NotEmpty
     @Column(name = "image_file")
-    private Byte[] imageFile;
+    private byte[] imageFile;
+//path
+    private Integer position;
 
 }

@@ -1,10 +1,8 @@
-package com.artogether.venue.vneorder;
+package com.artogether.venue.vneprice;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface VneOrderRepository extends JpaRepository<VneOrder, Integer> {
-
-
+public interface VnePriceRepository extends JpaRepository<VnePrice, Long> {
 }

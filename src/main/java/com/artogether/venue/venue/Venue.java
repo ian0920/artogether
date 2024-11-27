@@ -7,6 +7,7 @@ import com.artogether.venue.vne_track.Vne_track;
 import com.artogether.venue.vnecoup.VneCoup;
 import com.artogether.venue.vneimg.VneImg;
 import com.artogether.venue.vneorder.VneOrder;
+import com.artogether.venue.vneprice.VnePrice;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -45,6 +46,8 @@ public class Venue implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "venue", cascade = CascadeType.ALL)
     private List<Vne_track> vneTracks;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "venue", cascade = CascadeType.ALL)
+    private List<VnePrice> vnePrice;
 
     @NotEmpty(message="場地名稱: 請勿空白")
     @Pattern(regexp = "^[(\u4e00-\u9fa5)(a-zA-Z0-9_)]{2,10}$", message = "場地名稱: 只能是中、英文字母、數字和_ , 且長度必需在2到10之間")
@@ -54,13 +57,20 @@ public class Venue implements Serializable {
     @JoinColumn(name = "business_id",referencedColumnName = "id")
     private BusinessMember businessMember;
 
-
+    //場地類別描述
     private String type;
+    //場地描述
     private String description;
+    //場地狀態(上架/下架/停權)
     private VenueStatusEnum status;
+
+    //可容許預約天數
+    @Column(name = "available_days", nullable = false)
     private Integer availableDays;
+
+    @Column(name = "all_stars")
     private Integer allStars;
+
+    @Column(name = "all_reviews")
     private Integer allReviews;
-
-
 }
