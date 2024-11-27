@@ -1,0 +1,401 @@
+@import "root.css";
+@font-face {
+  font-family: "Noto Sans TC";
+  src: url(../asset/fonts/NotoSansTC-VariableFont_wght.ttf) format("opentype");
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Noto Sans TC";
+}
+
+header.navbar_homepage {
+  z-index: 6;
+  height: 72px;
+  font-family: "Noto Sans TC";
+  font-weight: 400;
+  font-size: 14pt;
+  line-height: 140%;
+  text-decoration: none;
+  letter-spacing: normal;
+  position: fixed;
+  width: 100%;
+  display: block;
+  display: flex;
+  flex-direction: row;
+  gap: normal;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  color: var(--text-default-secondary-sds-light);
+  border-bottom: 1px solid var(--border-default-default-sds-light);
+  /* Drop Shadow/200 */
+  box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.15);
+}
+header.navbar_homepage div.header_box {
+  width: 1140px;
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+  align-items: center;
+  justify-content: center;
+}
+@media (max-width: 768px) {
+  header.navbar_homepage div.header_box {
+    width: 100%;
+  }
+}
+header.navbar_homepage div.header_box span.btn_menu {
+  display: none;
+}
+@media (max-width: 768px) {
+  header.navbar_homepage div.header_box span.btn_menu {
+    display: inline-block;
+  }
+}
+header.navbar_homepage div.header_box div.search_bar {
+  flex: auto;
+  padding: 12px 24px;
+  border: 1px solid var(--border-default-default-sds-light);
+  border-radius: 10000px;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+header.navbar_homepage div.header_box div.search_bar:hover {
+  background-color: var(--background-default-secondary-sds-light);
+}
+header.navbar_homepage div.header_box div.search_bar.focus {
+  outline: 1pt solid var(--border-default-secondary-sds-light);
+  background-color: #fff;
+  box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.16);
+}
+header.navbar_homepage div.header_box div.search_bar input {
+  width: 100%;
+  outline: none;
+  border-style: none;
+  background: none;
+  font-family: "Noto Sans TC";
+  font-weight: 400;
+  font-size: 12pt;
+  line-height: 140%;
+  text-decoration: none;
+  letter-spacing: normal;
+}
+header.navbar_homepage div.header_box div.cart_div {
+  position: relative;
+  padding: 8px;
+  height: -moz-fit-content;
+  height: fit-content;
+  border-radius: 100%;
+}
+header.navbar_homepage div.header_box div.cart_div span#cart_amount {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  background-color: var(--background-danger-default-sds-light);
+}
+header.navbar_homepage div.header_box div.user_div {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
+header.navbar_homepage div.header_box div.user_div:hover {
+  color: var(--brand-shop);
+}
+header.navbar_homepage div.header_box div.user_div .thumbnail-box {
+  width: 36px;
+  height: 36px;
+  border: 2px solid var(--brand-shop);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: normal;
+  align-items: center;
+  justify-content: center;
+}
+header.navbar_homepage div.header_box div.user_div .thumbnail-box .thumbnail {
+  background-color: gray;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
+section.sec-showcase {
+  padding: 32px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+section.sec-showcase div.showcase-info-box {
+  display: flex;
+  flex-direction: row;
+  gap: normal;
+  align-items: stretch;
+  justify-content: space-between;
+}
+section.sec-showcase div.showcase-info-box h2 {
+  position: relative;
+  color: var(--text-default-default-sds-light);
+}
+section.sec-showcase div.showcase-info-box h2::before {
+  content: " ";
+  display: inline-block;
+  width: 12px;
+  height: 80%;
+  vertical-align: middle;
+  border-radius: 2px;
+  position: absolute;
+  left: -24px;
+}
+section.sec-showcase div.showcase-info-box h2.business::before {
+  background-color: var(--brand-shop);
+}
+section.sec-showcase div.showcase-info-box h2.event::before {
+  background-color: var(--brand-event);
+}
+section.sec-showcase div.showcase-info-box h2.venue::before {
+  background-color: var(--brand-venue);
+}
+section.sec-showcase div.showcase-info-box h2.product::before {
+  background-color: var(--brand-product);
+}
+section.sec-showcase div.showcase-info-box div.link-button {
+  color: var(--text-default-secondary-sds-light);
+}
+section.sec-showcase div.showcase-info-box div.link-button a {
+  color: var(--text-default-secondary-sds-light);
+}
+section.sec-showcase div.showcase-cards-box {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+}
+section.sec-showcase div.showcase-cards-box div.showcase-card {
+  width: -moz-max-content;
+  width: max-content;
+}
+
+div.nav-menu-box {
+  position: absolute;
+  top: 72px;
+  visibility: hidden;
+}
+div.nav-menu-box.open {
+  visibility: visible;
+}
+div.nav-menu-box.open div.nav-menu-mask {
+  position: fixed;
+  height: calc(100dvh - 72px);
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.15);
+}
+div.nav-menu-box.open div.nav-menu {
+  display: flex;
+  flex-direction: row;
+  gap: normal;
+  position: fixed;
+  left: 40px;
+  width: -moz-min-content;
+  width: min-content;
+  background-color: #fff;
+  z-index: 5;
+  box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.16);
+}
+div.nav-menu-box.open div.nav-menu div.nav-menu-content {
+  border-right: 1px solid var(--border-default-default-sds-light);
+  background-color: var(--background-default-secondary-sds-light);
+}
+div.nav-menu-box.open div.nav-menu div.nav-menu-content div.nav-menu-content-item {
+  color: var(--text-default-secondary-sds-light);
+  padding: 16px 20px;
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+div.nav-menu-box.open div.nav-menu div.nav-menu-content div.nav-menu-content-item:hover, div.nav-menu-box.open div.nav-menu div.nav-menu-content div.nav-menu-content-item.selected {
+  background-color: rgba(255, 255, 255, 0.5);
+  color: var(--brand-shop);
+}
+div.nav-menu-box.open div.nav-menu div.nav-menu-content div.nav-menu-content-item div {
+  display: flex;
+  flex-direction: row;
+  gap: normal;
+  align-items: stretch;
+  justify-content: space-between;
+  font-family: "Noto Sans TC";
+  font-weight: 400;
+  font-size: 16pt;
+  line-height: 140%;
+  text-decoration: none;
+  letter-spacing: normal;
+}
+div.nav-menu-box.open div.nav-menu div.nav-menu-content div.nav-menu-content-item p {
+  display: block;
+  font-size: 12px;
+}
+div.nav-menu-box.open div.nav-menu div.nav-menu-submenu {
+  border-right: 1px solid var(--border-default-default-sds-light);
+}
+div.nav-menu-box.open div.nav-menu div.nav-menu-submenu div.nav-menu-submenu-item {
+  color: var(--text-default-secondary-sds-light);
+  padding: 16px 20px;
+  width: 120px;
+  display: flex;
+  flex-direction: row;
+  gap: normal;
+  align-items: stretch;
+  justify-content: space-between;
+  font-family: "Noto Sans TC";
+  font-weight: 400;
+  font-size: 14pt;
+  line-height: 140%;
+  text-decoration: none;
+  letter-spacing: normal;
+}
+div.nav-menu-box.open div.nav-menu div.nav-menu-submenu div.nav-menu-submenu-item:hover, div.nav-menu-box.open div.nav-menu div.nav-menu-submenu div.nav-menu-submenu-item.selected {
+  color: var(--brand-shop);
+}
+div.nav-menu-box.open div.nav-menu div.nav-menu-submenu div.nav-menu-submenu-item p {
+  display: block;
+  font-size: 12px;
+}
+
+div.user-menu-box {
+  width: 280px;
+  visibility: hidden;
+  position: fixed;
+  top: 72px;
+  right: 60px;
+  z-index: 5;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  color: var(--text-default-secondary-sds-light);
+  box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.16);
+}
+div.user-menu-box.open {
+  visibility: visible;
+}
+div.user-menu-box.open hr {
+  background-color: var(--border-default-default-sds-light);
+  height: 1px;
+  border: 0;
+}
+div.user-menu-box.open div.user-menu-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+div.user-menu-box.open div.user-info-box {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
+div.user-menu-box.open div.user-info-box div.thumbnail {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+div.user-menu-box.open div.user-info-box div.thumbnail img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+div.user-menu-box.open div.user-info-box .user-info-text {
+  flex: auto;
+}
+div.user-menu-box.open div.user-menu-item {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
+  justify-content: start;
+  padding: 8px 0;
+}
+div.user-menu-box.open button {
+  flex: auto;
+}
+
+button.fab {
+  font-family: "Noto Sans TC";
+  font-weight: 400;
+  font-size: 14pt;
+  line-height: 140%;
+  text-decoration: none;
+  letter-spacing: normal;
+  color: #fff;
+  display: flex;
+  padding: 12px;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #088f4f 0%, #a6df20 99.99%, rgba(249, 203, 0, 0.2) 100%);
+  box-shadow: 1px 1px 2px 1px rgba(255, 255, 255, 0.25) inset, 2px 2px 4px 0px rgba(0, 0, 0, 0.25);
+  transition: all 0.2s ease-out;
+}
+button.fab:hover {
+  transform: scale(1.1);
+}
+
+footer {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: normal;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--brand-shop);
+}
+footer div.footer-box {
+  width: 1140px;
+  padding: 48px 0;
+  display: flex;
+  flex-direction: row;
+  gap: normal;
+}
+footer div.footer-box div.platform-info {
+  flex: 2;
+}
+footer div.footer-box div.platform-info div.logo-box {
+  width: 100%;
+}
+footer div.footer-box div.platform-info div.logo-box img {
+  width: 200px;
+}
+footer div.footer-box div.features-box {
+  display: flex;
+  flex-direction: row;
+  gap: normal;
+  align-items: stretch;
+  justify-content: space-between;
+  flex: 3;
+}
+footer div.footer-box div.features-box div {
+  display: inline-block;
+  vertical-align: top;
+}
+footer div.footer-box div.features-box div .feature-title {
+  color: #fff;
+  margin-bottom: 12px;
+}
+footer div.footer-box div.features-box div ul {
+  list-style: none;
+}
+footer div.footer-box div.features-box div ul a {
+  text-decoration: none;
+  color: var(--text-default-secondary-sds-dark);
+}/*# sourceMappingURL=style_homepage.css.map */
