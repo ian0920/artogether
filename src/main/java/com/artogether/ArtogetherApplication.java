@@ -6,7 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com")
 public class ArtogetherApplication {
 
 
@@ -22,7 +22,7 @@ public class ArtogetherApplication {
     CommandLineRunner runner(MemberService service){
         return args -> {
 
-            System.out.println(service.findAll().size());
+//            System.out.println(service.findAll().size());
         };
     }
 

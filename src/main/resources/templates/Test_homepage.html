@@ -1,11 +1,15 @@
 <!DOCTYPE html>
-<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
 </head>
 <body>
     <h2>This is home page from thymeleaf</h2>
+
+    <div th:text="${message}"></div>
+    <div th:text="${errors}"></div>
+
 
 
 </body>

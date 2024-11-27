@@ -1,6 +1,7 @@
 package com.artogether.common.business_member;
 
 import com.artogether.common.platform_msg.Platform_msg;
+import com.artogether.event.event.Event;
 import com.artogether.product.prd_coup.PrdCoup;
 import com.artogether.product.product.Product;
 import com.artogether.venue.venue.Venue;
@@ -65,8 +66,12 @@ public class BusinessMember {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "businessMember", cascade = CascadeType.ALL)
     private Set<Venue> venues;
 
+
+    /*    Event    */
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "businessMember", cascade = CascadeType.ALL)
+    private Set<Event> events;
+
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "businessMember", cascade = CascadeType.ALL)
     private Set<Platform_msg> platformMsgs;
-
-
 }
