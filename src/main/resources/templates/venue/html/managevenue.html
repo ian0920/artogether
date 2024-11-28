@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
+//預覽圖片時，指標會被往下推
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,9 +13,20 @@
         .carousel-inner img {
             width: 100%;
             height: 400px; /* 固定高度 */
-            object-fit: contain; /* 確保圖片完整顯示在幻燈片中 */
+            /*object-fit: contain; !* 確保圖片完整顯示在幻燈片中 *!*/
             display: block;
             margin: 0 auto; /* 置中圖片 */
+        }
+        .carousel-indicators {
+            position: absolute; /* 固定定位 */
+            bottom: 50px; /* 指標位置貼近幻燈片下緣 */
+            margin: 0 auto;
+            /*z-index: 500; !* 確保在圖片上層 *!*/
+            background-color: rgba(0, 0, 0, 0.5); /* 添加半透明背景，提升對比 */
+            padding: 5px 0; /* 添加一些上下空間 */
+            display: flex; /* 使用 Flexbox 居中 */
+            width: 100%; /* 確保指標寬度與幻燈片一致 */
+            text-align: center; /* 居中指標 */
         }
 
         .upload-button {
@@ -90,9 +101,9 @@
 </form>
 
 <div id="uploadStatus"></div>
+<input type="file" id="fileInput" style="display:none" @change="previewImage()" />
+<div id="uploadStatus"></div>
 
-<!-- 引入 Bootstrap JavaScript -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     // 打開檔案上傳
     function openFileUpload(element) {
@@ -121,8 +132,7 @@
 
         if (file && window.currentSlideElement) {
             // 檢查檔案格式是否正確
-            const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
-            if (!validImageTypes.includes(file.type)) {
+            if (!isValidImageType(file.type)) {
                 alert("Only JPEG, PNG, and GIF files are allowed.");
                 return;
             }
@@ -153,8 +163,7 @@
         }
 
         // 限制檔案類型
-        const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
-        if (!validImageTypes.includes(file.type)) {
+        if (!isValidImageType(file.type)) {
             alert("Only JPEG, PNG, and GIF files are allowed.");
             return;
         }
@@ -199,7 +208,17 @@
                 window.isUploading = false;
             });
     }
+
+    // 驗證圖片檔案類型
+    function isValidImageType(type) {
+        const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
+        return validImageTypes.includes(type);
+    }
 </script>
+
+<!-- 引入 Bootstrap JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!--<script src="../js/uploadimg.js"></script>-->
 </body>
 
 </html>

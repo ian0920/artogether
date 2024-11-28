@@ -8,6 +8,7 @@ import java.util.Optional;
 
 @Repository
 public interface VneImgRepository extends JpaRepository<VneImg, Integer> {
+
     List<VneImg> findAllByVenueId(Integer vneId);
     Optional<VneImg> findByVenueIdAndPosition(Integer vneId, Integer position);
 

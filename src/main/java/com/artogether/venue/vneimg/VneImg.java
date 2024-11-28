@@ -31,7 +31,7 @@ public class VneImg implements Serializable {
     @NotEmpty
     @Column(name = "image_file")
     private byte[] imageFile;
-//path
+    //path
     private Integer position;
 
 }

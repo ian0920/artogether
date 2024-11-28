@@ -73,4 +73,12 @@ public class Venue implements Serializable {
 
     @Column(name = "all_reviews")
     private Integer allReviews;
+
+    //設為靜態方法，只處理id的附值(單一職責)
+    //不要有過多創建邏輯
+    public static Venue id(Integer id) {
+        Venue venue = new Venue();
+        venue.setId(id);
+        return venue;
+    }
 }

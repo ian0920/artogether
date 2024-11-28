@@ -1,11 +1,13 @@
 package com.artogether.venue.tslot;
 
+import com.artogether.venue.venue.Venue;
+import com.artogether.venue.vnedto.TslotDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import javax.annotation.PostConstruct;
+import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,9 +17,56 @@ public class TslotService {
     @Autowired
     private TslotRepository tslotRepository;
 
-    // 創建時段
-    public Tslot createTslot(Tslot tslot) {
-        return tslotRepository.save(tslot);
+    @Autowired
+    private TslotViewService tslotViewService;
+
+    //只在第一次啟動時執行。
+    @PostConstruct
+//    @Transactional
+    public void init() {
+        tslotViewService.createTslotScheduleView();
+    }
+
+
+    // 創建或更新時段
+    @Transactional
+    public Tslot updateTslot(LocalDateTime submissionTime, TslotDTO tslotDTO) {
+        int vneId = tslotDTO.getVneId();
+        if (!tslotRepository.existsByVenueId(vneId)) {
+            //沒有找到新建一個
+            Tslot tslot = Tslot.builder()
+                    .venue(Venue.id(vneId)) // Venue 有靜態方法"id()"(嘗試看看)
+                    .hourOfMon(tslotDTO.getHourOfMon())
+                    .hourOfTue(tslotDTO.getHourOfTue())
+                    .hourOfWed(tslotDTO.getHourOfWed())
+                    .hourOfThu(tslotDTO.getHourOfThu())
+                    .hourOfFri(tslotDTO.getHourOfFri())
+                    .hourOfSat(tslotDTO.getHourOfSat())
+                    .hourOfSun(tslotDTO.getHourOfSun())
+                    .effectiveTime(submissionTime)
+                    .build();
+
+            return tslotRepository.save(tslot);
+        }else {
+            //找到最靠近現在的前一筆資料寫入更改時間
+            Tslot tslot = new Tslot();
+            tslot = tslotRepository.getNearestPastRecord(submissionTime);
+            tslotRepository.save(tslot);
+
+            //有找到舊的所以另存一個新的
+            Tslot newTslot = Tslot.builder()
+                .venue(Venue.id(vneId)) // Venue 有靜態方法"id()"(嘗試看看)
+                .hourOfMon(tslotDTO.getHourOfMon())
+                .hourOfTue(tslotDTO.getHourOfTue())
+                .hourOfWed(tslotDTO.getHourOfWed())
+                .hourOfThu(tslotDTO.getHourOfThu())
+                .hourOfFri(tslotDTO.getHourOfFri())
+                .hourOfSat(tslotDTO.getHourOfSat())
+                .hourOfSun(tslotDTO.getHourOfSun())
+                .expirationTime(submissionTime)
+                .build();
+            return tslotRepository.save(newTslot);
+        }
     }
 
     // 讀取所有時段
@@ -31,34 +80,18 @@ public class TslotService {
         return tslotRepository.findById(id);
     }
 
-    // 更新時段
-    public Tslot updateTslot(int id, Tslot tslot) {
-        if (tslotRepository.existsById(id)) {
-            tslot.setId(id); // 確保ID不變
-            return tslotRepository.save(tslot);
-        }
-        return null;
-    }
-
-    // 刪除時段
-    public void deleteTslot(int id) {
-        if (tslotRepository.existsById(id)) {
-            tslotRepository.deleteById(id);
-        }
-    }
-
-    private void setHourStr(Timestamp timestamp) {
-        // 設置分鐘、秒數為0
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-
-        Timestamp hourTimestamp = new Timestamp(calendar.getTimeInMillis());
-        System.out.println("當前小時的 Timestamp: " + hourTimestamp);
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH");
-        String hourString = sdf.format(hourTimestamp);
-        System.out.println("格式化到小時: " + hourString);
-    }
+//    private void setHourStr(Timestamp timestamp) {
+//        // 設置分鐘、秒數為0
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.set(Calendar.MINUTE, 0);
+//        calendar.set(Calendar.SECOND, 0);
+//        calendar.set(Calendar.MILLISECOND, 0);
+//
+//        Timestamp hourTimestamp = new Timestamp(calendar.getTimeInMillis());
+//        System.out.println("當前小時的 Timestamp: " + hourTimestamp);
+//
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH");
+//        String hourString = sdf.format(hourTimestamp);
+//        System.out.println("格式化到小時: " + hourString);
+//    }
 }
