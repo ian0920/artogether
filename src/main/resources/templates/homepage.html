@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Artogether</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="./style/style_general.css" />
+    <link rel="stylesheet" href="./style/style_homepage.css" />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- 導航 -->
+    <header class="header navbar_homepage">
+      <div class="header_box">
+        <div class="logo">
+          <img src="./asset/images/ARTOGETHER.svg" alt="" />
+        </div>
+        <nav class="navbar">
+          <div clickable class="navbar-item">
+            探索
+            <span class="material-icons"> arrow_drop_down </span>
+          </div>
+        </nav>
+        <div class="search_bar">
+          <input type="text" placeholder="Search by shop, event, location..." />
+          <span class="material-icons">search</span>
+        </div>
+        <div clickable class="cart_div">
+          <span class="badge" id="cart_amount">3</span>
+          <span class="material-icons">shopping_bag</span>
+        </div>
+        <div clickable class="user_div">
+          <div class="thumbnail-box">
+            <img src="./asset/images/bgimg.png" alt="" class="thumbnail" />
+          </div>
+          <span id="user_name">Alice Wang</span
+          ><span class="material-icons"> arrow_drop_down </span>
+        </div>
+        <button clickable class="fab">成為商家</button>
+        <span class="material-icons btn_menu">menu</span>
+      </div>
+    </header>
+
+    <main>
+      <section class="sec-carousel normal-width"></section>
+
+      <!-- 商家概覽 -->
+      <section class="sec-showcase showcase-business normal-width">
+        <div class="showcase-info-box">
+          <div class="showcase-info">
+            <h2 class="business">精選商家</h2>
+          </div>
+          <div class="showcase-browse-all link-button">
+            <a href="#">查看更多</a>
+            <span class="material-icons">chevron_right</span>
+          </div>
+        </div>
+        <div class="showcase-cards-box">
+          <div clickable class="showcase-card card business">
+            <img src="./asset/images/bgimg.png" alt="" />
+            <div class="card-content">
+              <div class="card-title">
+                <div class="tag business">商家</div>
+                <h3 class="card-title-text">
+                  這是一家好奇怪好奇怪好奇怪好奇怪的店家
+                </h3>
+              </div>
+              <div class="card-info">
+                <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
+              </div>
+              <div class="tags-box">
+                <div class="tag hot">
+                  <span class="material-icons">local_fire_department</span
+                  >哈燒精選
+                </div>
+                <div class="tag hot">
+                  <span class="material-icons">local_fire_department</span
+                  >哈燒精選
+                </div>
+              </div>
+            </div>
+          </div>
+          <div clickable class="showcase-card card business">
+            <img src="./asset/images/bgimg.png" alt="" />
+            <div class="card-content">
+              <div class="card-title">
+                <div class="tag business">商家</div>
+                <h3 class="card-title-text">
+                  這是一家好奇怪好奇怪好奇怪好奇怪的店家
+                </h3>
+              </div>
+              <div class="card-info">
+                <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
+              </div>
+              <div class="tags-box">
+                <div class="tag hot">
+                  <span class="material-icons">local_fire_department</span
+                  >哈燒精選
+                </div>
+                <div class="tag hot">
+                  <span class="material-icons">local_fire_department</span
+                  >哈燒精選
+                </div>
+              </div>
+            </div>
+          </div>
+          <div clickable class="showcase-card card business">
+            <img src="./asset/images/bgimg.png" alt="" />
+            <div class="card-content">
+              <div class="card-title">
+                <div class="tag business">商家</div>
+                <h3 class="card-title-text">
+                  這是一家好奇怪好奇怪好奇怪好奇怪的店家
+                </h3>
+              </div>
+              <div class="card-info">
+                <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
+              </div>
+              <div class="tags-box">
+                <div class="tag hot">
+                  <span class="material-icons">local_fire_department</span
+                  >哈燒精選
+                </div>
+                <div class="tag hot">
+                  <span class="material-icons">local_fire_department</span
+                  >哈燒精選
+                </div>
+              </div>
+            </div>
+          </div>
+          <div clickable class="showcase-card card business">
+            <img src="./asset/images/bgimg.png" alt="" />
+            <div class="card-content">
+              <div class="card-title">
+                <div class="tag business">商家</div>
+                <h3 class="card-title-text">
+                  這是一家好奇怪好奇怪好奇怪好奇怪的店家
+                </h3>
+              </div>
+              <div class="card-info">
+                <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
+              </div>
+              <div class="tags-box">
+                <div class="tag hot">
+                  <span class="material-icons">local_fire_department</span
+                  >哈燒精選
+                </div>
+                <div class="tag hot">
+                  <span class="material-icons">local_fire_department</span
+                  >哈燒精選
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 活動概覽 -->
+      <section class="sec-showcase showcase-event normal-width">
+        <div class="showcase-info-box">
+          <div class="showcase-info">
+            <h2 class="event">熱門活動</h2>
+          </div>
+          <div class="showcase-browse-all link-button">
+            <a href="#">查看更多</a>
+            <span class="material-icons">chevron_right</span>
+          </div>
+        </div>
+        <div class="showcase-cards-box">
+          <div clickable class="showcase-card card event">
+            <img src="./asset/images/bgimg.png" alt="" />
+            <div class="card-content">
+              <div class="card-title">
+                <div class="tag event">活動</div>
+                <h3 class="card-title-text">
+                  越玩越好玩越玩越好玩越玩越好玩越玩越好玩的活動
+                </h3>
+              </div>
+              <div class="card-info">
+                <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
+                <div class="progress">
+                  <div
+                    class="progress-bar bgcolor-event"
+                    role="progressbar"
+                    style="width: 70%"
+                  ></div>
+                </div>
+              </div>
+              <div class="tags-box">
+                <div class="tag plain-tag">
+                  <span class="material-icons">location_on</span>台北市
+                </div>
+                <div class="tag plain-tag">
+                  <span class="material-icons">calendar_today</span>04/28
+                </div>
+              </div>
+            </div>
+          </div>
+          <div clickable class="showcase-card card event">
+            <img src="./asset/images/bgimg.png" alt="" />
+            <div class="card-content">
+              <div class="card-title">
+                <div class="tag event">活動</div>
+                <h3 class="card-title-text">
+                  越玩越好玩越玩越好玩越玩越好玩越玩越好玩的活動
+                </h3>
+              </div>
+              <div class="card-info">
+                <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
+                <div class="progress">
+                  <div
+                    class="progress-bar bgcolor-event"
+                    role="progressbar"
+                    style="width: 70%"
+                  ></div>
+                </div>
+              </div>
+              <div class="tags-box">
+                <div class="tag plain-tag">
+                  <span class="material-icons">location_on</span>台北市
+                </div>
+                <div class="tag plain-tag">
+                  <span class="material-icons">calendar_today</span>04/28
+                </div>
+              </div>
+            </div>
+          </div>
+          <div clickable class="showcase-card card event">
+            <img src="./asset/images/bgimg.png" alt="" />
+            <div class="card-content">
+              <div class="card-title">
+                <div class="tag event">活動</div>
+                <h3 class="card-title-text">
+                  越玩越好玩越玩越好玩越玩越好玩越玩越好玩的活動
+                </h3>
+              </div>
+              <div class="card-info">
+                <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
+                <div class="progress">
+                  <div
+                    class="progress-bar bgcolor-event"
+                    role="progressbar"
+                    style="width: 70%"
+                  ></div>
+                </div>
+              </div>
+              <div class="tags-box">
+                <div class="tag plain-tag">
+                  <span class="material-icons">location_on</span>台北市
+                </div>
+                <div class="tag plain-tag">
+                  <span class="material-icons">calendar_today</span>04/28
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 場地概覽 -->
+      <section class="sec-showcase showcase-venue normal-width">
+        <div class="showcase-info-box">
+          <div class="showcase-info">
+            <h2 class="venue">優質場地</h2>
+          </div>
+          <div class="showcase-browse-all link-button">
+            <a href="/venue/recommend">查看更多</a>
+            <span class="material-icons">chevron_right</span>
+          </div>
+        </div>
+        <div class="showcase-cards-box">
+          <div clickable class="showcase-card card venue">
+            <img src="./asset/images/bgimg.png" alt="" />
+            <div class="card-content">
+              <div class="card-title">
+                <div class="tag venue">場地</div>
+                <h3 class="card-title-text">
+                  夭壽讚讚讚讚讚讚讚讚讚讚讚讚讚讚讚讚的場地
+                </h3>
+              </div>
+              <div class="card-info">
+                <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
+              </div>
+              <div class="tags-box">
+                <div class="tag plain-tag">
+                  <span class="material-icons">location_on</span>台北市
+                </div>
+                <div class="tag plain-tag">
+                  <span class="material-icons">schedule</span>08:00-17:00
+                </div>
+              </div>
+            </div>
+          </div>
+          <div clickable class="showcase-card card venue">
+            <img src="./asset/images/bgimg.png" alt="" />
+            <div class="card-content">
+              <div class="card-title">
+                <div class="tag venue">場地</div>
+                <h3 class="card-title-text">
+                  夭壽讚讚讚讚讚讚讚讚讚讚讚讚讚讚讚讚的場地
+                </h3>
+              </div>
+              <div class="card-info">
+                <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
+              </div>
+              <div class="tags-box">
+                <div class="tag plain-tag">
+                  <span class="material-icons">location_on</span>台北市
+                </div>
+                <div class="tag plain-tag">
+                  <span class="material-icons">schedule</span>08:00-17:00
+                </div>
+              </div>
+            </div>
+          </div>
+          <div clickable class="showcase-card card venue">
+            <img src="./asset/images/placeholder.jpg" alt="" />
+            <div class="card-content">
+              <div class="card-title">
+                <div class="tag venue">場地</div>
+                <h3 class="card-title-text">
+                  夭壽讚讚讚讚讚讚讚讚讚讚讚讚讚讚讚讚的場地
+                </h3>
+              </div>
+              <div class="card-info">
+                <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
+              </div>
+              <div class="tags-box">
+                <div class="tag plain-tag">
+                  <span class="material-icons">location_on</span>台北市
+                </div>
+                <div class="tag plain-tag">
+                  <span class="material-icons">schedule</span>08:00-17:00
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 商品概覽 -->
+      <section class="sec-showcase showcase-product normal-width">
+        <div class="showcase-info-box">
+          <div class="showcase-info">
+            <h2 class="product">超夯商品</h2>
+          </div>
+          <div class="showcase-browse-all link-button">
+            <a href="#">查看更多</a>
+            <span class="material-icons">chevron_right</span>
+          </div>
+        </div>
+        <div class="showcase-cards-box">
+          <div clickable class="showcase-card card product">
+            <img src="./asset/images/bgimg.png" alt="" />
+            <div class="card-content">
+              <div class="card-title">
+                <div class="tag product">商品</div>
+                <h3 class="card-title-text">
+                  好棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒的商品
+                </h3>
+              </div>
+              <div class="card-info">
+                <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
+              </div>
+              <div class="tags-box">
+                <strong>NT$ <span>3,600</span></strong>
+                <del>NT$ <span>4,800</span></del>
+              </div>
+            </div>
+          </div>
+          <div clickable class="showcase-card card product">
+            <img src="./asset/images/bgimg.png" alt="" />
+            <div class="card-content">
+              <div class="card-title">
+                <div class="tag product">商品</div>
+                <h3 class="card-title-text">
+                  好棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒的商品
+                </h3>
+              </div>
+              <div class="card-info">
+                <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
+              </div>
+              <div class="tags-box">
+                <strong>NT$ <span>3,600</span></strong>
+                <del>NT$ <span>4,800</span></del>
+              </div>
+            </div>
+          </div>
+          <div clickable class="showcase-card card product">
+            <img src="./asset/images/bgimg.png" alt="" />
+            <div class="card-content">
+              <div class="card-title">
+                <div class="tag product">商品</div>
+                <h3 class="card-title-text">
+                  好棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒的商品
+                </h3>
+              </div>
+              <div class="card-info">
+                <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
+              </div>
+              <div class="tags-box">
+                <strong>NT$ <span>3,600</span></strong>
+                <del>NT$ <span>4,800</span></del>
+              </div>
+            </div>
+          </div>
+          <div clickable class="showcase-card card product">
+            <img src="./asset/images/bgimg.png" alt="" />
+            <div class="card-content">
+              <div class="card-title">
+                <div class="tag product">商品</div>
+                <h3 class="card-title-text">
+                  好棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒的商品
+                </h3>
+              </div>
+              <div class="card-info">
+                <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
+              </div>
+              <div class="tags-box">
+                <strong>NT$ <span>3,600</span></strong>
+                <del>NT$ <span>4,800</span></del>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer>
+      <div class="footer-box">
+        <div class="platform-info">
+          <div class="logo-box">
+            <img src="./asset/images/ARTOGETHER_white.svg" alt="" />
+          </div>
+          <div class="contact"></div>
+        </div>
+        <div class="features-box">
+          <div>
+            <h5 class="feature-title">關於</h5>
+            <ul>
+              <li><a href="#">關於我們</a></li>
+              <li><a href="#">隱私權政策</a></li>
+              <li><a href="#">服務條款</a></li>
+            </ul>
+          </div>
+          <div>
+            <h5 class="feature-title">探索美好</h5>
+            <ul>
+              <li><a href="#">找商家</a></li>
+              <li><a href="/venue/recommend">找場地</a></li>
+              <li><a href="#">找商品</a></li>
+              <li><a href="#">找活動</a></li>
+            </ul>
+          </div>
+          <div>
+            <h5 class="feature-title">販售</h5>
+            <ul>
+              <li><a href="#">我想成為商家</a></li>
+              <li><a href="#">商家條款</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- 導航欄-探索視窗 -->
+    <div class="nav-menu-box">
+      <div class="nav-menu-mask"></div>
+      <div class="nav-menu">
+        <div class="nav-menu-content">
+          <div class="nav-menu-content-item selected">
+            <div>
+              探索內容 <span class="material-icons">chevron_right</span>
+            </div>
+            <p>探索所有你喜愛的內容</p>
+          </div>
+          <div class="nav-menu-content-item">
+            <div>
+              內容查找
+              <span class="material-icons">chevron_right</span>
+            </div>
+            <p>眾裡尋他千百度</p>
+          </div>
+        </div>
+        <div class="nav-menu-submenu">
+          <div clickable role="link" class="nav-menu-submenu-item selected">
+            活動
+            <span class="material-icons">local_activity</span>
+          </div>
+          <div clickable role="link" class="nav-menu-submenu-item">
+            場地
+            <span class="material-icons">roofing</span>
+          </div>
+          <div clickable role="link" class="nav-menu-submenu-item">
+            商品
+            <span class="material-icons">sell</span>
+          </div>
+        </div>
+        <div class="nav-menu-submenu">
+          <div clickable role="link" class="nav-menu-submenu-item">類型1</div>
+          <div clickable role="link" class="nav-menu-submenu-item">類型1</div>
+          <div clickable role="link" class="nav-menu-submenu-item">類型1</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 會員視窗 -->
+    <div class="user-menu-box">
+      <div clickable class="user-info-box">
+        <div class="thumbnail">
+          <img src="./asset/images/bgimg.png" alt="" />
+        </div>
+        <div class="user-info-text">Alice Wang</div>
+        <span class="material-icons">chevron_right</span>
+      </div>
+      <hr />
+      <div class="user-menu-group">
+        <div clickable class="user-menu-item">
+          <span class="material-icons">bookmark</span>
+          我的珍藏
+        </div>
+        <div clickable class="user-menu-item">
+          <span class="material-icons">description</span>
+          訂單紀錄
+        </div>
+        <div clickable class="user-menu-item">
+          <span class="material-icons">settings</span>
+          帳號設定
+        </div>
+      </div>
+      <hr />
+      <div class="user-menu-group">
+        <button clickable class="button-primary button-big">
+          前往商家後台
+        </button>
+        <button clickable class="button-secondary button-big">登出</button>
+      </div>
+    </div>
+
+    <script src="./components/web_components/navbar_hompage.js"></script>
+    <script>
+      var el_nav_item_discover = document.querySelector("div.navbar-item");
+      var el_div_nav_menu_box = document.querySelector("div.nav-menu-box");
+      var el_div_nav_user_box = document.querySelector("div.user_div");
+      var el_div_nav_menu = document.querySelector("div.nav-menu");
+      var el_eiv_user_menu = document.querySelector("div.user-menu-box");
+
+      //=====================觸發視窗========================
+      // 1. 探索
+      el_nav_item_discover.addEventListener("mouseenter", function () {
+        if (!el_div_nav_menu_box.classList.contains("open"))
+          el_div_nav_menu_box.classList.add("open");
+      });
+      console.log(el_div_nav_menu);
+      el_div_nav_menu.addEventListener("mouseleave", function () {
+        if (el_div_nav_menu_box.classList.contains("open"))
+          el_div_nav_menu_box.classList.remove("open");
+      });
+
+      // 2. 會員
+      el_div_nav_user_box.addEventListener("mouseenter", function () {
+        if (!el_eiv_user_menu.classList.contains("open"))
+          el_eiv_user_menu.classList.add("open");
+      });
+      el_eiv_user_menu.addEventListener("mouseleave", function () {
+        if (el_eiv_user_menu.classList.contains("open"))
+          el_eiv_user_menu.classList.remove("open");
+      });
+    </script>
+  </body>
+</html>
