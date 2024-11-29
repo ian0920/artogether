@@ -1,7 +1,7 @@
 package com.artogether.venue.vneimg;
 
 import com.artogether.venue.venue.Venue;
-import com.artogether.venue.vnedto.VneImgDTO;
+import com.artogether.venue.vnedto.VneImgBytesDTO;
 import com.artogether.venue.vnedto.VneImgPositionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -12,9 +12,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Duration;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class VneImgService {
@@ -45,10 +43,10 @@ public class VneImgService {
         return VneImgPositionDTO.builder().vneId(vneId).build();
     }
 
-    public void updateVneImg(VneImgDTO vneImgDTO){
-        int vneId = vneImgDTO.getVneId();
-        int position = vneImgDTO.getPosition();
-        byte[] imageBytes = vneImgDTO.getImageFile();
+    public void updateVneImg(VneImgBytesDTO vneImgBytesDTO){
+        int vneId = vneImgBytesDTO.getVneId();
+        int position = vneImgBytesDTO.getPosition();
+        byte[] imageBytes = vneImgBytesDTO.getImageFile();
 
         // 檔案儲存路徑
         String uploadDir = "public/uploads/venue/";//Dir=Directory（目錄）
