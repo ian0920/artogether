@@ -43,7 +43,7 @@ public class VenueService {
                 if (vneImgOptional.isPresent()) {
                     VneImg vneImg = vneImgOptional.get();
 
-                    vneCardDTO.setVneImgUrl(vneImgService.getAssetPath(vneId, vneImg.getPosition()));
+                    vneCardDTO.setVneImgUrl(vneImgService.getAssetPath(~vneId, vneImg.getPosition()));
                     return vneCardDTO;
                 }
 
@@ -75,5 +75,7 @@ public class VenueService {
 //        DetelVenueBO detelVenueBO = null;
 //
 //    }
+    public void creatVenue(VneCardDTO vneCardDTO,Integer businessId) {
 
+    }
 }

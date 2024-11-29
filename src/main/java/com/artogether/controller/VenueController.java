@@ -2,15 +2,19 @@ package com.artogether.controller;
 
 import com.artogether.venue.vnedto.TslotDTO;
 import com.artogether.venue.tslot.TslotService;
-import com.artogether.venue.vnedto.VneImgDTO;
+import com.artogether.venue.vnedto.VenueCreatDTO;
+import com.artogether.venue.vnedto.VneImgBytesDTO;
 import com.artogether.venue.vnedto.VnePriceDTO;
 import com.artogether.venue.vneimg.VneImgService;
 import com.artogether.venue.vneprice.VnePriceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 
 @Controller("/venue")
@@ -39,9 +43,15 @@ public class VenueController {
     }
 
     @PostMapping("/manageImg")
-    public String manageImg(@ModelAttribute VneImgDTO vneImgDTO) {
-        vneImgService.updateVneImg(vneImgDTO);
+    public String manageImg(@Valid @ModelAttribute VneImgBytesDTO vneImgBytesDTO, BindingResult bindingResult) {
+        vneImgService.updateVneImg(vneImgBytesDTO);
         return "redirect:/managevenue";
     }
 
+    @PostMapping("/creatVenue")
+    public String creatVenue (@ModelAttribute VenueCreatDTO vvenueCreatDTO, HttpSession session) {
+//        Integer businessId = session.getAttribute(businessId);
+
+        return "redirect:/managevenue";
+    }
 }
