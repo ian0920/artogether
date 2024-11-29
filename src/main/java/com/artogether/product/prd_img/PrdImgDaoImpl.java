@@ -15,11 +15,11 @@ public class PrdImgDaoImpl implements PrdImgDao {
 
 
 	@Override
-	public int add(PrdImg prd_img) {
+	public int add(PrdImg prdImg) {
 		Session session = sessionFactory.unwrap(Session.class);
 		try {
 			session.beginTransaction();
-			Integer id = (Integer) session.save(prd_img);
+			Integer id = (Integer) session.save(prdImg);
 			session.getTransaction().commit();
 			return id;
 		} catch (Exception e) {
@@ -30,11 +30,11 @@ public class PrdImgDaoImpl implements PrdImgDao {
 	}
 	
 	@Override
-	public int update(PrdImg prd_img) {
+	public int update(PrdImg prdImg) {
 		Session session = sessionFactory.unwrap(Session.class);
 		try {
 			session.beginTransaction();
-			session.update(prd_img);
+			session.update(prdImg);
 			session.getTransaction().commit();
 			return 1;
 		} catch (Exception e) {
@@ -49,9 +49,9 @@ public class PrdImgDaoImpl implements PrdImgDao {
 		Session session = sessionFactory.unwrap(Session.class);
 		try {
 			session.beginTransaction();
-			PrdImg prd_img= session.get(PrdImg.class, id);
-			if (prd_img != null) {
-				session.delete(prd_img);
+			PrdImg prdImg= session.get(PrdImg.class, id);
+			if (prdImg != null) {
+				session.delete(prdImg);
 			}
 			session.getTransaction().commit();
 			return 1;
@@ -67,9 +67,9 @@ public class PrdImgDaoImpl implements PrdImgDao {
 		Session session = sessionFactory.unwrap(Session.class);
 		try {
 			session.beginTransaction();
-			PrdImg prd_img = session.get(PrdImg.class, id);
+			PrdImg prdImg = session.get(PrdImg.class, id);
 			session.getTransaction().commit();
-			return prd_img;
+			return prdImg;
 		} catch (Exception e) {
 			e.printStackTrace();
 			session.getTransaction().rollback();

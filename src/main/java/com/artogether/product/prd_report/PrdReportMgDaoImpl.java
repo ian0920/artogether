@@ -1,26 +1,24 @@
-package com.artogether.product.prd_return;
+package com.artogether.product.prd_report;
 
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManagerFactory;
-
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public class PrdReturnDaoImpl implements PrdReturnDao {
+public class PrdReportMgDaoImpl implements PrdReportMgDao {
 
 	@Autowired
 	EntityManagerFactory sessionFactory;
 	
 	@Override
-	public int add(PrdReturn prdReturn) {
-		Session session = sessionFactory.unwrap(Session.class);
+	public int add(PrdReport prd_report) {
+		Session session =  sessionFactory.unwrap(Session.class);
 		try {
 			session.beginTransaction();
-			Integer id = (Integer) session.save(prdReturn);
+			Integer id = (Integer) session.save( prd_report);
 			session.getTransaction().commit();
 			return id;
 		} catch (Exception e) {
@@ -31,11 +29,11 @@ public class PrdReturnDaoImpl implements PrdReturnDao {
 	}
 	
 	@Override
-	public int update(PrdReturn prdReturn) {
-		Session session = sessionFactory.unwrap(Session.class);
+	public int update(PrdReport prd_report) {
+		Session session =  sessionFactory.unwrap(Session.class);
 		try {
 			session.beginTransaction();
-			session.update(prdReturn);
+			session.update(prd_report);
 			session.getTransaction().commit();
 			return 1;
 		} catch (Exception e) {
@@ -50,9 +48,9 @@ public class PrdReturnDaoImpl implements PrdReturnDao {
 		Session session = sessionFactory.unwrap(Session.class);
 		try {
 			session.beginTransaction();
-			PrdReturn prdReturn= session.get(PrdReturn.class, id);
-			if (prdReturn != null) {
-				session.delete(prdReturn);
+			PrdReport prd_report= session.get(PrdReport.class, id);
+			if (prd_report != null) {
+				session.delete(prd_report);
 			}
 			session.getTransaction().commit();
 			return 1;
@@ -64,13 +62,13 @@ public class PrdReturnDaoImpl implements PrdReturnDao {
 	}
 
 	@Override
-	public PrdReturn findByPK(Integer id) {
+	public PrdReport findByPK(Integer id) {
 		Session session = sessionFactory.unwrap(Session.class);
 		try {
 			session.beginTransaction();
-			PrdReturn prdReturn = session.get(PrdReturn.class, id);
+			PrdReport prd_report = session.get(PrdReport.class, id);
 			session.getTransaction().commit();
-			return prdReturn;
+			return prd_report;
 		} catch (Exception e) {
 			e.printStackTrace();
 			session.getTransaction().rollback();
@@ -79,11 +77,11 @@ public class PrdReturnDaoImpl implements PrdReturnDao {
 	}
 
 	@Override
-	public List<PrdReturn> getAll() {
+	public List<PrdReport> getAll() {
 		Session session = sessionFactory.unwrap(Session.class);
 		try {
 			session.beginTransaction();
-			List<PrdReturn> list = session.createQuery("from PrdReturn", PrdReturn.class).list();
+			List<PrdReport> list = session.createQuery("from PrdReport", PrdReport.class).list();
 			session.getTransaction().commit();
 			return list;
 		} catch (Exception e) {
@@ -94,12 +92,66 @@ public class PrdReturnDaoImpl implements PrdReturnDao {
 	}
 	
 	@Override
-	public List<PrdReturn> findByStatus(Integer status) {
+	public List<PrdReport> findByMemberId(Integer memberId) {
 	    Session session = sessionFactory.unwrap(Session.class);
 	    try {
 	        session.beginTransaction();
-	        String hql = "FROM PrdReturn WHERE status = :status";
-	        List<PrdReturn> list = session.createQuery(hql, PrdReturn.class)
+	        String hql = "FROM PrdReport WHERE member.id = :memberId";
+	        List<PrdReport> list = session.createQuery(hql, PrdReport.class)
+	                                      .setParameter("memberId", memberId)
+	                                      .list();
+	        session.getTransaction().commit();
+	        return list; // 返回符合條件的記錄
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        session.getTransaction().rollback();
+	    }
+	    return null; // 發生錯誤返回 null
+	}
+	
+	@Override
+	public List<PrdReport> findByOrderId(Integer orderId) {
+	    Session session = sessionFactory.unwrap(Session.class);
+	    try {
+	        session.beginTransaction();
+	        String hql = "FROM PrdReport WHERE order.id = :orderId";
+	        List<PrdReport> list = session.createQuery(hql, PrdReport.class)
+	                                      .setParameter("orderId", orderId)
+	                                      .list();
+	        session.getTransaction().commit();
+	        return list; // 返回符合條件的記錄
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        session.getTransaction().rollback();
+	    }
+	    return null; // 發生錯誤返回 null
+	}
+	
+	@Override
+	public List<PrdReport> findByProductId(Integer prdId) {
+	    Session session = sessionFactory.unwrap(Session.class);
+	    try {
+	        session.beginTransaction();
+	        String hql = "FROM PrdReport WHERE product.id = :prdId";
+	        List<PrdReport> list = session.createQuery(hql, PrdReport.class)
+	                                      .setParameter("prdId", prdId)
+	                                      .list();
+	        session.getTransaction().commit();
+	        return list; // 返回符合條件的記錄
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        session.getTransaction().rollback();
+	    }
+	    return null; // 發生錯誤返回 null
+	}
+	
+	@Override
+	public List<PrdReport> findByStatus(Integer status) {
+	    Session session = sessionFactory.unwrap(Session.class);
+	    try {
+	        session.beginTransaction();
+	        String hql = "FROM PrdReport WHERE status = :status";
+	        List<PrdReport> list = session.createQuery(hql, PrdReport.class)
 	                                      .setParameter("status", status)
 	                                      .list();
 	        session.getTransaction().commit();
@@ -112,83 +164,14 @@ public class PrdReturnDaoImpl implements PrdReturnDao {
 	}
 	
 	@Override
-	public List<PrdReturn> findByApplyDateRange(LocalDateTime startDate, LocalDateTime endDate) {
+	public int updateStatusBatch(List<Integer> reportIds, Integer status) {
 	    Session session = sessionFactory.unwrap(Session.class);
 	    try {
 	        session.beginTransaction();
-	        String hql = "FROM PrdReturn WHERE applyDate BETWEEN :startDate AND :endDate";
-	        List<PrdReturn> list = session.createQuery(hql, PrdReturn.class)
-	                                      .setParameter("startDate", startDate)
-	                                      .setParameter("endDate", endDate)
-	                                      .list();
-	        session.getTransaction().commit();
-	        return list; // 返回時間範圍內的記錄
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        session.getTransaction().rollback();
-	    }
-	    return null; // 發生錯誤返回 null
-	}
-	
-	@Override
-	public List<PrdReturn> findByType(Integer type) {
-	    Session session = sessionFactory.unwrap(Session.class);
-	    try {
-	        session.beginTransaction();
-	        String hql = "FROM PrdReturn WHERE type = :type";
-	        List<PrdReturn> list = session.createQuery(hql, PrdReturn.class)
-	                                      .setParameter("type", type)
-	                                      .list();
-	        session.getTransaction().commit();
-	        return list; // 返回符合類型的記錄
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        session.getTransaction().rollback();
-	    }
-	    return null; // 發生錯誤返回 null
-	}
-	
-	@Override
-	public List<PrdReturn> findAllOrderByApplyDateDesc() {
-	    Session session = sessionFactory.unwrap(Session.class);
-	    try {
-	        session.beginTransaction();
-	        String hql = "FROM PrdReturn ORDER BY applyDate DESC";
-	        List<PrdReturn> list = session.createQuery(hql, PrdReturn.class).list();
-	        session.getTransaction().commit();
-	        return list; // 返回按申請日期降序排列的記錄
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        session.getTransaction().rollback();
-	    }
-	    return null; // 發生錯誤返回 null
-	}
-
-	@Override
-	public List<PrdReturn> findAllOrderByReturnDateDesc() {
-	    Session session = sessionFactory.unwrap(Session.class);
-	    try {
-	        session.beginTransaction();
-	        String hql = "FROM PrdReturn ORDER BY returnDate DESC";
-	        List<PrdReturn> list = session.createQuery(hql, PrdReturn.class).list();
-	        session.getTransaction().commit();
-	        return list; // 返回按退換貨日期降序排列的記錄
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        session.getTransaction().rollback();
-	    }
-	    return null; // 發生錯誤返回 null
-	}
-	
-	@Override
-	public int updateStatus(Integer id, Integer status) {
-	    Session session = sessionFactory.unwrap(Session.class);
-	    try {
-	        session.beginTransaction();
-	        String hql = "UPDATE PrdReturn SET status = :status WHERE id = :id";
+	        String hql = "UPDATE PrdReport SET status = :status WHERE id IN (:reportIds)";
 	        int updatedRows = session.createQuery(hql)
 	                                 .setParameter("status", status)
-	                                 .setParameter("id", id)
+	                                 .setParameterList("reportIds", reportIds)
 	                                 .executeUpdate();
 	        session.getTransaction().commit();
 	        return updatedRows; // 返回更新的行數
@@ -200,43 +183,41 @@ public class PrdReturnDaoImpl implements PrdReturnDao {
 	}
 	
 	@Override
-	public int batchUpdateStatus(List<Integer> ids, Integer status) {
+	public boolean hasMemberReportedProduct(Integer memberId, Integer prdId) {
 	    Session session = sessionFactory.unwrap(Session.class);
 	    try {
 	        session.beginTransaction();
-	        String hql = "UPDATE PrdReturn SET status = :status WHERE id IN (:ids)";
-	        int updatedRows = session.createQuery(hql)
-	                                 .setParameter("status", status)
-	                                 .setParameterList("ids", ids)
+	        String hql = "SELECT COUNT(*) FROM PrdReport WHERE member.id = :memberId AND product.id = :prdId";
+	        Long count = session.createQuery(hql, Long.class)
+	                            .setParameter("memberId", memberId)
+	                            .setParameter("prdId", prdId)
+	                            .uniqueResult();
+	        session.getTransaction().commit();
+	        return count != null && count > 0; // 返回 true 表示已有檢舉
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        session.getTransaction().rollback();
+	    }
+	    return false; // 發生錯誤返回 false
+	}
+	
+	@Override
+	public int deleteReportsBatch(List<Integer> reportIds) {
+	    Session session = sessionFactory.unwrap(Session.class);
+	    try {
+	        session.beginTransaction();
+	        String hql = "DELETE FROM PrdReport WHERE id IN (:reportIds)";
+	        int deletedRows = session.createQuery(hql)
+	                                 .setParameterList("reportIds", reportIds)
 	                                 .executeUpdate();
 	        session.getTransaction().commit();
-	        return updatedRows; // 返回更新的行數
+	        return deletedRows; // 返回刪除的行數
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	        session.getTransaction().rollback();
 	    }
 	    return -1; // 發生錯誤返回 -1
 	}
-
-	@Override
-	public List<PrdReturn> findExpiredReturns(LocalDateTime currentDate, Integer days) {
-	    Session session = sessionFactory.unwrap(Session.class);
-	    try {
-	        session.beginTransaction();
-	        String hql = "FROM PrdReturn WHERE returnDate <= :expiryDate";
-	        LocalDateTime expiryDate = currentDate.plusDays(days);
-	        List<PrdReturn> list = session.createQuery(hql, PrdReturn.class)
-	                                      .setParameter("expiryDate", expiryDate)
-	                                      .list();
-	        session.getTransaction().commit();
-	        return list; // 返回即將過期的記錄
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        session.getTransaction().rollback();
-	    }
-	    return null; // 發生錯誤返回 null
-	}
-
 
 
 }
