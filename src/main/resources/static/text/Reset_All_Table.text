@@ -370,7 +370,8 @@ CREATE TABLE vne_track (
 CREATE TABLE vne_img (
     id INT NOT NULL AUTO_INCREMENT,
     vne_id INT NOT NULL,
-    image_file LONGBLOB NOT NULL,
+    image_file VARCHAR(50) NOT NULL,
+    position INT NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -395,10 +396,11 @@ CREATE TABLE vne_price (
     id INT NOT NULL AUTO_INCREMENT,
     vne_id INT NOT NULL,
     defaul_price INT NOT NULL ,
-    start_time	DATETIME,
-	end_time	DATETIME,
+    price_tslot CHAR(24),
     day_of_week CHAR(7),
     price INT,
+    effective_time DATETIME,
+    expiration_time DATETIME,
 
     PRIMARY KEY (id)
 );

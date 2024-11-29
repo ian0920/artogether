@@ -16,8 +16,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Builder
 @Table(name = "vne_img")
-public class VneImg implements Serializable {
-
+public class VneImgUrl implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -29,8 +28,8 @@ public class VneImg implements Serializable {
     private Venue venue;
 
     @NotEmpty
-    @Column(name = "image_file")
-    private byte[] imageFile;
+    @Column(name = "image_file_url")
+    private String imageFileUrl;
     //path
     private Integer position;
 

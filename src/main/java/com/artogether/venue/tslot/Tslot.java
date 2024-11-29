@@ -49,6 +49,9 @@ public class Tslot implements Serializable {
     @Column(name = "hour_of_sun")
     private String hourOfSun;
 
+    @Column(name = "effective_time")
     private LocalDateTime effectiveTime;
+
+    @Column(name = "expiration_time")
     private LocalDateTime expirationTime;
 }

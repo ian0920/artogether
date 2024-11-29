@@ -35,12 +35,20 @@ public class VnePrice implements Serializable {
     private Integer defaultPrice;
 
     // 開始時間與結束時間
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    @Column(name = "price_tslot")
+    private String priceTslot;
+//    private LocalDateTime startTime;
+//    private LocalDateTime endTime;
 
     // 星期設定 (例如：'0111110' 表示哪些日子適用此價格)
     private String dayOfWeek;
 
     // 特定時段的價格
     private Integer price;
+
+    @Column(name = "effective_time")
+    private LocalDateTime effectiveTime;
+
+    @Column(name = "expiration_time")
+    private LocalDateTime expirationTime;
 }
