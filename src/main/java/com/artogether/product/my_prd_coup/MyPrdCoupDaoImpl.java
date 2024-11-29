@@ -2,7 +2,8 @@ package com.artogether.product.my_prd_coup;
 
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
+
 
 import com.artogether.common.member.Member;
 import com.artogether.product.prd_coup.PrdCoup;
@@ -12,7 +13,7 @@ import javax.persistence.EntityManagerFactory;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Service
+@Repository
 public class MyPrdCoupDaoImpl implements MyPrdCoupDao {
 
 	@Autowired
