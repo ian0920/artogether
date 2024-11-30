@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Objects;
 import java.util.Set;
 
 @Data
@@ -30,6 +31,9 @@ public class Event {
 
     @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
+    private String location;
 
     @Column(name = "start_date", nullable = false)
     private Timestamp startDate;
@@ -61,4 +65,20 @@ public class Event {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "event", cascade = CascadeType.ALL)
     private Set<EvtOrder> evtOrders;
+
+
+    public int hashCode() {
+        return Objects.hash(this.id);
+    }
+
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj != null && this.getClass() == obj.getClass()) {
+            Event that = (Event)obj;
+            return Objects.equals(this.id, that.id);
+        } else {
+            return false;
+        }
+    }
 }

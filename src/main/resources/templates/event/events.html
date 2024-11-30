@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>All events</title>
+</head>
+<body>
+
+<form action="/evt/all" method="post">
+
+  <label for="events">排序方式:</label>
+  <select name="search" id="events">
+    <option value="">未選擇</option>
+    <option value="price">金額(由小到大)</option>
+    <option value="priceR">金額(由大到小)</option>
+    <option value="startDate">活動日期(由近到遠)</option>
+    <option value="startDateR">活動日期(由遠到近)</option>
+    <option value="enrolled">報名人數(由少到多)</option>
+    <option value="enrolledR">報名人數(由多到少)</option>
+  </select>
+  <span>
+        <input type="submit" value="送出">
+    </span>
+
+  <div th:if="${events != null}">
+    <ul>
+      <li th:each=" event : ${events}">
+        活動id=<span th:text="${event.getId()}"></span>,
+        活動名稱=<span th:text="${event.getName()}"></span>,
+        活動費用=<span th:text="${event.getPrice()}"></span>,
+        活動已報名人數=<span th:text="${event.getEnrolled()}"></span>,
+        活動開始日期=<span th:text="${event.getStartDate()}"></span>
+      </li>
+    </ul>
+  </div>
+
+</form>
+</body>
+</html>

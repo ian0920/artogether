@@ -1,5 +1,6 @@
 package com.artogether.common.member;
 
+import com.artogether.common.business_perm.BusinessPerm;
 import com.artogether.common.platform_msg.Platform_msg;
 import com.artogether.event.evt_order.EvtOrder;
 import com.artogether.event.evt_track.EvtTrackVO;
@@ -121,5 +122,8 @@ public class Member {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL)
     private Set<MyEvtCoup> myEvtCoups;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL)
+    private Set<BusinessPerm> businessPerms;
 
 }

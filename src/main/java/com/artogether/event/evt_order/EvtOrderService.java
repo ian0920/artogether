@@ -1,9 +1,12 @@
 package com.artogether.event.evt_order;
 
+import com.artogether.event.event.Event;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class EvtOrderService {
@@ -13,7 +16,7 @@ public class EvtOrderService {
 
     //null handling not be done
     public EvtOrder findById(int id) {
-        return repo.findById(id).orElse(new EvtOrder());
+        return repo.findById(id).orElse(null);
     }
 
     public List<EvtOrder> findAllEvtOrders() {
@@ -29,6 +32,15 @@ public class EvtOrderService {
         eo.setStatus(evtOrder.getStatus());
         return repo.save(eo);
 
+    }
+
+    public Map<Event, EvtOrder> getEventsToMyOrders(Integer memberId) {
+        Map<Event, EvtOrder> eventsToMyOrders = new HashMap();
+        List<EvtOrder> myOrders = repo.findByMemberId(memberId);
+        myOrders.forEach((o) -> {
+            eventsToMyOrders.put(o.getEvent(), o);
+        });
+        return eventsToMyOrders;
     }
 
 
