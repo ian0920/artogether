@@ -51,13 +51,13 @@
 <body>
 
 
-  <div class="error-container">
-      <h1>This is error page</h1>
-      <ul>
+<div class="error-container">
+    <h1>This is error page</h1>
+    <ul>
         <li th:if="${errors != null}" th:each="error : ${errors}" th:text="${error}"></li>
-      </ul>
-      <button class="button" onclick="window.location.href='/'">回到首頁</button>
-  </div>
+    </ul>
+    <button class="button" onclick="window.location.href='/'">回到首頁</button>
+</div>
 
 
 </body>
