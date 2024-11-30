@@ -2,14 +2,19 @@ package com.artogether.event.event;
 
 import com.artogether.common.business_member.BusinessMember;
 import com.artogether.event.evt_coup.EvtCoup;
-import com.artogether.event.evt_img.EvtImgVO;
+import com.artogether.event.evt_img.EvtImg;
 import com.artogether.event.evt_order.EvtOrder;
-import com.artogether.event.evt_track.EvtTrackVO;
+import com.artogether.event.evt_track.EvtTrack;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.sql.Timestamp;
 import java.util.Objects;
 import java.util.Set;
@@ -18,6 +23,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@DynamicUpdate
 @Table(name = "event")
 public class Event {
 
@@ -55,10 +61,10 @@ public class Event {
 
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "event", cascade = CascadeType.ALL)
-    private Set<EvtTrackVO> tracks;
+    private Set<EvtTrack> tracks;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "event", cascade = CascadeType.ALL)
-    private Set<EvtImgVO> images;
+    private Set<EvtImg> images;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "event", cascade = CascadeType.ALL)
     private Set<EvtCoup> evtCoups;

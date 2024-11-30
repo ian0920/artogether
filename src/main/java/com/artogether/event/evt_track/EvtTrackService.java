@@ -9,26 +9,29 @@ import java.util.List;
 @Service
 public class EvtTrackService {
 
+//	@Autowired
+//	private EvtTrackDAO_interface dao;
+//
+//	public EvtTrackService() {
+//		dao = new EvtTrackHibernateDAO();
+//	}
+	
 	@Autowired
-	private EvtTrackDAO_interface dao;
+	private EvtTrackRepo repo;
 
-	public EvtTrackService() {
-		dao = new EvtTrackHibernateDAO();
+	public EvtTrack addEvtTrack(EvtTrack evtTrackVO) {
+		return repo.save(evtTrackVO);
 	}
 
-	public void addEvtTrack(EvtTrackVO evtTrackVO) {
-		 dao.insert(evtTrackVO);
+	public void deleteEvtTrack(Integer id) {
+		repo.deleteById(id);
 	}
 
-	public void deleteEvent(Integer id) {
-		dao.delete(id);
+	public EvtTrack findById(Integer id) {
+		return repo.findById(id).orElse(new EvtTrack());
 	}
 
-	public EvtTrackVO getOneEvent(Integer id) {
-		return dao.findByPrimaryKey(id);
-	}
-
-	public List<EvtTrackVO> getAll() {
-		return dao.getAll();
+	public List<EvtTrack> findAllEvtTracks() {
+		return repo.findAll();
 	}
 }
