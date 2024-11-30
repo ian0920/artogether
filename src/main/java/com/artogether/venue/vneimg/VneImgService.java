@@ -72,9 +72,42 @@ public class VneImgService {
             // 新增新的圖片 URL
             VneImgUrl vneImgUrl = VneImgUrl.builder()
                                   .venue(Venue.id(vneId))
-                                  .imageFileUrl(filePath)
+                                  .imageUrl(filePath)
                                   .position(position)
                                   .build();
+            vneImgUrlRepository.save(vneImgUrl);
+        }
+    }
+
+    public void updateVneImg(int vneId, int position, byte[] imageBytes) {
+
+        // 檔案儲存路徑
+        String uploadDir = "public/uploads/venue/";//Dir=Directory（目錄）
+        String fileName = getFileName(vneId, position);
+        String filePath = uploadDir + fileName;
+
+        // 儲存圖片到指定路徑
+        try {
+            //教學中用的是File file = new File("static/uploads/venue/");
+            //Path"s"是處理Path的工具類，可以比較有效的去處理分隔路徑:"\"or"/"
+            Path path = Paths.get(uploadDir);
+            if (!Files.exists(path)) {
+                Files.createDirectories(path); // 若資料夾不存在則建立
+            }
+            //Files.write
+            //如果目標路徑的檔案已經存在，新的內容會直接覆蓋舊的檔案。
+            //如果檔案不存在，則會自動建立新的檔案。
+            Files.write(Paths.get(filePath), imageBytes);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to save image: " + e.getMessage(), e);
+        }
+        if (!vneImgUrlRepository.existsByVenueIdAndPosition(vneId, position)) {
+            // 新增新的圖片 URL
+            VneImgUrl vneImgUrl = VneImgUrl.builder()
+                    .venue(Venue.id(vneId))
+                    .imageUrl(filePath)
+                    .position(position)
+                    .build();
             vneImgUrlRepository.save(vneImgUrl);
         }
     }

@@ -3,6 +3,7 @@ package com.artogether.venue.venue;
 import com.artogether.common.business_member.BusinessMember;
 import com.artogether.common.business_member.BusinessMemberRepo;
 import com.artogether.venue.vnedto.VneCardDTO;
+import com.artogether.venue.vnedto.VneDetailDTO;
 import com.artogether.venue.vneimg.VneImg;
 import com.artogether.venue.vneimg.VneImgRepository;
 import com.artogether.venue.vneimg.VneImgService;
@@ -23,6 +24,30 @@ public class VenueService {
     @Autowired
     private VneImgService vneImgService;
 
+    //創建場地
+    public void creatVenue(VneDetailDTO vneDetailDTO, Integer businessId) {
+
+        String name = vneDetailDTO.getVneName();
+        String type = vneDetailDTO.getType();
+        String description = vneDetailDTO.getDescription();
+        Integer availableDays = vneDetailDTO.getAvailableDays();
+        byte[] imageFile1 = vneDetailDTO.getImageFile1();
+        byte[] imageFile2 = vneDetailDTO.getImageFile2();
+        byte[] imageFile3 = vneDetailDTO.getImageFile3();
+
+        Venue venue = Venue.builder()
+                      .name(name)
+                      .type(type)
+                      .description(description)
+                      .availableDays(availableDays)
+                      .build();
+        venueRepository.save(venue);
+        int vneId = venue.getId();
+        if (imageFile1 != null) {vneImgService.updateVneImg(vneId, 1, imageFile1);}
+        if (imageFile2 != null) {vneImgService.updateVneImg(vneId, 2, imageFile1);}
+        if (imageFile3 != null) {vneImgService.updateVneImg(vneId, 3, imageFile1);}
+    }
+
     //首頁卡片
     public VneCardDTO getVenue(Integer vneId) {
         VneCardDTO vneCardDTO = null;
@@ -35,7 +60,7 @@ public class VenueService {
                 BusinessMember businessMember = businessMemberOptional.get();
 
                 vneCardDTO.setVneId(vneId);
-                vneCardDTO.setName(venue.getName());
+                vneCardDTO.setVneName(venue.getName());
                 vneCardDTO.setVneAddress(businessMember.getAddr());
                 vneCardDTO.setDescription(venue.getDescription());
 
@@ -75,7 +100,5 @@ public class VenueService {
 //        DetelVenueBO detelVenueBO = null;
 //
 //    }
-    public void creatVenue(VneCardDTO vneCardDTO,Integer businessId) {
 
-    }
 }
