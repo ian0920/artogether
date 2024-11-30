@@ -592,7 +592,7 @@
 
 input.solo {
   font-family: "Noto Sans TC";
-  font-weight: 500;
+  font-weight: 400;
   font-size: 12pt;
   line-height: 140%;
   text-decoration: none;
@@ -647,7 +647,6 @@ main {
   gap: 0px;
   align-items: center;
   justify-content: center;
-  padding-top: 72px;
 }
 
 section.normal-width {
@@ -758,11 +757,19 @@ button.button-big {
   padding: 8px 16px;
 }
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Noto Sans TC";
+}
+
 html {
   overflow: hidden;
 }
 
 div.bs-navbar {
+  display: inline-block;
   width: 220px;
   padding: 16px 16px;
   height: 100vh;
@@ -876,4 +883,19 @@ div.bs-navbar div.bs-navbar-user-control div.bs-navbar-user-field {
 }
 div.bs-navbar div.bs-navbar-user-control div.bs-navbar-user-field:hover {
   box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.16);
+}
+
+body {
+  display: flex;
+}
+
+main {
+  display: inline-block;
+  width: calc(100% - 220px);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  overflow-y: overlay;
+  overflow-x: hidden;
+  padding: 24px;
+  height: 100vh;
 }/*# sourceMappingURL=style_business.css.map */

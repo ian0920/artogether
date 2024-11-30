@@ -1,12 +1,15 @@
 @import "root.css";
 @import "typography";
-@import "effect";
+@import "effect.css";
 @import "mixins";
 * {
   @include clear-default;
   @include font-setting;
 }
 
+main {
+  padding-top: 72px;
+}
 // 導航
 header.navbar_homepage {
   z-index: 6;
