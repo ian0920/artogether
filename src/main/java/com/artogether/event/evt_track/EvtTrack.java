@@ -14,7 +14,7 @@ import java.sql.Date;
 @NoArgsConstructor
 @Entity
 @Table(name="evt_track")
-public class EvtTrackVO {
+public class EvtTrack {
 
 	@Id
 	@Column(name="id")

@@ -3,36 +3,41 @@ package com.artogether.event.evt_img;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.artogether.event.event.EventRepo;
+
 import java.util.List;
 
 
 @Service
 public class EvtImgService {
 
-	@Autowired
-	private EvtImgDAO_interface dao;
+//	@Autowired
+//	private EvtImgDAO_interface dao;
 
-	public EvtImgService() {
-		dao = new EvtImgHibernateDAO();
+//	public EvtImgService() {
+//		dao = new EvtImgHibernateDAO();
+//	}
+	
+  @Autowired
+    private EvtImgRepo repo;
+
+	public void saveEvtImg(EvtImg evtImgVO) {
+		repo.save(evtImgVO);
 	}
 
-	public void addEvent(EvtImgVO evtImgVO) {
-		 dao.insert(evtImgVO);
+//	public void updateEvtImg(EvtImg evtImgVO) {
+//		repo.update(evtImgVO);
+//	}
+
+	public void deleteEvtImg(Integer id) {
+		repo.deleteById(id);
 	}
 
-	public void updateEvent(EvtImgVO evtImgVO) {
-		 dao.update(evtImgVO);
+	public EvtImg findById(Integer id) {
+		return repo.findById(id).orElse(new EvtImg());
 	}
 
-	public void deleteEvent(Integer id) {
-		dao.delete(id);
-	}
-
-	public EvtImgVO getOneEvent(Integer id) {
-		return dao.findByPrimaryKey(id);
-	}
-
-	public List<EvtImgVO> getAll() {
-		return dao.getAll();
+	public List<EvtImg> findAll() {
+		return repo.findAll();
 	}
 }

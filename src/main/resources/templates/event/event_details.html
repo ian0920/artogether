@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>event details</title>
+</head>
+<body>
+This is event_details
+<hr>
+<p th:text="${evt.name}"><p>
+<p th:text="${evt.id}"><p>
+<p th:text="${evt.startDate}"><p>
+<button th:onclick="*{trackEvt}">追蹤</button>
+<script type="text/javascript">
+var trackEvt= function(){
+	
+}
+</script>
+</body>
+</html>

@@ -12,7 +12,6 @@ public class EventService {
     private EventRepo eventRepo;
 
 
-    //null handling not be done
     public Event findById(int id) {
         return eventRepo.findById(id).orElse(new Event());
     }

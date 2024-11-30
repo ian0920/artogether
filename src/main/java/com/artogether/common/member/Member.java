@@ -2,7 +2,7 @@ package com.artogether.common.member;
 
 import com.artogether.common.platform_msg.Platform_msg;
 import com.artogether.event.evt_order.EvtOrder;
-import com.artogether.event.evt_track.EvtTrackVO;
+import com.artogether.event.evt_track.EvtTrack;
 import com.artogether.event.my_evt_coup.MyEvtCoup;
 import com.artogether.product.cart.Cart;
 import com.artogether.product.my_prd_coup.MyPrdCoup;
@@ -114,7 +114,7 @@ public class Member {
     /*    Event    */
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL)
-    private Set<EvtTrackVO> evtTracks;
+    private Set<EvtTrack> evtTracks;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL)
     private Set<EvtOrder> evtOrders;
