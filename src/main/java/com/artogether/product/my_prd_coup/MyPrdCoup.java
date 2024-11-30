@@ -44,8 +44,13 @@ public class MyPrdCoup {
 	 以下複合主鍵的用法建議再老師確認是否正確
 	 缺少複合主鍵的getter setter
 	 *********************************/
-
-
+	public void setMyPrdCoupId(MyPrdCoupId myPrdCoupId) {
+		this.member.setId(myPrdCoupId.getMember());
+		this.prdCoup.setId(myPrdCoupId.getPrdCoup());
+	}
+	public MyPrdCoupId getMyPrdCoupId() {
+		return new MyPrdCoupId(this.member.getId(),this.prdCoup.getId());
+	}
 
 	@Data
 	@AllArgsConstructor

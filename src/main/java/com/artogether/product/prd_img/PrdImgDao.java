@@ -4,8 +4,8 @@ import java.util.List;
 
 public interface PrdImgDao {
 	
-	int add(PrdImg prd_img);
-	int update(PrdImg prd_img);
+	int add(PrdImg prdImg);
+	int update(PrdImg prdImg);
 	int delete(Integer Id);
 	PrdImg findByPK(Integer Id);
 	List<PrdImg> getAll();

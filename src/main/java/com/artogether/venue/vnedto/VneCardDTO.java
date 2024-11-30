@@ -1,4 +1,4 @@
-package com.artogether.venue.vnebo;
+package com.artogether.venue.vnedto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class VneCardBO {
+public class VneCardDTO {
     private Integer vneId;
     private String name;
     private String vneAddress;

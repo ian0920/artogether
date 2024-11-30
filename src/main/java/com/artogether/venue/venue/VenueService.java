@@ -2,7 +2,7 @@ package com.artogether.venue.venue;
 
 import com.artogether.common.business_member.BusinessMember;
 import com.artogether.common.business_member.BusinessMemberRepo;
-import com.artogether.venue.vnebo.VneCardBO;
+import com.artogether.venue.vnedto.VneCardDTO;
 import com.artogether.venue.vneimg.VneImg;
 import com.artogether.venue.vneimg.VneImgRepository;
 import com.artogether.venue.vneimg.VneImgService;
@@ -24,8 +24,8 @@ public class VenueService {
     private VneImgService vneImgService;
 
     //首頁卡片
-    public VneCardBO getVenue(Integer vneId) {
-        VneCardBO vneCardBO = null;
+    public VneCardDTO getVenue(Integer vneId) {
+        VneCardDTO vneCardDTO = null;
 
         Optional<Venue> venueOptional = venueRepository.findById(vneId);
         if (venueOptional.isPresent()) {
@@ -34,22 +34,22 @@ public class VenueService {
             if (businessMemberOptional.isPresent()) {
                 BusinessMember businessMember = businessMemberOptional.get();
 
-                vneCardBO.setVneId(vneId);
-                vneCardBO.setName(venue.getName());
-                vneCardBO.setVneAddress(businessMember.getAddr());
-                vneCardBO.setDescription(venue.getDescription());
+                vneCardDTO.setVneId(vneId);
+                vneCardDTO.setName(venue.getName());
+                vneCardDTO.setVneAddress(businessMember.getAddr());
+                vneCardDTO.setDescription(venue.getDescription());
 
                 Optional<VneImg> vneImgOptional = vneImgRepository.findByVenueIdAndPosition(vneId, 1);
                 if (vneImgOptional.isPresent()) {
                     VneImg vneImg = vneImgOptional.get();
 
-                    vneCardBO.setVneImgUrl(vneImgService.getImgUrl(vneId, vneImg.getPosition()));
-                    return vneCardBO;
+                    vneCardDTO.setVneImgUrl(vneImgService.getAssetPath(vneId, vneImg.getPosition()));
+                    return vneCardDTO;
                 }
 
             }
         }
-    return vneCardBO;
+    return vneCardDTO;
     }
 // 水好深阿...lambda還沒看
 

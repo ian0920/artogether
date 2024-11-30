@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+//預覽圖片時，指標會被往下推
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootstrap Carousel with Indicators</title>
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- 引入 Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .carousel-inner img {
+            width: 100%;
+            height: 400px; /* 固定高度 */
+            /*object-fit: contain; !* 確保圖片完整顯示在幻燈片中 *!*/
+            display: block;
+            margin: 0 auto; /* 置中圖片 */
+        }
+        .carousel-indicators {
+            position: absolute; /* 固定定位 */
+            bottom: 50px; /* 指標位置貼近幻燈片下緣 */
+            margin: 0 auto;
+            /*z-index: 500; !* 確保在圖片上層 *!*/
+            background-color: rgba(0, 0, 0, 0.5); /* 添加半透明背景，提升對比 */
+            padding: 5px 0; /* 添加一些上下空間 */
+            display: flex; /* 使用 Flexbox 居中 */
+            width: 100%; /* 確保指標寬度與幻燈片一致 */
+            text-align: center; /* 居中指標 */
+        }
+
+        .upload-button {
+            margin-top: 10px;
+            float: right;
+        }
+
+        .carousel-item {
+            position: relative;
+            padding-bottom: 50px; /* 保留一些位置給按鈕 */
+        }
+
+        .custom-control-height {
+            height: 400px; /* 與幻燈片相同高度 */
+        }
+
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            background-size: 100%, 100%;
+        }
+    </style>
+    <script>
+        var images = [{ vneId: 123, position: 1 }];
+    </script>
+</head>
+
+<body>
+<div x-data="images">
+    <div id="carouselExampleIndicators" class="carousel slide" style="max-width: 800px; margin: 0 auto;"
+         data-bs-ride="carousel">
+        <!-- 指標（Indicators） -->
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"
+                    aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"
+                    aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"
+                    aria-label="Slide 3"></button>
+        </div>
+
+        <!-- 幻燈片內容（Slides） -->
+        <div class="carousel-inner">
+            <div class="carousel-item active" onclick="openFileUpload(this)" :data-id="`${images[0].vneId}/${images[0].position}`">
+                <img src="https://via.placeholder.com/800x400" class="d-block w-100" alt="..." loading="lazy">
+                <button class="btn btn-primary upload-button" onclick="uploadFile()" style="display: none;">確認上傳</button>
+            </div>
+            <div class="carousel-item" onclick="openFileUpload(this)" data-id="123/1">
+                <img src="https://via.placeholder.com/800x400" class="d-block w-100" alt="..." loading="lazy">
+                <button class="btn btn-primary upload-button" onclick="uploadFile()" style="display: none;">確認上傳</button>
+            </div>
+            <div class="carousel-item" onclick="openFileUpload(this)" data-id="123/2">
+                <img src="https://via.placeholder.com/800x400" class="d-block w-100" alt="..." loading="lazy">
+                <button class="btn btn-primary upload-button" onclick="uploadFile()" style="display: none;">確認上傳</button>
+            </div>
+        </div>
+
+        <!-- 控制按鈕（Controls） -->
+        <button class="carousel-control-prev custom-control-height" type="button" data-bs-target="#carouselExampleIndicators"
+                data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next custom-control-height" type="button" data-bs-target="#carouselExampleIndicators"
+                data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</div>
+<form id="uploadForm" style="display:none;">
+    <input type="file" id="fileInput" name="file" accept="image/jpeg, image/png, image/gif" onchange="previewImage()">
+</form>
+
+<div id="uploadStatus"></div>
+<input type="file" id="fileInput" style="display:none" @change="previewImage()" />
+<div id="uploadStatus"></div>
+
+<script>
+    // 打開檔案上傳
+    function openFileUpload(element) {
+        if (window.isUploading) {
+            return;
+        }
+
+        // 獲取被點擊元素的 data-id 屬性，並拆分成 vneId 和 position
+        const dataId = element.getAttribute('data-id');
+        const [vneId, position] = dataId.split('/');
+
+        // 設定全域變數來追蹤是哪個區域
+        window.currentRegionId = { vneId, position };
+
+        // 保存當前被點擊的幻燈片元素
+        window.currentSlideElement = element;
+
+        // 觸發文件上傳的輸入框
+        document.getElementById('fileInput').click();
+    }
+
+    // 預覽選擇的圖片
+    function previewImage() {
+        const fileInput = document.getElementById("fileInput");
+        const file = fileInput.files[0];
+
+        if (file && window.currentSlideElement) {
+            // 檢查檔案格式是否正確
+            if (!isValidImageType(file.type)) {
+                alert("Only JPEG, PNG, and GIF files are allowed.");
+                return;
+            }
+
+            // 使用 FileReader 來讀取圖片並顯示在對應的幻燈片中
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const imgElement = window.currentSlideElement.querySelector('img');
+                imgElement.src = e.target.result;
+
+                // 顯示 "確認上傳" 按鈕
+                const uploadButton = window.currentSlideElement.querySelector('.upload-button');
+                uploadButton.style.display = 'block';
+                uploadButton.disabled = false; // 確保按鈕是啟用狀態
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    // 上傳圖片的功能
+    function uploadFile() {
+        const fileInput = document.getElementById("fileInput");
+        const file = fileInput.files[0];
+
+        if (!file) {
+            alert("Please select a file to upload.");
+            return;
+        }
+
+        // 限制檔案類型
+        if (!isValidImageType(file.type)) {
+            alert("Only JPEG, PNG, and GIF files are allowed.");
+            return;
+        }
+
+        // 構建動態上傳的 URL
+        if (!window.currentRegionId) {
+            alert("Upload region not specified.");
+            return;
+        }
+        const { vneId, position } = window.currentRegionId;
+        const baseUrl = window.location.origin;
+        const UPLOAD_URL = `${baseUrl}/venue/images/upload/${vneId}/${position}`;
+
+        // 禁用上傳按鈕以防止重複提交
+        const uploadButton = window.currentSlideElement.querySelector('.upload-button');
+        uploadButton.disabled = true;
+
+        // 設置全域標記防止多次點擊
+        window.isUploading = true;
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        fetch(UPLOAD_URL, {
+            method: "POST",
+            body: formData,
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                document.getElementById("uploadStatus").innerText = "Upload Successful!";
+                // 隱藏 "確認上傳" 按鈕
+                uploadButton.style.display = 'none';
+            })
+            .catch((error) => {
+                console.error("Error uploading file:", error);
+                document.getElementById("uploadStatus").innerText = "Upload Failed!";
+                // 重新啟用上傳按鈕，允許重新嘗試
+                uploadButton.disabled = false;
+            })
+            .finally(() => {
+                // 重置全域標記
+                window.isUploading = false;
+            });
+    }
+
+    // 驗證圖片檔案類型
+    function isValidImageType(type) {
+        const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
+        return validImageTypes.includes(type);
+    }
+</script>
+
+<!-- 引入 Bootstrap JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!--<script src="../js/uploadimg.js"></script>-->
+</body>
+
+</html>
