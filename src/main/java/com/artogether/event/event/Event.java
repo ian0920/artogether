@@ -44,8 +44,8 @@ public class Event {
     @Column(name = "delay_date")
     private Timestamp delayDate;
 
-    @Column(name="catalog_id", nullable = false)
-    private Byte catalogId;
+    @Column(name="catalog", nullable = false)
+    private String catalog;
     private Integer price;
     private String description;
     private Byte status;

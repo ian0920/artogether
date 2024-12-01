@@ -2,7 +2,6 @@ package com.artogether.product.prd_order;
 
 
 import com.artogether.common.member.Member;
-import com.artogether.product.prd_coup.PrdCoup;
 import com.artogether.product.prd_order_detail.PrdOrderDetail;
 import com.artogether.product.prd_return.PrdReturn;
 import lombok.AllArgsConstructor;
@@ -11,7 +10,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
 
@@ -40,12 +38,12 @@ public class PrdOrder {
 	@Column(name="status")
 	private String status;
 	
-	@ManyToMany
-    @JoinTable
-    (name = "order_coupon",joinColumns = @JoinColumn(name = "prd_order_id"),
-     inverseJoinColumns = @JoinColumn(name = "prd_coup_id") )
-    
-    private Set<PrdCoup> coupons = new HashSet<>();
+//	@ManyToMany
+//    @JoinTable
+//    (name = "order_coupon",joinColumns = @JoinColumn(name = "prd_order_id"),
+//     inverseJoinColumns = @JoinColumn(name = "prd_coup_id") )
+
+//    private Set<PrdCoup> coupons = new HashSet<>();
     
     @Column(name="total_price")
 	private Integer totalPrice;

@@ -2,7 +2,6 @@ package com.artogether.product.prd_coup;
 
 import com.artogether.common.business_member.BusinessMember;
 import com.artogether.product.my_prd_coup.MyPrdCoup;
-import com.artogether.product.prd_order.PrdOrder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +9,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
 
@@ -61,7 +59,7 @@ public class PrdCoup {
 	@OneToMany(mappedBy = "prdCoup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<MyPrdCoup> myPrdCoups;
 
-	@ManyToMany(mappedBy = "coupons")
-	private Set<PrdOrder> orders = new HashSet<>();
+//	@ManyToMany(mappedBy = "coupons")
+//	private Set<PrdOrder> orders = new HashSet<>();
 
 }
