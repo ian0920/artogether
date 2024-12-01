@@ -1,0 +1,138 @@
+-- Foreign Key Constraints Section
+ALTER TABLE oath
+    ADD CONSTRAINT fk_oath_member FOREIGN KEY (member_id) REFERENCES member(id);
+
+ALTER TABLE business_perm
+    ADD CONSTRAINT fk_business_perm_business FOREIGN KEY (business_id) REFERENCES business_member(id),
+    ADD CONSTRAINT fk_business_perm_member FOREIGN KEY (member_id) REFERENCES member(id);
+
+-- Foreign keys for permission table
+ALTER TABLE permission
+    ADD CONSTRAINT fk_permission_manager FOREIGN KEY (manager_id) REFERENCES system_manager(id),
+    ADD CONSTRAINT fk_permission_desc FOREIGN KEY (desc_id) REFERENCES perm_desc(id);
+
+-- Foreign keys for product table
+ALTER TABLE product
+    ADD CONSTRAINT fk_product_business FOREIGN KEY (business_id) REFERENCES business_member(id),
+    ADD CONSTRAINT fk_product_catalog FOREIGN KEY (catalog_id) REFERENCES prd_catalog(id);
+
+-- Foreign keys for prd_order table
+ALTER TABLE prd_order
+    ADD CONSTRAINT fk_prd_order_member FOREIGN KEY (member_id) REFERENCES member(id),
+    ADD CONSTRAINT fk_prd_order_coupon FOREIGN KEY (prd_coup_id) REFERENCES prd_coup(id);
+
+-- Foreign keys for prd_order_detail table
+ALTER TABLE prd_order_detail
+    ADD CONSTRAINT fk_prd_order_detail_order FOREIGN KEY (order_id) REFERENCES prd_order(id),
+    ADD CONSTRAINT fk_prd_order_detail_product FOREIGN KEY (prd_id) REFERENCES product(id);
+
+-- Foreign keys for cart table
+ALTER TABLE cart
+    ADD CONSTRAINT fk_cart_product FOREIGN KEY (prd_id) REFERENCES product(id),
+    ADD CONSTRAINT fk_cart_member FOREIGN KEY (member_id) REFERENCES member(id);
+
+-- Foreign keys for prd_track table
+ALTER TABLE prd_track
+    ADD CONSTRAINT fk_prd_track_product FOREIGN KEY (prd_id) REFERENCES product(id),
+    ADD CONSTRAINT fk_prd_track_member FOREIGN KEY (member_id) REFERENCES member(id);
+
+-- Foreign keys for prd_report table
+ALTER TABLE prd_report
+    ADD CONSTRAINT fk_prd_report_member FOREIGN KEY (member_id) REFERENCES member(id),
+    ADD CONSTRAINT fk_prd_report_order FOREIGN KEY (order_id) REFERENCES prd_order(id),
+    ADD CONSTRAINT fk_prd_report_product FOREIGN KEY (prd_id) REFERENCES product(id);
+
+-- Foreign keys for prd_return table
+ALTER TABLE prd_return
+    ADD CONSTRAINT fk_prd_return_order FOREIGN KEY (order_id) REFERENCES prd_order(id);
+
+-- Foreign keys for prd_review table
+ALTER TABLE prd_review
+    ADD CONSTRAINT fk_prd_review_product FOREIGN KEY (prd_id) REFERENCES product(id),
+    ADD CONSTRAINT fk_prd_review_member FOREIGN KEY (member_id) REFERENCES member(id);
+
+-- Foreign keys for prd_img table
+ALTER TABLE prd_img
+    ADD CONSTRAINT fk_prd_img_product FOREIGN KEY (prd_id) REFERENCES product(id);
+
+-- Foreign keys for prd_coup table
+ALTER TABLE prd_coup
+    ADD CONSTRAINT fk_prd_coup_business FOREIGN KEY (business_id) REFERENCES business_member(id);
+
+-- Foreign keys for my_prd_coup table
+ALTER TABLE my_prd_coup
+    ADD CONSTRAINT fk_my_prd_coup_member FOREIGN KEY (member_id) REFERENCES member(id),
+    ADD CONSTRAINT fk_my_prd_coup_coupon FOREIGN KEY (prd_coup_id) REFERENCES prd_coup(id);
+
+-- Foreign keys for event table
+ALTER TABLE event
+    ADD CONSTRAINT fk_event_business FOREIGN KEY (business_id) REFERENCES business_member(id);
+
+-- Foreign keys for evt_order table
+ALTER TABLE evt_order
+    ADD CONSTRAINT fk_evt_order_event FOREIGN KEY (evt_id) REFERENCES event(id),
+    ADD CONSTRAINT fk_evt_order_member FOREIGN KEY (member_id) REFERENCES member(id),
+    ADD CONSTRAINT fk_evt_order_coupon FOREIGN KEY (evt_coup_id) REFERENCES evt_coup(id);
+
+-- Foreign keys for evt_track table
+ALTER TABLE evt_track
+    ADD CONSTRAINT fk_evt_track_member FOREIGN KEY (member_id) REFERENCES member(id),
+    ADD CONSTRAINT fk_evt_track_event FOREIGN KEY (evt_id) REFERENCES event(id);
+
+-- Foreign keys for evt_img table
+ALTER TABLE evt_img
+    ADD CONSTRAINT fk_evt_img_event FOREIGN KEY (evt_id) REFERENCES event(id);
+
+-- Foreign keys for evt_coup table
+ALTER TABLE evt_coup
+    ADD CONSTRAINT fk_evt_coup_event FOREIGN KEY (evt_id) REFERENCES event(id);
+
+-- Foreign keys for my_evt_coup table
+ALTER TABLE my_evt_coup
+    ADD CONSTRAINT fk_my_evt_coup_member FOREIGN KEY (member_id) REFERENCES member(id),
+    ADD CONSTRAINT fk_my_evt_coup_coupon FOREIGN KEY (evt_coup_id) REFERENCES evt_coup(id);
+
+-- Foreign keys for venue table
+ALTER TABLE venue
+    ADD CONSTRAINT fk_venue_business FOREIGN KEY (business_id) REFERENCES business_member(id);
+
+-- Foreign keys for tslot table
+ALTER TABLE tslot
+    ADD CONSTRAINT fk_tslot_venue FOREIGN KEY (vne_id) REFERENCES venue(id);
+
+
+-- Foreign keys for vne_order table
+ALTER TABLE vne_order
+    ADD CONSTRAINT fk_vne_order_member FOREIGN KEY (member_id) REFERENCES member(id),
+    ADD CONSTRAINT fk_vne_order_venue FOREIGN KEY (vne_id) REFERENCES venue(id),
+    ADD CONSTRAINT fk_vne_coup_id FOREIGN KEY (vne_coup_id) REFERENCES vne_coup(id);
+
+
+-- Foreign keys for vne_track table
+ALTER TABLE vne_track
+    ADD CONSTRAINT fk_vne_track_member FOREIGN KEY (member_id) REFERENCES member(id),
+    ADD CONSTRAINT fk_vne_track_venue FOREIGN KEY (vne_id) REFERENCES venue(id);
+
+-- Foreign keys for vne_img table
+ALTER TABLE vne_img
+    ADD CONSTRAINT fk_vne_img_venue FOREIGN KEY (vne_id) REFERENCES venue(id);
+
+-- Foreign keys for vne_coup table
+ALTER TABLE vne_coup
+    ADD CONSTRAINT fk_vne_coup_venue FOREIGN KEY (vne_id) REFERENCES venue(id);
+
+-- Foreign keys for vne_price table
+ALTER TABLE vne_price
+    ADD CONSTRAINT fk_vne_price_venue FOREIGN KEY (vne_id) REFERENCES venue(id);
+
+
+-- Foreign keys for platform_msg table
+ALTER TABLE platform_msg
+    ADD CONSTRAINT fk_platform_msg_member FOREIGN KEY (member_id) REFERENCES member(id),
+    ADD CONSTRAINT fk_platform_msg_business FOREIGN KEY (business_id) REFERENCES business_member(id);
+
+-- Foreign keys for chatroom table
+-- ALTER TABLE chatroom
+--     ADD CONSTRAINT fk_chatroom_member FOREIGN KEY (member_id) REFERENCES member(id),
+--     ADD CONSTRAINT fk_chatroom_business FOREIGN KEY (business_id) REFERENCES business_member(id);
+
