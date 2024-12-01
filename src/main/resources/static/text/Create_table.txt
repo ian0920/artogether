@@ -1,0 +1,420 @@
+CREATE DATABASE IF NOT EXISTS g4;
+
+use g4;
+
+-- Drop the venue table if it exists to reset the table
+DROP TABLE IF EXISTS member;
+DROP TABLE IF EXISTS oath;
+DROP TABLE IF EXISTS business_member;
+DROP TABLE IF EXISTS business_perm;
+DROP TABLE IF EXISTS system_manager;
+DROP TABLE IF EXISTS permission;
+DROP TABLE IF EXISTS perm_desc;
+DROP TABLE IF EXISTS product;
+DROP TABLE IF EXISTS prd_order;
+DROP TABLE IF EXISTS prd_order_detail;
+DROP TABLE IF EXISTS cart;
+DROP TABLE IF EXISTS prd_track;
+DROP TABLE IF EXISTS prd_report;
+DROP TABLE IF EXISTS prd_return;
+DROP TABLE IF EXISTS prd_review;
+DROP TABLE IF EXISTS prd_img;
+DROP TABLE IF EXISTS prd_catalog;
+DROP TABLE IF EXISTS prd_coup;
+DROP TABLE IF EXISTS my_prd_coup;
+DROP TABLE IF EXISTS event;
+DROP TABLE IF EXISTS evt_catalog;
+DROP TABLE IF EXISTS evt_order;
+DROP TABLE IF EXISTS evt_track;
+DROP TABLE IF EXISTS evt_img;
+DROP TABLE IF EXISTS evt_coup;
+DROP TABLE IF EXISTS my_evt_coup;
+DROP TABLE IF EXISTS venue;
+DROP TABLE IF EXISTS tslot;
+DROP TABLE IF EXISTS vne_order;
+DROP TABLE IF EXISTS vne_track;
+DROP TABLE IF EXISTS vne_img;
+DROP TABLE IF EXISTS vne_coup;
+DROP TABLE IF EXISTS vne_price;
+DROP TABLE IF EXISTS platform_msg;
+DROP TABLE IF EXISTS chatroom;
+
+CREATE TABLE member (
+    id INT NOT NULL AUTO_INCREMENT,
+    name VARCHAR(15) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    register_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    birthday DATE,
+    gender CHAR(2),
+    prefer VARCHAR(250),
+    phone VARCHAR(10),
+    password VARCHAR(50) NOT NULL,
+    status TINYINT DEFAULT 0,
+    oath_provider VARCHAR(50) DEFAULT NULL,
+    oath_user_id VARCHAR(250) DEFAULT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE oath (
+    id INT NOT NULL AUTO_INCREMENT,
+    member_id INT NOT NULL,
+    oath_provider VARCHAR(50) NOT NULL,
+    user_id VARCHAR(255) NOT NULL,
+    accss_token VARCHAR(500),
+    refresh_token VARCHAR(500),
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE business_member (
+    id INT NOT NULL AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    addr VARCHAR(100) NOT NULL,
+    tax_id VARCHAR(8) NOT NULL,
+    start_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    approve_date DATETIME,
+    status TINYINT DEFAULT 0,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE business_perm (
+    business_id INT NOT NULL,
+    member_id INT NOT NULL,
+    prd_perm BOOLEAN DEFAULT FALSE,
+    venue_perm BOOLEAN DEFAULT FALSE,
+    event_perm BOOLEAN DEFAULT FALSE,
+    assign_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    status TINYINT DEFAULT 0,
+    PRIMARY KEY (business_id, member_id)
+);
+
+CREATE TABLE system_manager (
+    id INT NOT NULL AUTO_INCREMENT,
+    account VARCHAR(50) NOT NULL,
+    password VARCHAR(50) NOT NULL,
+    register_date DATETIME NOT NULL,
+    phone VARCHAR(10) NOT NULL,
+    assign_date DATETIME,
+    status TINYINT DEFAULT 0,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE permission (
+    id INT NOT NULL AUTO_INCREMENT,
+    manager_id INT NOT NULL,
+    desc_id INT NOT NULL,
+    status TINYINT DEFAULT 0,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE perm_desc (
+    id INT NOT NULL AUTO_INCREMENT,
+    description VARCHAR(15),
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE product (
+    id INT NOT NULL AUTO_INCREMENT,
+    business_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    catalog_id INT NOT NULL,
+    price INT NOT NULL,
+    qty INT,
+    description VARCHAR(1000),
+    status TINYINT DEFAULT 0,
+    all_stars INT,
+    all_reviews INT,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE prd_order (
+    id INT NOT NULL AUTO_INCREMENT,
+    member_id INT NOT NULL,
+    ship_date DATETIME,
+    order_date DATETIME,
+    status VARCHAR(20),
+    prd_coup_id INT,
+    total_price INT,
+    discount INT,
+    paid INT,
+    payment_method VARCHAR(50),
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE prd_order_detail (
+    order_id INT NOT NULL,
+    prd_id INT NOT NULL,
+    qty INT,
+    price INT NOT NULL,
+    PRIMARY KEY (order_id, prd_id)
+);
+
+CREATE TABLE cart (
+    prd_id INT NOT NULL,
+    member_id INT NOT NULL,
+    qty INT NOT NULL,
+    PRIMARY KEY (prd_id, member_id)
+);
+
+CREATE TABLE prd_track (
+    prd_id INT NOT NULL,
+    member_id INT NOT NULL,
+    PRIMARY KEY (prd_id, member_id)
+);
+
+CREATE TABLE prd_report (
+    id INT NOT NULL AUTO_INCREMENT,
+    member_id INT NOT NULL,
+    order_id INT NOT NULL,
+    prd_id INT NOT NULL,
+    report_time DATETIME NOT NULL,
+    reason VARCHAR(100) NOT NULL,
+    status TINYINT NOT NULL DEFAULT 0,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE prd_return (
+    id INT NOT NULL AUTO_INCREMENT,
+    order_id INT NOT NULL,
+    prd_name VARCHAR(100) NOT NULL,
+    reason VARCHAR(255),
+    type TINYINT NOT NULL,
+    apply_date DATETIME,
+    return_date DATETIME,
+    refund INT,
+    status TINYINT NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE prd_review (
+    id INT NOT NULL AUTO_INCREMENT,
+    prd_id INT NOT NULL,
+    member_id INT NOT NULL,
+    review VARCHAR(1000),
+    star TINYINT NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE prd_img (
+    id INT NOT NULL AUTO_INCREMENT,
+    prd_id INT NOT NULL,
+    image_file LONGBLOB NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE prd_catalog (
+    id INT NOT NULL AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE prd_coup (
+    id INT NOT NULL AUTO_INCREMENT,
+    business_id INT NOT NULL,
+    prd_coup_name VARCHAR(100) NOT NULL,
+    status TINYINT DEFAULT 0,
+    type TINYINT,
+    deduction INT,
+    ratio DOUBLE,
+    start_date DATETIME,
+    end_date DATETIME,
+    duration INT,
+    threshold INT,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE my_prd_coup (
+    member_id INT NOT NULL,
+    prd_coup_id INT NOT NULL,
+    status TINYINT DEFAULT 0,
+    receive_date DATETIME NOT NULL,
+    use_date DATETIME,
+    PRIMARY KEY (member_id, prd_coup_id)
+);
+
+CREATE TABLE event (
+    id INT NOT NULL AUTO_INCREMENT,
+    business_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    location VARCHAR(100) NOT NULL,
+    start_date DATETIME NOT NULL,
+    end_date DATETIME,
+    delay_date DATETIME,
+    catalog VARCHAR(100)  NOT NULL,
+    price INT,
+    description VARCHAR(1000),
+    status TINYINT DEFAULT 0,
+    maximum INT,
+    minimum INT,
+    enrolled INT,
+    PRIMARY KEY (id)
+);
+
+
+CREATE TABLE evt_order (
+    id INT NOT NULL AUTO_INCREMENT,
+    evt_id INT NOT NULL,
+    member_id INT NOT NULL,
+    status TINYINT,
+    order_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    qty INT NOT NULL,
+    evt_coup_id INT,
+    paid INT,
+    total_price INT,
+    discount INT,
+    refund INT,
+    refund_apply_date DATETIME,
+    refund_date DATETIME,
+    payment_method TINYINT,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE evt_track (
+    member_id INT NOT NULL,
+    evt_id INT NOT NULL,
+    track_date DATETIME NOT NULL,
+    PRIMARY KEY (member_id, evt_id)
+);
+
+CREATE TABLE evt_img (
+    id INT NOT NULL AUTO_INCREMENT,
+    evt_id INT NOT NULL,
+    image_file LONGBLOB NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE evt_coup (
+    id INT NOT NULL AUTO_INCREMENT,
+    evt_id INT NOT NULL,
+    evt_coup_name VARCHAR(50) NOT NULL,
+    status TINYINT DEFAULT 0,
+    type TINYINT,
+    deduction INT,
+    ratio DOUBLE,
+    start_date DATETIME,
+    end_date DATETIME,
+    duration INT,
+    threshold INT,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE my_evt_coup (
+    member_id INT NOT NULL,
+    evt_coup_id INT NOT NULL,
+    status TINYINT DEFAULT 0,
+    receive_date DATETIME NOT NULL,
+    use_date DATETIME,
+    PRIMARY KEY (member_id, evt_coup_id)
+);
+
+CREATE TABLE venue (
+    id INT NOT NULL AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    business_id INT NOT NULL,
+    type VARCHAR(100),
+    description VARCHAR(1000),
+    status TINYINT DEFAULT 0,
+    available_days INT NOT NULL,
+    all_stars INT,
+    all_reviews INT,
+    PRIMARY KEY (id)
+);
+CREATE TABLE tslot (
+    id INT NOT NULL AUTO_INCREMENT,
+    vne_id INT NOT NULL,
+    hour_of_mon CHAR(24) NOT NULL,
+    hour_of_tue CHAR(24) NOT NULL,
+    hour_of_wed CHAR(24) NOT NULL,
+    hour_of_thu CHAR(24) NOT NULL,
+    hour_of_fri CHAR(24) NOT NULL,
+    hour_of_sat CHAR(24) NOT NULL,
+    hour_of_sun CHAR(24) NOT NULL,
+    effective_time DATETIME,
+    expiration_time DATETIME,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE vne_order (
+    id INT NOT NULL AUTO_INCREMENT,
+    member_id INT NOT NULL,
+    vne_id INT NOT NULL,
+    order_date DATETIME NOT NULL,
+    total_price INT NOT NULL,
+    vne_coup_id INT,
+    paid INT NOT NULL,
+    start_date DATETIME NOT NULL,
+    end_date DATETIME NOT NULL,
+    review VARCHAR(1000),
+    stars TINYINT,
+    payment_method TINYINT,
+    status TINYINT NOT NULL,
+    apply_date DATETIME,
+    refund_date DATETIME,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE vne_track (
+    member_id INT NOT NULL,
+    vne_id INT NOT NULL,
+    track_date DATETIME NOT NULL,
+    PRIMARY KEY (member_id, vne_id)
+);
+
+CREATE TABLE vne_img (
+    id INT NOT NULL AUTO_INCREMENT,
+    vne_id INT NOT NULL,
+    image_url VARCHAR(50) NOT NULL,
+    position INT NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE vne_coup (
+    id INT NOT NULL AUTO_INCREMENT,
+    vne_id INT NOT NULL,
+    vne_coup_name VARCHAR(50) NOT NULL,
+    status TINYINT DEFAULT 0,
+    type TINYINT,
+    threshold INT,
+    deduction INT,
+    ratio DOUBLE,
+    start_date DATETIME,
+    end_date DATETIME,
+    duration INT,
+    hour_of_day CHAR(24),
+    day_of_week CHAR(7),
+
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE vne_price (
+    id INT NOT NULL AUTO_INCREMENT,
+    vne_id INT NOT NULL,
+    defaul_price INT NOT NULL ,
+    price INT,
+    day_of_week CHAR(7),
+    price_tslot CHAR(24),
+    effective_time DATETIME,
+    expiration_time DATETIME,
+
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE platform_msg (
+    id INT NOT NULL AUTO_INCREMENT,
+    member_id INT,
+    business_id INT,
+    message VARCHAR(1000) NOT NULL,
+    msg_time TIME NOT NULL,
+    status TINYINT NOT NULL DEFAULT 0,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE chatroom (
+    member_id INT NOT NULL,
+    business_id INT NOT NULL,
+    sender TINYINT NOT NULL,
+    msg VARCHAR(1000) NOT NULL,
+    send_time TIMESTAMP NOT NULL,
+    PRIMARY KEY (member_id, business_id)
+);
+

@@ -4,11 +4,18 @@
 @import "effect";
 @import "style_general";
 
+* {
+  @include clear-default;
+  @include font-setting;
+}
 html {
   overflow: hidden;
 }
+$navbar-width: 220px;
+
 div.bs-navbar {
-  width: 220px;
+  display: inline-block;
+  width: $navbar-width;
   padding: 16px 16px;
   height: 100vh;
   @include flexbox(column);
@@ -105,4 +112,19 @@ div.bs-navbar {
       }
     }
   }
+}
+
+// main的設定
+body {
+  display: flex;
+}
+main {
+  display: inline-block;
+  width: calc(100% - $navbar-width);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  overflow-y: overlay;
+  overflow-x: hidden;
+  padding: 24px;
+  height: 100vh;
 }

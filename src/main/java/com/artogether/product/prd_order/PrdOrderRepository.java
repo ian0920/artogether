@@ -7,6 +7,14 @@ import java.util.List;
 
 @Repository
 public interface PrdOrderRepository extends JpaRepository<PrdOrder, Integer> {
+//    PrdOrder findByOrderId(Integer orderId);
+
     // 自定義方法，根據狀態查詢訂單
     List<PrdOrder> findByStatus(String status);
+
+    List<PrdOrder> findByMemberId(Integer memberId);
+
+//    List<PrdOrder> findByOrderDate(String start, String end);
+
+    List<PrdOrder> findByPaymentMethod (String paymentMethod);
 }

@@ -13,7 +13,7 @@ public class BusinessService {
 
     //null handling not be done
     public BusinessMember findById(Integer id) {
-        return businessMemberRepo.findById(id).orElse(new BusinessMember());
+        return businessMemberRepo.findById(id).orElse(null);
     }
 
     public List<BusinessMember> findAll() {

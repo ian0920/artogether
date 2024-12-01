@@ -29,7 +29,6 @@ public class PrdTrack {
 	private Member member;
 
 
-
 	// 嵌套類：複合主鍵類
 	public static class PrdTrackId implements Serializable {
 		private Integer product; // 對應 Product 的主鍵

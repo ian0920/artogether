@@ -73,7 +73,6 @@ div.progress {
 main {
   @include flexbox(column, 0px);
   @include flexbox-details(center, center);
-  padding-top: 72px;
 }
 section.normal-width {
   width: 1140px;

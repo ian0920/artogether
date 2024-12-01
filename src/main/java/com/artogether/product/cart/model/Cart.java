@@ -1,4 +1,4 @@
-package com.artogether.product.cart;
+package com.artogether.product.cart.model;
 
 import com.artogether.common.member.Member;
 import com.artogether.product.product.Product;
@@ -19,12 +19,12 @@ public class Cart {
 
 
     @Id
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "prd_id", referencedColumnName = "id", nullable = false)
     private Product product;
 
     @Id
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", referencedColumnName = "id", nullable = false)
     private Member member;
 
@@ -32,9 +32,7 @@ public class Cart {
     private Integer qty;
 
 
-	/**************************
-	  缺少複合主鍵的Getter Setter Done
-	***************************/
+	// 複合主鍵
 
     @Getter
     @Setter

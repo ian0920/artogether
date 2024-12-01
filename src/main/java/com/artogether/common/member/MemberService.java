@@ -63,14 +63,15 @@ public class MemberService {
         //Email重複的錯誤處理
         if(memberRepo.findByEmail(member.getEmail()) != null){
             throw new BindException(member, "emailDuplicate");
+        }else {
+
+            //寄送註冊成功信件
+            Member savedMember = memberRepo.save(m);
+            Integer memberId = savedMember.getId();
+            mailManager.sendRegisterSuccessMail(member.getName(), member.getEmail(), memberId);
+
+            return savedMember;
         }
-
-        //寄送註冊成功信件
-        Member savedMember = memberRepo.save(m);
-        Integer memberId = savedMember.getId();
-        mailManager.sendRegisterSuccessMail(member.getName(), member.getEmail(), memberId);
-
-        return savedMember;
     }
 
     //會員帳號啟用

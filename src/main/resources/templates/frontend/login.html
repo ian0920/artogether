@@ -59,6 +59,19 @@
         .btn-back:hover {
             background-color: #545b62;
         }
+
+        .btn-register{
+            width: 100%;
+            border-radius: 20px;
+            background-color: #2c95c6;
+            color: white;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-register:hover {
+            background-color: #2982a8;
+        }
         .forgot-password {
             text-align: center;
             margin-top: 15px;
@@ -98,8 +111,9 @@
         </div>
 
         <button type="submit" class="btn btn-primary btn-login">登入</button>
+        <button type="submit" class="btn btn-primary btn-register" onclick="location.href='/register'">註冊帳號</button>
         <button type="button" id="backButton" class="btn btn-secondary btn-back"
-                onclick="history.back()">回上一頁
+                onclick="location.href='/'">回首頁
         </button>
 
 

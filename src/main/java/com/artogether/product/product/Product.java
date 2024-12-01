@@ -2,7 +2,7 @@ package com.artogether.product.product;
 
 
 import com.artogether.common.business_member.BusinessMember;
-import com.artogether.product.cart.Cart;
+import com.artogether.product.cart.model.Cart;
 import com.artogether.product.prd_catalog.PrdCatalog;
 import com.artogether.product.prd_img.PrdImg;
 import com.artogether.product.prd_order_detail.PrdOrderDetail;
