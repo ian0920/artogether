@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+//預覽圖片時，指標會被往下推
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,15 +13,15 @@
         .carousel-inner img {
             width: 100%;
             height: 400px; /* 固定高度 */
-            object-fit: contain; /* 確保圖片完整顯示在幻燈片中 */
+            /*object-fit: contain; !* 確保圖片完整顯示在幻燈片中 *!*/
             display: block;
             margin: 0 auto; /* 置中圖片 */
         }
-
         .carousel-indicators {
             position: absolute; /* 固定定位 */
             bottom: 50px; /* 指標位置貼近幻燈片下緣 */
             margin: 0 auto;
+            /*z-index: 500; !* 確保在圖片上層 *!*/
             background-color: rgba(0, 0, 0, 0.5); /* 添加半透明背景，提升對比 */
             padding: 5px 0; /* 添加一些上下空間 */
             display: flex; /* 使用 Flexbox 居中 */
@@ -29,10 +30,8 @@
         }
 
         .upload-button {
-            position: absolute; /* 絕對定位，避免推動其他元素 */
-            bottom: 20px; /* 距離幻燈片底部一些距離 */
-            right: 20px; /* 距離右邊緣 */
-            display: none; /* 默認隱藏 */
+            margin-top: 10px;
+            float: right;
         }
 
         .carousel-item {
@@ -49,6 +48,9 @@
             background-size: 100%, 100%;
         }
     </style>
+    <script>
+        var images = [{ vneId: 123, position: 1 }];
+    </script>
 </head>
 
 <body>
@@ -69,15 +71,15 @@
         <div class="carousel-inner">
             <div class="carousel-item active" onclick="openFileUpload(this)" :data-id="`${images[0].vneId}/${images[0].position}`">
                 <img src="https://via.placeholder.com/800x400" class="d-block w-100" alt="..." loading="lazy">
-                <button class="btn btn-primary upload-button" onclick="uploadFile()">確認上傳</button>
+                <button class="btn btn-primary upload-button" onclick="uploadFile()" style="display: none;">確認上傳</button>
             </div>
             <div class="carousel-item" onclick="openFileUpload(this)" data-id="123/1">
                 <img src="https://via.placeholder.com/800x400" class="d-block w-100" alt="..." loading="lazy">
-                <button class="btn btn-primary upload-button" onclick="uploadFile()">確認上傳</button>
+                <button class="btn btn-primary upload-button" onclick="uploadFile()" style="display: none;">確認上傳</button>
             </div>
             <div class="carousel-item" onclick="openFileUpload(this)" data-id="123/2">
                 <img src="https://via.placeholder.com/800x400" class="d-block w-100" alt="..." loading="lazy">
-                <button class="btn btn-primary upload-button" onclick="uploadFile()">確認上傳</button>
+                <button class="btn btn-primary upload-button" onclick="uploadFile()" style="display: none;">確認上傳</button>
             </div>
         </div>
 
@@ -94,12 +96,17 @@
         </button>
     </div>
 </div>
-
 <form id="uploadForm" style="display:none;">
     <input type="file" id="fileInput" name="file" accept="image/jpeg, image/png, image/gif" onchange="previewImage()">
 </form>
 
 <div id="uploadStatus"></div>
+<input type="file" id="fileInput" style="display:none" @change="previewImage()" />
+<div id="uploadStatus"></div>
+
+
+<a href="/venue/updateVenue">儲存變更</a>
+<a href="/venue/manageVenue">新增場地</a>
 
 <script>
     // 打開檔案上傳
@@ -149,6 +156,63 @@
         }
     }
 
+    // 上傳圖片的功能
+    function uploadFile() {
+        const fileInput = document.getElementById("fileInput");
+        const file = fileInput.files[0];
+
+        if (!file) {
+            alert("Please select a file to upload.");
+            return;
+        }
+
+        // 限制檔案類型
+        if (!isValidImageType(file.type)) {
+            alert("Only JPEG, PNG, and GIF files are allowed.");
+            return;
+        }
+
+        // 構建動態上傳的 URL
+        if (!window.currentRegionId) {
+            alert("Upload region not specified.");
+            return;
+        }
+        const { vneId, position } = window.currentRegionId;
+        const baseUrl = window.location.origin;
+        const UPLOAD_URL = `${baseUrl}/venue/images/upload/${vneId}/${position}`;
+
+        // 禁用上傳按鈕以防止重複提交
+        const uploadButton = window.currentSlideElement.querySelector('.upload-button');
+        uploadButton.disabled = true;
+
+        // 設置全域標記防止多次點擊
+        window.isUploading = true;
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        fetch(UPLOAD_URL, {
+            method: "POST",
+            body: formData,
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                document.getElementById("uploadStatus").innerText = "Upload Successful!";
+                // 隱藏 "確認上傳" 按鈕
+                uploadButton.style.display = 'none';
+            })
+            .catch((error) => {
+                console.error("Error uploading file:", error);
+                document.getElementById("uploadStatus").innerText = "Upload Failed!";
+                // 重新啟用上傳按鈕，允許重新嘗試
+                uploadButton.disabled = false;
+            })
+            .finally(() => {
+                // 重置全域標記
+                window.isUploading = false;
+            });
+    }
+
     // 驗證圖片檔案類型
     function isValidImageType(type) {
         const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
@@ -158,5 +222,7 @@
 
 <!-- 引入 Bootstrap JavaScript -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!--<script src="../js/uploadimg.js"></script>-->
 </body>
+
 </html>

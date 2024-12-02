@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -25,22 +27,23 @@ public class VneImgService {
     private VneImgUrlRepository vneImgUrlRepository;
 
     //使用url讓<img src>需要再請求
-    public VneImgPositionDTO getAllImg(Integer vneId) {
-        List<String> imageUrls = vneImgUrlRepository.findImageUrlsByVneId(vneId);
-
+    public List<String> getAllImgs(Integer vneId) {
+        List<VneImgUrl> imageData = vneImgUrlRepository.findImageUrlsByVneId(vneId);
+        List<String> imageUrls = new ArrayList<>();
         // 檢查返回的圖片列表是否為 null 或空集合
-        if (imageUrls != null && !imageUrls.isEmpty()) {
-            // 建立 VneImgPositionDTO 物件，並根據可用的圖片URL數量進行設置
-            VneImgPositionDTO.VneImgPositionDTOBuilder builder
-                    = VneImgPositionDTO.builder().vneId(vneId)
-                                                 .vneURL1(imageUrls.get(0));
-            if (imageUrls.size() > 1) {builder.vneURL2(imageUrls.get(1));}
-            if (imageUrls.size() > 2) {builder.vneURL3(imageUrls.get(2));}
-            return builder.build();
+        if (imageData != null && !imageData.isEmpty()) {
+            for (VneImgUrl vneImg : imageData) {
+                if(vneImg.getPosition() == imageUrls.size()+1) {
+                    imageUrls.add(vneImg.getImageUrl());
+                }else {
+                    imageUrls.add("public/venue/images/0_0.jpg");
+                    }
+            }
+            return imageUrls;
         }
-
-        // 如果 imageUrls 為 null 或空集合，返回一個包含預設值的 DTO
-        return VneImgPositionDTO.builder().vneId(vneId).build();
+        //Collections.nCopies(int i,T o)快速生成一個集合(但不可變動，可以用ArrayList包裝來調整)
+        List<String> defaultUrls = new ArrayList<>(Collections.nCopies(3, "public/venue/images/0_0.jpg"));
+        return defaultUrls;
     }
 
     public void updateVneImg(VneImgBytesDTO vneImgBytesDTO){
@@ -49,7 +52,7 @@ public class VneImgService {
         byte[] imageBytes = vneImgBytesDTO.getImageFile();
 
         // 檔案儲存路徑
-        String uploadDir = "public/uploads/venue/";//Dir=Directory（目錄）
+        String uploadDir = "src/main/resources/public/uploads/venue/";//Dir=Directory（目錄）
         String fileName = getFileName(vneId, position);
         String filePath = uploadDir + fileName;
 
@@ -113,7 +116,7 @@ public class VneImgService {
     }
 
     public String getFileName(Integer vneId, Integer position){
-        return "venue_" + vneId + "_position_" + position + ".jpg"; // 自定義檔案名稱，我想確保不需要多存
+        return  vneId + "_" + position + ".jpg"; // 自定義檔案名稱，我想確保不需要多存
     }
     public String getAssetPath(Integer vneId, Integer position){
         return "/uploads/venue/"+getFileName(vneId, position);

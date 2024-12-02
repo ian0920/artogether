@@ -34,11 +34,18 @@ public class TslotService {
             //如果沒找到提供一個全部開啟的預設表單
             Map<String, List<Integer>> AllWeekOpening = new HashMap<String,List<Integer>>();
             List<Integer> AllDayOpening = new ArrayList<>();
+            // 生成 1~24 的連續數字
             for(int i= 0; i< 24; i++){
                 AllDayOpening.add(i);
             }
+            //有空再看看這樣也行
+//            List<Integer> allDayOpening = IntStream.rangeClosed(1, 24)
+//                    .boxed()
+//                    .collect(Collectors.toList());
+
             for (DayOfWeek day : DayOfWeek.values()) {
-                AllWeekOpening.put(day.name(), AllDayOpening);
+                //讓每個有獨立的
+                AllWeekOpening.put(day.name(),AllDayOpening);
             }
             return AllWeekOpening;
         }else {

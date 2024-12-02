@@ -43,9 +43,9 @@
     function uploadApp() {
         return {
             uploads: [
-                { file: null, status: '未上傳', url: '/venue/manageImg', vneId: 1, position: 1 },
-                { file: null, status: '未上傳', url: '/venue/manageImg', vneId: 1, position: 2 },
-                { file: null, status: '未上傳', url: '/venue/manageImg', vneId: 1, position: 3 }
+                { file: null, status: '未上傳', url: '/venue/updateImg', vneId: 1, position: 1 },
+                { file: null, status: '未上傳', url: '/venue/updateImg', vneId: 1, position: 2 },
+                { file: null, status: '未上傳', url: '/venue/updateImg', vneId: 1, position: 3 }
             ],
 
             handleFileChange(event, index) {
@@ -53,9 +53,12 @@
                 if (file) {
                     this.uploads[index].file = file;
                     this.uploads[index].status = '已選擇檔案';
+
+            console.log(event.target.files);
+            console.log(event.target.files[0]);
+            console.log(this.uploads[index]);
                 }
             },
-
             async confirmUpload(index) {
                 const upload = this.uploads[index];
                 if (upload.file) {
@@ -70,6 +73,8 @@
             // 創建表單資料
             const formData = new FormData();
             formData.append('file', upload.file);
+            formData.append('vneId',upload.vneId);
+            formData.append('position',upload.position);
 
             // 更新狀態
             this.uploads[index].status = '上傳中...';
