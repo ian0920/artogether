@@ -1,0 +1,43 @@
+<!--如果沒有任何修改無法點擊 '確認更新'」的功能-->
+<div x-data="updateForm()" class="form-container">
+    <form>
+        <label>
+            名稱:
+            <input type="text" x-model="formData.name" placeholder="輸入名稱" />
+        </label>
+        <label>
+            地址:
+            <input type="text" x-model="formData.address" placeholder="輸入地址" />
+        </label>
+        <button type="button" :disabled="!isModified" @click="submitForm()">確認更新</button>
+    </form>
+</div>
+
+<script>
+    function updateForm() {
+        return {
+            // 原始的基礎資料（例如從後端返回的預設值）
+            originalData: {
+                name: '舊名稱',
+                address: '舊地址',
+            },
+            // 可編輯的表單資料
+            formData: {
+                name: '舊名稱',
+                address: '舊地址',
+            },
+            // 檢查是否有修改
+            get isModified() {
+                return JSON.stringify(this.formData) !== JSON.stringify(this.originalData);
+            },
+            submitForm() {
+                // 提交表單的邏輯
+                console.log('提交表單:', this.formData);
+            },
+        };
+    }
+</script>
+<!--originalData: 保存原始的基礎資料（例如，從後端加載的初始值）。-->
+<!--formData: 用來綁定表單的當前輸入值。-->
+<!--isModified: 一個計算屬性，檢查 formData 和 originalData 是否相同，利用 JSON.stringify 簡單地進行深層比較。-->
+<!--:disabled 屬性: 綁定到 isModified，如果資料沒有變化，按鈕就會被禁用。-->

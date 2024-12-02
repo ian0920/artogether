@@ -396,9 +396,9 @@ CREATE TABLE vne_price (
     id INT NOT NULL AUTO_INCREMENT,
     vne_id INT NOT NULL,
     defaul_price INT NOT NULL ,
-    price_tslot CHAR(24),
-    day_of_week CHAR(7),
     price INT,
+    day_of_week CHAR(7),
+    price_tslot CHAR(24),
     effective_time DATETIME,
     expiration_time DATETIME,
 

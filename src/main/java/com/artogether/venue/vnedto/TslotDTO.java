@@ -13,6 +13,7 @@ public class TslotDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Integer vneId;
+    private String vneName;
     private String hourOfMon;
     private String hourOfTue;
     private String hourOfWed;

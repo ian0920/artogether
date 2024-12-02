@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class VneCardDTO {
     private Integer vneId;
-    private String name;
+    private String vneName;
     private String vneAddress;
     //場地描述
     private String description;

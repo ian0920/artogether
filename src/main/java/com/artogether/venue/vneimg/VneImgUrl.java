@@ -28,8 +28,8 @@ public class VneImgUrl implements Serializable {
     private Venue venue;
 
     @NotEmpty
-    @Column(name = "image_file_url")
-    private String imageFileUrl;
+    @Column(name = "image_url")
+    private String imageUrl;
     //path
     private Integer position;
 
