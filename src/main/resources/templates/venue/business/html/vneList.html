@@ -4,13 +4,40 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <link rel="stylesheet" th:href="@{/web_design/style/style_business.css}" />
     <link
             href="https://fonts.googleapis.com/icon?family=Material+Icons"
             rel="stylesheet"
     />
+    <link rel="stylesheet" th:href="@{/web_design/style/style_general.css}" />
+    <link rel="stylesheet" th:href="@{/web_design/style/style_homepage.css}" />
 </head>
 <body>
+<script>
+    function handleData() {
+        return {
+            vneList: [],
+            isError: false,
+            fetchData() {
+                $.ajax({
+                  url: '/test',
+                  method: "GET",
+                  dataType: "json",
+                  success: (data) => {
+                    console.log(data);
+                    this.vneList = data;
+                  },
+                  error: (xhr, status, error) => {
+                    console.log('Fail');
+                    this.isError = true;
+                  }
+                });
+            },
+        }
+    }
+</script>
 <div class="bs-navbar">
     <div class="bs-navbar-main">
         <div class="bs-navbar-logo">
@@ -71,32 +98,36 @@
 </div>
 
 <!-- 場地概覽 -->
-<section class="sec-showcase showcase-venue normal-width">
-    <div class="showcase-cards-box" th:each="vneCardDTO: ${vneCardDTOs}">
-        <div clickable class="showcase-card card venue">
-            <img th:src="${vneCardDTO.vneImgUrl}" alt="" />
-            <div class="card-content">
-                <div class="card-title">
-                    <div class="tag venue">場地</div>
-                    <h3 class="card-title-text" th:text="vneCardDTO.vneName">
-                        夭壽讚讚讚讚讚讚讚讚讚讚讚讚讚讚讚讚的場地
-                    </h3>
-                </div>
-                <div class="card-info">
-                    <p th:text="vneCardDTO.description">一段小小小小小小小小小小小小小小小小小小小小簡介</p>
-                </div>
-                <div class="tags-box">
-                    <div class="tag plain-tag">
-                        <span class="material-icons">location_on</span>台北市
-                    </div>
-                    <div class="tag plain-tag">
-                        <span class="material-icons">schedule</span>08:00-17:00
+<span x-data="handleData()" x-init="fetchData">
+    <section class="sec-showcase showcase-venue normal-width">
+        <template x-for="vne in vneList" :key="vne.vneId">
+            <div class="showcase-cards-box">
+                <div clickable class="showcase-card card venue">
+                    <img :src="vne.vneImgUrl" alt="" />
+                    <div class="card-content">
+                        <div class="card-title">
+                            <div class="tag venue">場地</div>
+                            <h3 class="card-title-text" x-text="vne.vneName">
+                            </h3>
+                        </div>
+                        <div class="card-info">
+                            <p x-text="vne.description"></p>
+                        </div>
+                        <div class="tags-box">
+                            <div class="tag plain-tag">
+                                <span class="material-icons">location_on</span>台北市
+                            </div>
+                            <div class="tag plain-tag">
+                                <span class="material-icons">schedule</span>08:00-17:00
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-</section>
+        </template>
+    </section>
+</span>
+
 
 <script>
     // 設定最下方的user control菜單收合
