@@ -2,6 +2,8 @@ package com.artogether.product.prd_coup;
 
 import com.artogether.common.business_member.BusinessMember;
 import com.artogether.product.my_prd_coup.MyPrdCoup;
+
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,6 +11,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
 import java.util.Set;
 
 
@@ -19,14 +22,14 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PrdCoup {
-
+   
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id", updatable = false)
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "business_id", referencedColumnName = "id")
+	@JoinColumn(name ="business_id", referencedColumnName ="id")
 	private BusinessMember businessMember;
 
 	@Column(name = "prd_coup_name")
