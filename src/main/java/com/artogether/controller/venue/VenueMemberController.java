@@ -1,4 +1,4 @@
-package com.artogether.controller;
+package com.artogether.controller.venue;
 
 import com.artogether.venue.venue.VenueService;
 import com.artogether.venue.vnedto.VneDetailDTO;

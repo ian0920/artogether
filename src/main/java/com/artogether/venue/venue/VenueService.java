@@ -2,12 +2,10 @@ package com.artogether.venue.venue;
 
 import com.artogether.common.business_member.BusinessMember;
 import com.artogether.common.business_member.BusinessMemberRepo;
+import com.artogether.common.business_member.BusinessService;
 import com.artogether.venue.vnedto.VneCardDTO;
 import com.artogether.venue.vnedto.VneDetailDTO;
-import com.artogether.venue.vneimg.VneImg;
-import com.artogether.venue.vneimg.VneImgRepository;
-import com.artogether.venue.vneimg.VneImgService;
-import com.artogether.venue.vneimg.VneImgUrlRepository;
+import com.artogether.venue.vneimg.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +30,6 @@ public class VenueService {
 
     //創建場地
     public Integer creatVenue(VneDetailDTO vneDetailDTO, Integer businessId) {
-
         String name = vneDetailDTO.getVneName();
         String type = vneDetailDTO.getType();
         String description = vneDetailDTO.getDescription();
@@ -122,12 +119,16 @@ public class VenueService {
             if (description != null) {
                 vneCardDTO.setDescription(description);
             }
-            String imgUrl = vneImgUrlRepository.findImageUrlByVenueIdAndPosition(venue.getId(),1);
-            if (imgUrl != null) {
-            vneCardDTO.setVneImgUrl(imgUrl);
-            }else {
-                vneCardDTO.setVneImgUrl("public/venue/images/0_0.jpg");
-            }
+            Optional<VneImgUrl> vneImgUrlOptional = vneImgUrlRepository.findByVenueIdAndPosition(venue.getId(),1);
+            vneImgUrlOptional.ifPresent(vneImgUrl -> {
+                String imgUrl = vneImgUrl.getImageUrl();
+                    if (imgUrl != null) {
+                        vneCardDTO.setVneImgUrl(imgUrl);
+                    } else {
+                        vneCardDTO.setVneImgUrl("public/venue/images/0_0.jpg");
+                    }
+                }
+            );
             vneCardDTOs.add(vneCardDTO);
         }
         return vneCardDTOs;
@@ -135,27 +136,28 @@ public class VenueService {
 
     //首頁卡片
     public VneCardDTO getVenue(Integer vneId) {
-        VneCardDTO vneCardDTO = null;
-
-        Optional<Venue> venueOptional = venueRepository.findById(vneId);
-        if (venueOptional.isPresent()) {
-            Venue venue = venueOptional.get();
-            Optional<BusinessMember> businessMemberOptional = businessMemberRepo.findById(venue.getBusinessMember().getId());
-            if (businessMemberOptional.isPresent()) {
-                BusinessMember businessMember = businessMemberOptional.get();
-
-                vneCardDTO.setVneId(vneId);
-                vneCardDTO.setVneName(venue.getName());
-                vneCardDTO.setVneAddress(businessMember.getAddr());
-                vneCardDTO.setDescription(venue.getDescription());
-
-                Optional<VneImg> vneImgOptional = vneImgRepository.findByVenueIdAndPosition(vneId, 1);
-                if (vneImgOptional.isPresent()) {
-                    VneImg vneImg = vneImgOptional.get();
-
-                    vneCardDTO.setVneImgUrl(vneImgService.getAssetPath(~vneId, vneImg.getPosition()));
-                    return vneCardDTO;
+        VneCardDTO vneCardDTO = new VneCardDTO();
+        Venue venue = venueRepository.findById(vneId).get();
+        vneCardDTO.setVneId(venue.getId());
+        vneCardDTO.setVneName(venue.getName());
+        vneCardDTO.setVneAddress(venue.getBusinessMember().getAddr());
+        String description = venue.getDescription();
+        if (description != null) {
+        vneCardDTO.setDescription(description);
+        }
+        Optional<VneImgUrl> vneImgOptional = vneImgUrlRepository.findByVenueIdAndPosition(vneId, 1);
+        vneImgOptional.ifPresent(
+                vneImgUrl -> {
+                    String imgUrl = vneImgUrl.getImageUrl();
+                    if (imgUrl != null) {
+                        vneCardDTO.setVneImgUrl(imgUrl);
+                    } else {
+                        vneCardDTO.setVneImgUrl("public/venue/images/0_0.jpg");
+                    }
                 }
+        );
+
+
 
             }
         }

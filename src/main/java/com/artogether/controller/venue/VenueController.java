@@ -1,24 +1,19 @@
-package com.artogether.controller;
+package com.artogether.controller.venue;
 
 import com.artogether.common.business_member.BusinessMember;
 import com.artogether.venue.venue.VenueService;
 import com.artogether.venue.vnedto.*;
 import com.artogether.venue.tslot.TslotService;
 import com.artogether.venue.vneimg.VneImgService;
-import com.artogether.venue.vneprice.VnePrice;
 import com.artogether.venue.vneprice.VnePriceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -78,11 +73,11 @@ public class VenueController {
     }
 
     //調整場地的頁面
-    @GetMapping("/manageVenue")
+    @GetMapping("/manageVenue/{vneId}")
     public String getVenueAndImg (@RequestParam("vneId") Integer vneId, Model model) {
         VneDetailDTO vneDetailDTO = venueService.getDetailVenue(vneId);
         model.addAttribute("vneDetail", vneDetailDTO);
-        return "/venue/business/html/manageVenue";
+        return "/venue/business/html/vneList1";
     }
     //修改場地內容
     @PostMapping("/updateVenue")

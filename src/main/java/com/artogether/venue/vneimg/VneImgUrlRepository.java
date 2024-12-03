@@ -13,6 +13,6 @@ public interface VneImgUrlRepository extends JpaRepository<VneImgUrl, Integer> {
     List<VneImgUrl> findImageUrlsByVneId(Integer vneId);
     List<VneImgUrl> findAllByVenueId(Integer vneId);
     @Query(value = "SELECT image_url FROM vne_img WHERE vne_id = ?1 and position = ?2", nativeQuery = true)
-    String findImageUrlByVenueIdAndPosition(Integer vneId, Integer position);
+    Optional<VneImgUrl> findByVenueIdAndPosition(Integer vneId, Integer position);
     Boolean existsByVenueIdAndPosition(Integer vneId, Integer position);
 }
