@@ -45,7 +45,6 @@ public class VenueController {
     @PostMapping("/createVenue")
     public String createVenue(@ModelAttribute VneDetailDTO vneDetailDTO, HttpSession session) {
         BusinessMember businessMember = (BusinessMember) session.getAttribute("presentBusinessMember");
-//        int businessId = businessMember.getId();
         venueService.creatVenue(vneDetailDTO, businessMember);
         return "redirect:manageVenue";
     }
