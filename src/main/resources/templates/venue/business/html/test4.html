@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>照片上傳測試</title>
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .upload-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .upload-row input {
+            margin-right: 10px;
+        }
+        .upload-row button {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+<div x-data="uploadApp">
+    <!-- 三行上傳 -->
+    <template x-for="(upload, index) in uploads" :key="index">
+        <div class="upload-row">
+            <input type="file" x-ref="fileInput" @change="handleFileChange($event, index)">
+            <button @click="confirmUpload(index)">確認上傳</button>
+            <span x-text="upload.status"></span>
+        </div>
+    </template>
+
+    <!-- 一鍵上傳 -->
+    <button @click="uploadAll">一鍵上傳</button>
+</div>
+
+<script>
+    function uploadApp() {
+        return {
+            uploads: [
+                { file: null, status: '未上傳', url: '/venue/updateImg', vneId: 1, position: 1 },
+                { file: null, status: '未上傳', url: '/venue/updateImg', vneId: 1, position: 2 },
+                { file: null, status: '未上傳', url: '/venue/updateImg', vneId: 1, position: 3 }
+            ],
+
+            handleFileChange(event, index) {
+                const file = event.target.files[0];
+                if (file) {
+                    this.uploads[index].file = file;
+                    this.uploads[index].status = '已選擇檔案';
+
+            console.log(event.target.files);
+            console.log(event.target.files[0]);
+            console.log(this.uploads[index]);
+                }
+            },
+            async confirmUpload(index) {
+                const upload = this.uploads[index];
+                if (upload.file) {
+                    // 模擬上傳過程
+                    setTimeout(() => {
+                        this.uploads[index].status = '上傳完成';
+                    }, 1000);
+                    upload.status = '上傳中...';
+                } else {
+                    alert(`第 ${index + 1} 行尚未選擇檔案`);
+                }
+            // 創建表單資料
+            const formData = new FormData();
+            formData.append('file', upload.file);
+            formData.append('vneId',upload.vneId);
+            formData.append('position',upload.position);
+
+            // 更新狀態
+            this.uploads[index].status = '上傳中...';
+
+            try {
+                // 發送請求
+                const response = await fetch(upload.url, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+            this.uploads[index].status = '上傳完成';
+        } else {
+            throw new Error(`上傳失敗 (狀態碼: ${response.status})`);
+        }
+    } catch (error) {
+            this.uploads[index].status = `上傳失敗: ${error.message}`;
+        }
+    },
+
+            uploadAll() {
+                this.uploads.forEach((upload, index) => {
+                    if (upload.file) {
+                        // 模擬按下確認上傳按鈕
+                        this.confirmUpload(index);
+                    }
+                });
+            }
+        };
+    }
+</script>
+</body>
+</html>

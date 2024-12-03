@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class TslotService {
@@ -27,6 +27,68 @@ public class TslotService {
         tslotViewService.createTslotScheduleView();
     }
 
+
+    public Map<String, List<Integer>> getWeeklyTslots(Integer vneId, LocalDateTime submissionTime) {
+        Tslot tslot = tslotRepository.getNearestPastRecord(submissionTime);
+        if (tslot == null) {
+            //如果沒找到提供一個全部開啟的預設表單
+            Map<String, List<Integer>> AllWeekOpening = new HashMap<String,List<Integer>>();
+            List<Integer> AllDayOpening = new ArrayList<>();
+            // 生成 1~24 的連續數字
+            for(int i= 0; i< 24; i++){
+                AllDayOpening.add(i);
+            }
+            //有空再看看這樣也行
+//            List<Integer> allDayOpening = IntStream.rangeClosed(1, 24)
+//                    .boxed()
+//                    .collect(Collectors.toList());
+
+            for (DayOfWeek day : DayOfWeek.values()) {
+                //讓每個有獨立的
+                AllWeekOpening.put(day.name(),AllDayOpening);
+            }
+            return AllWeekOpening;
+        }else {
+            //如果有找到，找出一個符合當時設定的行事曆
+            Map<String, List<Integer>> weeklyTslots = new HashMap<String,List<Integer>>();
+            // 遍歷一周的每一天
+            //for-each還不熟多用，前面是要撈的東西，後面是集合或數組
+            //values() 是所有枚舉類型的靜態方法，返回一個包含所有枚舉常量的數組。
+            for (DayOfWeek day : DayOfWeek.values()) {
+                List<Integer> daylyTslots = getDaylyTslotsByDay(tslot, day);
+                //枚舉類有靜態方法".name()"回傳String
+                weeklyTslots.put(day.name(), daylyTslots);
+            }
+            return weeklyTslots;
+        }
+    }
+
+    private List<Integer> getDaylyTslotsByDay(Tslot tslot, DayOfWeek day) {
+        String hourOfDay;
+        //這邊不用".name()"是因為"switch"支持枚舉類
+        switch (day) {
+            case MONDAY -> hourOfDay = tslot.getHourOfMon();
+            case TUESDAY -> hourOfDay = tslot.getHourOfTue();
+            case WEDNESDAY -> hourOfDay = tslot.getHourOfWed();
+            case THURSDAY -> hourOfDay = tslot.getHourOfThu();
+            case FRIDAY -> hourOfDay = tslot.getHourOfFri();
+            case SATURDAY -> hourOfDay = tslot.getHourOfSat();
+            case SUNDAY -> hourOfDay = tslot.getHourOfSun();
+            default -> throw new IllegalArgumentException("Invalid day of the week");
+        }
+        return getDaylyTslots(hourOfDay);
+    }
+
+    //把二元字串轉成陣列
+    public List<Integer> getDaylyTslots(String hoursOfDay) {
+        List<Integer> daylyTslots = new ArrayList<>();
+        for (int i= 0; i < hoursOfDay.length(); i++) {
+            if (hoursOfDay.charAt(i) == '1') {
+                daylyTslots.add(i);
+            }
+        }
+        return daylyTslots;
+    }
 
     // 創建或更新時段
     @Transactional

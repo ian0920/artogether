@@ -16,7 +16,7 @@ public class VneImgPositionDTO implements Serializable {
 
     private Integer vneId;
     //"static/web_design/asset/images/placeholder.jpg"
-    private String vneURL1 = "public/venue/images/venue_0_position_0.jpg";
-    private String vneURL2 = "public/venue/images/venue_0_position_0.jpg";
-    private String vneURL3 = "public/venue/images/venue_0_position_0.jpg";
+    private String vneURL1 = "public/venue/images/0_0.jpg";
+    private String vneURL2 = "public/venue/images/0_0.jpg";
+    private String vneURL3 = "public/venue/images/0_0.jpg";
 }
