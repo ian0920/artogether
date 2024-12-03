@@ -29,14 +29,15 @@ public class VenueService {
     private VneImgUrlRepository vneImgUrlRepository;
 
     //創建場地
-    public Integer creatVenue(VneDetailDTO vneDetailDTO, Integer businessId) {
-        String name = vneDetailDTO.getVneName();
+    public Integer creatVenue(VneDetailDTO vneDetailDTO, BusinessMember businessMember) {
+        String name = vneDetailDTO.getName();
         String type = vneDetailDTO.getType();
         String description = vneDetailDTO.getDescription();
         Integer availableDays = vneDetailDTO.getAvailableDays();
 
         Venue venue = Venue.builder()
                       .name(name)
+                .businessMember(businessMember)
                       .type(type)
                       .availableDays(availableDays)
                       .build();
@@ -52,7 +53,7 @@ public class VenueService {
 //        Venue venue = Venue.builder().id(vneId).name(name).type(type).description(description).availableDays(availableDays).build();
 //        venueRepository.save(venue);
         Venue venue = venueRepository.findById(vneId).get();
-        String name = vneDetailDTO.getVneName();
+        String name = vneDetailDTO.getName();
         String type = vneDetailDTO.getType();
         String description = vneDetailDTO.getDescription();
         Integer availableDays = vneDetailDTO.getAvailableDays();
@@ -75,7 +76,7 @@ public class VenueService {
     public VneDetailDTO getDetailVenue(Integer vneId) {
         Venue venue = venueRepository.findById(vneId).get();
         VneDetailDTO vneDetailDTO = VneDetailDTO.builder()
-                .vneName(venue.getName())
+                .name(venue.getName())
                 .vneAddress(businessMemberRepo.findById(venue.getBusinessMember().getId()).get().getAddr())
                 .type(venue.getType())
                 .availableDays(venue.getAvailableDays())
@@ -119,7 +120,7 @@ public class VenueService {
             if (description != null) {
                 vneCardDTO.setDescription(description);
             }
-            Optional<VneImgUrl> vneImgUrlOptional = vneImgUrlRepository.findByVenueIdAndPosition(venue.getId(),1);
+            Optional<VneImgUrl> vneImgUrlOptional = vneImgUrlRepository.findByVenue_IdAndPosition(venue.getId(),1);
             vneImgUrlOptional.ifPresent(vneImgUrl -> {
                 String imgUrl = vneImgUrl.getImageUrl();
                     if (imgUrl != null) {
@@ -145,7 +146,7 @@ public class VenueService {
         if (description != null) {
         vneCardDTO.setDescription(description);
         }
-        Optional<VneImgUrl> vneImgOptional = vneImgUrlRepository.findByVenueIdAndPosition(vneId, 1);
+        Optional<VneImgUrl> vneImgOptional = vneImgUrlRepository.findByVenue_IdAndPosition(vneId, 1);
         vneImgOptional.ifPresent(
                 vneImgUrl -> {
                     String imgUrl = vneImgUrl.getImageUrl();
@@ -156,11 +157,6 @@ public class VenueService {
                     }
                 }
         );
-
-
-
-            }
-        }
     return vneCardDTO;
     }
 // 水好深阿...lambda還沒看

@@ -30,54 +30,32 @@ public class VenueController {
     @Autowired
     private VenueService venueService;
 
-//    //若有之前檔案的話修改時會秀出來
-//    @ModelAttribute("weeklyTslots")
-//    public Map<String, List<Integer>> prepareWeeklyTslots(@RequestParam("vneId") Integer vneId) {
-//        LocalDateTime now = LocalDateTime.now();
-//        return tslotService.getWeeklyTslots(vneId, now);
-//    }
-//    //若有之前檔案的話修改時會秀出來
-//    @ModelAttribute("vnePriceData")
-//    public VnePriceDTO prepareVnePriceData(@RequestParam("vneId") Integer vneId) {
-//        LocalDateTime now = LocalDateTime.now();
-//        VnePriceDTO vnePriceDTO = vnePriceService.getNearestVnePrice(vneId, now);
-//        return vnePriceDTO;
-//    }
-//    @ModelAttribute("venueDetail")
-//    public VneDetailDTO getVenueDetail(@RequestParam ("vneId") int vneId) {
-//        VneDetailDTO vneDetailDTO = venueService.getDetailVenue(vneId);
-//        return vneDetailDTO;
-//    }
-
     //店家場地總覽
     @GetMapping("/vneList")
-    public String vneList(Model model, HttpSession session) {
-        BusinessMember businessMember = (BusinessMember) session.getAttribute("presentBusinessMember");
-        int businessId = businessMember.getId();
-        List<VneCardDTO> vneCardDTOs = venueService.bizVneList(businessId);
-        model.addAttribute("vneCardDTOs", vneCardDTOs);
+    public String vneList() {
+        //交給Ajax->/vneBiz/vneList
         return "venue/business/html/vneList";
     }
     //新增場地頁面
     @GetMapping("/addVenue")
-    public String addVenue(Model model) {
+    public String addVenue() {
         return "/venue/business/html/addVenue";
     }
     //創建新場地
     @PostMapping("/createVenue")
     public String createVenue(@ModelAttribute VneDetailDTO vneDetailDTO, HttpSession session) {
         BusinessMember businessMember = (BusinessMember) session.getAttribute("presentBusinessMember");
-        int businessId = businessMember.getId();
-        venueService.creatVenue(vneDetailDTO, businessId);
+//        int businessId = businessMember.getId();
+        venueService.creatVenue(vneDetailDTO, businessMember);
         return "redirect:manageVenue";
     }
 
     //調整場地的頁面
-    @GetMapping("/manageVenue/{vneId}")
+    @GetMapping("/manageVenue")
     public String getVenueAndImg (@RequestParam("vneId") Integer vneId, Model model) {
         VneDetailDTO vneDetailDTO = venueService.getDetailVenue(vneId);
         model.addAttribute("vneDetail", vneDetailDTO);
-        return "/venue/business/html/vneList1";
+        return "example";
     }
     //修改場地內容
     @PostMapping("/updateVenue")

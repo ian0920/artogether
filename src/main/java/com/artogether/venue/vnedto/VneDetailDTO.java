@@ -17,7 +17,7 @@ import java.util.List;
 public class VneDetailDTO {
     @NotEmpty(message="場地名稱: 請勿空白")
     @Pattern(regexp = "^[(\u4e00-\u9fa5)(a-zA-Z0-9_)]{2,10}$", message = "場地名稱: 只能是中、英文字母、數字和_ , 且長度必需在2到10之間")
-    private String vneName;
+    private String name;
 //    private BusinessMember businessMember;
     private String vneAddress;
     //場地類別描述
