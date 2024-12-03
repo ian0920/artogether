@@ -19,8 +19,6 @@ import java.util.List;
 @Service
 public class VneImgService {
 
-    @Autowired
-    private VneImgRepository vneImgRepository;
     @Resource
     RedisTemplate<String, byte[]> redisTemplate;
     @Autowired

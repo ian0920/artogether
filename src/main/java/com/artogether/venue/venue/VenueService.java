@@ -22,8 +22,6 @@ public class VenueService {
     @Autowired
     private BusinessMemberRepo businessMemberRepo;
     @Autowired
-    private VneImgRepository vneImgRepository;
-    @Autowired
     private VneImgService vneImgService;
     @Autowired
     private VneImgUrlRepository vneImgUrlRepository;
@@ -47,6 +45,7 @@ public class VenueService {
         venueRepository.save(venue);
         return venue.getId();
     }
+
     //場地資料更新
     public void updateVenue( Integer vneId, VneDetailDTO vneDetailDTO) {
 //        全部抓下來
@@ -91,6 +90,7 @@ public class VenueService {
         }
         return vneDetailDTO;
     }
+
     //商家場地總覽
     public List<VneCardDTO> bizVneList(Integer businessId) {
         List<Venue> venues = venueRepository.findByBusinessMember_Id(businessId);
@@ -100,6 +100,7 @@ public class VenueService {
         //        return o1.getId().compareTo(o2.getId());
         //    }
         //};
+
         //Lambda
         Comparator<Venue> comparator =((o1, o2) -> o1.getId().compareTo(o2.getId()));
         venues.sort(comparator);
