@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>有效優惠券</title>
+</head>
+<body>
+    <h1>有效優惠券</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>名稱</th>
+                <th>類型</th>
+                <th>狀態</th>
+                <th>有效期間</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="coupon : ${coupons}">
+                <td th:text="${coupon.id}"></td>
+                <td th:text="${coupon.name}"></td>
+                <td th:text="${coupon.type}"></td>
+                <td th:text="${coupon.status}"></td>
+                <td th:text="${coupon.startDate} + ' - ' + ${coupon.endDate}"></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

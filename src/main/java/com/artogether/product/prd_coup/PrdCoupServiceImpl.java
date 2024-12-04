@@ -2,7 +2,9 @@ package com.artogether.product.prd_coup;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -12,133 +14,87 @@ public class PrdCoupServiceImpl implements PrdCoupService {
     private PrdCoupDao prdCoupDao;
 
     @Override
+    @Transactional
     public int addPrdCoup(PrdCoup prdCoup) {
-        try {
-            return prdCoupDao.add(prdCoup); // 調用 DAO 的新增方法
-        } catch (Exception e) {
-            e.printStackTrace();
-            return -1; // 發生錯誤返回 -1
-        }
+        return prdCoupDao.add(prdCoup); // 調用 DAO 層新增方法
     }
 
     @Override
+    @Transactional
     public int updatePrdCoup(PrdCoup prdCoup) {
-        try {
-            return prdCoupDao.update(prdCoup); // 調用 DAO 的更新方法
-        } catch (Exception e) {
-            e.printStackTrace();
-            return -1; // 發生錯誤返回 -1
-        }
+        return prdCoupDao.update(prdCoup); // 調用 DAO 層更新方法
     }
 
     @Override
+    @Transactional
     public int deletePrdCoup(PrdCoup prdCoup) {
-        try {
-            return prdCoupDao.delete(prdCoup.getId()); // 調用 DAO 的刪除方法
-        } catch (Exception e) {
-            e.printStackTrace();
-            return -1; // 發生錯誤返回 -1
+        if (prdCoup.getId() == null) {
+            throw new IllegalArgumentException("ID 不能為空");
         }
+        return prdCoupDao.delete(prdCoup.getId()); // 調用 DAO 層刪除方法
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PrdCoup findCoupById(Integer id) {
-        try {
-            return prdCoupDao.findByPK(id); // 調用 DAO 的查詢方法
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null; // 查詢失敗返回 null
+        PrdCoup prdCoup = prdCoupDao.findByPK(id); // 調用 DAO 層查詢方法
+        if (prdCoup == null) {
+            throw new IllegalArgumentException("找不到 ID 為 " + id + " 的優惠券");
         }
+        return prdCoup;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<PrdCoup> getAllCoupons() {
-        try {
-            return prdCoupDao.getAll(); // 調用 DAO 查詢所有優惠券
-        } catch (Exception e) {
-            e.printStackTrace();
-            return List.of(); // 查詢失敗返回空列表
-        }
+        return prdCoupDao.getAll(); // 調用 DAO 層查詢所有優惠券
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<PrdCoup> findCouponsByBusinessId(Integer businessId) {
-        try {
-            return prdCoupDao.findByBusinessId(businessId); // 查詢特定商家的優惠券
-        } catch (Exception e) {
-            e.printStackTrace();
-            return List.of(); // 查詢失敗返回空列表
-        }
+        return prdCoupDao.findByBusinessId(businessId); // 調用 DAO 層查詢特定商家優惠券
     }
 
     @Override
-    public List<PrdCoup> findValidCoupons(LocalDateTime now) {
-        try {
-            return prdCoupDao.findValidCoupons(now); // 查詢有效的優惠券
-        } catch (Exception e) {
-            e.printStackTrace();
-            return List.of(); // 查詢失敗返回空列表
-        }
+    @Transactional(readOnly = true)
+    public List<PrdCoup> findValidCoupons(Date now) {
+        return prdCoupDao.findValidCoupons(now); // 調用 DAO 層查詢有效的優惠券
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<PrdCoup> findCouponsByCriteria(String name, Integer type, Integer status, Integer threshold) {
-        try {
-            return prdCoupDao.findCouponsByCriteria(name, type, status, threshold); // 根據條件查詢優惠券
-        } catch (Exception e) {
-            e.printStackTrace();
-            return List.of(); // 查詢失敗返回空列表
-        }
+        return prdCoupDao.findCouponsByCriteria(name, type, status, threshold); // 調用 DAO 層查詢符合條件的優惠券
     }
 
     @Override
-    public List<PrdCoup> findCouponsExpiringSoon(LocalDateTime now, Integer days) {
-        try {
-            return prdCoupDao.findCouponsExpiringSoon(now, days); // 查詢快過期的優惠券
-        } catch (Exception e) {
-            e.printStackTrace();
-            return List.of(); // 查詢失敗返回空列表
-        }
+    @Transactional(readOnly = true)
+    public List<PrdCoup> findCouponsExpiringSoon(Date now, Integer days) {
+        return prdCoupDao.findCouponsExpiringSoon(now, days); // 調用 DAO 層查詢快過期的優惠券
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<PrdCoup> findCouponsByStatus(Integer status) {
-        try {
-            return prdCoupDao.findCouponsByStatus(status); // 根據狀態查詢優惠券
-        } catch (Exception e) {
-            e.printStackTrace();
-            return List.of(); // 查詢失敗返回空列表
-        }
+        return prdCoupDao.findCouponsByStatus(status); // 調用 DAO 層查詢特定狀態的優惠券
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<PrdCoup> findCouponsByType(Integer type) {
-        try {
-            return prdCoupDao.findCouponsByType(type); // 根據類型查詢優惠券
-        } catch (Exception e) {
-            e.printStackTrace();
-            return List.of(); // 查詢失敗返回空列表
-        }
+        return prdCoupDao.findCouponsByType(type); // 調用 DAO 層查詢特定類型的優惠券
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<PrdCoup> findCouponsByMultipleCriteria(Integer status, Integer type, Integer threshold) {
-        try {
-            return prdCoupDao.findCouponsByMultipleCriteria(status, type, threshold); // 根據條件組合查詢
-        } catch (Exception e) {
-            e.printStackTrace();
-            return List.of(); // 查詢失敗返回空列表
-        }
+        return prdCoupDao.findCouponsByMultipleCriteria(status, type, threshold); // 調用 DAO 層條件組合查詢優惠券
     }
 
     @Override
-    public List<PrdCoup> findActiveCoupons(LocalDateTime currentDate) {
-        try {
-            return prdCoupDao.findActiveCoupons(currentDate); // 查詢有效期間內的優惠券
-        } catch (Exception e) {
-            e.printStackTrace();
-            return List.of(); // 查詢失敗返回空列表
-        }
+    @Transactional(readOnly = true)
+    public List<PrdCoup> findActiveCoupons( Date currentDate) {
+        return prdCoupDao.findActiveCoupons(currentDate); // 調用 DAO 層查詢有效期間內的優惠券
     }
 }
-

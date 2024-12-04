@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
+import java.util.Date;
 import java.util.Set;
 
 
@@ -28,7 +28,7 @@ public class PrdCoup {
 	@Column(name="id", updatable = false)
 	private Integer id;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name ="business_id", referencedColumnName ="id")
 	private BusinessMember businessMember;
 
@@ -48,10 +48,10 @@ public class PrdCoup {
 	private  BigDecimal ratio;
 
 	@Column(name = "start_date")
-	private  LocalDateTime startDate;
+	private  Date  startDate;
 
 	@Column(name = "end_date")
-	private  LocalDateTime endDate;
+	private  Date endDate;
 
 	@Column(name = "duration")
 	private Integer duration;

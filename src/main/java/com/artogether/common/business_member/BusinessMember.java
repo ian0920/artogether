@@ -61,7 +61,7 @@ public class BusinessMember {
     private Set<Product> products;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "businessMember", cascade = CascadeType.ALL)
-    private Set<PrdCoup> prdCoup;
+    private Set<PrdCoup> prdCoups;
 
 
     /*    Venue    */

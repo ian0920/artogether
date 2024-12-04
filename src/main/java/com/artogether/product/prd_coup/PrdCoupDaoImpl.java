@@ -5,7 +5,9 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.time.LocalDateTime;
+
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -85,7 +87,7 @@ public class PrdCoupDaoImpl implements PrdCoupDao {
     }
 
     @Override
-    public List<PrdCoup> findValidCoupons(LocalDateTime now) {
+    public List<PrdCoup> findValidCoupons(Date now) {
         try {
             String hql = "FROM PrdCoup WHERE startDate <= :now AND endDate >= :now AND status = 1";
             return entityManager.createQuery(hql, PrdCoup.class)
@@ -134,12 +136,16 @@ public class PrdCoupDaoImpl implements PrdCoupDao {
     }
 
     @Override
-    public List<PrdCoup> findCouponsExpiringSoon(LocalDateTime now, Integer days) {
+    public List<PrdCoup> findCouponsExpiringSoon(Date now, Integer days) {
         try {
+        	Calendar calendar = Calendar.getInstance();
+            calendar.setTime(now);
+            calendar.add(Calendar.DAY_OF_MONTH, days);
+            Date endDate = calendar.getTime();
             String hql = "FROM PrdCoup WHERE endDate BETWEEN :now AND :end";
             return entityManager.createQuery(hql, PrdCoup.class)
                                 .setParameter("now", now)
-                                .setParameter("end", now.plusDays(days))
+                                .setParameter("end", endDate)
                                 .getResultList();
         } catch (Exception e) {
             e.printStackTrace();
@@ -204,7 +210,7 @@ public class PrdCoupDaoImpl implements PrdCoupDao {
     }
 
     @Override
-    public List<PrdCoup> findActiveCoupons(LocalDateTime currentDate) {
+    public List<PrdCoup> findActiveCoupons( Date currentDate) {
         try {
             String hql = "FROM PrdCoup WHERE startDate <= :currentDate AND endDate >= :currentDate AND status = 1";
             return entityManager.createQuery(hql, PrdCoup.class)

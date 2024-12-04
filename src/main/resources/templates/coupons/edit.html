@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>編輯優惠券</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        form {
+            width: 400px;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        input:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <form th:action="@{/coupons/update/{id}(id=${prdCoup.id})}" method="post">
+        <h1>編輯優惠券</h1>
+        <label>名稱：</label>
+        <input type="text" name="name" th:value="${prdCoup.name}" required />
+        <label>商家編號：</label>
+        <input type="text" name="name" th:value="${prdCoup.businessMember.id}" required />
+        <label>折扣類型：</label>
+        <input type="number" name="type" th:value="${prdCoup.type}" required />
+        <label>狀態：</label>
+        <input type="number" name="status" th:value="${prdCoup.status}" required />
+        <label>門檻：</label>
+        <input type="number" name="threshold" th:value="${prdCoup.threshold}" />
+        <label>開始日期：</label>
+        <input type="datetime-local" name="startDate" th:value="${#dates.format(prdCoup.startDate, 'yyyy-MM-dd HH:mm')}" />
+        <label>結束日期：</label>
+        <input type="datetime-local" name="endDate" th:value="${#dates.format(prdCoup.endDate, 'yyyy-MM-dd HH:mm')}" />
+        <button type="submit">更新</button>
+    </form>
+</body>
+</html>

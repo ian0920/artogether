@@ -13,4 +13,3 @@ public class PrdCoupViewController {
         return "PrdCoup/html/PrdCoup"; // 返回位於 templates/product/html/ 的 PrdCoup.html
     }
 }
-
