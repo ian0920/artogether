@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootstrap Carousel with Indicators</title>
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- 引入 Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<form action="/venue/createVenue" method="POST">
+    <h2>場地資料填寫</h2>
+
+    <!-- 場地名稱 -->
+    <div>
+        <label for="name">場地名稱:</label>
+        <input type="text" id="name" name="name" maxlength="100" required>
+    </div>
+
+    <!-- 場地類別描述 -->
+    <div>
+        <label for="type">場地類別描述:</label>
+        <select id="type" name="type">
+            <option value="indoor">戶外</option>
+            <option value="outdoor">室內</option>
+        </select>
+    </div>
+
+    <!-- 場地描述 -->
+    <div>
+        <label for="description">場地描述:</label>
+        <textarea id="description" name="description" maxlength="1000"></textarea>
+    </div>
+
+    <!-- 可容許預約天數 -->
+    <div>
+        <label for="availableDays">可容許預約天數:</label>
+        <select id="availableDays" name="availableDays" required>
+            <option value="14" selected>14天</option>
+            <option value="28" >28天</option>
+            <option value="42" >42天</option>
+            <option value="56" >56天</option>
+            <option value="84" >84天</option>
+        </select>
+    </div>
+
+    <!-- 提交按鈕 -->
+    <div>
+        <button type="submit">提交</button>
+    </div>
+</form>
+
+</body>
+</html>

@@ -7,12 +7,15 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@DynamicUpdate
 @Table(name = "evt_img")
-public class EvtImgVO {
+public class EvtImg {
 
 	@Id
 	@Column(name = "id")

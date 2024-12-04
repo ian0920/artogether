@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
@@ -55,12 +56,12 @@ public class BusinessMember {
 
     //以下為hibernate一對多設定
 
-    /*    Product    */
+//    /*    Product    */
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "businessMember", cascade = CascadeType.ALL)
     private Set<Product> products;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "businessMember", cascade = CascadeType.ALL)
-    private Set<PrdCoup> prdCoup;
+    private Set<PrdCoup> prdCoups;
 
 
     /*    Venue    */

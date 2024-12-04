@@ -1,6 +1,9 @@
 package com.artogether;
 
-import com.artogether.event.my_evt_coup.MyEvtCoupService;
+
+import com.artogether.common.member.MemberService;
+import com.artogether.venue.venue.VenueService;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -19,12 +22,13 @@ public class ArtogetherApplication {
     //以下為測試用
 
     @Bean
-    CommandLineRunner runner(MyEvtCoupService service){
+    CommandLineRunner runner(VenueService service){
         return args -> {
 
-//            service.getMyEvtCoupsByMemberIdAndEventId(1,1)
-//                    .forEach(coup -> System.out.println(coup.getEvtCoup().getEvtCoupName() + "" + coup.getStatus())
-//            );
+            System.out.println(service.getDetailVenue(1));
+//            System.out.println(service.getDetailVenue(1).getImgUrls());
+//            System.out.println(service.getDetailVenue(1).getAvailableDays());
+
         };
     }
 

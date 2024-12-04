@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>優惠券列表</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            text-align: center;
+        }
+        h1 {
+            color: #4CAF50;
+        }
+        a {
+            text-decoration: none;
+            color: #007BFF;
+        }
+        a:hover {
+            color: #0056b3;
+        }
+        .button-group {
+            display: flex;
+            justify-content: left;
+            width: 80%;
+            margin: 10px auto 20px auto; /* 與表格對齊 */
+            gap: 10px; /* 按鈕之間的間距 */
+        }
+        .button-group a {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 4px;
+            display: inline-block;
+            text-align: center;
+        }
+        .button-group a:hover {
+            background-color: #45a049;
+        }
+        table {
+            margin: 0 auto;
+            border-collapse: collapse;
+            width: 80%;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        button {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #cc0000;
+        }
+    </style>
+</head>
+<body>
+    <h1>優惠券列表</h1>
+    <div class="button-group">
+        <a href="/coupons/add">新增優惠券</a>
+        <a href="/coupons/search">搜尋優惠券</a>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>商家編號</th>
+                <th>名稱</th>             
+                <th>折扣類型</th>
+                <th>狀態</th>
+                <th>門檻</th>
+                <th>效期</th>
+                <th>適用期間(起)</th>
+                <th>適用期間(訖)</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="coupon : ${coupons}">
+                <td th:text="${coupon.id}"></td>
+                <td th:text="${coupon.businessMember.id}"></td>    
+                <td th:text="${coupon.name}"></td>
+                <td th:text="${coupon.type == 1 ? '金額折扣' : '比例折扣'}">金額折扣</td>
+                <td th:text="${coupon.status==0 ?'下架' : '上架'}"></td>
+                <td th:text="${coupon.threshold}"></td>
+                <td th:text="${coupon.duration}"></td>
+                <td th:text="${coupon.startDate}"></td>
+                <td th:text="${coupon.endDate}"></td>
+                <td>
+                    <a th:href="@{'/coupons/edit/' + ${coupon.id}}">編輯</a>
+                    <form th:action="@{'/coupons/delete/' + ${coupon.id}}" method="post" style="display: inline;">
+                        <button type="submit">刪除</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

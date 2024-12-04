@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" th:href="@{/web_design/style/style_business.css}" />
+    <link
+            href="https://fonts.googleapis.com/icon?family=Material+Icons"
+            rel="stylesheet"
+    />
+</head>
+<body>
+<div class="bs-navbar">
+    <div class="bs-navbar-main">
+        <div class="bs-navbar-logo">
+            <img src="../asset/images/ARTOGETHER.svg" alt="" />
+            <div id="div_back_to_homepage" class="link-button">
+                <a th:href="@{/business_logout}">返回首頁</a
+                ><span class="material-icons">exit_to_app</span>
+            </div>
+        </div>
+        <hr />
+        <nav>
+            <ul>
+                <li clickable class="bs-navbar-item -open">
+                    <span class="material-icons">storefront</span>
+                    <a href="#">商家基本資訊</a>
+                </li>
+                <li clickable class="bs-navbar-item">
+                    <span class="material-icons">inbox</span>
+                    <a href="#">收件匣</a>
+                </li>
+                <li clickable class="bs-navbar-item">
+                    <span class="material-icons">admin_panel_settings</span>
+                    <a href="#">管理員權限設定</a>
+                </li>
+            </ul>
+        </nav>
+        <hr />
+        <nav>
+            <ul>
+                <li clickable class="bs-navbar-item">
+                    <span class="material-icons">sell</span>
+                    <a href="#">商品管理</a>
+                </li>
+                <li clickable class="bs-navbar-item">
+                    <span class="material-icons">roofing</span>
+                    <a href="/venue/vneList">場地管理</a>
+                </li>
+                <li clickable class="bs-navbar-item">
+                    <span class="material-icons">local_activity</span>
+                    <a href="#">活動管理</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <div class="bs-navbar-user-control">
+        <div class="bs-navbar-user-menu -hidden" th:if="${businessMembers.size()>1}">
+            <div class="bs-navbar-user-item" th:each="businessMember: ${businessMembers}">
+                <div class="bs-navbar-user-exclude" th:if="${!businessMember.equals(#session.getAttribute('presentBusinessMember'))}">
+                    <div class="bs-navbar-user-thumbnail">
+                        <img src="../asset/images/bgimg.png" alt="" />
+                    </div >
+                    <div>
+                        <form th:action="@{/businessMemberSwitch}" method="post">
+                            <input type="hidden" name="switchTo" th:value="${businessMember.id}" />
+                            <button type="submit" th:text="${businessMember.name}"  ></button>
+                        </form>
+                    </div>
+                    <input type="radio" name="choose_business" id="" />
+                    <hr />
+                </div>
+            </div>
+        </div>
+        <div clickable class="bs-navbar-user-field">
+            <div class="bs-navbar-user-item">
+                <div class="bs-navbar-user-thumbnail">
+                    <img src="../asset/images/bgimg.png" alt="" />
+                </div>
+                <p th:text="${#session.getAttribute('presentBusinessMember').name}"></p>
+                <span class="material-icons unfold" id="icon_unfold"
+                >unfold_more</span
+                >
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="sec-showcase showcase-venue normal-width">
+    <div class="showcase-info-box">
+        <div class="showcase-info">
+            <h2 class="venue">優質場地</h2>
+        </div>
+        <div class="showcase-browse-all link-button">
+            <a href="/venue/recommend">查看更多</a>
+            <span class="material-icons">chevron_right</span>
+        </div>
+    </div>
+    <div class="showcase-cards-box">
+        <div clickable class="showcase-card card venue">
+            <img src="./asset/images/bgimg.png" alt="" />
+            <div class="card-content">
+                <div class="card-title">
+                    <div class="tag venue">場地</div>
+                    <h3 class="card-title-text">
+                        夭壽讚讚讚讚讚讚讚讚讚讚讚讚讚讚讚讚的場地
+                    </h3>
+                </div>
+                <div class="card-info">
+                    <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
+                </div>
+                <div class="tags-box">
+                    <div class="tag plain-tag">
+                        <span class="material-icons">location_on</span>台北市
+                    </div>
+                    <div class="tag plain-tag">
+                        <span class="material-icons">schedule</span>08:00-17:00
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div clickable class="showcase-card card venue">
+            <img src="./asset/images/bgimg.png" alt="" />
+            <div class="card-content">
+                <div class="card-title">
+                    <div class="tag venue">場地</div>
+                    <h3 class="card-title-text">
+                        夭壽讚讚讚讚讚讚讚讚讚讚讚讚讚讚讚讚的場地
+                    </h3>
+                </div>
+                <div class="card-info">
+                    <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
+                </div>
+                <div class="tags-box">
+                    <div class="tag plain-tag">
+                        <span class="material-icons">location_on</span>台北市
+                    </div>
+                    <div class="tag plain-tag">
+                        <span class="material-icons">schedule</span>08:00-17:00
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div clickable class="showcase-card card venue">
+            <img src="./asset/images/placeholder.jpg" alt="" />
+            <div class="card-content">
+                <div class="card-title">
+                    <div class="tag venue">場地</div>
+                    <h3 class="card-title-text">
+                        夭壽讚讚讚讚讚讚讚讚讚讚讚讚讚讚讚讚的場地
+                    </h3>
+                </div>
+                <div class="card-info">
+                    <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
+                </div>
+                <div class="tags-box">
+                    <div class="tag plain-tag">
+                        <span class="material-icons">location_on</span>台北市
+                    </div>
+                    <div class="tag plain-tag">
+                        <span class="material-icons">schedule</span>08:00-17:00
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // 設定最下方的user control菜單收合
+    var el_nav_user_control = document.querySelector(".bs-navbar-user-field");
+    el_nav_user_control.addEventListener("click", function () {
+        let el_nav_user_menu = document.querySelector(".bs-navbar-user-menu");
+        el_nav_user_menu.classList.toggle("-hidden");
+        let el_field_icon = document.querySelector(
+            ".bs-navbar-user-field #icon_unfold"
+        );
+        if (el_field_icon.classList.contains("unfold")) {
+            el_field_icon.classList.remove("unfold");
+            el_field_icon.innerHTML = "unfold_less";
+        } else {
+            el_field_icon.classList.add("unfold");
+            el_field_icon.innerHTML = "unfold_more";
+        }
+    });
+
+    // 設定nav-item的選取效果
+    var els_nav_item = document.querySelectorAll(".bs-navbar-item");
+    for (let i = 0; i < els_nav_item.length; i++) {
+        els_nav_item[i].addEventListener("click", function () {
+            els_nav_item.forEach((e) => e.classList.remove("-open"));
+            this.classList.add("-open");
+            // 觸發a tag點擊事件
+            this.lastElementChild.click();
+        });
+    }
+</script>
+</body>
+</html>

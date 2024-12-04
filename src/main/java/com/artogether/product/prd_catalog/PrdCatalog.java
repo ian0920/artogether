@@ -21,7 +21,9 @@ public class PrdCatalog {
 	@Column(name="id",updatable = false)
 	private Integer id;
 	
-	@OneToMany(mappedBy = "prdCatalogs", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+
+	@OneToMany(mappedBy = "prdCatalog", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+
 	@OrderBy("id asc")
 	private Set<Product> products;
 	

@@ -3,6 +3,7 @@ package com.artogether.product.cart.controller;
 import com.artogether.common.member.Member;
 import com.artogether.product.cart.model.Cart;
 import com.artogether.product.cart.model.CartService;
+import com.artogether.product.prd_coup.PrdCoup;
 import com.artogether.product.product.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -56,6 +57,30 @@ public class CartController {
     @PutMapping("/update")
     public Cart updateCart(@RequestBody Cart cart) {
         return cartService.updateCart(cart);
+    }
+
+    @GetMapping("/totalPrice/{memberId}")
+    public int totalPrice(@PathVariable Integer memberId) {
+        Member member = new Member();
+        member.setId(memberId);
+        return cartService.getTotalPriceInCart(member);
+    }
+
+    @GetMapping("/coupons/{memberId}")
+    public List<PrdCoup> getAvailableCoupons(@PathVariable Integer memberId) {
+        Member member = new Member();
+        member.setId(memberId);
+        return cartService.getMyPrdCoupByMember(member);
+    }
+
+    @GetMapping("/checkout/{memberId}")
+    public int checkoutWithCoupon(@PathVariable Integer memberId, @RequestParam Integer couponId) {
+        Member member = new Member();
+        member.setId(memberId);
+
+        PrdCoup prdCoup = new PrdCoup();
+        prdCoup.setId(couponId);
+        return cartService.finalPriceWithCoupon(member, prdCoup);
     }
 
 

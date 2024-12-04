@@ -1,26 +1,39 @@
 package com.artogether.product.cart.model;
 
 import com.artogether.common.member.Member;
+import com.artogether.product.my_prd_coup.MyPrdCoup;
+import com.artogether.product.my_prd_coup.MyPrdCoupDaoImpl;
+import com.artogether.product.my_prd_coup.MyPrdCoupRepository;
+import com.artogether.product.prd_coup.PrdCoup;
 import com.artogether.product.product.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CartService {
 
     private final CartRepository cartRepository;
+    private final MyPrdCoupRepository myPrdCoupRepository;
+    private final MyPrdCoupDaoImpl myPrdCoupDaoImpl;
 
     @Autowired
-    public CartService(CartRepository cartRepository) {
+    public CartService(CartRepository cartRepository, MyPrdCoupRepository myPrdCoupRepository, MyPrdCoupDaoImpl myPrdCoupDaoImpl) {
         this.cartRepository = cartRepository;
+        this.myPrdCoupRepository = myPrdCoupRepository;
+        this.myPrdCoupDaoImpl = myPrdCoupDaoImpl;
     }
 
     // 添加到購物車
     @Transactional
     public Cart addProductToCart(Member member, Product product, Integer qty){
+        if (member == null || product == null || qty == null || qty <= 0) {
+            throw new IllegalArgumentException("Invalid input for adding product to cart");
+        }
         Cart existingCart = cartRepository.findByProductAndMember(product, member);
         if(existingCart != null){
             existingCart.setQty(existingCart.getQty() + qty);
@@ -56,6 +69,50 @@ public class CartService {
     // 更新購物車
     public Cart updateCart(Cart cart){
         return cartRepository.save(cart);
+    }
+
+    // 計算購物車總金額
+    public int getTotalPriceInCart(Member member){
+        return cartRepository.findByMember(member).stream()
+                .mapToInt(cart -> cart.getProduct().getPrice() * cart.getQty())
+                .sum();
+    }
+
+        // 獲取會員可用優惠券
+    public List<PrdCoup> getMyPrdCoupByMember(Member member){
+        return myPrdCoupDaoImpl.findByMemberIdAndStatus(member.getId(), 0).stream()
+                .map(MyPrdCoup::getPrdCoup)
+                .filter(this::isAvailable)
+                .collect(Collectors.toList());
+
+    }
+
+
+    // 計算套用優惠券的最終金額
+    public int finalPriceWithCoupon(Member member, PrdCoup prdCoup) {
+        if (member == null || prdCoup == null) {
+            throw new IllegalArgumentException("Invalid member or coupon");
+        }
+
+        int totalPrice = getTotalPriceInCart(member);
+        if (!isAvailable(prdCoup)) {
+            throw new IllegalArgumentException("Coupon is not available");
+        }
+
+        int finalPrice = switch (prdCoup.getType()) {
+            case 1 -> totalPrice - prdCoup.getDeduction(); //固定金額
+            case 2 -> (int) (totalPrice * (100 - prdCoup.getRatio().doubleValue() / 100.0));
+            default -> throw new IllegalArgumentException("Unknown coupon type");
+        };
+        return Math.max(0, finalPrice);
+    }
+
+    // 檢查優惠券是否有效
+    private boolean isAvailable(PrdCoup prdCoup){
+        LocalDateTime now = LocalDateTime.now();
+        return prdCoup.getStatus() == 1 &&
+                (prdCoup.getStartDate() == null || !now.isBefore(prdCoup.getStartDate())) &&
+                (prdCoup.getEndDate() == null || now.isBefore(prdCoup.getEndDate()));
     }
 
 //    public int getTotalItemsInCart(Member member){
