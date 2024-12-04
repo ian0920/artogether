@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Objects;
 import java.util.Set;
 
 @Data
@@ -28,6 +29,7 @@ public class EvtCoup {
     private String evtCoupName;
 
     private Byte status;
+    //0→比例折扣 1→金額折扣
     private Byte type;
     private Integer deduction;
     private Double ratio;
@@ -42,6 +44,22 @@ public class EvtCoup {
     private Integer threshold;
 
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "evtCoup", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "evtCoup", cascade = CascadeType.ALL)
     private Set<MyEvtCoup> myEvtCoups;
+
+    public int hashCode() {
+        return Objects.hash(this.id);
+    }
+
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj != null && this.getClass() == obj.getClass()) {
+            EvtCoup that = (EvtCoup)obj;
+            return Objects.equals(this.id, that.id);
+        } else {
+            return false;
+        }
+    }
+
 }

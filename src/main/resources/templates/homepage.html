@@ -37,7 +37,7 @@
       <div class="thumbnail-box">
         <img src="./asset/images/bgimg.png" alt="" class="thumbnail" />
       </div>
-      <span id="user_name">Alice Wang</span>
+      <span id="user_name" th:if="${#ctx.session.getOrDefault('islogin',false)}"  th:text="${#ctx.session.memberObject == null? '' : #ctx.session.memberObject.name}"></span>
       <span class="material-icons"> arrow_drop_down </span>
     </div>
     <div th:unless="${#ctx.session.getOrDefault('islogin',false)}">
@@ -518,7 +518,7 @@
     <div class="thumbnail">
       <img src="./asset/images/bgimg.png" alt="" />
     </div>
-    <div class="user-info-text">Alice Wang</div>
+    <div class="user-info-text" th:if="${#ctx.session.getOrDefault('islogin',false)}"  th:text="${#ctx.session.memberObject == null? '' : #ctx.session.memberObject.name}">Alice Wang</div>
     <span class="material-icons">chevron_right</span>
   </div>
   <hr />

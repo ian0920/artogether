@@ -28,7 +28,7 @@ public class MyEvtCoup {
     @JoinColumn(name = "evt_coup_id", referencedColumnName = "id")
     private EvtCoup evtCoup;
 
-
+    //0→未使用(預設) 1→已使用
     private Byte status;
 
     @Column(name = "receive_date")

@@ -32,6 +32,7 @@ public class GeneralController {
 
     @RequestMapping("/")
     public String hello() {
+
         return "homepage";
     }
 
@@ -120,10 +121,11 @@ public class GeneralController {
         } else {
             session.setAttribute("islogin", true);
             session.setAttribute("member", find.getId());
+            session.setAttribute("memberObject", find);
         }
 
 
-        return errors.isEmpty() ? "redirect:/" : "frontend/login";
+        return errors.isEmpty() ? "homepage" : "frontend/login";
     }
 
     //一般會員登出
@@ -131,6 +133,7 @@ public class GeneralController {
     public String logout(HttpSession session) {
         session.removeAttribute("islogin");
         session.removeAttribute("member");
+        session.removeAttribute("memberObject");
         return "redirect:/";
     }
 
@@ -157,7 +160,7 @@ public class GeneralController {
 
             //將第一個商家作為預設登入的商家並寫入session
             session.setAttribute("presentBusinessMember", sortedBusinessMember.get(0));
-            model.addAttribute("businessMembers", sortedBusinessMember);
+            session.setAttribute("businessMembers", sortedBusinessMember);
         }
 
         return businessPerms.isEmpty() ? "redirect:/" : "homepage_business";
@@ -184,7 +187,7 @@ public class GeneralController {
 
             //將切換至的商家寫入session
             session.setAttribute("presentBusinessMember", switchToMember.get(0));
-            model.addAttribute("businessMembers", sortedBusinessMember);
+            session.setAttribute("businessMembers", sortedBusinessMember);
         }
 
         return "homepage_business";
@@ -193,6 +196,7 @@ public class GeneralController {
     @GetMapping({"business_logout"})
     public String businessLogout(HttpSession session) {
         session.removeAttribute("presentBusinessMember");
+        session.removeAttribute("businessMembers");
         return "redirect:/";
     }
 

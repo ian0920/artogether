@@ -35,4 +35,10 @@ public class MyEvtCoupService {
         repo.save(mec);
 
     }
+
+    //回傳該會員特定活動的優惠券
+    public List<MyEvtCoup> getMyEvtCoupsByMemberIdAndEventId(Integer memberId, Integer eventId) {
+        return repo.getMyEvtCoupsByMemberIdAndEventId(memberId, eventId);
+
+    }
 }

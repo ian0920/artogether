@@ -1,7 +1,9 @@
 package com.artogether;
 
+
 import com.artogether.common.member.MemberService;
 import com.artogether.venue.venue.VenueService;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,6 +28,7 @@ public class ArtogetherApplication {
             System.out.println(service.getDetailVenue(1));
 //            System.out.println(service.getDetailVenue(1).getImgUrls());
 //            System.out.println(service.getDetailVenue(1).getAvailableDays());
+
         };
     }
 
