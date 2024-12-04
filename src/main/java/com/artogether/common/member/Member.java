@@ -3,7 +3,6 @@ package com.artogether.common.member;
 import com.artogether.common.business_perm.BusinessPerm;
 import com.artogether.common.platform_msg.Platform_msg;
 import com.artogether.event.evt_order.EvtOrder;
-import com.artogether.event.evt_track.EvtTrackVO;
 import com.artogether.event.my_evt_coup.MyEvtCoup;
 import com.artogether.product.cart.model.Cart;
 import com.artogether.product.my_prd_coup.MyPrdCoup;
@@ -27,6 +26,7 @@ import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.Objects;
 import java.util.Set;
 
 @Data
@@ -114,16 +114,31 @@ public class Member {
 
     /*    Event    */
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL)
-    private Set<EvtTrackVO> evtTracks;
+//    @OneToMany(fetch = FetchType.EAGER, mappedBy = "member", cascade = CascadeType.ALL)
+//    private Set<EvtTrackVO> evtTracks;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "member", cascade = CascadeType.ALL)
     private Set<EvtOrder> evtOrders;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "member", cascade = CascadeType.ALL)
     private Set<MyEvtCoup> myEvtCoups;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL)
     private Set<BusinessPerm> businessPerms;
+
+    public int hashCode() {
+        return Objects.hash(this.id);
+    }
+
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj != null && this.getClass() == obj.getClass()) {
+            Member that = (Member)obj;
+            return Objects.equals(this.id, that.id);
+        } else {
+            return false;
+        }
+    }
 
 }

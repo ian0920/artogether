@@ -86,5 +86,8 @@ public class MemberService {
 
     }
 
+    public List<Member> platforMemberList(){
+        return memberRepo.findAll();
+    }
 
 }

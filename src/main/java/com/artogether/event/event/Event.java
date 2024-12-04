@@ -2,9 +2,7 @@ package com.artogether.event.event;
 
 import com.artogether.common.business_member.BusinessMember;
 import com.artogether.event.evt_coup.EvtCoup;
-import com.artogether.event.evt_img.EvtImgVO;
 import com.artogether.event.evt_order.EvtOrder;
-import com.artogether.event.evt_track.EvtTrackVO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -54,16 +52,16 @@ public class Event {
     private Integer enrolled;
 
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "event", cascade = CascadeType.ALL)
-    private Set<EvtTrackVO> tracks;
+//    @OneToMany(fetch = FetchType.EAGER, mappedBy = "event", cascade = CascadeType.ALL)
+//    private Set<EvtTrackVO> tracks;
+//
+//    @OneToMany(fetch = FetchType.EAGER, mappedBy = "event", cascade = CascadeType.ALL)
+//    private Set<EvtImgVO> images;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "event", cascade = CascadeType.ALL)
-    private Set<EvtImgVO> images;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "event", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "event", cascade = CascadeType.ALL)
     private Set<EvtCoup> evtCoups;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "event", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "event", cascade = CascadeType.ALL)
     private Set<EvtOrder> evtOrders;
 
 
@@ -81,4 +79,5 @@ public class Event {
             return false;
         }
     }
+
 }

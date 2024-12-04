@@ -35,7 +35,7 @@ public class Product {
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "catalog_id", referencedColumnName = "id")
-	private PrdCatalog prdCatalog;
+	private PrdCatalog prdCatalogs;
 
 	@Column(name = "price")
 	private Integer price;

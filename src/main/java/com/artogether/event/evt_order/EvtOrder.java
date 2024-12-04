@@ -3,6 +3,7 @@ package com.artogether.event.evt_order;
 import com.artogether.common.member.Member;
 import com.artogether.event.event.Event;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -15,6 +16,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @Entity
 @Table(name = "evt_order")
+@Builder
 public class EvtOrder {
 
     @Id
@@ -29,6 +31,7 @@ public class EvtOrder {
     @JoinColumn(name = "member_id", referencedColumnName = "id")
     private Member member;
 
+    //0→已付款 1→取消
     private Byte status;
 
     @Column(name = "order_Date", updatable = false, insertable = false)
@@ -58,6 +61,7 @@ public class EvtOrder {
 
     @Column(name = "payment_method")
     private Byte paymentMethod;
+    //0→信用卡 1→行動支付 2→ATM轉帳
 
 
 }
