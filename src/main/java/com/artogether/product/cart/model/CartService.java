@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -109,10 +110,10 @@ public class CartService {
 
     // 檢查優惠券是否有效
     private boolean isAvailable(PrdCoup prdCoup){
-        LocalDateTime now = LocalDateTime.now();
+        Timestamp now = new Timestamp(System.currentTimeMillis());
         return prdCoup.getStatus() == 1 &&
-                (prdCoup.getStartDate() == null || !now.isBefore(prdCoup.getStartDate())) &&
-                (prdCoup.getEndDate() == null || now.isBefore(prdCoup.getEndDate()));
+                (prdCoup.getStartDate() == null || prdCoup.getStartDate().getTime() <= now.getTime()) &&
+                (prdCoup.getEndDate() == null || prdCoup.getEndDate().getTime() > now.getTime());
     }
 
 //    public int getTotalItemsInCart(Member member){

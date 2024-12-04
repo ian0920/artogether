@@ -28,6 +28,11 @@ public class PrdTrack {
 	@JoinColumn(name = "member_id", referencedColumnName = "id", nullable = false) // 會員外來鍵
 	private Member member;
 
+	public PrdTrackId getPrdTrackId() {
+		return new PrdTrackId(product.getId(), member.getId());
+	}
+
+
 
 	// 嵌套類：複合主鍵類
 	public static class PrdTrackId implements Serializable {
