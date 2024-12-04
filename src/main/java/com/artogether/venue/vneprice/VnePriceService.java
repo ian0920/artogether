@@ -1,5 +1,6 @@
 package com.artogether.venue.vneprice;
 
+import com.artogether.util.BitSetHelper;
 import com.artogether.venue.tslot.TslotService;
 import com.artogether.venue.venue.Venue;
 import com.artogether.venue.venue.VenueRepository;
@@ -44,7 +45,7 @@ public class VnePriceService {
                 String priceTslot = vnePrice.getPriceTslot();
                 List<Integer> timeToPrice = new ArrayList<>();
                 if (priceTslot != null) {
-                    timeToPrice = tslotService.getDaylyTslots(priceTslot);
+                    timeToPrice =  BitSetHelper.bitSetToList(BitSetHelper.toBitSet(priceTslot));
                     vnePriceDTO.setPriceTslot(timeToPrice);
                     return vnePriceDTO;
                 }
