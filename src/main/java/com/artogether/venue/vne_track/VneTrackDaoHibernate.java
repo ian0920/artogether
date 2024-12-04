@@ -10,22 +10,22 @@ import java.util.List;
 
 @Repository
 @Transactional
-public class Vne_trackDaoHibernate implements Vne_trackDao{
+public class VneTrackDaoHibernate implements VneTrackDao {
 
 	@Autowired
 	EntityManagerFactory sessionFactory;
 	
 	@Override
-	public Vne_track add(Vne_track.Vne_trackCom vneTrackCom) {
+	public VneTrack add(VneTrack.Vne_trackCom vneTrackCom) {
 		Session session = sessionFactory.unwrap(Session.class);
 	
-		Vne_track vt = (Vne_track) session.save(vneTrackCom);
+		VneTrack vt = (VneTrack) session.save(vneTrackCom);
 		return vt;
 		
 	}
 
 	@Override
-	public void update(Vne_track.Vne_trackCom vneTrackCom) {
+	public void update(VneTrack.Vne_trackCom vneTrackCom) {
 		Session session = sessionFactory.unwrap(Session.class);
 	
 		session.update(vneTrackCom);
@@ -33,28 +33,28 @@ public class Vne_trackDaoHibernate implements Vne_trackDao{
 	}
 
 	@Override
-	public Boolean delete(Vne_track.Vne_trackCom vneTrackCom) {
+	public Boolean delete(VneTrack.Vne_trackCom vneTrackCom) {
 		Session session = sessionFactory.unwrap(Session.class);
 
-		Vne_track.Vne_trackCom vt = session.get(Vne_track.Vne_trackCom.class, vneTrackCom);
+		VneTrack.Vne_trackCom vt = session.get(VneTrack.Vne_trackCom.class, vneTrackCom);
 		return true;
 			
 	}
 
 	@Override
-	public Vne_track findByPK(Vne_track.Vne_trackCom vneTrackCom) {
+	public VneTrack findByPK(VneTrack.Vne_trackCom vneTrackCom) {
 		Session session = sessionFactory.unwrap(Session.class);
 		
-			Vne_track vt = session.get(Vne_track.class, vneTrackCom);
+			VneTrack vt = session.get(VneTrack.class, vneTrackCom);
 			return vt;
 	
 	}
 
 	@Override
-	public List<Vne_track> getAll() {
+	public List<VneTrack> getAll() {
 		Session session = sessionFactory.unwrap(Session.class);
 		
-			List<Vne_track> list = session.createQuery("from Vne_track", Vne_track.class).list();
+			List<VneTrack> list = session.createQuery("from VneTrack", VneTrack.class).list();
 			return list;
 
 	}

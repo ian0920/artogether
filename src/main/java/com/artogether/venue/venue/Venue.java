@@ -3,7 +3,7 @@ package com.artogether.venue.venue;
 
 import com.artogether.common.business_member.BusinessMember;
 import com.artogether.venue.tslot.Tslot;
-import com.artogether.venue.vne_track.Vne_track;
+import com.artogether.venue.vne_track.VneTrack;
 import com.artogether.venue.vnecoup.VneCoup;
 import com.artogether.venue.vneimg.VneImgUrl;
 import com.artogether.venue.vneorder.VneOrder;
@@ -44,7 +44,7 @@ public class Venue implements Serializable {
     private List<VneOrder> vneOrders;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "venue", cascade = CascadeType.ALL)
-    private List<Vne_track> vneTracks;
+    private List<VneTrack> vneTracks;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "venue", cascade = CascadeType.ALL)
     private List<VnePrice> vnePrice;

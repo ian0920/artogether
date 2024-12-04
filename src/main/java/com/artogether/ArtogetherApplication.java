@@ -25,7 +25,7 @@ public class ArtogetherApplication {
     CommandLineRunner runner(VenueService service){
         return args -> {
 
-            System.out.println(service.getDetailVenue(1));
+//            System.out.println(service.getDetailVenue(1));
 //            System.out.println(service.getDetailVenue(1).getImgUrls());
 //            System.out.println(service.getDetailVenue(1).getAvailableDays());
 

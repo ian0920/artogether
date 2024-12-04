@@ -10,8 +10,8 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "Vne_track")
-@IdClass(Vne_track.Vne_trackCom.class)
-public class Vne_track {
+@IdClass(VneTrack.Vne_trackCom.class)
+public class VneTrack {
 
 	@Id
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -25,11 +25,11 @@ public class Vne_track {
 
 	private Date track_date;
 
-	public Vne_track() {
+	public VneTrack() {
 		super();
 	}
 
-	public Vne_track(Date track_date, Venue venue, Member member) {
+	public VneTrack(Date track_date, Venue venue, Member member) {
 		this.track_date = track_date;
 		this.venue = venue;
 		this.member = member;
@@ -75,7 +75,7 @@ public class Vne_track {
 		return new Vne_trackCom(this.venue.getId(), this.member.getId());
 	}
 
-	static class Vne_trackCom implements Serializable {
+	public static class Vne_trackCom implements Serializable {
 
 		private int venue;
 		private int member;
