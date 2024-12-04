@@ -33,32 +33,47 @@ public class VneOrder implements Serializable {
     @JoinColumn(name = "vne_id",referencedColumnName = "id")
     private Venue venue;
 
+    // 訂單日期
     @Column(name = "order_date")
     private LocalDateTime orderDate;
 
+    // 總價格
     private Integer totalPrice;
 
+    // 優惠券ID
     private Integer vneCoupId;
 
+    // 應該支付的金額
+    private Integer shouldPaid;
+
+    // 已支付金額
     private Integer paid;
 
+    // 開始日期
     @Column(name = "start_date")
     private LocalDateTime startDate;
 
+    // 結束日期
     @Column(name = "end_date")
     private LocalDateTime endDate;
 
+    // 評論
     private String review;
 
+    // 評分星數
     private Integer stars;
 
+    // 支付方式
     private PaymentMethodEnum paymentMethod;
 
+    // 訂單狀態
     private OrderStatusEnum status;
 
+    // 申請日期
     @Column(name = "apply_date")
     private LocalDateTime applyDate;
 
+    // 退款日期
     @Column(name = "refund_date")
     private LocalDateTime refundDate;
 }
