@@ -55,7 +55,7 @@ public class BusinessMember {
 
     //以下為hibernate一對多設定
 
-    /*    Product    */
+//    /*    Product    */
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "businessMember", cascade = CascadeType.ALL)
     private Set<Product> products;
 
@@ -70,7 +70,7 @@ public class BusinessMember {
 
 
     /*    Event    */
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "businessMember", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "businessMember", cascade = CascadeType.ALL)
     private Set<Event> events;
 
 

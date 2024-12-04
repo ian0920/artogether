@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>event edit</title>
+</head>
+<body>
+	<form th:action="@{/event/update}" th:object="${event}" method="post" enctype="multipart/form-data">
+		<input type="hidden" th:field="*{id}">
+		<input type="hidden" th:field="*{businessMember.id}">
+		<input type="text" th:field="*{name}">
+		<input type="datetime-local" th:field="*{startDate}">
+		<input type="datetime-local" th:field="*{endDate}">
+		<input type="number" th:field="*{catalog}">
+		<input type="text" th:field="*{description}">
+		<input type="number" th:field="*{price}">
+		<input type="text" th:field="*{location}">
+		<input type="number" th:field="*{maximum}">
+		<input type="number" th:field="*{minimum}">
+		
+<!-- 		<input type="file" name="evtImg.imageFile"> -->
+		<button type="submit">確認更新</button>
+	</form>
+	<div><img alt="" th:src="${evtImg}"></div>
+	
+</body>
+</html>
