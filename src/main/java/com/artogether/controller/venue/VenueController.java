@@ -1,24 +1,19 @@
-package com.artogether.controller;
+package com.artogether.controller.venue;
 
 import com.artogether.common.business_member.BusinessMember;
 import com.artogether.venue.venue.VenueService;
 import com.artogether.venue.vnedto.*;
 import com.artogether.venue.tslot.TslotService;
 import com.artogether.venue.vneimg.VneImgService;
-import com.artogether.venue.vneprice.VnePrice;
 import com.artogether.venue.vneprice.VnePriceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -35,45 +30,22 @@ public class VenueController {
     @Autowired
     private VenueService venueService;
 
-//    //若有之前檔案的話修改時會秀出來
-//    @ModelAttribute("weeklyTslots")
-//    public Map<String, List<Integer>> prepareWeeklyTslots(@RequestParam("vneId") Integer vneId) {
-//        LocalDateTime now = LocalDateTime.now();
-//        return tslotService.getWeeklyTslots(vneId, now);
-//    }
-//    //若有之前檔案的話修改時會秀出來
-//    @ModelAttribute("vnePriceData")
-//    public VnePriceDTO prepareVnePriceData(@RequestParam("vneId") Integer vneId) {
-//        LocalDateTime now = LocalDateTime.now();
-//        VnePriceDTO vnePriceDTO = vnePriceService.getNearestVnePrice(vneId, now);
-//        return vnePriceDTO;
-//    }
-//    @ModelAttribute("venueDetail")
-//    public VneDetailDTO getVenueDetail(@RequestParam ("vneId") int vneId) {
-//        VneDetailDTO vneDetailDTO = venueService.getDetailVenue(vneId);
-//        return vneDetailDTO;
-//    }
-
     //店家場地總覽
     @GetMapping("/vneList")
-    public String vneList(Model model, HttpSession session) {
-        BusinessMember businessMember = (BusinessMember) session.getAttribute("presentBusinessMember");
-        int businessId = businessMember.getId();
-        List<VneCardDTO> vneCardDTOs = venueService.bizVneList(businessId);
-        model.addAttribute("vneCardDTOs", vneCardDTOs);
+    public String vneList() {
+        //交給Ajax->/vneBiz/vneList
         return "venue/business/html/vneList";
     }
     //新增場地頁面
     @GetMapping("/addVenue")
-    public String addVenue(Model model) {
+    public String addVenue() {
         return "/venue/business/html/addVenue";
     }
     //創建新場地
     @PostMapping("/createVenue")
     public String createVenue(@ModelAttribute VneDetailDTO vneDetailDTO, HttpSession session) {
         BusinessMember businessMember = (BusinessMember) session.getAttribute("presentBusinessMember");
-        int businessId = businessMember.getId();
-        venueService.creatVenue(vneDetailDTO, businessId);
+        venueService.creatVenue(vneDetailDTO, businessMember);
         return "redirect:manageVenue";
     }
 
@@ -82,7 +54,7 @@ public class VenueController {
     public String getVenueAndImg (@RequestParam("vneId") Integer vneId, Model model) {
         VneDetailDTO vneDetailDTO = venueService.getDetailVenue(vneId);
         model.addAttribute("vneDetail", vneDetailDTO);
-        return "/venue/business/html/manageVenue";
+        return "example";
     }
     //修改場地內容
     @PostMapping("/updateVenue")

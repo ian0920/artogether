@@ -19,8 +19,6 @@ import java.util.List;
 @Service
 public class VneImgService {
 
-    @Autowired
-    private VneImgRepository vneImgRepository;
     @Resource
     RedisTemplate<String, byte[]> redisTemplate;
     @Autowired
@@ -119,6 +117,6 @@ public class VneImgService {
         return  vneId + "_" + position + ".jpg"; // 自定義檔案名稱，我想確保不需要多存
     }
     public String getAssetPath(Integer vneId, Integer position){
-        return "/uploads/venue/"+getFileName(vneId, position);
+        return "public/uploads/venue/"+getFileName(vneId, position);
     }
 }

@@ -2,12 +2,10 @@ package com.artogether.venue.venue;
 
 import com.artogether.common.business_member.BusinessMember;
 import com.artogether.common.business_member.BusinessMemberRepo;
+import com.artogether.common.business_member.BusinessService;
 import com.artogether.venue.vnedto.VneCardDTO;
 import com.artogether.venue.vnedto.VneDetailDTO;
-import com.artogether.venue.vneimg.VneImg;
-import com.artogether.venue.vneimg.VneImgRepository;
-import com.artogether.venue.vneimg.VneImgService;
-import com.artogether.venue.vneimg.VneImgUrlRepository;
+import com.artogether.venue.vneimg.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,22 +22,20 @@ public class VenueService {
     @Autowired
     private BusinessMemberRepo businessMemberRepo;
     @Autowired
-    private VneImgRepository vneImgRepository;
-    @Autowired
     private VneImgService vneImgService;
     @Autowired
     private VneImgUrlRepository vneImgUrlRepository;
 
     //創建場地
-    public Integer creatVenue(VneDetailDTO vneDetailDTO, Integer businessId) {
-
-        String name = vneDetailDTO.getVneName();
+    public Integer creatVenue(VneDetailDTO vneDetailDTO, BusinessMember businessMember) {
+        String name = vneDetailDTO.getName();
         String type = vneDetailDTO.getType();
         String description = vneDetailDTO.getDescription();
         Integer availableDays = vneDetailDTO.getAvailableDays();
 
         Venue venue = Venue.builder()
                       .name(name)
+                .businessMember(businessMember)
                       .type(type)
                       .availableDays(availableDays)
                       .build();
@@ -49,13 +45,14 @@ public class VenueService {
         venueRepository.save(venue);
         return venue.getId();
     }
+
     //場地資料更新
     public void updateVenue( Integer vneId, VneDetailDTO vneDetailDTO) {
 //        全部抓下來
 //        Venue venue = Venue.builder().id(vneId).name(name).type(type).description(description).availableDays(availableDays).build();
 //        venueRepository.save(venue);
         Venue venue = venueRepository.findById(vneId).get();
-        String name = vneDetailDTO.getVneName();
+        String name = vneDetailDTO.getName();
         String type = vneDetailDTO.getType();
         String description = vneDetailDTO.getDescription();
         Integer availableDays = vneDetailDTO.getAvailableDays();
@@ -78,7 +75,7 @@ public class VenueService {
     public VneDetailDTO getDetailVenue(Integer vneId) {
         Venue venue = venueRepository.findById(vneId).get();
         VneDetailDTO vneDetailDTO = VneDetailDTO.builder()
-                .vneName(venue.getName())
+                .name(venue.getName())
                 .vneAddress(businessMemberRepo.findById(venue.getBusinessMember().getId()).get().getAddr())
                 .type(venue.getType())
                 .availableDays(venue.getAvailableDays())
@@ -93,6 +90,7 @@ public class VenueService {
         }
         return vneDetailDTO;
     }
+
     //商家場地總覽
     public List<VneCardDTO> bizVneList(Integer businessId) {
         List<Venue> venues = venueRepository.findByBusinessMember_Id(businessId);
@@ -102,6 +100,7 @@ public class VenueService {
         //        return o1.getId().compareTo(o2.getId());
         //    }
         //};
+
         //Lambda
         Comparator<Venue> comparator =((o1, o2) -> o1.getId().compareTo(o2.getId()));
         venues.sort(comparator);
@@ -122,12 +121,16 @@ public class VenueService {
             if (description != null) {
                 vneCardDTO.setDescription(description);
             }
-            String imgUrl = vneImgUrlRepository.findImageUrlByVenueIdAndPosition(venue.getId(),1);
-            if (imgUrl != null) {
-            vneCardDTO.setVneImgUrl(imgUrl);
-            }else {
-                vneCardDTO.setVneImgUrl("public/venue/images/0_0.jpg");
-            }
+            Optional<VneImgUrl> vneImgUrlOptional = vneImgUrlRepository.findByVenue_IdAndPosition(venue.getId(),1);
+            vneImgUrlOptional.ifPresent(vneImgUrl -> {
+                String imgUrl = vneImgUrl.getImageUrl();
+                    if (imgUrl != null) {
+                        vneCardDTO.setVneImgUrl(imgUrl);
+                    } else {
+                        vneCardDTO.setVneImgUrl("public/venue/images/0_0.jpg");
+                    }
+                }
+            );
             vneCardDTOs.add(vneCardDTO);
         }
         return vneCardDTOs;
@@ -135,30 +138,26 @@ public class VenueService {
 
     //首頁卡片
     public VneCardDTO getVenue(Integer vneId) {
-        VneCardDTO vneCardDTO = null;
-
-        Optional<Venue> venueOptional = venueRepository.findById(vneId);
-        if (venueOptional.isPresent()) {
-            Venue venue = venueOptional.get();
-            Optional<BusinessMember> businessMemberOptional = businessMemberRepo.findById(venue.getBusinessMember().getId());
-            if (businessMemberOptional.isPresent()) {
-                BusinessMember businessMember = businessMemberOptional.get();
-
-                vneCardDTO.setVneId(vneId);
-                vneCardDTO.setVneName(venue.getName());
-                vneCardDTO.setVneAddress(businessMember.getAddr());
-                vneCardDTO.setDescription(venue.getDescription());
-
-                Optional<VneImg> vneImgOptional = vneImgRepository.findByVenueIdAndPosition(vneId, 1);
-                if (vneImgOptional.isPresent()) {
-                    VneImg vneImg = vneImgOptional.get();
-
-                    vneCardDTO.setVneImgUrl(vneImgService.getAssetPath(~vneId, vneImg.getPosition()));
-                    return vneCardDTO;
-                }
-
-            }
+        VneCardDTO vneCardDTO = new VneCardDTO();
+        Venue venue = venueRepository.findById(vneId).get();
+        vneCardDTO.setVneId(venue.getId());
+        vneCardDTO.setVneName(venue.getName());
+        vneCardDTO.setVneAddress(venue.getBusinessMember().getAddr());
+        String description = venue.getDescription();
+        if (description != null) {
+        vneCardDTO.setDescription(description);
         }
+        Optional<VneImgUrl> vneImgOptional = vneImgUrlRepository.findByVenue_IdAndPosition(vneId, 1);
+        vneImgOptional.ifPresent(
+                vneImgUrl -> {
+                    String imgUrl = vneImgUrl.getImageUrl();
+                    if (imgUrl != null) {
+                        vneCardDTO.setVneImgUrl(imgUrl);
+                    } else {
+                        vneCardDTO.setVneImgUrl("public/venue/images/0_0.jpg");
+                    }
+                }
+        );
     return vneCardDTO;
     }
 // 水好深阿...lambda還沒看

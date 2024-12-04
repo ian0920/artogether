@@ -22,7 +22,7 @@
             isError: false,
             fetchData() {
                 $.ajax({
-                  url: '/test',
+                  url: '/vneBiz/vneList',
                   method: "GET",
                   dataType: "json",
                   success: (data) => {
@@ -98,8 +98,8 @@
 </div>
 
 <!-- 場地概覽 -->
-<span x-data="handleData()" x-init="fetchData">
-    <section class="sec-showcase showcase-venue normal-width">
+<main x-data="handleData()" x-init="fetchData">
+    <section class="sec-showcase showcase-venue ">
         <template x-for="vne in vneList" :key="vne.vneId">
             <div class="showcase-cards-box">
                 <div clickable class="showcase-card card venue">
@@ -126,7 +126,8 @@
             </div>
         </template>
     </section>
-</span>
+    <a href="/venue/addVenue">新增場地</a>
+</main>
 
 
 <script>
