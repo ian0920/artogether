@@ -7,7 +7,7 @@ import com.artogether.event.evt_track.EvtTrackVO;
 import com.artogether.event.my_evt_coup.MyEvtCoup;
 import com.artogether.product.cart.model.Cart;
 import com.artogether.product.my_prd_coup.MyPrdCoup;
-import com.artogether.product.prd_order.PrdOrder;
+import com.artogether.product.prd_order.model.PrdOrder;
 import com.artogether.product.prd_report.PrdReport;
 import com.artogether.product.prd_review.PrdReview;
 import com.artogether.product.prd_track.PrdTrack;

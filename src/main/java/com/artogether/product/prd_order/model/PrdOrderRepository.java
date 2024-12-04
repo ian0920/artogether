@@ -1,4 +1,4 @@
-package com.artogether.product.prd_order;
+package com.artogether.product.prd_order.model;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
