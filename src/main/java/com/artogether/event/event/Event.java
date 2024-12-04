@@ -6,6 +6,7 @@ import com.artogether.event.evt_img.EvtImg;
 import com.artogether.event.evt_order.EvtOrder;
 import com.artogether.event.evt_track.EvtTrack;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -24,6 +25,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Entity
 @DynamicUpdate
+@Builder
 @Table(name = "event")
 public class Event {
 
