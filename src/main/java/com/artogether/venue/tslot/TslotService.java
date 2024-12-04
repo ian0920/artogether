@@ -1,6 +1,6 @@
 package com.artogether.venue.tslot;
 
-import com.artogether.util.BitSetHelper;
+import com.artogether.util.BinaryTools;
 import com.artogether.venue.venue.Venue;
 import com.artogether.venue.vnedto.TslotDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +28,10 @@ public class TslotService {
         tslotViewService.createTslotScheduleView();
     }
 
-
+    //找不到是給初始設定用的
     public Map<String, List<Integer>> getWeeklyTslots(Integer vneId, LocalDateTime submissionTime) {
-        Tslot tslot = tslotRepository.getNearestPastRecord(submissionTime);
-        if (tslot == null) {
+        Optional<Tslot> tslotOptional = tslotRepository.getNearestPastRecord(submissionTime);
+        if (tslotOptional.isEmpty()) {
             //如果沒找到提供一個全部開啟的預設表單
             Map<String, List<Integer>> AllWeekOpening = new HashMap<String,List<Integer>>();
             List<Integer> AllDayOpening = new ArrayList<>();
@@ -50,6 +50,7 @@ public class TslotService {
             }
             return AllWeekOpening;
         }else {
+            Tslot tslot= tslotOptional.get();
             //如果有找到，找出一個符合當時設定的行事曆
             Map<String, List<Integer>> weeklyTslots = new HashMap<String,List<Integer>>();
             // 遍歷一周的每一天
@@ -64,6 +65,31 @@ public class TslotService {
         }
     }
 
+    public Integer getBinaryWeek(Integer vneId, LocalDateTime submissionTime) {
+        Optional<Tslot> tslotOptional = tslotRepository.getNearestPastRecord(submissionTime);
+        if (tslotOptional.isPresent()) {
+            Tslot tslot= tslotOptional.get();
+
+            for(int i = 1; i < 8; i++){
+                String hourOfDay;
+                switch ( DayOfWeek.of(i)) {
+                    case MONDAY -> hourOfDay = tslot.getHourOfMon();
+                    case TUESDAY -> hourOfDay = tslot.getHourOfTue();
+                    case WEDNESDAY -> hourOfDay = tslot.getHourOfWed();
+                    case THURSDAY -> hourOfDay = tslot.getHourOfThu();
+                    case FRIDAY -> hourOfDay = tslot.getHourOfFri();
+                    case SATURDAY -> hourOfDay = tslot.getHourOfSat();
+                    case SUNDAY -> hourOfDay = tslot.getHourOfSun();
+                    default -> throw new IllegalArgumentException("Invalid day of the week");
+
+            }
+                //枚舉類有靜態方法".name()"回傳String
+
+            }
+        }
+        Integer binaryWeek = null;
+        return binaryWeek;
+    }
     private List<Integer> getDaylyTslotsByDay(Tslot tslot, DayOfWeek day) {
         String hourOfDay;
         //這邊不用".name()"是因為"switch"支持枚舉類
@@ -77,7 +103,7 @@ public class TslotService {
             case SUNDAY -> hourOfDay = tslot.getHourOfSun();
             default -> throw new IllegalArgumentException("Invalid day of the week");
         }
-        List<Integer> daylyTslots = BitSetHelper.bitSetToList(BitSetHelper.toBitSet(hourOfDay));
+        List<Integer> daylyTslots = BinaryTools.bitSetToList(BinaryTools.toBitSet(hourOfDay));
         return daylyTslots;
     }
 
@@ -103,7 +129,8 @@ public class TslotService {
         }else {
             //找到最靠近現在的前一筆資料寫入更改時間
             Tslot tslot = new Tslot();
-            tslot = tslotRepository.getNearestPastRecord(submissionTime);
+            tslot = tslotRepository.getNearestPastRecord(submissionTime).get();
+            tslot.setExpirationTime(submissionTime);
             tslotRepository.save(tslot);
 
             //有找到舊的所以另存一個新的
