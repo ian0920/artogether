@@ -10,14 +10,14 @@ import java.util.List;
 
 @Repository
 @Transactional
-public class Perm_descDaoHibernate implements Perm_descDao{
+public class PermDescDaoHibernate implements PermDescDao {
 
 	@Autowired
 	EntityManagerFactory sessionFactory;
 
 	@Override
 	@Transactional
-	public int add(Perm_desc permDesc) {
+	public int add(PermDesc permDesc) {
 		Session session = sessionFactory.unwrap(Session.class);
 
 		Integer id = (Integer) session.save(permDesc);
@@ -26,7 +26,7 @@ public class Perm_descDaoHibernate implements Perm_descDao{
 	}
 
 	@Override
-	public int update(Perm_desc permDesc) {
+	public int update(PermDesc permDesc) {
 		Session session = sessionFactory.unwrap(Session.class);
 
 			session.saveOrUpdate(permDesc);
@@ -38,25 +38,25 @@ public class Perm_descDaoHibernate implements Perm_descDao{
 	public int delete(Integer id) {
 		Session session = sessionFactory.unwrap(Session.class);
 		
-			Perm_desc pd = session.get(Perm_desc.class, id);
+			PermDesc pd = session.get(PermDesc.class, id);
 			return 1;
 
 	}
 
 	@Override
-	public Perm_desc findByPK(Integer id) {
+	public PermDesc findByPK(Integer id) {
 		Session session = sessionFactory.unwrap(Session.class);
 	
-			Perm_desc pd = session.get(Perm_desc.class, id);
+			PermDesc pd = session.get(PermDesc.class, id);
 			return pd;
 		
 	}
 
 	@Override
-	public List<Perm_desc> getAll() {
+	public List<PermDesc> getAll() {
 		Session session = sessionFactory.unwrap(Session.class);
 		
-			List<Perm_desc> list = session.createQuery("from Perm_desc", Perm_desc.class).list();
+			List<PermDesc> list = session.createQuery("from PermDesc", PermDesc.class).list();
 			return list;
 	
 	}

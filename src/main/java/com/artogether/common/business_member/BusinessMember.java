@@ -1,7 +1,7 @@
 package com.artogether.common.business_member;
 
 import com.artogether.common.business_perm.BusinessPerm;
-import com.artogether.common.platform_msg.Platform_msg;
+import com.artogether.common.platform_msg.PlatformMsg;
 import com.artogether.event.event.Event;
 import com.artogether.product.prd_coup.PrdCoup;
 import com.artogether.product.product.Product;
@@ -76,7 +76,7 @@ public class BusinessMember {
 
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "businessMember", cascade = CascadeType.ALL)
-    private Set<Platform_msg> platformMsgs;
+    private Set<PlatformMsg> platformMsgs;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "businessMember", cascade = CascadeType.ALL)
     private Set<BusinessPerm> businessPerms;

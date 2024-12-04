@@ -1,64 +1,44 @@
 package com.artogether.common.permission;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import com.artogether.common.perm_desc.PermDesc;
+import com.artogether.common.system_mamager.SystemManager;
+import lombok.*;
 
+import javax.persistence.*;
+import java.io.Serializable;
 @Entity
 @Table(name = "permission")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@IdClass(Permission.PermissionId.class)
 public class Permission {
+	// 平台功能权限
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "Id", updatable = false)
-	private Integer id;
-	
 	@Column(name = "manager_id")
-	private Integer manager_id;
-	
+	private Integer managerId;  // 作为复合主键的一部分
+
+	@Id
 	@Column(name = "desc_id")
-	private Integer desc_id;
-	
-	@Column(name = "status")
-	private byte status;
+	private Integer descId;  // 作为复合主键的一部分
 
-	public Permission() {
-		super();
-	}
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "manager_id", referencedColumnName = "id", insertable = false, updatable = false)
+	private SystemManager manager; // 不允许插入或更新该列
 
-	public Integer getId() {
-		return id;
-	}
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "desc_id", referencedColumnName = "id", insertable = false, updatable = false)
+	private PermDesc permDesc; // 不允许插入或更新该列
 
-	public void setId(Integer id) {
-		this.id = id;
+	/**
+	 * ====================================================================
+	 */
+	@Data
+	@AllArgsConstructor
+	@NoArgsConstructor
+	public static class PermissionId implements Serializable {
+		private Integer managerId;  // 复合主键的第一部分
+		private Integer descId;     // 复合主键的第二部分
 	}
-
-	public Integer getManager_id() {
-		return manager_id;
-	}
-
-	public void setManager_id(Integer manager_id) {
-		this.manager_id = manager_id;
-	}
-
-	public Integer getDesc_id() {
-		return desc_id;
-	}
-
-	public void setDesc_id(Integer desc_id) {
-		this.desc_id = desc_id;
-	}
-
-	public byte getStatus() {
-		return status;
-	}
-
-	public void setStatus(byte status) {
-		this.status = status;
-	}
-	
 }

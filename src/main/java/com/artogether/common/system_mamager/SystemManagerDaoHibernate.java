@@ -11,13 +11,13 @@ import java.util.List;
 
 @Repository
 @Transactional
-public class System_managerDaoHibernate implements System_managerDao {
+public class SystemManagerDaoHibernate implements SystemManagerDao {
 
 	@Autowired
 	SessionFactory sessionFactory;
 	
 	@Override
-	public int add(System_manager systemManager) {
+	public int add(SystemManager systemManager) {
 		Session session = sessionFactory.getCurrentSession();
 	
 			Integer id = (Integer) session.save(systemManager);
@@ -26,7 +26,7 @@ public class System_managerDaoHibernate implements System_managerDao {
 	}
 
 	@Override
-	public int update(System_manager systemManager) {
+	public int update(SystemManager systemManager) {
 		Session session = sessionFactory.getCurrentSession();
 	
 			session.update(systemManager);
@@ -38,25 +38,25 @@ public class System_managerDaoHibernate implements System_managerDao {
 	public int delete(Integer id) {
 		Session session = sessionFactory.getCurrentSession();
 
-			System_manager sys = session.get(System_manager.class, id);
+			SystemManager sys = session.get(SystemManager.class, id);
 			return 1;
 			
 	}
 
 	@Override
-	public System_manager findByPK(Integer id) {
+	public SystemManager findByPK(Integer id) {
 		Session session = sessionFactory.getCurrentSession();
 		
-			System_manager sys = session.get(System_manager.class, id);
+			SystemManager sys = session.get(SystemManager.class, id);
 			return sys;
 	
 	}
 
 	@Override
-	public List<System_manager> getAll() {
+	public List<SystemManager> getAll() {
 		Session session = sessionFactory.getCurrentSession();
 		
-			List<System_manager> list = session.createQuery("from system_manager", System_manager.class).list();
+			List<SystemManager> list = session.createQuery("from system_manager", SystemManager.class).list();
 			return list;
 
 	}
