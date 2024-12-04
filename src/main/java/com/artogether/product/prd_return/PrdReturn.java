@@ -1,6 +1,6 @@
 package com.artogether.product.prd_return;
 
-import com.artogether.product.prd_order.PrdOrder;
+import com.artogether.product.prd_order.model.PrdOrder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>event details</title>
+</head>
+<body>
+This is event_details
+<hr>
+<p th:text="${evt.name}"></p>
+<p th:text="${evt.id}"></p>
+<p th:text="${evt.startDate}"></p>
+<img th:src="@{/event/DBImgReader/} + ${evtImg.id}" width="100px">
+<button id=btn_track>追蹤</button>
+<script type="text/javascript" th:inline="javascript">
+var el_btn_track=document.querySelector("#btn_track")
+el_btn_track.addEventListener("click", function(){
+	trackEvt();
+})
+const eventId = /*[[${evt.id}]]*/ 'defaultEvtId';
+const memberId = /*[[${session.member}]]*/ 'defaultMemberId';
+const payload = {
+	    eventId: eventId,
+	    memberId: memberId
+	};
+var trackEvt = async function() {
+    try {
+        let response = await fetch("/api/event/toggleTrack", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+        });
+
+        console.log(response);
+        if (response.ok) {
+            let data = await response.json(); // 解析 JSON 資料
+            alert(data.message);
+        } else {
+            alert("追蹤失敗，請稍後再試。");
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("請求發送失敗，請稍後再試。");
+    }
+}
+</script>
+</body>
+</html>

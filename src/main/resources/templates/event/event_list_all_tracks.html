@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>event_list_all_tracks</title>
+</head>
+<body>
+<ul>
+        <!-- 使用 th:each 遍歷 List -->
+        <li th:each="evt : ${evtTrackList}">
+            <p th:text="'Event ID: ' + ${evt.event.id}"></p>
+<!--             <p th:text="'Event Name: ' + ${evt.name}"></p> -->
+<!--             <p th:text="'Event Start Date: ' + ${evt.startDate}"></p> -->
+        </li>
+    </ul>
+</body>
+</html>

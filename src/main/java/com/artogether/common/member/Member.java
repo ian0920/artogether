@@ -1,17 +1,19 @@
 package com.artogether.common.member;
 
 import com.artogether.common.business_perm.BusinessPerm;
-import com.artogether.common.platform_msg.Platform_msg;
+import com.artogether.common.platform_msg.PlatformMsg;
 import com.artogether.event.evt_order.EvtOrder;
-import com.artogether.event.evt_track.EvtTrackVO;
+
+import com.artogether.event.evt_track.EvtTrack;
+
 import com.artogether.event.my_evt_coup.MyEvtCoup;
 import com.artogether.product.cart.model.Cart;
 import com.artogether.product.my_prd_coup.MyPrdCoup;
-import com.artogether.product.prd_order.PrdOrder;
+import com.artogether.product.prd_order.model.PrdOrder;
 import com.artogether.product.prd_report.PrdReport;
 import com.artogether.product.prd_review.PrdReview;
 import com.artogether.product.prd_track.PrdTrack;
-import com.artogether.venue.vne_track.Vne_track;
+import com.artogether.venue.vne_track.VneTrack;
 import com.artogether.venue.vneorder.VneOrder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,6 +29,7 @@ import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.Objects;
 import java.util.Set;
 
 @Data
@@ -106,24 +109,41 @@ public class Member {
     private Set<VneOrder> vneOrders;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL)
-    private Set<Vne_track> vneTracks;
+    private Set<VneTrack> vneTracks;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL)
-    private Set<Platform_msg> platformMsgs;
+    private Set<PlatformMsg> platformMsgs;
 
 
     /*    Event    */
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL)
-    private Set<EvtTrackVO> evtTracks;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL)
+    private Set<EvtTrack> evtTracks;
+
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "member", cascade = CascadeType.ALL)
     private Set<EvtOrder> evtOrders;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "member", cascade = CascadeType.ALL)
     private Set<MyEvtCoup> myEvtCoups;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL)
     private Set<BusinessPerm> businessPerms;
+
+    public int hashCode() {
+        return Objects.hash(this.id);
+    }
+
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj != null && this.getClass() == obj.getClass()) {
+            Member that = (Member)obj;
+            return Objects.equals(this.id, that.id);
+        } else {
+            return false;
+        }
+    }
 
 }
