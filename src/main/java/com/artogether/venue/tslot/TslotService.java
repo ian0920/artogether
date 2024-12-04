@@ -30,7 +30,7 @@ public class TslotService {
 
     //找不到是給初始設定用的
     public Map<String, List<Integer>> getWeeklyTslots(Integer vneId, LocalDateTime submissionTime) {
-        Optional<Tslot> tslotOptional = tslotRepository.getNearestPastRecord(submissionTime);
+        Optional<Tslot> tslotOptional = tslotRepository.getNearestPastRecord(vneId, submissionTime);
         if (tslotOptional.isEmpty()) {
             //如果沒找到提供一個全部開啟的預設表單
             Map<String, List<Integer>> AllWeekOpening = new HashMap<String,List<Integer>>();
@@ -65,12 +65,11 @@ public class TslotService {
         }
     }
 
+    //取出是否有公休日
     public Integer getBinaryWeek(Integer vneId, LocalDateTime submissionTime) {
-        Optional<Tslot> tslotOptional = tslotRepository.getNearestPastRecord(submissionTime);
-        if (tslotOptional.isPresent()) {
-            Tslot tslot= tslotOptional.get();
-
-            for(int i = 1; i < 8; i++){
+        Tslot tslot= tslotRepository.getNearestPastRecord(vneId, submissionTime).get();
+            Integer binaryWeek= 0;
+            for(int i = 1; i <= 7; i++){
                 String hourOfDay;
                 switch ( DayOfWeek.of(i)) {
                     case MONDAY -> hourOfDay = tslot.getHourOfMon();
@@ -81,15 +80,14 @@ public class TslotService {
                     case SATURDAY -> hourOfDay = tslot.getHourOfSat();
                     case SUNDAY -> hourOfDay = tslot.getHourOfSun();
                     default -> throw new IllegalArgumentException("Invalid day of the week");
-
+                }
+                if (!BinaryTools.toBitSet(hourOfDay).isEmpty()) {
+                    binaryWeek |= 1 << (7-i);
+                }
             }
-                //枚舉類有靜態方法".name()"回傳String
-
-            }
-        }
-        Integer binaryWeek = null;
         return binaryWeek;
     }
+    //列出有營業的時間陣列
     private List<Integer> getDaylyTslotsByDay(Tslot tslot, DayOfWeek day) {
         String hourOfDay;
         //這邊不用".name()"是因為"switch"支持枚舉類
@@ -129,7 +127,7 @@ public class TslotService {
         }else {
             //找到最靠近現在的前一筆資料寫入更改時間
             Tslot tslot = new Tslot();
-            tslot = tslotRepository.getNearestPastRecord(submissionTime).get();
+            tslot = tslotRepository.getNearestPastRecord(vneId, submissionTime).get();
             tslot.setExpirationTime(submissionTime);
             tslotRepository.save(tslot);
 
