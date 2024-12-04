@@ -1,5 +1,6 @@
 package com.artogether.venue.tslot;
 
+import com.artogether.util.BitSetHelper;
 import com.artogether.venue.venue.Venue;
 import com.artogether.venue.vnedto.TslotDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +22,8 @@ public class TslotService {
     private TslotViewService tslotViewService;
 
     //只在第一次啟動時執行。
-    @PostConstruct
 //    @Transactional
+    @PostConstruct
     public void init() {
         tslotViewService.createTslotScheduleView();
     }
@@ -76,17 +77,7 @@ public class TslotService {
             case SUNDAY -> hourOfDay = tslot.getHourOfSun();
             default -> throw new IllegalArgumentException("Invalid day of the week");
         }
-        return getDaylyTslots(hourOfDay);
-    }
-
-    //把二元字串轉成陣列
-    public List<Integer> getDaylyTslots(String hoursOfDay) {
-        List<Integer> daylyTslots = new ArrayList<>();
-        for (int i= 0; i < hoursOfDay.length(); i++) {
-            if (hoursOfDay.charAt(i) == '1') {
-                daylyTslots.add(i);
-            }
-        }
+        List<Integer> daylyTslots = BitSetHelper.bitSetToList(BitSetHelper.toBitSet(hourOfDay));
         return daylyTslots;
     }
 
@@ -129,17 +120,6 @@ public class TslotService {
                 .build();
             return tslotRepository.save(newTslot);
         }
-    }
-
-    // 讀取所有時段
-    public List<Tslot> getAllTslots() {
-        return tslotRepository.findAll();
-    }
-
-    // 讀取單一時段
-    // Optional 是 Java 8 引入的一個容器類，用於表示可能包含也可能不包含非空值的容器。
-    public Optional<Tslot> getTslotById(int id) {
-        return tslotRepository.findById(id);
     }
 
 //    private void setHourStr(Timestamp timestamp) {
