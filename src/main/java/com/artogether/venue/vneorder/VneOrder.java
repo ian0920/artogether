@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -51,11 +52,19 @@ public class VneOrder implements Serializable {
 
     // 開始日期
     @Column(name = "start_date")
-    private LocalDateTime startDate;
+    private LocalDate startDate;
+
+    // 開始時間
+    @Column(name = "start_time")
+    private Integer startTime;
 
     // 結束日期
     @Column(name = "end_date")
-    private LocalDateTime endDate;
+    private LocalDate endDate;
+
+    // 結束時間
+    @Column(name = "end_time")
+    private Integer endTime;
 
     // 評論
     private String review;
