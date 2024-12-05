@@ -1,9 +1,18 @@
 package com.artogether.common.business_member;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import com.artogether.event.event.Event;
+import com.artogether.event.event.EventSpecifications;
+
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class BusinessService {
@@ -36,11 +45,12 @@ public class BusinessService {
     }
 
 
-
-
-
-
-
+    // 複合查詢+分頁
+    public Page<BusinessMember> searchEvents(Map<String, String> searchCriteria, Pageable pageable) {
+        Specification<BusinessMember> spec = BMemberSpecification.dynamicQuery(searchCriteria);
+        return businessMemberRepo.findAll(spec, pageable);
+    }
+    
 
 
 }

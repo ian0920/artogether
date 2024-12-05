@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>我所發布的活動</title>
+</head>
+<body>
+
+<h4>我所發布的活動</h4>
+<!-- 	<p>共有<span th:text=${evtList}></span>筆</p> -->
+	<table>
+		<thead>
+			<tr>
+				<th scope="col">ID</th>
+				<th scope="col">名稱</th>
+				<th scope="col">狀態</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="e : ${page.content}">
+				<th scope = "row" th:text="${e.id}">ID</th>	
+				<td th:text="${e.name}"></td>
+				<td th:text="${e.status}"></td>
+				<td><button th:onclick="location.href='/event/edit/' + [[${e.id}]]">編輯</button></td>
+				<td><button th:onclick="updateStatus(2, [[${e.id}]])">延期</button></td>
+				<td><button th:onclick="updateStatus(3, [[${e.id}]])">取消</button></td>
+			
+			</tr>
+		</tbody>
+	</table>
+	
+	<script type="text/javascript" th:inline="javascript">
+		var updateStatus = async function(status, eid){
+			const payload = {
+				    eventId: eid,
+				    status: status
+				};
+			let response = await fetch("/api/event/updateStatus", {
+	            method: "POST",
+	            headers: {
+	                "Content-Type": "application/json",
+	            },
+	            body: JSON.stringify(payload),
+	        });
+			if(response.ok){
+				let data = await response.json(); // 解析 JSON 資料
+	            alert(data.message);
+			}
+		}
+	</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>註冊成為商家</title>
+</head>
+<body>
+<form th:action="@{/applyForBusiness}" method="post" th:object=${businessMember}>
+	<input type="text" th:field="*{name}">
+	<input type="email" th:field="*{email}">
+	<input type="text" th:field="*{addr}">
+	<input type="text" th:field="*{taxId}">
+	<button type="submit">送出</button>
+</form>
+
+</body>
+</html>

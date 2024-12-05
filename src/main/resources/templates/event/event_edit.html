@@ -5,23 +5,86 @@
 <title>event edit</title>
 </head>
 <body>
-	<form th:action="@{/event/update}" th:object="${event}" method="post" enctype="multipart/form-data">
+	<form th:action="${#strings.isEmpty(event.id) ? '/event/create' : '/event/update'}"  th:object="${event}" method="post" enctype="multipart/form-data">
 		<input type="hidden" th:field="*{id}">
 		<input type="hidden" th:field="*{businessMember.id}">
 		<input type="text" th:field="*{name}">
 		<input type="datetime-local" th:field="*{startDate}">
 		<input type="datetime-local" th:field="*{endDate}">
-		<input type="number" th:field="*{catalog}">
+		<input type="text" th:field="*{catalog}">
 		<input type="text" th:field="*{description}">
 		<input type="number" th:field="*{price}">
 		<input type="text" th:field="*{location}">
 		<input type="number" th:field="*{maximum}">
 		<input type="number" th:field="*{minimum}">
 		
-<!-- 		<input type="file" name="evtImg.imageFile"> -->
-		<button type="submit">確認更新</button>
+    <!-- 顯示已存在的圖片 -->
+    <div>
+        <h3>目前的圖片</h3>
+        <ul>
+            <li th:each="image : ${evtImgList}">
+                <img th:src="@{/event/DBImgReader/} + ${image.id}" width="100px">
+                <label>
+                    <input type="checkbox" name="imagesToDelete" th:value="${image.id}">
+                    刪除
+                </label>
+            </li>
+        </ul>
+        <button id="btn_delete_imgs">刪除選定圖片</button>
+        
+    </div>
+
+    <!-- 新圖片上傳 -->
+    <label>新增圖片：</label>
+    <input type="file" name="evtImgList" multiple>
+
+	<button type="submit">確認更新</button>
 	</form>
-	<div><img alt="" th:src="${evtImg}"></div>
+<!-- 	<form th:action="${#strings.isEmpty(evtImg.id) ? '/event/uploadImg' : '/event/updateImg'}"  th:object="${evtImg}" method="post" enctype="multipart/form-data"> -->
+<!-- 		<img th:src="@{/event/DBImgReader/} + ${id}" width="100px"> -->
+<!-- 	</form> -->
+<script type="text/javascript" th:inline="javascript">
+	var el_btn_delete_imgs = document.querySelector("#btn_delete_imgs")
+	el_btn_delete_imgs.addEventListener("click", function(e){
+		e.preventDefault();
+		deleteEvtImgs();
+	});
+
+	var deleteEvtImgs = async function() {
+		var selectedImgList=[];
+		var checkboxes = document.querySelectorAll('input[name="imagesToDelete"]:checked');
+        
+        // 將被選中的圖片ID加入到selectedImgList中
+        checkboxes.forEach(function(checkbox) {
+            selectedImgList.push(parseInt(checkbox.value));
+        });
+        console.log(selectedImgList)
+		alert(selectedImgList);
+
+		var payload = {
+				"evtImgId": selectedImgList
+			};
+	    try {
+	        let response = await fetch("/api/event/deleteEvtImg", {
+	            method: "POST",
+	            headers: {
+	                "Content-Type": "application/json",
+	            },
+	            body: JSON.stringify(payload),
+	        });
 	
+	        console.log(response);
+	        if (response.ok) {
+	            let data = await response.json(); // 解析 JSON 資料
+	            alert(data.message);
+	        } else {
+	            alert("刪除失敗，請稍後再試。");
+	        }
+	    } catch (error) {
+	        console.error("Error:", error);
+	        alert("請求發送失敗，請稍後再試。");
+	    }
+	}
+</script>	
 </body>
 </html>

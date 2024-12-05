@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>商家會員管理</title>
+</head>
+<body>
+
+	<h4>搜尋欄</h4>
+	<form action="/platform/search_bmemb" method="get">
+	
+		<label>ID
+		<input name="id">
+		</label>
+		<label>名稱
+		<input name="name">
+		</label>
+		<label>email
+		<input name="email" type="email">
+		</label>
+		<label>地點
+		<input name="addr">
+		</label>
+		<label>稅號
+		<input name="taxId">
+		</label>
+		<label>申辦日期
+		<input name="startDate" type="datetime-local">
+		</label>
+		<label>狀態
+		<input name="status" type="number">
+		</label>
+		<button type="submit">查詢囉</button>
+	</form>
+	
+	<h4>搜尋結果：</h4>
+	<p>共有<span th:text="${page.totalElements}"></span>筆</p>
+	<table>
+		<thead>
+			<tr>
+				<th scope="col">ID</th>
+				<th scope="col">名稱</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="bm : ${page.content}">
+				<th scope = "row" th:text="${bm.id}">ID</th>	
+				<td th:text="${bm.name}"></td>
+				<td th:switch="${bm.status}">
+					<button th:case="0" th:onclick="approve([[${bm.id}]])">通過</button>
+					<button th:case="1" th:onclick="inactivate([[${bm.id}]])">停權</button>
+					<button th:case="2" th:onclick="activate([[${bm.id}]])">啟用</button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	
+	<script type="text/javascript" th:inline="javascript">
+		var approve=function(id){
+			console.log(id);
+			// 這裡可以發送AJAX請求或執行其他操作
+		}
+		var inactivate=function(id){
+			console.log(id);
+			// 這裡可以發送AJAX請求或執行其他操作
+		}
+		var activate=function(id){
+			console.log(id);
+			// 這裡可以發送AJAX請求或執行其他操作
+		}
+	</script>
+	
+</body>
+</html>
