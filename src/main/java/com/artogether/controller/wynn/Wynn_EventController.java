@@ -42,8 +42,8 @@ import com.artogether.event.evt_track.EvtTrack;
 import com.artogether.event.evt_track.EvtTrackService;
 
 @Controller
-@RequestMapping("event")
-public class WynnEventController {
+@RequestMapping("/event")
+public class Wynn_EventController {
 	@Autowired
 	private EventService eventService;
 	@Autowired

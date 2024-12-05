@@ -6,10 +6,18 @@
 </head>
 <body>
 <form th:action="@{/applyForBusiness}" method="post" th:object=${businessMember}>
-	<input type="text" th:field="*{name}">
-	<input type="email" th:field="*{email}">
-	<input type="text" th:field="*{addr}">
-	<input type="text" th:field="*{taxId}">
+	<label>名稱
+		<input type="text" th:field="*{name}">
+	</label>
+	<label>email
+		<input type="email" th:field="*{email}">
+	</label>
+	<label>地址
+		<input type="text" th:field="*{addr}">
+	</label>
+	<label>稅號
+		<input type="text" th:field="*{taxId}">
+	</label>
 	<button type="submit">送出</button>
 </form>
 

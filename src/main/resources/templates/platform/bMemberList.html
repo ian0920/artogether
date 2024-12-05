@@ -47,27 +47,43 @@
 				<th scope = "row" th:text="${bm.id}">ID</th>	
 				<td th:text="${bm.name}"></td>
 				<td th:switch="${bm.status}">
-					<button th:case="0" th:onclick="approve([[${bm.id}]])">通過</button>
-					<button th:case="1" th:onclick="inactivate([[${bm.id}]])">停權</button>
-					<button th:case="2" th:onclick="activate([[${bm.id}]])">啟用</button>
+					<button th:case="0" th:onclick="updateStatus(1,[[${bm.id}]])">通過</button>
+					<button th:case="1" th:onclick="updateStatus(2,[[${bm.id}]])">停權</button>
+					<button th:case="2" th:onclick="updateStatus(1,[[${bm.id}]])">啟用</button>
 				</td>
 			</tr>
 		</tbody>
 	</table>
 	
 	<script type="text/javascript" th:inline="javascript">
-		var approve=function(id){
-			console.log(id);
+		var updateStatus = async function(status, id){
+			const payload = {
+				    "status": status,
+				    "bMembId": id,
+				};
+			try {
+		        let response = await fetch("/api/platform/updateBMemberStatus", {
+		            method: "POST",
+		            headers: {
+		                "Content-Type": "application/json",
+		            },
+		            body: JSON.stringify(payload),
+		        });
+		
+		        console.log(response);
+		        if (response.ok) {
+		            let data = await response.json(); // 解析 JSON 資料
+		            alert(data.message);
+		        } else {
+		            alert("更新失敗，請稍後再試。");
+		        }
+		    } catch (error) {
+		        console.error("Error:", error);
+		        alert("請求發送失敗，請稍後再試。");
+		    }
 			// 這裡可以發送AJAX請求或執行其他操作
 		}
-		var inactivate=function(id){
-			console.log(id);
-			// 這裡可以發送AJAX請求或執行其他操作
-		}
-		var activate=function(id){
-			console.log(id);
-			// 這裡可以發送AJAX請求或執行其他操作
-		}
+		
 	</script>
 	
 </body>

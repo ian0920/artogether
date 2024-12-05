@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>活動狀態管理-平台</title>
+</head>
+<body>
+	<h4>搜尋欄</h4>
+	<form action="#" method="get">
+	
+		<label for="id">ID</label>
+		<input name="id">
+		<label for="name">名稱</label>
+		<input name="name">
+		<label for="location">地點</label>
+		<input name="location">
+		<label for="minPrice">價錢起</label>
+		<input name="minPrice">
+		<label for="maxPrice">價錢迄</label>
+		<input name="maxPrice">
+		<button type="submit">查詢囉</button>
+	</form>
+	
+	<h4>搜尋結果：</h4>
+	<p>共有<span th:text=${page.totalElements}></span>筆</p>
+	<table>
+		<thead>
+			<tr>
+				<th scope="col">ID</th>
+				<th scope="col">名稱</th>
+				<th scope="col">狀態</th>
+				<th scope="col">操作</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="evt : ${page.content}">
+				<th scope = "row" th:text="${evt.id}">ID</th>	
+				<td th:text="${evt.name}"></td>
+				<td th:switch="${evt.status}">
+					<p th:case="0">待審核</p>
+					<p th:case="1">已上架</p>
+					<p th:case="2">延期</p>
+					<p th:case="3">取消</p>
+					<p th:case="4">退回</p>
+				</td>
+				<td>
+					<button th:if="${evt.status} eq 0" th:onclick="updateStatus(1,[[${evt.id}]])">批准</button>
+					<button th:if="${evt.status} eq 0" th:onclick="updateStatus(4,[[${evt.id}]])">退回</button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	
+	
+	<script type="text/javascript" th:inline="javascript">
+		var updateStatus = async function(status, eid){
+			const payload = {
+				    eventId: eid,
+				    status: status
+				};
+			let response = await fetch("/api/event/updateStatus", {
+	            method: "POST",
+	            headers: {
+	                "Content-Type": "application/json",
+	            },
+	            body: JSON.stringify(payload),
+	        });
+			if(response.ok){
+				let data = await response.json(); // 解析 JSON 資料
+	            alert(data.message);
+			}
+		}
+	</script>
+	
+</body>
+</html>
