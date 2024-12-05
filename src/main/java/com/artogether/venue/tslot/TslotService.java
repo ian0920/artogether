@@ -29,37 +29,22 @@ public class TslotService {
     }
 
     //找不到是給初始設定用的
-    public Map<String, List<Integer>> getWeeklyTslots(Integer vneId, LocalDateTime submissionTime) {
+    public List<Integer> getWeeklyTslots(Integer vneId, LocalDateTime submissionTime) {
         Optional<Tslot> tslotOptional = tslotRepository.getNearestPastRecord(vneId, submissionTime);
         if (tslotOptional.isEmpty()) {
             //如果沒找到提供一個全部開啟的預設表單
-            Map<String, List<Integer>> AllWeekOpening = new HashMap<String,List<Integer>>();
-            List<Integer> AllDayOpening = new ArrayList<>();
-            // 生成 1~24 的連續數字
-            for(int i= 0; i< 24; i++){
-                AllDayOpening.add(i);
-            }
-            //有空再看看這樣也行
-//            List<Integer> allDayOpening = IntStream.rangeClosed(1, 24)
-//                    .boxed()
-//                    .collect(Collectors.toList());
-
-            for (DayOfWeek day : DayOfWeek.values()) {
-                //讓每個有獨立的
-                AllWeekOpening.put(day.name(),AllDayOpening);
-            }
+            //24小時全開(用二進位)
+            Integer AllDayOpening = 16777215;
+            List<Integer> AllWeekOpening = new ArrayList<>(Collections.nCopies(5, AllDayOpening));
             return AllWeekOpening;
         }else {
             Tslot tslot= tslotOptional.get();
             //如果有找到，找出一個符合當時設定的行事曆
-            Map<String, List<Integer>> weeklyTslots = new HashMap<String,List<Integer>>();
+            List<Integer> weeklyTslots = new ArrayList<>();
             // 遍歷一周的每一天
-            //for-each還不熟多用，前面是要撈的東西，後面是集合或數組
-            //values() 是所有枚舉類型的靜態方法，返回一個包含所有枚舉常量的數組。
-            for (DayOfWeek day : DayOfWeek.values()) {
-                List<Integer> daylyTslots = getDaylyTslotsByDay(tslot, day);
-                //枚舉類有靜態方法".name()"回傳String
-                weeklyTslots.put(day.name(), daylyTslots);
+            for(int i = 1; i <= 7; i++){
+                Integer daylyTslots = getDaylyTslotsByDay(tslot, DayOfWeek.of(i));
+                weeklyTslots.add(daylyTslots);
             }
             return weeklyTslots;
         }
@@ -79,7 +64,7 @@ public class TslotService {
                     case FRIDAY -> hourOfDay = tslot.getHourOfFri();
                     case SATURDAY -> hourOfDay = tslot.getHourOfSat();
                     case SUNDAY -> hourOfDay = tslot.getHourOfSun();
-                    default -> throw new IllegalArgumentException("Invalid day of the week");
+                    default -> throw new IllegalArgumentException("無效數字");
                 }
                 if (!BinaryTools.toBitSet(hourOfDay).isEmpty()) {
                     binaryWeek |= 1 << (7-i);
@@ -87,8 +72,9 @@ public class TslotService {
             }
         return binaryWeek;
     }
-    //列出有營業的時間陣列
-    private List<Integer> getDaylyTslotsByDay(Tslot tslot, DayOfWeek day) {
+
+    //單日有營業的數字
+    private Integer getDaylyTslotsByDay(Tslot tslot, DayOfWeek day) {
         String hourOfDay;
         //這邊不用".name()"是因為"switch"支持枚舉類
         switch (day) {
@@ -99,10 +85,10 @@ public class TslotService {
             case FRIDAY -> hourOfDay = tslot.getHourOfFri();
             case SATURDAY -> hourOfDay = tslot.getHourOfSat();
             case SUNDAY -> hourOfDay = tslot.getHourOfSun();
-            default -> throw new IllegalArgumentException("Invalid day of the week");
+            default -> throw new IllegalArgumentException("無效數字");
         }
-        List<Integer> daylyTslots = BinaryTools.bitSetToList(BinaryTools.toBitSet(hourOfDay));
-        return daylyTslots;
+        Integer daylyTslot = BinaryTools.toBinaryInteger(hourOfDay);
+        return daylyTslot;
     }
 
     // 創建或更新時段

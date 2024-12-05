@@ -11,7 +11,7 @@ import java.util.List;
 public class BinaryTools {
 
     // 處理 String
-    public int toBinaryInteger(String binary) {
+    public static Integer toBinaryInteger(String binary) {
         // 確保字符串只包含合法二進位字符
         if (!binary.matches("[01]+")) {
             throw new IllegalArgumentException("Invalid binary string: " + binary);
@@ -20,7 +20,7 @@ public class BinaryTools {
     }
 
     // 處理 BitSet
-    public int toBinaryInteger(BitSet bitSet, int length) {
+    public static Integer toBinaryInteger(BitSet bitSet, int length) {
         int result = 0;
         for (int i = 0; i < bitSet.length(); i++) {
             if (bitSet.get(i)) {
@@ -69,6 +69,20 @@ public class BinaryTools {
             list.add(i);
         }
         return list;
+    }
+
+    // 將二進位整數轉為 List<Integer>，記錄哪些位有數字
+    public static List<Integer> binaryToList(int number, int bitLength) {
+        List<Integer> positions = new ArrayList<>();
+
+        for (int i = 0; i < bitLength; i++) {
+            // 檢查第 i 位是否為 1
+            if ((number & (1 << (bitLength-1-i))) != 0) {
+                positions.add(i); // 如果為 1，加入該位索引
+            }
+        }
+
+        return positions;
     }
 
 }
