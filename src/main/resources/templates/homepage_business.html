@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -17,23 +17,29 @@
       <img src="../asset/images/ARTOGETHER.svg" alt="" />
       <div id="div_back_to_homepage" class="link-button">
         <a th:href="@{/business_logout}">返回首頁</a
-        ><span class="material-icons">exit_to_app</span>
+        ><span class="material-symbols-outlined">exit_to_app</span>
       </div>
     </div>
     <hr />
     <nav>
       <ul>
         <li clickable class="bs-navbar-item -open">
-          <span class="material-icons">storefront</span>
-          <a href="#">商家基本資訊</a>
+          <div clickable class="bs-navbar-header">
+            <span class="material-symbols-outlined">storefront</span>
+            <a href="#">商家基本資訊</a>
+          </div>
         </li>
         <li clickable class="bs-navbar-item">
-          <span class="material-icons">inbox</span>
-          <a href="#">收件匣</a>
+          <div clickable class="bs-navbar-header">
+            <span class="material-symbols-outlined">inbox</span>
+            <a href="#">收件匣</a>
+          </div>
         </li>
         <li clickable class="bs-navbar-item">
-          <span class="material-icons">admin_panel_settings</span>
-          <a href="#">管理員權限設定</a>
+          <div clickable class="bs-navbar-header">
+            <span class="material-symbols-outlined">admin_panel_settings</span>
+            <a href="#">管理員權限設定</a>
+          </div>
         </li>
       </ul>
     </nav>
@@ -41,16 +47,53 @@
     <nav>
       <ul>
         <li clickable class="bs-navbar-item">
-          <span class="material-icons">sell</span>
-          <a href="#">商品管理</a>
+          <div clickable class="bs-navbar-header">
+            <span class="material-symbols-outlined">sell</span>商品管理
+          </div>
+          <ul class="bs-navbar-submenu">
+            <li clickable class="bs-navbar-subitem">
+              <a href="#">訂單管理</a>
+            </li>
+            <li clickable class="bs-navbar-subitem">
+              <a href="#">優惠券管理</a>
+            </li>
+            <li clickable class="bs-navbar-subitem">
+              <a href="#">商品管理</a>
+            </li>
+          </ul>
         </li>
         <li clickable class="bs-navbar-item">
-          <span class="material-icons">roofing</span>
-          <a href="/venue/vneList">場地管理</a>
+          <div clickable class="bs-navbar-header">
+            <span class="material-symbols-outlined">roofing</span>場地管理
+          </div>
+          <ul class="bs-navbar-submenu">
+            <li clickable class="bs-navbar-subitem">
+              <a href="#">訂單管理</a>
+            </li>
+            <li clickable class="bs-navbar-subitem">
+              <a href="#">優惠券管理</a>
+            </li>
+            <li clickable class="bs-navbar-subitem">
+              <a href="/venue/vneList">場地管理</a>
+            </li>
+          </ul>
         </li>
         <li clickable class="bs-navbar-item">
-          <span class="material-icons">local_activity</span>
-          <a href="#">活動管理</a>
+          <div clickable class="bs-navbar-header">
+                <span class="material-symbols-outlined">local_activity</span
+                >活動管理
+          </div>
+          <ul class="bs-navbar-submenu">
+            <li clickable class="bs-navbar-subitem">
+              <a href="#">訂單管理</a>
+            </li>
+            <li clickable class="bs-navbar-subitem">
+              <a href="#">優惠券管理</a>
+            </li>
+            <li clickable class="bs-navbar-subitem">
+              <a href="#">活動管理</a>
+            </li>
+          </ul>
         </li>
       </ul>
     </nav>
@@ -58,7 +101,7 @@
   <div class="bs-navbar-user-control">
     <div class="bs-navbar-user-menu -hidden" th:if="${#session.getAttribute('businessMembers').size()>1}">
       <div class="bs-navbar-user-item" th:each="businessMember: ${#session.getAttribute('businessMembers')}">
-        <div class="bs-navbar-user-exclude" th:if="${! (businessMember == #session.getAttribute('presentBusinessMember'))}">
+        <div th:if="${! (businessMember == #session.getAttribute('presentBusinessMember'))}">
           <div class="bs-navbar-user-thumbnail">
             <img src="../asset/images/bgimg.png" alt="" />
           </div >
@@ -78,8 +121,8 @@
         <div class="bs-navbar-user-thumbnail">
           <img src="../asset/images/bgimg.png" alt="" />
         </div>
-        <p th:text="${#session.getAttribute('presentBusinessMember').name}"></p>
-        <span class="material-icons unfold" id="icon_unfold"
+        <p class="bs-navbar-user-name" th:text="${#session.getAttribute('presentBusinessMember').name}"></p>
+        <span class="material-symbols-outlined unfold" id="icon_unfold"
         >unfold_more</span
         >
       </div>
@@ -87,10 +130,20 @@
   </div>
 </div>
 
+<!-- main區塊 -->
+<main>
+  <h3>hiiiiiiiiii</h3>
+  <p>
+    ggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+  </p>
+  <img th:src="@{/web_design/asset/images/bgimg.png}" alt="" />
+</main>
+
 <script>
   // 設定最下方的user control菜單收合
-  var el_nav_user_control = document.querySelector(".bs-navbar-user-field");
-  el_nav_user_control.addEventListener("click", function () {
+  var el_nav_user_field = document.querySelector(".bs-navbar-user-field");
+  el_nav_user_field.addEventListener("click", function (e) {
+    e.stopPropagation();
     let el_nav_user_menu = document.querySelector(".bs-navbar-user-menu");
     el_nav_user_menu.classList.toggle("-hidden");
     let el_field_icon = document.querySelector(
@@ -105,14 +158,39 @@
     }
   });
 
+  // 設定user-item的選取範圍
+  var els_nav_user_item = document.querySelectorAll(
+          "div.bs-navbar-user-menu .bs-navbar-user-item"
+  );
+  for (let i = 0; i < els_nav_user_item.length; i++) {
+    els_nav_user_item[i].addEventListener("click", function (e) {
+      console.log("hi");
+      // TODO: 這裡要補上跳轉連結
+      this.lastElementChild.click();
+      el_nav_user_field.click();
+    });
+  }
+
   // 設定nav-item的選取效果
   var els_nav_item = document.querySelectorAll(".bs-navbar-item");
+  var els_nav_header = document.querySelectorAll(".bs-navbar-header");
+  var els_nav_submenu = document.querySelectorAll(".bs-navbar-submenu");
+  var els_nav_subitem = document.querySelectorAll(".bs-navbar-subitem");
   for (let i = 0; i < els_nav_item.length; i++) {
     els_nav_item[i].addEventListener("click", function () {
-      els_nav_item.forEach((e) => e.classList.remove("-open"));
-      this.classList.add("-open");
+      els_nav_header.forEach((e) => e.classList.remove("-open"));
+      els_nav_submenu.forEach((e) => e.classList.remove("-open"));
+      this.firstElementChild.classList.add("-open");
+      this.lastElementChild.classList.add("-open");
       // 觸發a tag點擊事件
       this.lastElementChild.click();
+    });
+  }
+  // 設定nav-subitem的選取效果
+  for (let i = 0; i < els_nav_subitem.length; i++) {
+    els_nav_subitem[i].addEventListener("click", function () {
+      els_nav_subitem.forEach((e) => e.classList.remove("-focus"));
+      this.classList.add("-focus");
     });
   }
 </script>

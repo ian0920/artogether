@@ -14,7 +14,7 @@
 </head>
 <body>
 <!-- 導航 -->
-<header class="header navbar_homepage">
+<header class="header navbar_homepage" th:fragment="header">
   <div class="header_box">
     <div class="logo">
       <img src="./asset/images/ARTOGETHER.svg" alt="" />
@@ -37,7 +37,7 @@
       <div class="thumbnail-box">
         <img src="./asset/images/bgimg.png" alt="" class="thumbnail" />
       </div>
-      <span id="user_name" th:if="${#ctx.session.getOrDefault('islogin',false)}"  th:text="${#ctx.session.memberObject == null? '' : #ctx.session.memberObject.name}"></span>
+      <span id="user_name" th:text="${#ctx.session.memberName == null? '' : #ctx.session.memberName}"></span>
       <span class="material-icons"> arrow_drop_down </span>
     </div>
     <div th:unless="${#ctx.session.getOrDefault('islogin',false)}">
@@ -175,18 +175,18 @@
         <span class="material-icons">chevron_right</span>
       </div>
     </div>
+
     <div class="showcase-cards-box">
-      <div clickable class="showcase-card card event">
+      <div th:each="topThree:${topThreeEvents}" th:onclick="|location.href='/event/details/' + ${topThree.id}|" clickable class="showcase-card card event">
         <img src="./asset/images/bgimg.png" alt="" />
         <div class="card-content">
           <div class="card-title">
             <div class="tag event">活動</div>
-            <h3 class="card-title-text">
-              越玩越好玩越玩越好玩越玩越好玩越玩越好玩的活動
+            <h3 class="card-title-text" th:text="${topThree.name}">
             </h3>
           </div>
           <div class="card-info">
-            <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
+            <p th:text="${topThree.description.substring(0,35)}+ ' ...'" ></p>
             <div class="progress">
               <div
                       class="progress-bar bgcolor-event"
@@ -196,70 +196,10 @@
             </div>
           </div>
           <div class="tags-box">
-            <div class="tag plain-tag">
-              <span class="material-icons">location_on</span>台北市
-            </div>
-            <div class="tag plain-tag">
-              <span class="material-icons">calendar_today</span>04/28
-            </div>
-          </div>
-        </div>
-      </div>
-      <div clickable class="showcase-card card event">
-        <img src="./asset/images/bgimg.png" alt="" />
-        <div class="card-content">
-          <div class="card-title">
-            <div class="tag event">活動</div>
-            <h3 class="card-title-text">
-              越玩越好玩越玩越好玩越玩越好玩越玩越好玩的活動
-            </h3>
-          </div>
-          <div class="card-info">
-            <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
-            <div class="progress">
-              <div
-                      class="progress-bar bgcolor-event"
-                      role="progressbar"
-                      style="width: 70%"
-              ></div>
-            </div>
-          </div>
-          <div class="tags-box">
-            <div class="tag plain-tag">
-              <span class="material-icons">location_on</span>台北市
-            </div>
-            <div class="tag plain-tag">
-              <span class="material-icons">calendar_today</span>04/28
-            </div>
-          </div>
-        </div>
-      </div>
-      <div clickable class="showcase-card card event">
-        <img src="./asset/images/bgimg.png" alt="" />
-        <div class="card-content">
-          <div class="card-title">
-            <div class="tag event">活動</div>
-            <h3 class="card-title-text">
-              越玩越好玩越玩越好玩越玩越好玩越玩越好玩的活動
-            </h3>
-          </div>
-          <div class="card-info">
-            <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
-            <div class="progress">
-              <div
-                      class="progress-bar bgcolor-event"
-                      role="progressbar"
-                      style="width: 70%"
-              ></div>
-            </div>
-          </div>
-          <div class="tags-box">
-            <div class="tag plain-tag">
-              <span class="material-icons">location_on</span>台北市
-            </div>
-            <div class="tag plain-tag">
-              <span class="material-icons">calendar_today</span>04/28
-            </div>
+            <span class="material-icons">location_on</span>
+            <span class="tag plain-tag" th:text="${topThree.location.substring(0,3)}"></span>
+            <span class="material-icons">calendar_today</span>
+            <span th:text="${#dates.format(topThree.startDate, 'yyyy-MM-dd')}"></span>
           </div>
         </div>
       </div>
@@ -434,8 +374,8 @@
     </div>
   </section>
 </main>
-<footer>
-  <div class="footer-box">
+<footer th:fragment="footer">
+  <div class="footer-box" >
     <div class="platform-info">
       <div class="logo-box">
         <img src="./asset/images/ARTOGETHER_white.svg" alt="" />
@@ -472,7 +412,7 @@
 </footer>
 
 <!-- 導航欄-探索視窗 -->
-<div class="nav-menu-box">
+<div class="nav-menu-box" th:fragment="nav-menu-box">
   <div class="nav-menu-mask"></div>
   <div class="nav-menu">
     <div class="nav-menu-content">
@@ -513,12 +453,12 @@
 </div>
 
 <!-- 會員視窗 -->
-<div class="user-menu-box">
+<div class="user-menu-box" th:fragment="user-menu-box">
   <div clickable class="user-info-box">
     <div class="thumbnail">
       <img src="./asset/images/bgimg.png" alt="" />
     </div>
-    <div class="user-info-text" th:if="${#ctx.session.getOrDefault('islogin',false)}"  th:text="${#ctx.session.memberObject == null? '' : #ctx.session.memberObject.name}">Alice Wang</div>
+    <div class="user-info-text"   th:text="${#ctx.session.memberName == null? '' : #ctx.session.memberName}"></div>
     <span class="material-icons">chevron_right</span>
   </div>
   <hr />
@@ -544,7 +484,7 @@
     <button clickable class="button-secondary button-big" onclick="location.href='/logout'">登出</button>
   </div>
 </div>
-<script src="./components/web_components/navbar_hompage.js"></script>
+<script th:src="@{/web_design/components/web_components/navbar_hompage.js}"></script>
 <script>
   var el_nav_item_discover = document.querySelector("div.navbar-item");
   var el_div_nav_menu_box = document.querySelector("div.nav-menu-box");

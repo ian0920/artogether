@@ -2,38 +2,132 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>All events</title>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link rel="stylesheet" th:href="@{/web_design/style/style_general.css}" />
+  <link rel="stylesheet" th:href="@{/web_design/style/style_homepage.css}" />
+  <link
+          href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet"
+  />
+  <style>
+
+    .event-card-container{
+      width: 85%;
+      align-content: center;
+    }
+
+    .showcase-cards-box{
+
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+
+
+    .showcases-card{
+      margin: 25px;
+      width: 300px;
+    }
+
+    .event-card-search{
+      align-self: flex-start;
+      margin-left: 120px;
+      margin-top: 25px;
+    }
+
+  </style>
 </head>
 <body>
+<header class="header navbar_homepage" th:include="homepage::header"></header>
 
-<form action="/evt/all" method="post">
-
-  <label for="events">排序方式:</label>
-  <select name="search" id="events">
-    <option value="">未選擇</option>
-    <option value="price">金額(由小到大)</option>
-    <option value="priceR">金額(由大到小)</option>
-    <option value="startDate">活動日期(由近到遠)</option>
-    <option value="startDateR">活動日期(由遠到近)</option>
-    <option value="enrolled">報名人數(由少到多)</option>
-    <option value="enrolledR">報名人數(由多到少)</option>
-  </select>
-  <span>
-        <input type="submit" value="送出">
-    </span>
-
-  <div th:if="${events != null}">
-    <ul>
-      <li th:each=" event : ${events}">
-        活動id=<span th:text="${event.getId()}"></span>,
-        活動名稱=<span th:text="${event.getName()}"></span>,
-        活動費用=<span th:text="${event.getPrice()}"></span>,
-        活動已報名人數=<span th:text="${event.getEnrolled()}"></span>,
-        活動開始日期=<span th:text="${event.getStartDate()}"></span>
-      </li>
-    </ul>
+<main>
+  <div class="event-card-search">
+    <form action="/event/all" method="post">
+      <label for="events">篩選條件:</label>
+      <select name="search" id="events">
+        <option value="">未選擇</option>
+        <option value="price">金額(由小到大)</option>
+        <option value="priceR">金額(由大到小)</option>
+        <option value="startDate">活動日期(由近到遠)</option>
+        <option value="startDateR">活動日期(由遠到近)</option>
+        <option value="enrolled">報名人數(由少到多)</option>
+        <option value="enrolledR">報名人數(由多到少)</option>
+      </select>
+      <span>
+              <input class="btn btn-sm" type="submit" value="送出">
+      </span>
+    </form>
+  </div>
+  <div class="event-card-container">
+  <div class="showcase-cards-box">
+    <div th:each="event:${events}" th:onclick="|location.href='/event/details/' + ${event.id}|" clickable class="showcases-card card event">
+      <img src="./asset/images/bgimg.png" alt="" />
+      <div class="card-content">
+        <div class="card-title">
+          <div class="tag event">活動</div>
+          <h3 class="card-title-text" th:text="${event.name}">
+          </h3>
+        </div>
+        <div class="card-info">
+          <p th:text="${event.description.substring(0,35)}+ ' ...'" ></p>
+          <div class="progress">
+            <div
+                    class="progress-bar bgcolor-event"
+                    role="progressbar"
+                    style="width: 70%"
+            ></div>
+          </div>
+        </div>
+        <div class="tags-box">
+          <span class="material-icons">location_on</span>
+          <span class="tag plain-tag" th:text="${event.location.substring(0,3)}"></span>
+          <span class="material-icons">calendar_today</span>
+          <span th:text="${#dates.format(event.startDate, 'yyyy-MM-dd')}"></span>
+        </div>
+      </div>
+    </div>
   </div>
 
-</form>
+
+  </div>
+</main>
+
+
+<div class="nav-menu-box" th:include="homepage::nav-menu-box"></div>
+<div class="user-menu-box" th:include="homepage::user-menu-box"></div>
+<footer th:include="homepage::footer"></footer>
+
+<script th:src="@{/web_design/components/web_components/navbar_hompage.js}"></script>
+<script>
+  var el_nav_item_discover = document.querySelector("div.navbar-item");
+  var el_div_nav_menu_box = document.querySelector("div.nav-menu-box");
+  var el_div_nav_user_box = document.querySelector("div.user_div");
+  var el_div_nav_menu = document.querySelector("div.nav-menu");
+  var el_eiv_user_menu = document.querySelector("div.user-menu-box");
+
+  //=====================觸發視窗========================
+  // 1. 探索
+  el_nav_item_discover.addEventListener("mouseenter", function () {
+    if (!el_div_nav_menu_box.classList.contains("open"))
+      el_div_nav_menu_box.classList.add("open");
+  });
+  console.log(el_div_nav_menu);
+  el_div_nav_menu.addEventListener("mouseleave", function () {
+    if (el_div_nav_menu_box.classList.contains("open"))
+      el_div_nav_menu_box.classList.remove("open");
+  });
+
+  // 2. 會員
+  el_div_nav_user_box.addEventListener("mouseenter", function () {
+    if (!el_eiv_user_menu.classList.contains("open"))
+      el_eiv_user_menu.classList.add("open");
+  });
+  el_eiv_user_menu.addEventListener("mouseleave", function () {
+    if (el_eiv_user_menu.classList.contains("open"))
+      el_eiv_user_menu.classList.remove("open");
+  });
+</script>
 </body>
 </html>

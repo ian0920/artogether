@@ -32,3 +32,11 @@
     @content;
   }
 }
+
+// 超過行數，使用刪節號設定
+@mixin ellipse-text($line-amount) {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: $line-amount;
+  overflow: hidden;
+}
