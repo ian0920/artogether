@@ -1,15 +1,25 @@
 package com.artogether.venue.tslot;
 
+import com.artogether.common.member.Member;
+import com.artogether.common.member.MemberRepo;
+import com.artogether.common.member.MemberService;
 import com.artogether.util.BinaryTools;
 import com.artogether.venue.venue.Venue;
+import com.artogether.venue.venue.VenueRepository;
 import com.artogether.venue.vnedto.TslotDTO;
+import com.artogether.venue.vnedto.VneOrderDTO;
+import com.artogether.venue.vneorder.VneOrder;
+import com.artogether.venue.vneorder.VneOrderRepository;
+import com.artogether.venue.vneorder.VneOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
@@ -17,9 +27,15 @@ public class TslotService {
 
     @Autowired
     private TslotRepository tslotRepository;
-
     @Autowired
     private TslotViewService tslotViewService;
+    @Autowired
+    private VneOrderRepository vneOrderRepository;
+    @Autowired
+    private MemberRepo memberRepository;
+    @Autowired
+    private VenueRepository venueRepository;
+
 
     //只在第一次啟動時執行。
 //    @Transactional
@@ -131,6 +147,82 @@ public class TslotService {
                 .build();
             return tslotRepository.save(newTslot);
         }
+    }
+
+    //有個Multimap(Guava Library)可能可以用
+    //取出訂單中所有預約的小時
+    public Map<LocalDate, Integer> getBookingTslot (Integer vneId) {
+        List<VneOrder> vneOrders = vneOrderRepository.findUnclosedOrders(vneId,LocalDate.now());
+        Map<LocalDate, Integer> bookingTslotMap = new HashMap<>();
+        for (VneOrder vneOrder : vneOrders) {
+            LocalDate startDate = vneOrder.getStartDate();
+            Integer startTime = vneOrder.getStartTime();
+            LocalDate endDate = vneOrder.getEndDate();
+            Integer endTime = vneOrder.getEndTime();
+            long days = ChronoUnit.DAYS.between(startDate, endDate);
+            Integer bookingTslot = 0;
+            //若為單日訂單
+            if (days == 0) {
+                //設定為<=因為希望設定一小時的緩衝時間
+                for (int i = startTime; i <= endTime; i++) {
+                    bookingTslot |= 1 << (24-1-i);
+                    if (bookingTslotMap.containsKey(startDate)) {
+                        bookingTslot |= bookingTslotMap.get(startDate);
+                        bookingTslotMap.put(startDate, bookingTslot);
+                    }
+                    bookingTslotMap.put(startDate, bookingTslot);
+                }
+            }
+        }
+        return bookingTslotMap;
+    }
+
+    //整理出已被整天預約的日期
+    public List<LocalDate> getOrderedDates(Integer vneId, LocalDateTime submissionTime){
+
+        List<LocalDate> nonBizDays = new ArrayList<>();
+        List<Integer> weeklyTslot = getWeeklyTslots(vneId,submissionTime);
+        Map<LocalDate, Integer> bookingTslotMap = getBookingTslot(vneId);
+        for (Map.Entry<LocalDate, Integer> entry: bookingTslotMap.entrySet()) {
+            LocalDate date = entry.getKey();
+            Integer bookingTslot = entry.getValue();
+            Integer weekday = date.getDayOfWeek().getValue()-1;
+            if ((weeklyTslot.get(weekday) ^ bookingTslot)==0) {
+                nonBizDays.add(date);
+            }
+        }
+        return nonBizDays;
+    }
+
+    //找出表訂不能預約的天數(尚須排除已預約
+    public List<LocalDate> getNonBizDays(Integer vneId){
+        Venue venue = venueRepository.findById(vneId).get();
+        Integer availableDays = venue.getAvailableDays();
+        List<LocalDate> openDates = venueRepository.getAvailableDates(availableDays);
+        List<LocalDate> disableDates = new ArrayList<>();
+        int binaryWeek = getBinaryWeek(vneId, LocalDateTime.now());
+
+        if (binaryWeek == 127){
+            return disableDates;
+        }else {
+            for (LocalDate openDate : openDates) {
+                int weekday = openDate.getDayOfWeek().getValue();
+                if ((binaryWeek & 1 << (7-weekday))==0){
+                    disableDates.add(openDate);
+                }
+            }
+            return disableDates;
+        }
+    }
+
+    //列出確切無法被選取的日期(未排序，但應該不用排)
+    public List<LocalDate> getDisableDates(Integer vneId, LocalDateTime submissionTime){
+        List<LocalDate>nonBizDays = getNonBizDays(vneId);
+        List<LocalDate>orderedDates = getOrderedDates(vneId,submissionTime);
+        List<LocalDate> disableDates = new ArrayList<>();
+        disableDates.addAll(nonBizDays);
+        disableDates.addAll(orderedDates);
+        return disableDates;
     }
 
 //    private void setHourStr(Timestamp timestamp) {
