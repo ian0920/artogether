@@ -69,7 +69,7 @@ public class EventService {
 			finalComparator = finalComparator.reversed();
 		}
 
-		return this.eventRepo.findAll().stream().sorted(finalComparator).toList();
+		return eventRepo.findAll().stream().sorted(finalComparator).toList();
 	}
 
 	public Event saveEvent(Event event) {

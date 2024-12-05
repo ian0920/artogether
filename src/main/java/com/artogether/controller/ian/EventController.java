@@ -20,7 +20,7 @@ import java.util.*;
 import java.util.function.Predicate;
 
 @Controller
-@RequestMapping("evt")
+@RequestMapping("event")
 public class EventController {
 
     @Autowired
@@ -38,7 +38,9 @@ public class EventController {
 
     @GetMapping({"all"})
     public String allEvents(Model model) {
-        model.addAttribute("events", null);
+        String search = "enrolledR";
+        List<Event> eventList = eventService.findAllEvents(search);
+        model.addAttribute("events", eventList);
         return "event/events";
     }
 
