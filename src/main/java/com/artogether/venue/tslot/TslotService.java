@@ -99,25 +99,23 @@ public class TslotService {
     @Transactional
     public void updateTslot(LocalDateTime submissionTime, TslotDTO tslotDTO) {
         int vneId = tslotDTO.getVneId();
-        if (tslotRepository.existsByVenueId(vneId)) {
-            //找到最靠近現在的前一筆資料寫入更改時間
-            Tslot tslot = new Tslot();
-            tslot = tslotRepository.getNearestPastRecord(vneId, submissionTime).get();
+        //找到最靠近現在的前一筆資料寫入更改時間
+        Optional<Tslot> tslotOptional =tslotRepository.getNearestPastRecord(vneId, submissionTime);
+        tslotOptional.ifPresent(tslot->{
             tslot.setExpirationTime(submissionTime);
             tslotRepository.save(tslot);
-        }
-        //不論有沒有找到都新建一個
-            Tslot tslot = Tslot.builder()
-                    .venue(Venue.id(vneId)) // Venue 有靜態方法"id()"(嘗試看看)
-                    .hourOfMon(BinaryTools.toBinaryString(tslotDTO.getHourOfMon(),24))
-                    .hourOfTue(BinaryTools.toBinaryString(tslotDTO.getHourOfTue(),24))
-                    .hourOfWed(BinaryTools.toBinaryString(tslotDTO.getHourOfWed(),24))
-                    .hourOfThu(BinaryTools.toBinaryString(tslotDTO.getHourOfThu(),24))
-                    .hourOfFri(BinaryTools.toBinaryString(tslotDTO.getHourOfFri(),24))
-                    .hourOfSat(BinaryTools.toBinaryString(tslotDTO.getHourOfSat(),24))
-                    .hourOfSun(BinaryTools.toBinaryString(tslotDTO.getHourOfSun(),24))
-                    .effectiveTime(submissionTime)
-                    .build();
+        });
+    //不論有沒有找到都新建一個
+        Tslot tslot = Tslot.builder()
+                .venue(Venue.id(vneId)) // Venue 有靜態方法"id()"(嘗試看看)
+                .hourOfMon(BinaryTools.toBinaryString(tslotDTO.getHourOfMon(),24))
+                .hourOfTue(BinaryTools.toBinaryString(tslotDTO.getHourOfTue(),24))
+                .hourOfWed(BinaryTools.toBinaryString(tslotDTO.getHourOfWed(),24))
+                .hourOfThu(BinaryTools.toBinaryString(tslotDTO.getHourOfThu(),24))
+                .hourOfFri(BinaryTools.toBinaryString(tslotDTO.getHourOfFri(),24))
+                .hourOfSat(BinaryTools.toBinaryString(tslotDTO.getHourOfSat(),24))
+                .hourOfSun(BinaryTools.toBinaryString(tslotDTO.getHourOfSun(),24))
+                .build();
     }
 
     //有個Multimap(Guava Library)可能可以用
