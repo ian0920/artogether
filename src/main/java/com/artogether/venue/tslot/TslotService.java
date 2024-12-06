@@ -97,44 +97,27 @@ public class TslotService {
 
     // 創建或更新時段
     @Transactional
-    public Tslot updateTslot(LocalDateTime submissionTime, TslotDTO tslotDTO) {
+    public void updateTslot(LocalDateTime submissionTime, TslotDTO tslotDTO) {
         int vneId = tslotDTO.getVneId();
-        if (!tslotRepository.existsByVenueId(vneId)) {
-            //沒有找到新建一個
-            Tslot tslot = Tslot.builder()
-                    .venue(Venue.id(vneId)) // Venue 有靜態方法"id()"(嘗試看看)
-                    .hourOfMon(tslotDTO.getHourOfMon())
-                    .hourOfTue(tslotDTO.getHourOfTue())
-                    .hourOfWed(tslotDTO.getHourOfWed())
-                    .hourOfThu(tslotDTO.getHourOfThu())
-                    .hourOfFri(tslotDTO.getHourOfFri())
-                    .hourOfSat(tslotDTO.getHourOfSat())
-                    .hourOfSun(tslotDTO.getHourOfSun())
-                    .effectiveTime(submissionTime)
-                    .build();
-
-            return tslotRepository.save(tslot);
-        }else {
+        if (tslotRepository.existsByVenueId(vneId)) {
             //找到最靠近現在的前一筆資料寫入更改時間
             Tslot tslot = new Tslot();
             tslot = tslotRepository.getNearestPastRecord(vneId, submissionTime).get();
             tslot.setExpirationTime(submissionTime);
             tslotRepository.save(tslot);
-
-            //有找到舊的所以另存一個新的
-            Tslot newTslot = Tslot.builder()
-                .venue(Venue.id(vneId)) // Venue 有靜態方法"id()"(嘗試看看)
-                .hourOfMon(tslotDTO.getHourOfMon())
-                .hourOfTue(tslotDTO.getHourOfTue())
-                .hourOfWed(tslotDTO.getHourOfWed())
-                .hourOfThu(tslotDTO.getHourOfThu())
-                .hourOfFri(tslotDTO.getHourOfFri())
-                .hourOfSat(tslotDTO.getHourOfSat())
-                .hourOfSun(tslotDTO.getHourOfSun())
-                .expirationTime(submissionTime)
-                .build();
-            return tslotRepository.save(newTslot);
         }
+        //不論有沒有找到都新建一個
+            Tslot tslot = Tslot.builder()
+                    .venue(Venue.id(vneId)) // Venue 有靜態方法"id()"(嘗試看看)
+                    .hourOfMon(BinaryTools.toBinaryString(tslotDTO.getHourOfMon(),24))
+                    .hourOfTue(BinaryTools.toBinaryString(tslotDTO.getHourOfTue(),24))
+                    .hourOfWed(BinaryTools.toBinaryString(tslotDTO.getHourOfWed(),24))
+                    .hourOfThu(BinaryTools.toBinaryString(tslotDTO.getHourOfThu(),24))
+                    .hourOfFri(BinaryTools.toBinaryString(tslotDTO.getHourOfFri(),24))
+                    .hourOfSat(BinaryTools.toBinaryString(tslotDTO.getHourOfSat(),24))
+                    .hourOfSun(BinaryTools.toBinaryString(tslotDTO.getHourOfSun(),24))
+                    .effectiveTime(submissionTime)
+                    .build();
     }
 
     //有個Multimap(Guava Library)可能可以用
