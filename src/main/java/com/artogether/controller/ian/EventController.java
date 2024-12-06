@@ -8,11 +8,13 @@ import com.artogether.event.evt_order.EvtOrderService;
 import com.artogether.event.my_evt_coup.MyEvtCoup;
 import com.artogether.event.my_evt_coup.MyEvtCoupService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -36,21 +38,30 @@ public class EventController {
     public EventController() {
     }
 
-    @GetMapping({"all"})
-    public String allEvents(Model model) {
-        String search = "enrolledR";
-        List<Event> eventList = eventService.findAllEvents(search);
-        model.addAttribute("events", eventList);
+    @GetMapping("all")
+    public String allEvents(Model model,
+                            @RequestParam(defaultValue = "enrolledR")String sortBy,
+                            @RequestParam(defaultValue = "0") int page,
+                            @RequestParam(defaultValue = "3") int size) {
+
+
+
+        Page<Event> paginatedEventList = eventService.findAllEventsAndPagination(sortBy,page, size);
+        model.addAttribute("events", paginatedEventList);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", paginatedEventList.getTotalPages());
+        model.addAttribute("size", size);
+        model.addAttribute("sortBy", sortBy);
         return "event/events";
     }
 
-    @PostMapping({"all"})
-    public String allEvents(String search, Model model) {
-
-        List<Event> eventList = eventService.findAllEvents(search);
-        model.addAttribute("events", eventList);
-        return "event/events";
-    }
+//    @PostMapping("all")
+//    public String allEvents(String search, Model model) {
+//
+//        List<Event> eventList = eventService.findAllEvents(search);
+//        model.addAttribute("events", eventList);
+//        return "event/events";
+//    }
 
     @GetMapping({"orders"})
     public String order(Model model, HttpSession session) {
@@ -101,7 +112,7 @@ public class EventController {
         model.addAttribute("myEvtCoups", filteredMyEvtCoups);
         model.addAttribute("evtCoupIdAndTypeMap", evtCoupIdAndTypeMap);
 
-        return "event/eventTest2";
+        return "event/eventTest";
 
     }
 
@@ -127,7 +138,7 @@ public class EventController {
         boolean match = map.keySet().stream().anyMatch(filter);
         if (match) {
             model.addAttribute("errors", errors);
-            return "event/eventTest2";
+            return "eventTest";
         }
 
 
