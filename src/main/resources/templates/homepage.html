@@ -191,7 +191,7 @@
               <div
                       class="progress-bar bgcolor-event"
                       role="progressbar"
-                      style="width: 70%"
+                      th:attr="style='width:' + (${event.getEnrolled()} / ${event.getMaximum()} * 100) + '%' "
               ></div>
             </div>
           </div>

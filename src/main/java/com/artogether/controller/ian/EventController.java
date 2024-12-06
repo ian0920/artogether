@@ -38,7 +38,7 @@ public class EventController {
 
 
 
-    //活動清單瀏覽+分頁功能
+    //活動清單瀏覽+分頁功能+複合查詢
     @GetMapping("all")
     public String allEvents(Model model,
                             @RequestParam(defaultValue = "enrolledR")String sortBy,
@@ -59,6 +59,7 @@ public class EventController {
     }
 
 
+    //查詢活動訂單to會員
     @GetMapping({"orders"})
     public String order(Model model, HttpSession session) {
 
