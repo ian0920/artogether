@@ -1,6 +1,5 @@
 package com.artogether.product.prd_order_detail;
 
-import com.artogether.product.PrdOrderProductId;
 import com.artogether.product.prd_order.model.PrdOrder;
 import com.artogether.product.prd_report.PrdReport;
 import com.artogether.product.product.Product;

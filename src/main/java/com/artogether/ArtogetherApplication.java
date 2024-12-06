@@ -2,6 +2,7 @@ package com.artogether;
 
 
 import com.artogether.common.member.MemberService;
+import com.artogether.product.cart.model.CartService;
 import com.artogether.venue.venue.VenueService;
 
 import org.springframework.boot.CommandLineRunner;
@@ -22,10 +23,10 @@ public class ArtogetherApplication {
     //以下為測試用
 
     @Bean
-    CommandLineRunner runner(VenueService service){
+    CommandLineRunner runner(CartService service){
         return args -> {
-
-//            System.out.println(service.getDetailVenue(1));
+//            service.getCartByMember(1).forEach(System.out::println);
+//            System.out.println();
 //            System.out.println(service.getDetailVenue(1).getImgUrls());
 //            System.out.println(service.getDetailVenue(1).getAvailableDays());
 
