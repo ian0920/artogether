@@ -103,22 +103,18 @@
       <div class="bs-navbar-user-control">
         <div class="bs-navbar-user-menu -hidden" th:if="${#session.getAttribute('businessMembers').size()>1}">
           <div clickable class="bs-navbar-user-item" th:each="businessMember: ${#session.getAttribute('businessMembers')}">
-            <div th:if="${! (businessMember == #session.getAttribute('presentBusinessMember'))}">
-              <div class="bs-navbar-user-thumbnail">
-                <img src="../asset/images/bgimg.png" alt="" />
-              </div>
-              <div>
-                <form th:action="@{/businessMemberSwitch}" method="post">
-                  <input type="hidden" name="switchTo" th:value="${businessMember.id}" />
-                  <button type="submit" th:text="${businessMember.name}"></button>
-                </form>
-              </div>
-              <hr />
+            <div class="bs-navbar-user-thumbnail">
+              <img src="../asset/images/bgimg.png" alt="" />
             </div>
+            <div>
+              <a class="bs-navbar-user-name"
+                 th:href="@{/businessMemberSwitch(index=${#session.getAttribute('businessMembers').indexOf(businessMember)})}"
+                 th:text="${businessMember.name}">商家名稱</a>
+            </div>
+            <hr />
           </div>
-
-
         </div>
+
         <div clickable class="bs-navbar-user-field">
           <div class="bs-navbar-user-item">
             <div class="bs-navbar-user-thumbnail">
