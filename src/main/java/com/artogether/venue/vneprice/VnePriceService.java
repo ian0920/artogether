@@ -1,5 +1,6 @@
 package com.artogether.venue.vneprice;
 
+import com.artogether.util.BinaryTools;
 import com.artogether.venue.tslot.TslotService;
 import com.artogether.venue.venue.Venue;
 import com.artogether.venue.venue.VenueRepository;
@@ -24,7 +25,7 @@ public class VnePriceService {
     private TslotService tslotService;
 
     public VnePriceDTO getNearestVnePrice(Integer vneId, LocalDateTime submissionTime) {
-        VnePrice vnePrice = vnePriceRepository.getNearestPastRecord(submissionTime);
+        VnePrice vnePrice = vnePriceRepository.getNearestPastRecord(vneId, submissionTime);
         VnePriceDTO vnePriceDTO = new VnePriceDTO();
         Optional<Venue> venueOptional = venueRepository.findById(vneId);
         Venue venue = venueOptional.get();
@@ -44,7 +45,7 @@ public class VnePriceService {
                 String priceTslot = vnePrice.getPriceTslot();
                 List<Integer> timeToPrice = new ArrayList<>();
                 if (priceTslot != null) {
-                    timeToPrice = tslotService.getDaylyTslots(priceTslot);
+                    timeToPrice =  BinaryTools.bitSetToList(BinaryTools.toBitSet(priceTslot));
                     vnePriceDTO.setPriceTslot(timeToPrice);
                     return vnePriceDTO;
                 }
@@ -72,7 +73,7 @@ public class VnePriceService {
         }else {
             //找到最靠近現在的前一筆資料寫入更改時間
             VnePrice vnePrice = new VnePrice();
-            vnePrice = vnePriceRepository.getNearestPastRecord(submissionTime);
+            vnePrice = vnePriceRepository.getNearestPastRecord(vneId, submissionTime);
             vnePriceRepository.save(vnePrice);
 
             //有找到舊的所以另存一個新的
