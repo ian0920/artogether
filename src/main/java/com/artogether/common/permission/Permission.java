@@ -12,6 +12,14 @@ import java.util.Objects;
 @IdClass(Permission.PermissionId.class)
 public class Permission {
 
+//	@Id
+//	@Column(name = "manager_id")
+//	private Integer managerId;
+//
+//	@Id
+//	@Column(name = "desc_id")
+//	private Integer descId;
+
 	@Id
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "manager_id", referencedColumnName = "id")
@@ -66,37 +74,37 @@ public class Permission {
 
 	public static class PermissionId implements Serializable {
 
-		private Integer managerId;
-		private Integer descId;
+		private Integer manager;
+		private Integer permDesc;
 
 		public PermissionId() {
 			super();
 		}
 
 		public PermissionId(Integer managerId, Integer descId) {
-			this.managerId = managerId;
-			this.descId = descId;
+			this.manager = managerId;
+			this.permDesc = descId;
 		}
 
 		public Integer getManagerId() {
-			return managerId;
+			return manager;
 		}
 
 		public void setManagerId(Integer managerId) {
-			this.managerId = managerId;
+			this.manager = managerId;
 		}
 
 		public Integer getDescId() {
-			return descId;
+			return permDesc;
 		}
 
 		public void setDescId(Integer descId) {
-			this.descId = descId;
+			this.permDesc = descId;
 		}
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(managerId, descId);
+			return Objects.hash(manager, permDesc);
 		}
 
 		@Override
@@ -104,7 +112,7 @@ public class Permission {
 			if (this == obj) return true;
 			if (obj == null || getClass() != obj.getClass()) return false;
 			PermissionId that = (PermissionId) obj;
-			return Objects.equals(managerId, that.managerId) && Objects.equals(descId, that.descId);
+			return Objects.equals(manager, that.manager) && Objects.equals(permDesc, that.permDesc);
 		}
 	}
 }
