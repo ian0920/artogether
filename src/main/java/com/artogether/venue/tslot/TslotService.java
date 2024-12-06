@@ -32,8 +32,6 @@ public class TslotService {
     @Autowired
     private VneOrderRepository vneOrderRepository;
     @Autowired
-    private MemberRepo memberRepository;
-    @Autowired
     private VenueRepository venueRepository;
 
 
@@ -68,24 +66,14 @@ public class TslotService {
 
     //取出是否有公休日
     public Integer getBinaryWeek(Integer vneId, LocalDateTime submissionTime) {
-        Tslot tslot= tslotRepository.getNearestPastRecord(vneId, submissionTime).get();
-            Integer binaryWeek= 0;
-            for(int i = 1; i <= 7; i++){
-                String hourOfDay;
-                switch ( DayOfWeek.of(i)) {
-                    case MONDAY -> hourOfDay = tslot.getHourOfMon();
-                    case TUESDAY -> hourOfDay = tslot.getHourOfTue();
-                    case WEDNESDAY -> hourOfDay = tslot.getHourOfWed();
-                    case THURSDAY -> hourOfDay = tslot.getHourOfThu();
-                    case FRIDAY -> hourOfDay = tslot.getHourOfFri();
-                    case SATURDAY -> hourOfDay = tslot.getHourOfSat();
-                    case SUNDAY -> hourOfDay = tslot.getHourOfSun();
-                    default -> throw new IllegalArgumentException("無效數字");
-                }
-                if (!BinaryTools.toBitSet(hourOfDay).isEmpty()) {
-                    binaryWeek |= 1 << (7-i);
-                }
+        List<Integer> weeklyTslots = getWeeklyTslots(vneId, submissionTime);
+        Integer size = weeklyTslots.size();
+        Integer binaryWeek = 0;
+        for (int i = 0; i < size; i++) {
+            if (weeklyTslots.get(i) != 0) {
+                binaryWeek |= 1 << (size-1-i);
             }
+        }
         return binaryWeek;
     }
 
