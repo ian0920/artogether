@@ -70,10 +70,10 @@ public class BinaryTools {
         StringBuilder stringBuilder = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
             if (tslot.get(i) > i) {
-                for (int j = i; j < tslot.get(i); j++ ) {
+                for (int j = i; j < tslot.get(i); j++) {
                     stringBuilder.append('0');
                 }
-            }else {
+            } else {
                 stringBuilder.append('1');
             }
         }
@@ -96,12 +96,32 @@ public class BinaryTools {
 
         for (int i = 0; i < bitLength; i++) {
             // 檢查第 i 位是否為 1
-            if ((number & (1 << (bitLength-1-i))) != 0) {
+            if ((number & (1 << (bitLength - 1 - i))) != 0) {
                 positions.add(i); // 如果為 1，加入該位索引
             }
         }
-
         return positions;
     }
 
+    //String轉List
+    public static List<Integer> toList(String binaryString) {
+        List<Integer> positions = new ArrayList<>();
+        int length = binaryString.length();
+        for (int i = 0,j = 1; i < length; i++,j++) {
+            if (binaryString.charAt(i) == '1') {
+                positions.add(j);
+            }
+        }
+        return positions;
+    }
+
+    //String.first
+    public static Integer first(String binaryString) {
+        return toList(binaryString).get(0);
+    }
+    //String.last
+    public static Integer last(String binaryString) {
+        return toList(binaryString).get(binaryString.length() - 1);
+    }
 }
+
