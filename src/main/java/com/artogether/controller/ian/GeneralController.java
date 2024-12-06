@@ -175,7 +175,7 @@ public class GeneralController {
             session.setAttribute("businessMembers", sortedBusinessMember);
         }
 
-        return businessPerms.isEmpty() ? "redirect:/" : "homepage_business2";
+        return businessPerms.isEmpty() ? "redirect:/" : "homepage_business";
     }
 
     @PostMapping({"businessMemberSwitch"})
@@ -202,7 +202,7 @@ public class GeneralController {
             session.setAttribute("businessMembers", sortedBusinessMember);
         }
 
-        return "homepage_business2";
+        return "homepage_business";
     }
 
     @GetMapping({"business_logout"})
