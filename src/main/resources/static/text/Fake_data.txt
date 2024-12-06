@@ -355,6 +355,8 @@ INSERT INTO evt_coup (evt_id, evt_coup_name, status, type, deduction, ratio, sta
 (8, '台北電影節優惠券', 1, 1, 10, NULL, '2024-10-01', '2025-01-10', 16, 50),
 (9, '公益募款活動優惠券', 0, 0, 15, 0.10, '2024-12-01', '2025-01-22', 24, 75),
 (10, '個人成長體驗營優惠券', 1, 1, 20, NULL, '2024-11-01', '2025-01-03', 4, 100);
+(1, '2024文創展覽優惠券A', 1, 0, NULL, 0.8, '2024-11-01', '2024-12-31', 20, 100),
+(1, '2024文創展覽優惠券B', 1, 1, 20, NULL, '2024-11-01', '2024-12-31', 20, 100);
 
 -- Insert fake data into the my_evt_coup table
 INSERT INTO my_evt_coup (member_id, evt_coup_id, status, receive_date, use_date) VALUES
@@ -368,6 +370,8 @@ INSERT INTO my_evt_coup (member_id, evt_coup_id, status, receive_date, use_date)
 (8, 8, 0, '2024-10-01', '2024-11-07'),
 (9, 9, 1, '2023-09-11', NULL),
 (10, 10, 0, '2024-11-01', '2024-11-09');
+(1, 11, 0, '2024-11-01', null),
+(1, 12, 0, '2024-11-01', null);
 
 -- Insert fake data into the venue table
 INSERT INTO venue (name, business_id, type, description, status, available_days, all_stars, all_reviews) VALUES
@@ -433,25 +437,25 @@ INSERT INTO tslot ( vne_id, hour_of_mon, hour_of_tue, hour_of_wed, hour_of_thu, 
 '000000000011111100000', '000000000011111100000', '000000000011111100000', "2024-12-01 20:20",null);
 
 -- Insert fake data into the vne_order table
-INSERT INTO vne_order (member_id, vne_id, order_date, total_price, vne_coup_id, paid, start_date, end_date, review, stars, payment_method, status, apply_date, refund_date) VALUES
+INSERT INTO vne_order (member_id, vne_id, order_date, total_price, vne_coup_id, paid, start_date, start_time, end_date,  end_time, review, stars, payment_method, status, apply_date, refund_date) VALUES
 (1, 1, '2023-01-05', 72000,
- NULL, 72000, '2023-01-11-10', '2023-01-12-19',
+ NULL, 72000, '2023-01-11', 10, '2023-01-12', 19,
 'Great service!', 5, 0,
  2, NULL, NULL),
 (2, 2, '2023-02-15', 72000,
- 2, 61200, '2023-02-20-10', '2023-02-22-22',
+ 2, 61200, '2023-02-20', 10, '2023-02-22', 22,
  'Beautiful venue!', 5, 1,
 2, NULL, NULL),
 (3, 3, '2023-03-02', 60000,
- NULL, 12000, '2023-03-26-19', '2023-03-26-22',
+ NULL, 12000, '2023-03-26', 19, '2023-03-26', 22,
   NULL,  NULL, NULL,
  5, '2023-03-02', '2023-03-07'),
 (3, 3, '2023-03-02', 60000,
- 3 , 51000, '2023-03-26-19', '2023-03-26-22',
+ 3 , 51000, '2023-03-26', 19, '2023-03-26', 22,
  'Good for small meetings.', 5,2 ,
  2, NULL, NULL),
 (3, 3, '2023-03-20', 60000,
- 3 , 51000, '2023-03-26-15', '2023-03-26-22',
+ 3 , 51000, '2023-03-26', 15, '2023-03-26', 22,
  NULL, 4,2 ,
  2, NULL, NULL);
 
