@@ -7,13 +7,15 @@
   @include font-setting;
 }
 
+//==================== homepage ===============================
+$navbar-height: 64px;
 main {
-  padding-top: 72px;
+  padding-top: $navbar-height;
 }
 // 導航
 header.navbar_homepage {
   z-index: 6;
-  height: 72px;
+  height: $navbar-height;
   @include font-body-medium;
   position: fixed;
   width: 100%;
@@ -46,7 +48,7 @@ header.navbar_homepage {
     // 搜尋欄
     div.search_bar {
       flex: auto;
-      padding: 12px 24px;
+      padding: 10px 18px;
       border: 1px solid var(--border-default-default-sds-light);
       border-radius: 10000px;
       @include flexbox(row, 8px);
@@ -298,6 +300,7 @@ button.fab {
   }
 }
 
+// footer
 footer {
   width: 100%;
   @include flexbox(row);
@@ -340,3 +343,86 @@ footer {
   }
 }
 
+// ======================= 地圖頁面 ===========================
+main.map-page {
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+  div.div-search {
+    position: absolute;
+    left: 0;
+    top: $navbar-height;
+    height: calc(100% - $navbar-height);
+    @include effect-shadow-light;
+
+    transition: all 0.3s;
+    &.-close {
+      transform: translateX(-100%);
+    }
+
+    // 收合按鈕
+    button.btn-collapse {
+      position: absolute;
+      // float: right;
+      left: 100%;
+      border: 1px solid var(--border-default-default-sds-light);
+      border-radius: 0 4px 4px 0;
+      z-index: 4;
+      @include effect-shadow-light;
+    }
+
+    // 搜尋欄
+    div.search-column {
+      width: 320px;
+      z-index: 5;
+      padding: 0 16px;
+      background-color: var(--background-default-secondary-sds-light);
+      border-right: 1px solid var(--border-default-default-sds-light);
+      height: 100%;
+      @include flexbox(column, 0px);
+      form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 16px 0;
+        input {
+          width: 100%;
+        }
+        select {
+          width: calc((100% - 8px) / 2);
+        }
+      }
+      div.search-result-box {
+        height: 100%;
+        overflow: hidden;
+        @include flexbox(column, 0px);
+        .result-setting {
+          @include flexbox(row, 4px);
+          padding: 12px 0;
+          align-items: center;
+          .result-title {
+            display: inline;
+            flex: 1;
+          }
+        }
+        .div-search-results {
+          @include flexbox(column, 16px);
+          max-height: 100%;
+          overflow-y: overlay;
+          // overflow-x: hidden;
+          div.search-result-item {
+            @include flexbox(row, 16px);
+            img {
+              object-fit: cover;
+              width: 100px;
+              border-radius: 4px;
+            }
+            p {
+              @include ellipse-text(2);
+            }
+          }
+        }
+      }
+    }
+  }
+}
