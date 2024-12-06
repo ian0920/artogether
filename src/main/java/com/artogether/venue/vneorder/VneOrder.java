@@ -19,7 +19,6 @@ import java.time.LocalDateTime;
 @Builder
 @Table(name = "vne_order")
 public class VneOrder implements Serializable {
-
     private static final long serialVersionUID = 1L;
 
     @Id
