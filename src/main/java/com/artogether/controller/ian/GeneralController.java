@@ -214,5 +214,12 @@ public class GeneralController {
         return "redirect:/";
     }
 
+    //會員個人頁面
+    @GetMapping("member")
+    public String memeberPage(){
+
+        return"member_page";
+    }
+
 
 }
