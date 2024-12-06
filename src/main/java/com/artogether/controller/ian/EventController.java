@@ -35,18 +35,21 @@ public class EventController {
     @Autowired
     MyEvtCoupService myEvtCoupService;
 
-    public EventController() {
-    }
 
+
+
+    //活動清單瀏覽+分頁功能
     @GetMapping("all")
     public String allEvents(Model model,
                             @RequestParam(defaultValue = "enrolledR")String sortBy,
+                            @RequestParam(defaultValue = "")String location,
+                            @RequestParam(defaultValue = "")String catalog,
                             @RequestParam(defaultValue = "0") int page,
-                            @RequestParam(defaultValue = "3") int size) {
+                            @RequestParam(defaultValue = "9") int size) {
 
 
 
-        Page<Event> paginatedEventList = eventService.findAllEventsAndPagination(sortBy,page, size);
+        Page<Event> paginatedEventList = eventService.findAllEventsAndPagination(sortBy,page, size, location, catalog);
         model.addAttribute("events", paginatedEventList);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", paginatedEventList.getTotalPages());
@@ -55,13 +58,6 @@ public class EventController {
         return "event/events";
     }
 
-//    @PostMapping("all")
-//    public String allEvents(String search, Model model) {
-//
-//        List<Event> eventList = eventService.findAllEvents(search);
-//        model.addAttribute("events", eventList);
-//        return "event/events";
-//    }
 
     @GetMapping({"orders"})
     public String order(Model model, HttpSession session) {

@@ -37,6 +37,7 @@
     }
 
 
+
     .custom-pagination {
       display: flex;
       justify-content: center;
@@ -49,7 +50,7 @@
       margin: 0 5px;
     }
 
-    .custom-pagination .page-link {
+    .custom-pagination .page-link{
       display: inline-block;
       padding: 8px 16px;
       text-decoration: none;
@@ -60,7 +61,7 @@
       transition: all 0.3s;
     }
 
-    .custom-pagination .page-link:hover {
+    .custom-pagination .page-link:hover{
       background-color: #2c95c6;
       color: white;
       border-color: #2c95c6;
@@ -80,6 +81,52 @@
       pointer-events: none;
     }
 
+    /* Form Styling */
+
+    .event-card-search-form{
+      margin-bottom: 20px;
+    }
+
+    .event-card-search-form label {
+      font-weight: bold;
+      color: #333;
+      margin-right: 10px;
+      margin-left: 10px;
+    }
+
+    .event-card-search-form select {
+      padding: 8px 10px;
+      font-size: 14px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: white;
+      transition: all 0.3s;
+    }
+
+    .event-card-search-form select:hover {
+      border-color: #2c95c6;
+    }
+
+    .event-card-search-form .btn {
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: bold;
+      color: white;
+      background-color: #2c95c6;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .event-card-search-form .btn:hover {
+      background-color: #2c95c6;
+    }
+
+    .event-card-search-form .btn:active {
+      background-color: #003d80;
+    }
+
 
   </style>
 </head>
@@ -88,7 +135,7 @@
 
 <main>
   <div class="event-card-search">
-    <form action="/event/all" method="get">
+    <form action="/event/all" class="event-card-search-form" method="get">
       <label for="events">篩選條件:</label>
       <select name="sortBy" id="events">
         <option value="">未選擇</option>
@@ -99,8 +146,33 @@
         <option value="enrolled">報名人數(由少到多)</option>
         <option value="enrolledR">報名人數(由多到少)</option>
       </select>
+      <label for="location">活動地點:</label>
+      <select name="location" id="location">
+        <option value="">未選擇</option>
+        <option value="台北市">台北市</option>
+        <option value="新北市">新北市</option>
+        <option value="桃園市">桃園市</option>
+        <option value="台中市">台中市</option>
+        <option value="台南市">台南市</option>
+        <option value="高雄市">高雄市</option>
+      </select>
+      <label for="catalog">活動類型:</label>
+      <select name="catalog" id="catalog">
+        <option value="">未選擇</option>
+        <option value="展覽">展覽</option>
+        <option value="繪畫">繪畫</option>
+        <option value="藝文">藝文</option>
+        <option value="美食">美食</option>
+        <option value="音樂">音樂</option>
+        <option value="文學">文學</option>
+        <option value="學習">學習</option>
+        <option value="電影">電影</option>
+        <option value="公益">公益</option>
+        <option value="個人成長">個人成長</option>
+      </select>
+
       <span>
-              <input class="btn btn-sm" type="submit" value="送出">
+              <input class="btn btn-sm event-card-search-submit" type="submit" value="送出">
       </span>
     </form>
   </div>
@@ -110,7 +182,7 @@
       <img src="./asset/images/bgimg.png" alt="" />
       <div class="card-content">
         <div class="card-title">
-          <div class="tag event">活動</div>
+          <div class="tag event" th:text="${event.catalog}">活動</div>
           <h3 class="card-title-text" th:text="${event.name}">
           </h3>
         </div>
@@ -148,12 +220,15 @@
         </li>
 
         <!-- Page Numbers -->
-        <li th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}">
+        <li th:if="${totalPages > 1}" th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}">
           <a class="page-link"
              th:href="@{/event/all(sortBy=${sortBy}, page=${pageNum}, size=${size})}"
              th:classappend="${pageNum == currentPage} ? 'active'"
              th:text="${pageNum + 1}">
           </a>
+        </li>
+        <li th:if="${totalPages == 1}">
+          <span class="page-link active">1</span>
         </li>
 
         <!-- Next Button -->
