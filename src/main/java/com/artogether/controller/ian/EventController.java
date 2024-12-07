@@ -144,4 +144,11 @@ public class EventController {
 
         return "Test_success";
     }
+
+
+    @GetMapping("coupons")
+    public String coupons() {
+
+        return "event/event_coupon_management";
+    }
 }

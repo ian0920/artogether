@@ -12,7 +12,7 @@
   </head>
   <body>
     <!-- 導航 -->
-    <div class="bs-navbar">
+    <div class="bs-navbar" th:fragment="navbar">
       <div class="bs-navbar-main">
         <div class="bs-navbar-logo">
           <img src="../asset/images/ARTOGETHER.svg" alt="" />
@@ -90,7 +90,7 @@
                   <a href="#">訂單管理</a>
                 </li>
                 <li clickable class="bs-navbar-subitem">
-                  <a href="#">優惠券管理</a>
+                  <a href="/business_event/couponManagement">優惠券管理</a>
                 </li>
                 <li clickable class="bs-navbar-subitem">
                   <a href="#">活動管理</a>
@@ -138,7 +138,7 @@
       <img src="./asset/images/bgimg.png" alt="" />
     </main>
 
-    <script>
+    <script th:fragment="business_script">
       // 設定最下方的user control菜單收合
       var el_nav_user_field = document.querySelector(".bs-navbar-user-field");
       el_nav_user_field.addEventListener("click", function (e) {
