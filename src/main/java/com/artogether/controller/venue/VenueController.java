@@ -1,6 +1,7 @@
 package com.artogether.controller.venue;
 
 import com.artogether.common.business_member.BusinessMember;
+import com.artogether.util.BinaryTools;
 import com.artogether.venue.venue.VenueService;
 import com.artogether.venue.vnedto.*;
 import com.artogether.venue.tslot.TslotService;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -91,9 +93,13 @@ public class VenueController {
     @GetMapping("/manageTslot")
     public String nearestTslot(@RequestParam("vneId") Integer vneId, Model model) {
         LocalDateTime now = LocalDateTime.now();
-        Map<String, List<Integer>> weeklyTslots = tslotService.getWeeklyTslots(vneId, now);
-        for (Map.Entry<String, List<Integer>> daylyTslot : weeklyTslots.entrySet()) {
-            model.addAttribute(daylyTslot.getKey(), daylyTslot.getValue());
+        List<Integer> weeklyTslots = tslotService.getWeeklyTslots(vneId, now);
+        for (int i = 0; i <= weeklyTslots.size()-1; i++) {
+            List<Integer> daylyTslot = BinaryTools.toList(weeklyTslots.get(i),24);
+            int dayOfWeek = 1;
+            dayOfWeek += i;
+            String dayName = DayOfWeek.of(dayOfWeek).toString();
+            model.addAttribute(dayName, daylyTslot);
         }
         return "/venue/business/html/manageTslot";
     }

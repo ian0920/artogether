@@ -49,4 +49,9 @@ public class SystemManagerService {
         return system_managerRepo.findAll();
     }
 
+    //用登入帳號查詢管理員
+    public SystemManager findByAccount(String account) {
+        return system_managerRepo.findByAccount(account);
+    }
+
 }

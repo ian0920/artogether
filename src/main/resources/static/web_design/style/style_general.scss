@@ -6,6 +6,7 @@
   @include font-setting;
 }
 .-hidden {
+  display: none !important;
   visibility: hidden;
   width: 0;
   height: 0;
@@ -27,6 +28,11 @@
     background-color: var(--brand-product) !important;
   }
 }
+span.material-symbols-outlined {
+  vertical-align: middle;
+}
+
+// input樣式設定
 input.solo {
   @include font-body-small;
   padding: 8px 8px;
@@ -55,6 +61,18 @@ div.textfield {
     outline: none;
     border-style: none;
     background: none;
+  }
+}
+
+// select樣式設定
+select.solo {
+  @include font-body-small;
+  padding: 8px 8px;
+  height: 40px;
+  border: 1px solid var(--border-default-default-sds-light);
+  border-radius: 4px;
+  &:focus {
+    outline-color: var(--border-default-secondary-sds-light);
   }
 }
 
@@ -168,6 +186,11 @@ button {
     border: 1pt solid var(--brand-shop);
     background: none;
   }
+  &.button-tertiary {
+    border: 1pt solid var(--border-default-default-sds-light);
+    color: var(--text-default-secondary-sds-light);
+  }
+
   &.button-big {
     padding: 8px 16px;
   }

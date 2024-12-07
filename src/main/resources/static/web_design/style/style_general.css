@@ -563,6 +563,7 @@
 }
 
 .-hidden {
+  display: none !important;
   visibility: hidden;
   width: 0;
   height: 0;
@@ -583,6 +584,10 @@
 }
 .bgcolor-product {
   background-color: var(--brand-product) !important;
+}
+
+span.material-symbols-outlined {
+  vertical-align: middle;
 }
 
 input.solo {
@@ -623,6 +628,22 @@ div.textfield input {
   outline: none;
   border-style: none;
   background: none;
+}
+
+select.solo {
+  font-family: "Noto Sans TC";
+  font-weight: 400;
+  font-size: 12pt;
+  line-height: 140%;
+  text-decoration: none;
+  letter-spacing: normal;
+  padding: 8px 8px;
+  height: 40px;
+  border: 1px solid var(--border-default-default-sds-light);
+  border-radius: 4px;
+}
+select.solo:focus {
+  outline-color: var(--border-default-secondary-sds-light);
 }
 
 div.progress {
@@ -747,6 +768,10 @@ button.button-primary {
   color: var(--brand-shop);
   border: 1pt solid var(--brand-shop);
   background: none;
+}
+button.button-tertiary {
+  border: 1pt solid var(--border-default-default-sds-light);
+  color: var(--text-default-secondary-sds-light);
 }
 button.button-big {
   padding: 8px 16px;
