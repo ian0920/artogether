@@ -191,7 +191,7 @@
               <div
                       class="progress-bar bgcolor-event"
                       role="progressbar"
-                      style="width: 70%"
+                      th:attr="style='width:' + (${topThree.getEnrolled()} / ${topThree.getMaximum()} * 100) + '%' "
               ></div>
             </div>
           </div>
@@ -463,15 +463,15 @@
   </div>
   <hr />
   <div class="user-menu-group">
-    <div clickable class="user-menu-item">
+    <div clickable onclick="location.href='/member'" class="user-menu-item">
       <span class="material-icons">bookmark</span>
       我的珍藏
     </div>
-    <div clickable class="user-menu-item">
+    <div clickable onclick="location.href='/member'" class="user-menu-item">
       <span class="material-icons">description</span>
       訂單紀錄
     </div>
-    <div clickable class="user-menu-item">
+    <div clickable onclick="location.href='/member'" class="user-menu-item">
       <span class="material-icons">settings</span>
       帳號設定
     </div>

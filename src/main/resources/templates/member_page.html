@@ -12,12 +12,12 @@
   </head>
   <body>
     <!-- 導航 -->
-    <div class="bs-navbar" th:fragment="navbar">
+    <div class="bs-navbar">
       <div class="bs-navbar-main">
         <div class="bs-navbar-logo">
           <img src="../asset/images/ARTOGETHER.svg" alt="" />
           <div id="div_back_to_homepage" class="link-button">
-            <a th:href="@{/business_logout}">返回首頁</a
+            <a th:href="@{/}">返回首頁</a
             ><span class="material-symbols-outlined">exit_to_app</span>
           </div>
         </div>
@@ -26,21 +26,14 @@
           <ul>
             <li clickable class="bs-navbar-item -open">
               <div clickable class="bs-navbar-header">
-                <span class="material-symbols-outlined">storefront</span
-                ><a href="#">商家基本資訊</a>
+                <span class="material-symbols-outlined">settings</span
+                ><a href="#">基本資訊設定</a>
               </div>
             </li>
             <li clickable class="bs-navbar-item">
               <div clickable class="bs-navbar-header">
                 <span class="material-symbols-outlined">inbox</span
                 ><a href="#">收件匣</a>
-              </div>
-            </li>
-            <li clickable class="bs-navbar-item">
-              <div clickable class="bs-navbar-header">
-                <span class="material-symbols-outlined"
-                  >admin_panel_settings</span
-                ><a href="#">管理員權限設定</a>
               </div>
             </li>
           </ul>
@@ -54,13 +47,13 @@
               </div>
               <ul class="bs-navbar-submenu">
                 <li clickable class="bs-navbar-subitem">
-                  <a href="#">訂單管理</a>
+                  <a href="#">訂單查詢</a>
                 </li>
                 <li clickable class="bs-navbar-subitem">
-                  <a href="#">優惠券管理</a>
+                  <a href="#">商品優惠券</a>
                 </li>
                 <li clickable class="bs-navbar-subitem">
-                  <a href="#">商品管理</a>
+                  <a href="#">商品追蹤</a>
                 </li>
               </ul>
             </li>
@@ -70,13 +63,13 @@
               </div>
               <ul class="bs-navbar-submenu">
                 <li clickable class="bs-navbar-subitem">
-                  <a href="#">訂單管理</a>
+                  <a href="#">訂單查詢</a>
                 </li>
                 <li clickable class="bs-navbar-subitem">
-                  <a href="#">優惠券管理</a>
+                  <a href="#">場地優惠券</a>
                 </li>
                 <li clickable class="bs-navbar-subitem">
-                  <a href="#">場地管理</a>
+                  <a href="#">場地追蹤</a>
                 </li>
               </ul>
             </li>
@@ -87,13 +80,13 @@
               </div>
               <ul class="bs-navbar-submenu">
                 <li clickable class="bs-navbar-subitem">
-                  <a href="#">訂單管理</a>
+                  <a href="#">訂單查詢</a>
                 </li>
                 <li clickable class="bs-navbar-subitem">
-                  <a href="/business_event/couponManagement">優惠券管理</a>
+                  <a href="#">活動優惠券</a>
                 </li>
                 <li clickable class="bs-navbar-subitem">
-                  <a href="#">活動管理</a>
+                  <a href="#">活動追蹤</a>
                 </li>
               </ul>
             </li>
@@ -101,26 +94,12 @@
         </nav>
       </div>
       <div class="bs-navbar-user-control">
-        <div class="bs-navbar-user-menu -hidden" th:if="${#session.getAttribute('businessMembers').size()>1}">
-          <div clickable class="bs-navbar-user-item" th:each="businessMember: ${#session.getAttribute('businessMembers')}">
-            <div class="bs-navbar-user-thumbnail">
-              <img src="../asset/images/bgimg.png" alt="" />
-            </div>
-            <div>
-              <a class="bs-navbar-user-name"
-                 th:href="@{/businessMemberSwitch(index=${#session.getAttribute('businessMembers').indexOf(businessMember)})}"
-                 th:text="${businessMember.name}">商家名稱</a>
-            </div>
-            <hr />
-          </div>
-        </div>
-
         <div clickable class="bs-navbar-user-field">
           <div class="bs-navbar-user-item">
             <div class="bs-navbar-user-thumbnail">
               <img src="../asset/images/bgimg.png" alt="" />
             </div>
-            <p class="bs-navbar-user-name" th:text="${#session.getAttribute('presentBusinessMember').name}">商家名稱</p>
+            <p class="bs-navbar-user-name" th:text="${#session.getAttribute('memberName')}">會員名稱</p>
             <span class="material-symbols-outlined unfold" id="icon_unfold"
               >unfold_more</span
             >
@@ -138,7 +117,7 @@
       <img src="./asset/images/bgimg.png" alt="" />
     </main>
 
-    <script th:fragment="business_script">
+    <script>
       // 設定最下方的user control菜單收合
       var el_nav_user_field = document.querySelector(".bs-navbar-user-field");
       el_nav_user_field.addEventListener("click", function (e) {
