@@ -1,16 +1,11 @@
 package com.artogether.venue.tslot;
 
-import com.artogether.common.member.Member;
-import com.artogether.common.member.MemberRepo;
-import com.artogether.common.member.MemberService;
 import com.artogether.util.BinaryTools;
 import com.artogether.venue.venue.Venue;
 import com.artogether.venue.venue.VenueRepository;
 import com.artogether.venue.vnedto.TslotDTO;
-import com.artogether.venue.vnedto.VneOrderDTO;
 import com.artogether.venue.vneorder.VneOrder;
 import com.artogether.venue.vneorder.VneOrderRepository;
-import com.artogether.venue.vneorder.VneOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
