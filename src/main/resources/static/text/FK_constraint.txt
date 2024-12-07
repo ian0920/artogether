@@ -19,7 +19,7 @@ ALTER TABLE product
 -- Foreign keys for prd_order table
 ALTER TABLE prd_order
     ADD CONSTRAINT fk_prd_order_member FOREIGN KEY (member_id) REFERENCES member(id),
-    ADD CONSTRAINT fk_prd_order_coupon FOREIGN KEY (prd_coup_id) REFERENCES prd_coup(id);
+    ADD CONSTRAINT fk_prd_order_coupon FOREIGN KEY (prd_coup_id) REFERENCES prd_coup(id),
     ADD COLUMN order_name VARCHAR(50) NOT NULL,
     ADD COLUMN order_phone VARCHAR(15) NOT NULL,
     ADD COLUMN order_address VARCHAR(255) NOT NULL;
