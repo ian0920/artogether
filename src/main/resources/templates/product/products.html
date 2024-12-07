@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>商品清單</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>商品清單</h1>
+    </header>
+
+    <main>
+        <!-- 商品清單區 -->
+        <section>
+            <h2>所有商品</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>商品名稱</th>
+                        <th>價格</th>
+                        <th>數量</th>
+                        <th>描述</th>
+                        <th>狀態</th>
+                        <th>商家名稱</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- 使用 Thymeleaf 渲染商品資料 -->
+                    <tr th:each="product : ${products}">
+                        <td th:text="${product.name}">商品名稱</td>
+                        <td th:text="${product.price}">價格</td>
+                        <td th:text="${product.qty}">數量</td>
+                        <td th:text="${product.description}">描述</td>
+                        <td th:text="${product.status == 1 ? '上架' : '下架'}">狀態</td>
+                        <td th:text="${product.businessMemberName != null ? product.businessMemberName : '無'}">商家名稱</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 我的商店</p>
+    </footer>
+</body>
+</html>
