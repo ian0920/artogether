@@ -10,9 +10,11 @@ import com.artogether.product.prd_review.PrdReview;
 import com.artogether.product.prd_track.PrdTrack;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -20,6 +22,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 public class Product {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

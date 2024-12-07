@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.HashSet;
@@ -30,22 +31,30 @@ public class PrdOrder {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "member_id", referencedColumnName = "id")
 	private Member member;
+
+	@Column(name="order_name", nullable = false, length = 50)
+	private String orderName;
+
+	@Column(name="order_phone", nullable = false, length = 15)
+	private String orderPhone;
+
+	@Column(name="order_address", nullable = false, length = 255)
+	private String orderAddress;
 	
 	@Column(name="ship_date")
-	private LocalDateTime shipDate;
+	private Timestamp shipDate;
 	
 	@Column(name="order_date")
-	private LocalDateTime orderDate;
+	private Timestamp orderDate;
 	
 	@Column(name="status")
 	private String status;
 	
-	@ManyToMany
-    @JoinTable
-    (name = "order_coupon",joinColumns = @JoinColumn(name = "prd_order_id"),
-     inverseJoinColumns = @JoinColumn(name = "prd_coup_id") )
-
-    private Set<PrdCoup> coupons = new HashSet<>();
+//	@ManyToMany
+//    @JoinTable
+//    (name = "order_coupon",joinColumns = @JoinColumn(name = "prd_order_id"),
+//     inverseJoinColumns = @JoinColumn(name = "prd_coup_id") )
+//    private Set<PrdCoup> coupons = new HashSet<>();
     
     @Column(name="total_price")
 	private Integer totalPrice;
