@@ -44,6 +44,7 @@ public class VneOrder implements Serializable {
     private Integer vneCoupId;
 
     // 應該支付的金額
+    @Column(name = "should_paid")
     private Integer shouldPaid;
 
     // 已支付金額
@@ -70,9 +71,6 @@ public class VneOrder implements Serializable {
 
     // 評分星數
     private Integer stars;
-
-    // 支付方式
-    private PaymentMethodEnum paymentMethod;
 
     // 訂單狀態
     private OrderStatusEnum status;
