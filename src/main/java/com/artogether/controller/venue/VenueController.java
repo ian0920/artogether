@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/venue")
+@RequestMapping("/vneBiz")
 public class VenueController {
 
     @Autowired
@@ -52,11 +52,11 @@ public class VenueController {
     }
 
     //調整場地的頁面
-    @GetMapping("/manageVenue")
-    public String getVenueAndImg (@RequestParam("vneId") Integer vneId, Model model) {
+    @GetMapping("/manageVenue/{vneId}")
+    public String getVenueAndImg (@PathVariable("vneId") Integer vneId, Model model) {
         VneDetailDTO vneDetailDTO = venueService.getDetailVenue(vneId);
         model.addAttribute("vneDetail", vneDetailDTO);
-        return "example";
+        return "venue/business/html/manageVenue";
     }
     //修改場地內容
     @PostMapping("/updateVenue")
