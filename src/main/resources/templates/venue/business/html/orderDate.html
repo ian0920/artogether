@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日期與時間選擇</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <style>
+        .time-slots {
+            margin-top: 10px;
+        }
+        .time-slot {
+            display: inline-block;
+            margin: 5px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .time-slot:hover {
+            background-color: #f0f0f0;
+        }
+        .time-slot.selected {
+            background-color: #007BFF;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<label for="datePicker">選擇日期:</label>
+<input type="text" id="datePicker" placeholder="請選擇日期">
+
+<div class="time-slots" id="timeSlots">
+    <p>請選擇日期以顯示可預約時間。</p>
+</div>
+
+<button id="confirmBooking" style="margin-top: 20px; display: none;">確認預約</button>
+
+<script>
+    const timeSlotsDiv = document.getElementById("timeSlots");
+    const confirmButton = document.getElementById("confirmBooking");
+    let selectedTime = null;
+
+    // 初始化 Flatpickr
+    flatpickr("#datePicker", {
+        dateFormat: "Y-m-d", // 日期格式
+        onChange: async function(selectedDates, dateStr) {
+            if (!dateStr) return;
+
+            // 向後端請求該日期的可預約時間
+            try {
+                const response = await fetch(`/api/available-times?date=${dateStr}`);
+                if (response.ok) {
+                    const availableTimes = await response.json(); // 假設後端返回時間陣列
+                    renderTimeSlots(availableTimes);
+                } else {
+                    timeSlotsDiv.innerHTML = "<p>無法取得該日期的可預約時間。</p>";
+                }
+            } catch (error) {
+                console.error("Error fetching time slots:", error);
+                timeSlotsDiv.innerHTML = "<p>載入時發生錯誤。</p>";
+            }
+        }
+    });
+
+    // 渲染時間選擇
+    function renderTimeSlots(times) {
+        if (!times || times.length === 0) {
+            timeSlotsDiv.innerHTML = "<p>該日期無可預約時間。</p>";
+            confirmButton.style.display = "none";
+            return;
+        }
+
+        timeSlotsDiv.innerHTML = "";
+        times.forEach(time => {
+            const timeSlot = document.createElement("div");
+            timeSlot.className = "time-slot";
+            timeSlot.textContent = time;
+            timeSlot.addEventListener("click", () => {
+                document.querySelectorAll(".time-slot").forEach(slot => slot.classList.remove("selected"));
+                timeSlot.classList.add("selected");
+                selectedTime = time; // 設定選中的時間
+                confirmButton.style.display = "block"; // 顯示確認按鈕
+            });
+            timeSlotsDiv.appendChild(timeSlot);
+        });
+    }
+
+    // 確認預約
+    confirmButton.addEventListener("click", () => {
+        if (!selectedTime) return alert("請選擇時間！");
+        alert(`已選擇日期和時間: ${document.getElementById("datePicker").value} ${selectedTime}`);
+        // 這裡可以向後端發送最終預約請求
+    });
+</script>
+</body>
+</html>
+
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title>Flatpickr 搭配 type="text"</title>-->
+<!--    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">-->
+<!--    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>-->
+<!--</head>-->
+<!--<body>-->
+<!--<label for="datePicker">選擇日期:</label>-->
+<!--<input type="text" id="datePicker" placeholder="請選擇日期">-->
+
+<!--<script>-->
+<!--    flatpickr("#datePicker", {-->
+<!--        dateFormat: "Y-m-d", // 日期格式-->
+<!--        minDate: "2024-12-01", // 設定最小可選日期-->
+<!--        maxDate: "2025-2-31", // 設定最大可選日期-->
+<!--        disable: ["2024-12-25", "2025-01-01"], // 禁用日期-->
+<!--        locale: "zh" // 中文-->
+<!--    });-->
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->
