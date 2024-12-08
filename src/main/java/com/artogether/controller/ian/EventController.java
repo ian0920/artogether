@@ -146,9 +146,5 @@ public class EventController {
     }
 
 
-    @GetMapping("coupons")
-    public String coupons() {
 
-        return "event/event_coupon_management";
-    }
 }

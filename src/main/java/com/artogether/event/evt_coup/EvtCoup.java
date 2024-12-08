@@ -44,7 +44,7 @@ public class EvtCoup {
     private Integer threshold;
 
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "evtCoup", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "evtCoup", cascade = CascadeType.ALL)
     private Set<MyEvtCoup> myEvtCoups;
 
     public int hashCode() {
