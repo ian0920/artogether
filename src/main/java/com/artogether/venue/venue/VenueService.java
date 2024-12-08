@@ -8,6 +8,7 @@ import com.artogether.venue.vnedto.VneDetailDTO;
 import com.artogether.venue.vneimg.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -27,7 +28,7 @@ public class VenueService {
     private VneImgUrlRepository vneImgUrlRepository;
 
     //創建場地
-    public Integer creatVenue(VneDetailDTO vneDetailDTO, BusinessMember businessMember) {
+    public Integer createVenue(VneDetailDTO vneDetailDTO, BusinessMember businessMember) {
         String name = vneDetailDTO.getName();
         String type = vneDetailDTO.getType();
         String description = vneDetailDTO.getDescription();
@@ -47,16 +48,20 @@ public class VenueService {
     }
 
     //場地資料更新
-    public void updateVenue( Integer vneId, VneDetailDTO vneDetailDTO) {
+    public Venue updateVenue( Integer vneId, VneDetailDTO vneDetailDTO) {
 //        全部抓下來
 //        Venue venue = Venue.builder().id(vneId).name(name).type(type).description(description).availableDays(availableDays).build();
 //        venueRepository.save(venue);
         Optional<Venue> venueOptional = venueRepository.findById(vneId);
         venueOptional.ifPresent(venue -> {
         String name = vneDetailDTO.getName();
+            System.out.println(name);
         String type = vneDetailDTO.getType();
+            System.out.println(type);
         String description = vneDetailDTO.getDescription();
+            System.out.println(description);
         Integer availableDays = vneDetailDTO.getAvailableDays();
+            System.out.println(availableDays);
         if (name != null) {
             venue.setName(name);
         }
@@ -71,12 +76,15 @@ public class VenueService {
         }
         venueRepository.save(venue);
         });
+        Venue venue = venueRepository.findById(vneId).get();
+        return venue;
     }
 
     //場地詳情
     public VneDetailDTO getDetailVenue(Integer vneId) {
         Venue venue = venueRepository.findById(vneId).get();
         VneDetailDTO vneDetailDTO = VneDetailDTO.builder()
+                .vneId(vneId)
                 .name(venue.getName())
                 .vneAddress(businessMemberRepo.findById(venue.getBusinessMember().getId()).get().getAddr())
                 .type(venue.getType())

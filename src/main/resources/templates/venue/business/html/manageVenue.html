@@ -11,8 +11,177 @@
             href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
             rel="stylesheet"
     />
+    <style>
+        main {
+            font-family: Arial, sans-serif;
+            max-width: 85%;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        form div, .upload-row {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"], textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .upload-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .upload-row input[type="file"] {
+            flex: 1;
+        }
+
+        .upload-row span {
+            color: #555;
+            font-size: 14px;
+        }
+
+        .upload-row button {
+            margin-left: auto;
+        }
+
+        .upload-row:last-child {
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
+<script>
+    function appData() {
+        return {
+            // 表單相關數據
+            Detail: {}, // 存放場地詳細數據
+
+            // 上傳相關數據
+            uploads: [
+                { file: null, status: '未上傳', url: null, position: 1 },
+                { file: null, status: '未上傳', url: null, position: 2 },
+                { file: null, status: '未上傳', url: null, position: 3 }
+            ],
+
+            // 初始化
+            initialize() {
+                this.fetchData(); // 獲取場地詳細數據
+            },
+
+            // 獲取場地詳細數據
+            fetchData() {
+                const pathArray = window.location.pathname.split('/');
+                const vneId = pathArray[pathArray.length - 1]; // 獲取 URL 中的 vneId
+
+                $.ajax({
+                    url: `/vne/Detail/${vneId}`,
+                    method: "GET",
+                    dataType: "json",
+                    success: (data) => {
+                        console.log(data);
+                        this.Detail = data; // 將獲取的數據存入 Detail
+                        this.setUrls(this.getUpdateImgUrl()); // 根據數據設置上傳 URL
+                    },
+                    error: (xhr, status, error) => {
+                        console.error('Error fetching data:', error);
+                    }
+                });
+            },
+
+            // 動態生成更新圖片的 URL
+            getUpdateImgUrl() {
+                return `/vneBiz/updateImg/${this.Detail.vneId}`;
+            },
+
+            // 表單提交
+            submitForm() {
+                $.ajax({
+                    url: `/vneBiz/updateVenue/${this.Detail.vneId}`,
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(this.Detail),
+                    success: (response) => {
+                        alert('提交成功');
+                    },
+                    error: (error) => {
+                        console.error('提交失敗:', error);
+                    }
+                });
+            },
+
+            // 處理圖片上傳
+            handleUpload(index) {
+                const upload = this.uploads[index];
+                if (!upload.file) {
+                    alert('請選擇文件後再上傳！');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('file', upload.file);
+                formData.append('position', upload.position);
+
+                $.ajax({
+                    url: upload.url, // 使用對應的上傳 URL
+                    method: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: () => {
+                        upload.status = '已上傳';
+                    },
+                    error: (xhr, status, error) => {
+                        console.error('Upload failed:', error);
+                        upload.status = '上傳失敗';
+                    }
+                });
+            },
+
+            // 設置所有上傳項的 URL
+            setUrls(url) {
+                this.uploads.forEach((upload) => {
+                    upload.url = url;
+                });
+            }
+        };
+    }
+</script>
 <!-- 導航 -->
 <div class="bs-navbar">
     <div class="bs-navbar-main">
@@ -132,18 +301,20 @@
 </div>
 
 <!-- main區塊 -->
-<main>
-    <form action="vneBiz/updateVenue" method="post">
+<main x-data="appData()" x-init="initialize()" >
+    <form x-modle="Detail"  method="post">
+<!--        action=`vneBiz/updateVenue/${this.Detail.vneId}`-->
         <!-- 場地名稱 -->
         <div>
             <label for="name">場地名稱:</label>
-            <input type="text" id="name" name="name" maxlength="100" required>
+            <input type="text" id="name" name="name" maxlength="100"
+                   x-model="Detail.name" required :value="Detail.name || ''">
         </div>
 
         <!-- 場地類別描述 -->
         <div>
             <label for="type">場地類別描述:</label>
-            <select id="type" name="type">
+            <select id="type" name="type" x-model="Detail.type">
                 <option value="indoor">戶外</option>
                 <option value="outdoor">室內</option>
             </select>
@@ -152,13 +323,17 @@
         <!-- 場地描述 -->
         <div>
             <label for="description">場地描述:</label>
-            <textarea id="description" name="description" maxlength="1000"></textarea>
+            <textarea id="description" name="description" maxlength="1000"
+                      x-model="Detail.description">
+
+            </textarea>
         </div>
 
         <!-- 可容許預約天數 -->
         <div>
             <label for="availableDays">可容許預約天數:</label>
-            <select id="availableDays" name="availableDays" required>
+            <select id="availableDays" name="availableDays"
+                    x-model="Detail.availableDays" required>
                 <option value="14" selected>14天</option>
                 <option value="28" >28天</option>
                 <option value="42" >42天</option>
@@ -169,9 +344,19 @@
 
         <!-- 提交按鈕 -->
         <div>
-            <button type="submit">提交</button>
+            <button type="submit"  @click.prevent="submitForm">提交</button>
         </div>
     </form>
+    <div>
+        <template x-for="(upload, index) in uploads" :key="index">
+            <div>
+                <label x-text="upload.position">上傳位置 </label>
+                <input type="file" @change="upload.file = $event.target.files[0]" />
+                <button @click.prevent="handleUpload(index)">上傳</button>
+                <p x-text="upload.status"></p>
+            </div>
+        </template>
+    </div>
 </main>
 <script th:src="@{/platform_backend/js/bizpage-modle.js}"></script>
 </body>

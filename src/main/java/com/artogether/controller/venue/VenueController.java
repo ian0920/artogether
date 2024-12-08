@@ -2,6 +2,7 @@ package com.artogether.controller.venue;
 
 import com.artogether.common.business_member.BusinessMember;
 import com.artogether.util.BinaryTools;
+import com.artogether.venue.venue.Venue;
 import com.artogether.venue.venue.VenueService;
 import com.artogether.venue.vnedto.*;
 import com.artogether.venue.tslot.TslotService;
@@ -47,22 +48,22 @@ public class VenueController {
     @PostMapping("/createVenue")
     public String createVenue(@ModelAttribute VneDetailDTO vneDetailDTO, HttpSession session) {
         BusinessMember businessMember = (BusinessMember) session.getAttribute("presentBusinessMember");
-        venueService.creatVenue(vneDetailDTO, businessMember);
-        return "redirect:manageVenue";
+        Integer vneId = venueService.createVenue(vneDetailDTO, businessMember);
+        return "redirect:/vneBiz/manageVenue/"+vneId;
     }
 
     //調整場地的頁面
     @GetMapping("/manageVenue/{vneId}")
-    public String getVenueAndImg (@PathVariable("vneId") Integer vneId, Model model) {
-        VneDetailDTO vneDetailDTO = venueService.getDetailVenue(vneId);
-        model.addAttribute("vneDetail", vneDetailDTO);
+    public String getVenueAndImg () {
         return "venue/business/html/manageVenue";
     }
     //修改場地內容
-    @PostMapping("/updateVenue")
-    public String uploadVenue(@RequestParam Integer vneId, @ModelAttribute VneDetailDTO venDetailDTO, HttpSession session) {
-        venueService.updateVenue(vneId, venDetailDTO);
-        return "redirect:manageVenue";
+    @PostMapping("/updateVenue/{vneId}")
+    public String uploadVenue(@PathVariable Integer vneId, @RequestBody VneDetailDTO venDetailDTO, HttpSession session) {
+        System.out.println("uploadVenue");
+        Venue venue =venueService.updateVenue(vneId, venDetailDTO);
+        System.out.println(venue);
+        return "redirect:/vneBiz/manageVenue/"+vneId;
     }
     //上傳場地圖片
 //    @PostMapping("/updateImg")
@@ -70,18 +71,20 @@ public class VenueController {
 //        vneImgService.updateVneImg(vneImgBytesDTO);
 //        return "redirect:manageVenue";
 //    }
-    @PostMapping("/updateImg")
+    @PostMapping("/updateImg/{vneId}")
     public String manageImg(@RequestParam("file") MultipartFile file,
-                            @RequestParam("vneId") Integer vneId,
+                            @PathVariable("vneId") Integer vneId,
                             @RequestParam("position") Integer position) {
         try {
             VneImgBytesDTO vneImgBytesDTO = new VneImgBytesDTO();
             vneImgBytesDTO.setVneId(vneId);
+            System.out.println(vneId);
             vneImgBytesDTO.setImageFile(file.getBytes());
             vneImgBytesDTO.setPosition(position);
+            System.out.println(position);
 
             vneImgService.updateVneImg(vneImgBytesDTO);
-            return "redirect:manageVenue";
+            return "redirect:/vneBiz/manageVenue/"+vneId;
         } catch (Exception e) {
             e.printStackTrace(); // 打印完整的異常
             return "error"; // 返回錯誤頁面或提示
