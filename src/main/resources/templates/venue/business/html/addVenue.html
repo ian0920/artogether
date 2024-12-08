@@ -1,17 +1,189 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bootstrap Carousel with Indicators</title>
-    <!-- Alpine.js -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <!-- 引入 Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" th:href="@{/web_design/style/style_business.css}" />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+            rel="stylesheet"
+    />
+    <style>
+        main {
+            font-family: Arial, sans-serif;
+            max-width: 85%;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        form div, .upload-row {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"], textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+        </style>
 </head>
 <body>
-<form action="/venue/createVenue" method="POST">
+<!-- 導航 -->
+<div class="bs-navbar">
+    <div class="bs-navbar-main">
+        <div class="bs-navbar-logo">
+            <img src="../asset/images/ARTOGETHER.svg" alt="" />
+            <div id="div_back_to_homepage" class="link-button">
+                <a th:href="@{/business_logout}">返回首頁</a
+                ><span class="material-symbols-outlined">exit_to_app</span>
+            </div>
+        </div>
+        <hr />
+        <nav>
+            <ul>
+                <li clickable class="bs-navbar-item -open">
+                    <div clickable class="bs-navbar-header">
+                <span class="material-symbols-outlined">storefront</span
+                ><a href="#">商家基本資訊</a>
+                    </div>
+                </li>
+                <li clickable class="bs-navbar-item">
+                    <div clickable class="bs-navbar-header">
+                <span class="material-symbols-outlined">inbox</span
+                ><a href="#">收件匣</a>
+                    </div>
+                </li>
+                <li clickable class="bs-navbar-item">
+                    <div clickable class="bs-navbar-header">
+                <span class="material-symbols-outlined"
+                >admin_panel_settings</span
+                ><a href="#">管理員權限設定</a>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+        <hr />
+        <nav>
+            <ul>
+                <li clickable class="bs-navbar-item">
+                    <div clickable class="bs-navbar-header">
+                        <span class="material-symbols-outlined">sell</span>商品管理
+                    </div>
+                    <ul class="bs-navbar-submenu">
+                        <li clickable class="bs-navbar-subitem">
+                            <a href="#">訂單管理</a>
+                        </li>
+                        <li clickable class="bs-navbar-subitem">
+                            <a href="#">優惠券管理</a>
+                        </li>
+                        <li clickable class="bs-navbar-subitem">
+                            <a href="#">商品管理</a>
+                        </li>
+                    </ul>
+                </li>
+                <li clickable class="bs-navbar-item">
+                    <div clickable class="bs-navbar-header">
+                        <span class="material-symbols-outlined">roofing</span>場地管理
+                    </div>
+                    <ul class="bs-navbar-submenu">
+                        <li clickable class="bs-navbar-subitem">
+                            <a href="/vneBiz/Orders">訂單管理</a>
+                        </li>
+                        <li clickable class="bs-navbar-subitem">
+                            <a href="#">優惠券管理</a>
+                        </li>
+                        <li clickable class="bs-navbar-subitem">
+                            <a href="/venue/vneList">場地管理</a>
+                        </li>
+                    </ul>
+                </li>
+                <li clickable class="bs-navbar-item">
+                    <div clickable class="bs-navbar-header">
+                <span class="material-symbols-outlined">local_activity</span
+                >活動管理
+                    </div>
+                    <ul class="bs-navbar-submenu">
+                        <li clickable class="bs-navbar-subitem">
+                            <a href="#">訂單管理</a>
+                        </li>
+                        <li clickable class="bs-navbar-subitem">
+                            <a href="#">優惠券管理</a>
+                        </li>
+                        <li clickable class="bs-navbar-subitem">
+                            <a href="#">活動管理</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <div class="bs-navbar-user-control">
+        <div class="bs-navbar-user-menu -hidden" th:if="${#session.getAttribute('businessMembers').size()>1}">
+            <div clickable class="bs-navbar-user-item" th:each="businessMember: ${#session.getAttribute('businessMembers')}">
+                <div class="bs-navbar-user-thumbnail">
+                    <img src="../asset/images/bgimg.png" alt="" />
+                </div>
+                <div>
+                    <a class="bs-navbar-user-name"
+                       th:href="@{/businessMemberSwitch(index=${#session.getAttribute('businessMembers').indexOf(businessMember)})}"
+                       th:text="${businessMember.name}">商家名稱</a>
+                </div>
+                <hr />
+            </div>
+        </div>
+
+        <div clickable class="bs-navbar-user-field">
+            <div class="bs-navbar-user-item">
+                <div class="bs-navbar-user-thumbnail">
+                    <img src="../asset/images/bgimg.png" alt="" />
+                </div>
+                <p class="bs-navbar-user-name" th:text="${#session.getAttribute('presentBusinessMember').name}">商家名稱</p>
+                <span class="material-symbols-outlined unfold" id="icon_unfold"
+                >unfold_more</span
+                >
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- main區塊 -->
+<main>
+<form action="/vneBiz/createVenue" method="POST">
     <h2>場地資料填寫</h2>
 
     <!-- 場地名稱 -->
@@ -52,6 +224,7 @@
         <button type="submit">提交</button>
     </div>
 </form>
-
+</main>
+<script th:src="@{/platform_backend/js/bizpage-modle.js}"></script>
 </body>
 </html>
