@@ -34,6 +34,7 @@ public class GeneralController {
     private EventService eventService;
 
 
+    //拜訪首頁
     @GetMapping("/")
     public String hello(Model model) {
 
@@ -46,6 +47,7 @@ public class GeneralController {
         return "homepage";
     }
 
+    //帳號註冊頁面拜訪
     @GetMapping("register")
     public String landing(Model model) {
         model.addAttribute("member", new Member());
@@ -53,7 +55,7 @@ public class GeneralController {
         return "frontend/register";
     }
 
-    //帳號註冊
+    //帳號註冊資料驗證
     @PostMapping("register")
     public String register (@Valid Member member, Model model) throws BindException {
 
@@ -92,6 +94,7 @@ public class GeneralController {
     }
 
 
+    //一般會員登入頁面拜訪
     @GetMapping("login")
     public String login(Model model) {
 
@@ -102,7 +105,7 @@ public class GeneralController {
 
 
 
-    //一般會員登入
+    //一般會員登入驗證
     @PostMapping("login")
     public String login(
             @NotBlank(message = "Email請勿空白")
@@ -214,5 +217,24 @@ public class GeneralController {
         return "redirect:/";
     }
 
+    //會員個人頁面
+    @GetMapping("member")
+    public String memeberPage(){
+
+        return"member_page";
+    }
+
+
+    //過場頁面測試
+    @GetMapping("status")
+    public String statusPage(Model model) {
+
+        Map<String, String> message = new HashMap<>();
+        //key -> ok or no  value -> 訊息
+        message.put("no", "失敗");
+        model.addAttribute("message", message);
+
+        return"transient_page/status_page";
+    }
 
 }

@@ -7,10 +7,11 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 
+//這邊可以換成Stream呈現
 @Component
 public class BinaryTools {
 
-    // 處理 String
+    //String轉Integer
     public static Integer toBinaryInteger(String binary) {
         // 確保字符串只包含合法二進位字符
         if (!binary.matches("[01]+")) {
@@ -19,7 +20,7 @@ public class BinaryTools {
         return Integer.parseInt(binary, 2);
     }
 
-    // 處理 BitSet
+    //BitSet轉Integer
     public static Integer toBinaryInteger(BitSet bitSet, int length) {
         int result = 0;
         for (int i = 0; i < bitSet.length(); i++) {
@@ -29,6 +30,7 @@ public class BinaryTools {
         }
         return result;
     }
+
     //String轉BitSet
     public static BitSet toBitSet(String binaryString) {
         BitSet bitSet = new BitSet();
@@ -52,6 +54,7 @@ public class BinaryTools {
         }
         return bitSet;
     }
+
     //BitSet轉String
     public static String toBinaryString(BitSet bitSet, int length) {
         StringBuilder stringBuilder = new StringBuilder(length);
@@ -62,7 +65,23 @@ public class BinaryTools {
         return stringBuilder.reverse().toString(); // 從左到右還原
     }
 
-    public static List<Integer> bitSetToList(BitSet bitSet) {
+    //List轉String
+    public static String toBinaryString(List<Integer> tslot, int length) {
+        StringBuilder stringBuilder = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            if (tslot.get(i) > i) {
+                for (int j = i; j < tslot.get(i); j++) {
+                    stringBuilder.append('0');
+                }
+            } else {
+                stringBuilder.append('1');
+            }
+        }
+        return stringBuilder.reverse().toString();
+    }
+
+    //BitSet轉List
+    public static List<Integer> toList(BitSet bitSet) {
         List<Integer> list = new ArrayList<>();
         //.nextSetBit(i)滿有趣的，他會從找i開始找，所以i+1並不會跳過
         for (int i = bitSet.nextSetBit(0); i >= 0; i = bitSet.nextSetBit(i + 1)) {
@@ -71,18 +90,38 @@ public class BinaryTools {
         return list;
     }
 
-    // 將二進位整數轉為 List<Integer>，記錄哪些位有數字
-    public static List<Integer> binaryToList(int number, int bitLength) {
+    //Integer轉List<Integer>
+    public static List<Integer> toList(int number, int bitLength) {
         List<Integer> positions = new ArrayList<>();
 
         for (int i = 0; i < bitLength; i++) {
             // 檢查第 i 位是否為 1
-            if ((number & (1 << (bitLength-1-i))) != 0) {
+            if ((number & (1 << (bitLength - 1 - i))) != 0) {
                 positions.add(i); // 如果為 1，加入該位索引
             }
         }
-
         return positions;
     }
 
+    //String轉List
+    public static List<Integer> toList(String binaryString) {
+        List<Integer> positions = new ArrayList<>();
+        int length = binaryString.length();
+        for (int i = 0,j = 1; i < length; i++,j++) {
+            if (binaryString.charAt(i) == '1') {
+                positions.add(j);
+            }
+        }
+        return positions;
+    }
+
+    //String.first
+    public static Integer first(String binaryString) {
+        return toList(binaryString).get(0);
+    }
+    //String.last
+    public static Integer last(String binaryString) {
+        return toList(binaryString).get(binaryString.length() - 1);
+    }
 }
+

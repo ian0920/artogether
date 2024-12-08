@@ -1,16 +1,11 @@
 package com.artogether.venue.tslot;
 
-import com.artogether.common.member.Member;
-import com.artogether.common.member.MemberRepo;
-import com.artogether.common.member.MemberService;
 import com.artogether.util.BinaryTools;
 import com.artogether.venue.venue.Venue;
 import com.artogether.venue.venue.VenueRepository;
 import com.artogether.venue.vnedto.TslotDTO;
-import com.artogether.venue.vnedto.VneOrderDTO;
 import com.artogether.venue.vneorder.VneOrder;
 import com.artogether.venue.vneorder.VneOrderRepository;
-import com.artogether.venue.vneorder.VneOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -97,44 +92,25 @@ public class TslotService {
 
     // 創建或更新時段
     @Transactional
-    public Tslot updateTslot(LocalDateTime submissionTime, TslotDTO tslotDTO) {
+    public void updateTslot(LocalDateTime submissionTime, TslotDTO tslotDTO) {
         int vneId = tslotDTO.getVneId();
-        if (!tslotRepository.existsByVenueId(vneId)) {
-            //沒有找到新建一個
-            Tslot tslot = Tslot.builder()
-                    .venue(Venue.id(vneId)) // Venue 有靜態方法"id()"(嘗試看看)
-                    .hourOfMon(tslotDTO.getHourOfMon())
-                    .hourOfTue(tslotDTO.getHourOfTue())
-                    .hourOfWed(tslotDTO.getHourOfWed())
-                    .hourOfThu(tslotDTO.getHourOfThu())
-                    .hourOfFri(tslotDTO.getHourOfFri())
-                    .hourOfSat(tslotDTO.getHourOfSat())
-                    .hourOfSun(tslotDTO.getHourOfSun())
-                    .effectiveTime(submissionTime)
-                    .build();
-
-            return tslotRepository.save(tslot);
-        }else {
-            //找到最靠近現在的前一筆資料寫入更改時間
-            Tslot tslot = new Tslot();
-            tslot = tslotRepository.getNearestPastRecord(vneId, submissionTime).get();
+        //找到最靠近現在的前一筆資料寫入更改時間
+        Optional<Tslot> tslotOptional =tslotRepository.getNearestPastRecord(vneId, submissionTime);
+        tslotOptional.ifPresent(tslot->{
             tslot.setExpirationTime(submissionTime);
             tslotRepository.save(tslot);
-
-            //有找到舊的所以另存一個新的
-            Tslot newTslot = Tslot.builder()
+        });
+    //不論有沒有找到都新建一個
+        Tslot tslot = Tslot.builder()
                 .venue(Venue.id(vneId)) // Venue 有靜態方法"id()"(嘗試看看)
-                .hourOfMon(tslotDTO.getHourOfMon())
-                .hourOfTue(tslotDTO.getHourOfTue())
-                .hourOfWed(tslotDTO.getHourOfWed())
-                .hourOfThu(tslotDTO.getHourOfThu())
-                .hourOfFri(tslotDTO.getHourOfFri())
-                .hourOfSat(tslotDTO.getHourOfSat())
-                .hourOfSun(tslotDTO.getHourOfSun())
-                .expirationTime(submissionTime)
+                .hourOfMon(BinaryTools.toBinaryString(tslotDTO.getHourOfMon(),24))
+                .hourOfTue(BinaryTools.toBinaryString(tslotDTO.getHourOfTue(),24))
+                .hourOfWed(BinaryTools.toBinaryString(tslotDTO.getHourOfWed(),24))
+                .hourOfThu(BinaryTools.toBinaryString(tslotDTO.getHourOfThu(),24))
+                .hourOfFri(BinaryTools.toBinaryString(tslotDTO.getHourOfFri(),24))
+                .hourOfSat(BinaryTools.toBinaryString(tslotDTO.getHourOfSat(),24))
+                .hourOfSun(BinaryTools.toBinaryString(tslotDTO.getHourOfSun(),24))
                 .build();
-            return tslotRepository.save(newTslot);
-        }
     }
 
     //有個Multimap(Guava Library)可能可以用

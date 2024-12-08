@@ -19,7 +19,50 @@ ALTER TABLE product
 -- Foreign keys for prd_order table
 ALTER TABLE prd_order
     ADD CONSTRAINT fk_prd_order_member FOREIGN KEY (member_id) REFERENCES member(id),
-    ADD CONSTRAINT fk_prd_order_coupon FOREIGN KEY (prd_coup_id) REFERENCES prd_coup(id);
+    ADD CONSTRAINT fk_prd_order_coupon FOREIGN KEY (prd_coup_id) REFERENCES prd_coup(id),
+    ADD COLUMN order_name VARCHAR(50) NOT NULL,
+    ADD COLUMN order_phone VARCHAR(15) NOT NULL,
+    ADD COLUMN order_address VARCHAR(255) NOT NULL;
+
+    UPDATE prd_order
+    SET
+        order_name = CASE id
+            WHEN 1 THEN 'John Doe'
+            WHEN 2 THEN 'Jane Smith'
+            WHEN 3 THEN 'Alice Johnson'
+            WHEN 4 THEN 'Bob Brown'
+            WHEN 5 THEN 'Charlie Davis'
+            WHEN 6 THEN 'Emily White'
+            WHEN 7 THEN 'Frank Black'
+            WHEN 8 THEN 'Grace Green'
+            WHEN 9 THEN 'Hank Blue'
+            WHEN 10 THEN 'Ivy Grey'
+        END,
+        order_phone = CASE id
+            WHEN 1 THEN '0912345678'
+            WHEN 2 THEN '0923456789'
+            WHEN 3 THEN '0934567890'
+            WHEN 4 THEN '0945678901'
+            WHEN 5 THEN '0956789012'
+            WHEN 6 THEN '0967890123'
+            WHEN 7 THEN '0978901234'
+            WHEN 8 THEN '0989012345'
+            WHEN 9 THEN '0990123456'
+            WHEN 10 THEN '0901234567'
+        END,
+        order_address = CASE id
+            WHEN 1 THEN 'Taipei'
+            WHEN 2 THEN 'New Taipei'
+            WHEN 3 THEN 'Kaohsiung'
+            WHEN 4 THEN 'Taichung'
+            WHEN 5 THEN 'Tainan'
+            WHEN 6 THEN 'Hsinchu'
+            WHEN 7 THEN 'Keelung'
+            WHEN 8 THEN 'Chiayi'
+            WHEN 9 THEN 'Yilan'
+            WHEN 10 THEN 'Pingtung'
+        END
+    WHERE id BETWEEN 1 AND 10;
 
 -- Foreign keys for prd_order_detail table
 ALTER TABLE prd_order_detail
