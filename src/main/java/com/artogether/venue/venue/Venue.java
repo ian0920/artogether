@@ -8,10 +8,7 @@ import com.artogether.venue.vnecoup.VneCoup;
 import com.artogether.venue.vneimg.VneImgUrl;
 import com.artogether.venue.vneorder.VneOrder;
 import com.artogether.venue.vneprice.VnePrice;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -22,6 +19,8 @@ import java.util.Set;
 
 @Entity
 @Data
+@EqualsAndHashCode(exclude = {"tslots", "vnecoups", "vneImgs", "vneOrders", "vneTracks", "vnePrice", "businessMember"}) // 排除雙向引用的字段
+@ToString(exclude = {"tslots", "vnecoups", "vneImgs", "vneOrders", "vneTracks", "vnePrice", "businessMember"}) // 同樣排除以避免遞迴
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

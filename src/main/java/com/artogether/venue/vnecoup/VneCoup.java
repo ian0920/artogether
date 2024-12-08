@@ -1,10 +1,7 @@
 package com.artogether.venue.vnecoup;
 
 import com.artogether.venue.venue.Venue;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -12,6 +9,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
+@EqualsAndHashCode(exclude="venue")
+@ToString(exclude="venue")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
