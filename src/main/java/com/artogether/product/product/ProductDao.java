@@ -10,5 +10,9 @@ public interface ProductDao {
 	int delete(Integer Id);
 	Product findByPK(Integer Id);
 	List<Product> getAll();
-	
+
+	List<Product> findByBusinessMemberId(Integer businessMemberId); // 新增方法
+
+
+
 }

@@ -6,12 +6,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Repository
 public interface VnePriceRepository extends JpaRepository<VnePrice, Long> {
 
-    Boolean existsByVenueId(Integer vneId);
     //原生sql語句
-    @Query(value = "SELECT * FROM vne_price WHERE effective_time <= ?1 ORDER BY effective_time DESC LIMIT 1",nativeQuery = true)
-    VnePrice getNearestPastRecord(LocalDateTime submissionTime);
+    @Query(value = "SELECT * FROM vne_price WHERE vne_id = ?1 AND effective_time <= ?1 ORDER BY effective_time DESC LIMIT 1",nativeQuery = true)
+    Optional<VnePrice> getNearestPastRecord(Integer vneId, LocalDateTime submissionTime);
 }

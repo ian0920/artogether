@@ -92,4 +92,22 @@ public class ProductDaoImpl implements ProductDao {
 		return null;
 	}
 
+	@Override
+	public List<Product> findByBusinessMemberId(Integer businessMemberId) {
+		Session session = sessionFactory.unwrap(Session.class);
+		try {
+			session.beginTransaction();
+			String hql = "FROM Product p WHERE p.businessMember.id = :businessMemberId";
+			List<Product> products = session.createQuery(hql, Product.class)
+					.setParameter("businessMemberId", businessMemberId)
+					.list();
+			session.getTransaction().commit();
+			return products;
+		} catch (Exception e) {
+			e.printStackTrace();
+			session.getTransaction().rollback();
+		}
+		return null;
+	}
+
 }

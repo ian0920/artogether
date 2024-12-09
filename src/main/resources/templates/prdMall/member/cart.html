@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>購物車</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center; /* 水平置中 */
+            vertical-align: middle; /* 垂直置中 */
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .center {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .center button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        button[type="submit"] {
+            background-color: #28a745;
+            font-size: 14px;
+            padding: 5px 10px;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+<div class="center">
+<h1>購物車</h1>
+</div>
+<table>
+    <thead>
+    <tr>
+        <th>商品名稱</th>
+        <th>價格</th>
+        <th>數量</th>
+        <th>小計</th>
+        <th>操作</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item : ${cartItems}" data-product-id="${item.product.id}">
+        <td th:text="${item.product.name}">商品名稱</td>
+        <td th:text="${item.product.price}">價格</td>
+        <td>
+            <form method="post" action="/cart/updateQty">
+                <input type="hidden" name="productId" th:value="${item.product.id}" />
+                <input type="number" name="qty" th:value="${item.qty}" min="1" style="width: 50px;" />
+                <button type="submit">更新</button>
+            </form>
+        </td>
+        <td class="subtotal" th:text="${item.product.price * item.qty}">小計</td>
+        <td>
+            <form method="post" action="/cart/remove">
+                <input type="hidden" name="productId" th:value="${item.product.id}" />
+                <button type="submit">刪除</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<div class="center">
+<h3>總金額: <span th:text="${totalPrice}">0</span></h3>
+
+    <button id="checkout-button">結帳去</button>
+
+<button onclick="location.href='/'">繼續購物</button>
+</div>
+
+<script>
+    function updateCartRow(input) {
+        const row = input.closest('tr');
+        const price = parseFloat(row.querySelector('.price').textContent);
+        const qty = parseInt(input.value);
+        const subtotalElem = row.querySelector('.subtotal');
+
+        if (qty < 1) {
+            alert("數量不能小於1");
+            input.value = 1;
+            return;
+        }
+
+        // 計算小計
+        const subtotal = price * qty;
+        subtotalElem.textContent = subtotal.toFixed(2);
+
+        // 更新總金額
+        updateTotalPrice();
+
+        // 發送數據到後端
+        const productId = row.getAttribute('data-product-id');
+        fetch('/cart/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ productId, qty })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    alert("更新失敗：" + data.message);
+                }
+            });
+    }
+
+    function removeCartItem(button) {
+        const row = button.closest('tr');
+        const productId = row.getAttribute('data-product-id');
+        row.remove();
+
+        // 更新總金額
+        updateTotalPrice();
+
+        // 發送刪除請求到後端
+        fetch('/cart/remove', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ productId })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    alert("刪除失敗：" + data.message);
+                }
+            });
+    }
+
+    function updateTotalPrice() {
+        const subtotals = document.querySelectorAll('.subtotal');
+        let total = 0;
+        subtotals.forEach(subtotal => {
+            total += parseFloat(subtotal.textContent);
+        });
+        document.getElementById('total-price').textContent = total.toFixed(2);
+    }
+
+    document.getElementById('checkout-button').onclick = function() {
+        const cartItems = document.querySelectorAll('tbody tr');
+        if(cartItems.length === 0) {
+            alert('購物車是空的，無法結帳！');
+        }else {
+            location.href = '/cart/cartCheck';
+        }
+    };
+</script>
+</body>
+</html>

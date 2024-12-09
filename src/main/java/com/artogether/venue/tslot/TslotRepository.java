@@ -5,15 +5,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Repository
 public interface TslotRepository extends JpaRepository<Tslot, Integer> {
 
-    /* 以下方法缺少Query查詢語句，請補上後再解開註解 */
-//    List<Tslot> findByVneIdAndDayOfWeek(Integer vneId, DayOfWeek dayOfWeek );
-//    Boolean existsByVneIdAndDayOfWeek(Integer vneId, DayOfWeek dayOfWeek );
-    Boolean existsByVenueId(Integer vneId);
     //原生sql語句
-    @Query(value = "SELECT * FROM tslot WHERE effective_time <= ?1 ORDER BY effective_time DESC LIMIT 1",nativeQuery = true)
-    Tslot getNearestPastRecord(LocalDateTime submissionTime);
+    @Query(value = "SELECT * FROM tslot WHERE vne_id = ?1 AND effective_time <= ?2 ORDER BY effective_time DESC LIMIT 1",nativeQuery = true)
+    Optional<Tslot> getNearestPastRecord(Integer vneId, LocalDateTime submissionTime);
 }

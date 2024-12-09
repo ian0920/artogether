@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -14,13 +15,13 @@ public class TslotDTO implements Serializable {
 
     private Integer vneId;
     private String vneName;
-    private String hourOfMon;
-    private String hourOfTue;
-    private String hourOfWed;
-    private String hourOfThu;
-    private String hourOfFri;
-    private String hourOfSat;
-    private String hourOfSun;
+    private List<Integer> hourOfMon;
+    private List<Integer> hourOfTue;
+    private List<Integer> hourOfWed;
+    private List<Integer> hourOfThu;
+    private List<Integer> hourOfFri;
+    private List<Integer> hourOfSat;
+    private List<Integer> hourOfSun;
 
 
 }

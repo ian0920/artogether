@@ -51,7 +51,8 @@ public class VenueService {
 //        全部抓下來
 //        Venue venue = Venue.builder().id(vneId).name(name).type(type).description(description).availableDays(availableDays).build();
 //        venueRepository.save(venue);
-        Venue venue = venueRepository.findById(vneId).get();
+        Optional<Venue> venueOptional = venueRepository.findById(vneId);
+        venueOptional.ifPresent(venue -> {
         String name = vneDetailDTO.getName();
         String type = vneDetailDTO.getType();
         String description = vneDetailDTO.getDescription();
@@ -69,6 +70,7 @@ public class VenueService {
             venue.setAvailableDays(availableDays);
         }
         venueRepository.save(venue);
+        });
     }
 
     //場地詳情
@@ -109,7 +111,8 @@ public class VenueService {
         //Comparator<Venue> comparator = Comparator.comparing(Venue::getId);
         //可以直接寫成這樣!!!!!
         //venues.sort(Comparator.comparing(Venue::getName));
-        BusinessMember businessMember = businessMemberRepo.findById(businessId).get();
+        Optional<BusinessMember> businessMemberOptional = businessMemberRepo.findById(businessId);
+        BusinessMember businessMember = businessMemberOptional.get();
         String addr = businessMember.getAddr();
         List<VneCardDTO> vneCardDTOs = new ArrayList<>();
         for (Venue venue : venues) {
@@ -139,25 +142,27 @@ public class VenueService {
     //首頁卡片
     public VneCardDTO getVenue(Integer vneId) {
         VneCardDTO vneCardDTO = new VneCardDTO();
-        Venue venue = venueRepository.findById(vneId).get();
-        vneCardDTO.setVneId(venue.getId());
-        vneCardDTO.setVneName(venue.getName());
-        vneCardDTO.setVneAddress(venue.getBusinessMember().getAddr());
-        String description = venue.getDescription();
-        if (description != null) {
-        vneCardDTO.setDescription(description);
-        }
-        Optional<VneImgUrl> vneImgOptional = vneImgUrlRepository.findByVenue_IdAndPosition(vneId, 1);
-        vneImgOptional.ifPresent(
-                vneImgUrl -> {
-                    String imgUrl = vneImgUrl.getImageUrl();
-                    if (imgUrl != null) {
-                        vneCardDTO.setVneImgUrl(imgUrl);
-                    } else {
-                        vneCardDTO.setVneImgUrl("public/venue/images/0_0.jpg");
+        Optional<Venue> venueOptional = venueRepository.findById(vneId);
+        venueOptional.ifPresent(venue -> {
+            vneCardDTO.setVneId(venue.getId());
+            vneCardDTO.setVneName(venue.getName());
+            vneCardDTO.setVneAddress(venue.getBusinessMember().getAddr());
+            String description = venue.getDescription();
+            if (description != null) {
+                vneCardDTO.setDescription(description);
+            }
+            Optional<VneImgUrl> vneImgOptional = vneImgUrlRepository.findByVenue_IdAndPosition(vneId, 1);
+            vneImgOptional.ifPresent(
+                    vneImgUrl -> {
+                        String imgUrl = vneImgUrl.getImageUrl();
+                        if (imgUrl != null) {
+                            vneCardDTO.setVneImgUrl(imgUrl);
+                        } else {
+                            vneCardDTO.setVneImgUrl("public/venue/images/0_0.jpg");
+                        }
                     }
-                }
-        );
+            );
+        });
     return vneCardDTO;
     }
 // 水好深阿...lambda還沒看

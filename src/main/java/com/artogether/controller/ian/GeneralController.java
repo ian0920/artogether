@@ -5,6 +5,8 @@ import com.artogether.common.business_perm.BusinessPerm;
 import com.artogether.common.business_perm.BusinessPermService;
 import com.artogether.common.member.Member;
 import com.artogether.common.member.MemberService;
+import com.artogether.event.event.Event;
+import com.artogether.event.event.EventService;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,7 +14,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -29,13 +30,24 @@ public class GeneralController {
     @Autowired
     private BusinessPermService businessPermService;
 
+    @Autowired
+    private EventService eventService;
 
-    @RequestMapping("/")
-    public String hello() {
+
+    //拜訪首頁
+    @GetMapping("/")
+    public String hello(Model model) {
+
+        //精選活動呈現
+        List<Event> topThreeEvent = eventService.findAllEvents("enrolledR").subList(0,3);
+        model.addAttribute("topThreeEvents", topThreeEvent);
+
+
 
         return "homepage";
     }
 
+    //帳號註冊頁面拜訪
     @GetMapping("register")
     public String landing(Model model) {
         model.addAttribute("member", new Member());
@@ -43,7 +55,7 @@ public class GeneralController {
         return "frontend/register";
     }
 
-    //帳號註冊
+    //帳號註冊資料驗證
     @PostMapping("register")
     public String register (@Valid Member member, Model model) throws BindException {
 
@@ -82,6 +94,7 @@ public class GeneralController {
     }
 
 
+    //一般會員登入頁面拜訪
     @GetMapping("login")
     public String login(Model model) {
 
@@ -92,7 +105,7 @@ public class GeneralController {
 
 
 
-    //一般會員登入
+    //一般會員登入驗證
     @PostMapping("login")
     public String login(
             @NotBlank(message = "Email請勿空白")
@@ -121,12 +134,14 @@ public class GeneralController {
         } else {
             session.setAttribute("islogin", true);
             session.setAttribute("member", find.getId());
-            session.setAttribute("memberObject", find);
+            session.setAttribute("memberName", find.getName());
         }
 
 
-        return errors.isEmpty() ? "homepage" : "frontend/login";
+        return errors.isEmpty() ? "redirect:/" : "frontend/login";
     }
+
+
 
     //一般會員登出
     @GetMapping({"logout"})
@@ -149,50 +164,52 @@ public class GeneralController {
                 businessMembers.add(businessPerm.getBusinessMember());
             });
 
-            //將所擁有的商家排序
-            Comparator<BusinessMember> comparator = new Comparator<BusinessMember>() {
-                public int compare(BusinessMember o1, BusinessMember o2) {
-                    return o1.getId().compareTo(o2.getId());
-                }
-            };
+            List<BusinessMember> sortedBusinessMember = businessMembers.stream().sorted(Comparator.comparing(BusinessMember::getId)).toList();
 
-            List<BusinessMember> sortedBusinessMember = businessMembers.stream().sorted(comparator).toList();
+            BusinessMember presentBusinessMember = sortedBusinessMember.get(0);
+            List<BusinessMember> listedBusinessMember = new ArrayList();
+            sortedBusinessMember.stream().filter(s -> !s.equals(presentBusinessMember)).forEach(listedBusinessMember::add);
+
 
             //將第一個商家作為預設登入的商家並寫入session
-            session.setAttribute("presentBusinessMember", sortedBusinessMember.get(0));
-            session.setAttribute("businessMembers", sortedBusinessMember);
+            session.setAttribute("presentBusinessMember", presentBusinessMember);
+            session.setAttribute("businessMembers", listedBusinessMember);
         }
 
         return businessPerms.isEmpty() ? "redirect:/" : "homepage_business";
     }
 
-    @PostMapping({"businessMemberSwitch"})
-    public String businessMemberSwitch(Integer switchTo, HttpSession session, Model model) {
-        Integer memberId = (Integer)session.getAttribute("member");
-        List<BusinessPerm> businessPerms = this.businessPermService.getPermsByMember(memberId);
-        if (!businessPerms.isEmpty()) {
-            List<BusinessMember> businessMembers = new ArrayList();
-            businessPerms.forEach((businessPerm) -> {
-                businessMembers.add(businessPerm.getBusinessMember());
-            });
-            Comparator<BusinessMember> comparator = new Comparator<BusinessMember>() {
-                public int compare(BusinessMember o1, BusinessMember o2) {
-                    return o1.getId().compareTo(o2.getId());
-                }
-            };
 
-            List<BusinessMember> sortedBusinessMember = businessMembers.stream().sorted(comparator).toList();
-            List<BusinessMember> switchToMember = sortedBusinessMember.stream().filter(
-                    businessMember ->businessMember.getId().equals(switchTo)).toList();
 
-            //將切換至的商家寫入session
-            session.setAttribute("presentBusinessMember", switchToMember.get(0));
-            session.setAttribute("businessMembers", sortedBusinessMember);
-        }
+    //商家會員切換
+    @GetMapping({"businessMemberSwitch"})
+    public String businessMemberSwitch(Integer index, HttpSession session) {
+
+
+        BusinessMember oldPresentBusinessMember = (BusinessMember) session.getAttribute("presentBusinessMember");
+        List<BusinessMember> businessMembers = (List<BusinessMember>) session.getAttribute("businessMembers");
+
+        //從清單抓出要切換的商家，加入session
+        BusinessMember PresentBusinessMember = businessMembers.get(index);
+
+        //將選取到的商家從清單剔除，並加回原先的商家
+        businessMembers.remove(PresentBusinessMember);
+        businessMembers.add(oldPresentBusinessMember);
+
+        //將要呈現回去的商家排序
+        businessMembers.sort(Comparator.comparing(BusinessMember::getId));
+
+
+        //將切換至的商家寫入session
+        session.setAttribute("presentBusinessMember", PresentBusinessMember);
+        session.setAttribute("businessMembers", businessMembers);
+
 
         return "homepage_business";
     }
 
+
+    //商家會員登出
     @GetMapping({"business_logout"})
     public String businessLogout(HttpSession session) {
         session.removeAttribute("presentBusinessMember");
@@ -200,5 +217,24 @@ public class GeneralController {
         return "redirect:/";
     }
 
+    //會員個人頁面
+    @GetMapping("member")
+    public String memeberPage(){
+
+        return"member_page";
+    }
+
+
+    //過場頁面測試
+    @GetMapping("status")
+    public String statusPage(Model model) {
+
+        Map<String, String> message = new HashMap<>();
+        //key -> ok or no  value -> 訊息
+        message.put("no", "失敗");
+        model.addAttribute("message", message);
+
+        return"transient_page/status_page";
+    }
 
 }

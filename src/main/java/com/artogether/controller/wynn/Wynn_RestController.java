@@ -1,15 +1,15 @@
 package com.artogether.controller.wynn;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,12 +17,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.artogether.common.business_member.BusinessMember;
 import com.artogether.common.business_member.BusinessService;
+import com.artogether.common.business_perm.BusinessPerm;
+import com.artogether.common.business_perm.BusinessPermService;
 import com.artogether.common.member.Member;
+import com.artogether.common.member.MemberService;
 import com.artogether.event.event.Event;
 import com.artogether.event.event.EventService;
 import com.artogether.event.evt_img.EvtImgService;
-import com.artogether.event.evt_track.EvtTrack;
 import com.artogether.event.evt_track.EvtTrackService;
+import com.artogether.util.MailManager;
 
 @RestController
 @RequestMapping("/api") 
@@ -38,6 +41,15 @@ public class Wynn_RestController {
 	
 	@Autowired
 	private BusinessService businessService;
+	
+	@Autowired
+	private BusinessPermService businessPermService;
+	
+	@Autowired
+	private MemberService memberService;
+	
+	@Autowired
+	private MailManager mailManager;
 
 	//==========================================================
 	//         				活動相關
@@ -78,6 +90,53 @@ public class Wynn_RestController {
 		Map<String, String> response = new HashMap<>();
         response.put("message", "成功更新狀態");
         return ResponseEntity.ok(response);
+		
+	}
+	
+	//==========================================================
+	//         				商家相關
+	//==========================================================
+	
+	//商家新增員工
+	@PostMapping("/business/addStaff")
+	public ResponseEntity<Map> addStaff(@RequestBody Map<String, Object> payload, HttpSession session){
+		List<String> emails = (List) payload.get("emails");
+		Map<String, Boolean> perms = (Map) payload.get("perms");
+		BusinessMember bm = (BusinessMember)session.getAttribute("presentBusinessMember");
+		List<BusinessPerm> bPerms = new ArrayList<>();
+		List<String> nonMemberList=new ArrayList<>();
+		System.out.println(payload);
+		for (String email : emails) {
+			Member m =memberService.findByEmail(email);
+			if(m==null) {
+				nonMemberList.add(email);
+			}else {
+			// 新增權限
+	        BusinessPerm bp = new BusinessPerm();
+	        bp.setBusinessMember(bm);
+	        bp.setMember(m);
+	        bp.setPrdPerm(perms.getOrDefault("prdPerm", false));
+	        bp.setVnePerm(perms.getOrDefault("vnePerm", false));
+	        bp.setEvtPerm(perms.getOrDefault("evtPerm", false));
+	        bPerms.add(bp);
+			}
+		}
+		
+		List<BusinessPerm> doneBPerms=businessPermService.saveAll(bPerms);
+		// 整理響應訊息
+	    String addedEmails = doneBPerms.stream()
+	            .map(bp -> bp.getMember().getEmail())
+	            .collect(Collectors.joining(", "));
+	    String nonMemberEmails = String.join(", ", nonMemberList);
+
+	    String message = "成功新增以下員工: " + addedEmails;
+	    if (!nonMemberList.isEmpty()) {
+	        message += "；以下人員未註冊，已發送邀請郵件: " + nonMemberEmails;
+	        // 發送邀請邏輯（假設有 inviteService）
+	        nonMemberList.forEach(email ->mailManager.sendInviteMail(email, bm.getName()));
+	    }
+
+	    return ResponseEntity.ok(Map.of("message", message));
 		
 	}
 	

@@ -18,4 +18,8 @@ public class BusinessPermService {
     public List<BusinessPerm> getAllByBusinessMember(Integer businessMemberId) {
         return repo.findBusinessPermsByBusinessMember_Id(businessMemberId);
     }
+    
+    public List<BusinessPerm> saveAll(List<BusinessPerm> bPermList){
+    	return repo.saveAll(bPermList);
+    }
 }

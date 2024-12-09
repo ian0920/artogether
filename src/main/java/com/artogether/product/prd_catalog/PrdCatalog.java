@@ -3,9 +3,11 @@ package com.artogether.product.prd_catalog;
 import com.artogether.product.product.Product;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -14,21 +16,17 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
 public class PrdCatalog {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id",updatable = false)
 	private Integer id;
-	
 
-	@OneToMany(mappedBy = "prdCatalog", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-
-	@OrderBy("id asc")
-	private Set<Product> products;
-	
 	@Column(name = "name")
 	private String name;
+
 
 
 }

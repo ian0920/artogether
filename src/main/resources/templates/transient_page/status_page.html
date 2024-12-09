@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Member Verify</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script th:inline="javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            const message = /*[[${message['ok']}]]*/ null; // Success message
+            const error = /*[[${message['no']}]]*/ null;   // Error message
+            const title = message || error || '連線異常'; // Default fallback message
+            const icon = message ? 'success' : (error ? 'error' : 'warning');
+
+            Swal.fire({
+                title: title,
+                text: '',
+                icon: icon,
+                confirmButtonText: 'OK'
+            }).then(() => {
+                //預設返回上一頁，如有要設定可以自行調整
+                window.history.go(-1);
+            });
+        });
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+<div>
+</div>
+</body>
+</html>

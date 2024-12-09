@@ -2,18 +2,13 @@ package com.artogether.product.prd_coup;
 
 import com.artogether.common.business_member.BusinessMember;
 import com.artogether.product.my_prd_coup.MyPrdCoup;
-
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-
-import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.Set;
 
 

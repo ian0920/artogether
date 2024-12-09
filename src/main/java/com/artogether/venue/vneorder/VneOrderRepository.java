@@ -6,10 +6,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
+import java.util.List;
 
 @Repository
 public interface VneOrderRepository extends JpaRepository<VneOrder, Integer> {
 
+    @Query(value = "SELECT * FROM vne_order WHERE vne_id = ?1 AND end_day >  ?2 ", nativeQuery = true)
+    List<VneOrder> findUnclosedOrders (Integer vneId, LocalDate today);
+
+    //@Modifying是指操作不會返回具體的實體集合
     @Modifying
     @Transactional
     @Query(value = """

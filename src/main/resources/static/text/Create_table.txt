@@ -100,11 +100,9 @@ CREATE TABLE system_manager (
 );
 
 CREATE TABLE permission (
-    id INT NOT NULL AUTO_INCREMENT,
     manager_id INT NOT NULL,
     desc_id INT NOT NULL,
-    status TINYINT DEFAULT 0,
-    PRIMARY KEY (id)
+    PRIMARY KEY (manager_id, desc_id)
 );
 
 CREATE TABLE perm_desc (
@@ -329,7 +327,7 @@ CREATE TABLE tslot (
     hour_of_fri CHAR(24) NOT NULL,
     hour_of_sat CHAR(24) NOT NULL,
     hour_of_sun CHAR(24) NOT NULL,
-    effective_time DATETIME,
+    effective_time DATETIME DEFAULT CURRENT_TIMESTAMP,
     expiration_time DATETIME,
     PRIMARY KEY (id)
 );
@@ -338,15 +336,17 @@ CREATE TABLE vne_order (
     id INT NOT NULL AUTO_INCREMENT,
     member_id INT NOT NULL,
     vne_id INT NOT NULL,
-    order_date DATETIME NOT NULL,
+    order_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     total_price INT NOT NULL,
     vne_coup_id INT,
+    should_paid INT NOT NULL,
     paid INT NOT NULL,
-    start_date DATETIME NOT NULL,
-    end_date DATETIME NOT NULL,
+    start_date DATE NOT NULL,
+    start_time TIME NOT NULL,
+    end_date DATE NOT NULL,
+    end_time TIME NOT NULL,
     review VARCHAR(1000),
     stars TINYINT,
-    payment_method TINYINT,
     status TINYINT NOT NULL,
     apply_date DATETIME,
     refund_date DATETIME,
@@ -393,7 +393,7 @@ CREATE TABLE vne_price (
     price INT,
     day_of_week CHAR(7),
     price_tslot CHAR(24),
-    effective_time DATETIME,
+    effective_time DATETIME DEFAULT CURRENT_TIMESTAMP,
     expiration_time DATETIME,
 
     PRIMARY KEY (id)

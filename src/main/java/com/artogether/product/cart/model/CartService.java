@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,6 +52,21 @@ public class CartService {
         Cart existingCart = cartRepository.findByProductAndMember(product, member);
         if(existingCart != null){
             cartRepository.delete(existingCart);
+        }
+    }
+
+    // 減少商品數量
+    @Transactional
+    public void decreaseProductQty(Member member, Product product, int qty) {
+        Cart existingCart = cartRepository.findByProductAndMember(product, member);
+        if (existingCart != null) {
+            int currentQty = existingCart.getQty();
+            if (currentQty > qty) {
+                existingCart.setQty(currentQty - qty);
+                cartRepository.save(existingCart); // 更新數量
+            } else {
+                cartRepository.delete(existingCart); // 如果數量不足，刪除整個記錄
+            }
         }
     }
 

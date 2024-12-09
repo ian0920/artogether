@@ -13,6 +13,7 @@ html {
 }
 $navbar-width: 220px;
 
+// ====================導航============================
 div.bs-navbar {
   display: inline-block;
   width: $navbar-width;
@@ -43,30 +44,109 @@ div.bs-navbar {
       }
     }
 
-    nav ul {
+    nav > ul {
+      list-style: none;
       li.bs-navbar-item {
-        border-radius: 8px;
-        padding: 8px 12px;
-        @include flexbox(row, 12px);
-        @include flexbox-details(center, start);
-        color: var(--text-default-secondary-sds-light);
-        a {
-          text-decoration: none;
+        div.bs-navbar-header {
+          position: relative;
+          padding: 8px 12px;
+          @include flexbox(row, 8px);
           color: var(--text-default-secondary-sds-light);
-        }
 
-        &:hover {
-          outline: 1px solid var(--brand-shop);
-          color: var(--brand-shop);
           a {
-            color: var(--brand-shop);
+            text-decoration: none;
+            color: var(--text-default-secondary-sds-light);
+          }
+          &.-open {
+            color: var(--text-default-default-sds-light);
+            span {
+              color: var(--brand-shop);
+            }
+            a {
+              font-weight: bold;
+              color: var(--brand-shop);
+            }
+          }
+          &:hover {
+            color: var(--text-default-default-sds-light);
+            span {
+              color: var(--brand-shop);
+            }
+            a {
+              color: var(--brand-shop);
+            }
+          }
+
+          &::before {
+            content: "";
+            transition: all 0.3s;
+            position: absolute;
+            top: 0;
+            left: -24px;
+            width: 8px;
+            height: 100%;
+          }
+          &.-open::before {
+            border-radius: 0 8px 8px 0;
+            left: -16px;
+            background-color: var(--brand-shop);
           }
         }
-        &.-open {
-          background-color: var(--brand-shop);
-          color: #fff;
+        ul.bs-navbar-submenu {
+          list-style: none;
+          max-height: 0; /* 初始高度為 0 */
+          overflow: hidden; /* 隱藏內容 */
+          position: relative;
+          transition: none;
           a {
-            color: #fff;
+            visibility: hidden;
+            text-decoration: none;
+            color: var(--text-default-secondary-sds-light);
+          }
+          &.-open {
+            opacity: 1;
+            max-height: 500px;
+            @include flexbox(column, 0px);
+            transition: max-height 0.9s ease-out; /* 動畫過渡效果 */
+
+            &::before {
+              content: "";
+              position: absolute;
+              border: 1px var(--border-default-default-sds-light);
+              height: 90%;
+              transform: translateY(-50%);
+              width: 1px;
+              left: 20px;
+              top: 50%;
+              background-color: var(--border-default-default-sds-light);
+            }
+            li.bs-navbar-subitem {
+              list-style: none;
+              border-radius: 8px;
+              padding: 8px 44px;
+              @include flexbox(row, 12px);
+              @include flexbox-details(center, start);
+              color: var(--text-default-secondary-sds-light);
+              a {
+                visibility: visible;
+                text-decoration: none;
+                color: var(--text-default-secondary-sds-light);
+              }
+
+              &:hover {
+                color: var(--brand-shop);
+                a {
+                  color: var(--brand-shop);
+                }
+              }
+              &.-focus {
+                color: var(--brand-shop);
+                a {
+                  color: var(--brand-shop);
+                  font-weight: bold;
+                }
+              }
+            }
           }
         }
       }
@@ -84,8 +164,13 @@ div.bs-navbar {
         object-fit: cover;
         border-radius: 4px;
       }
-      p {
+      .bs-navbar-user-name {
         flex: auto;
+        text-decoration: none;
+        color: var(--text-default-secondary-sds-light);
+        &:hover {
+          color: var(--text-default-default-sds-light);
+        }
       }
     }
     div.bs-navbar-user-menu {
@@ -95,11 +180,18 @@ div.bs-navbar {
       transform: translateY(-101%);
       border: 1px solid var(--border-default-default-sds-light);
       border-radius: 8px;
-      padding: 12px;
+      padding: 0 12px;
+
       color: var(--text-default-secondary-sds-light);
       background-color: #fff;
-      @include flexbox(column, 12px);
+      @include flexbox(column, 0px);
       @include effect-shadow-light;
+      div.bs-navbar-user-item {
+        padding: 12px 0;
+        &:hover {
+          color: var(--text-default-default-sds-light);
+        }
+      }
     }
     div.bs-navbar-user-field {
       background-color: #fff;

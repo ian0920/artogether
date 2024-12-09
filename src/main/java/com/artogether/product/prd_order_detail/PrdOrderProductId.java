@@ -1,6 +1,4 @@
-package com.artogether.product;
-
-import lombok.Data;
+package com.artogether.product.prd_order_detail;
 
 import java.io.Serializable;
 import java.util.Objects;
