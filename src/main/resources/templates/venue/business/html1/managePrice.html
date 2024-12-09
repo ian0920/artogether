@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Special Pricing Calendar</title>
+    <style>
+        /* 整體樣式設定 */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+        }
+        .calendar {
+            display: grid;
+            grid-template-columns: 50px repeat(7, 1fr);
+            border: 1px solid #cccccc;
+            background-color: #ffffff;
+        }
+        .calendar div {
+            border: 1px solid #e0e0e0;
+            text-align: center;
+            padding: 5px;
+        }
+        .time {
+            background-color: #f0f4fa;
+            text-align: right;
+            padding-right: 10px;
+            grid-column: 1;
+            color: #2b3a4a;
+            font-weight: bold;
+        }
+        .day-header {
+            font-weight: bold;
+            background-color: #dbe7f3;
+            color: #2b3a4a;
+        }
+        .cell {
+            height: 50px;
+            background-color: #ffffff;
+        }
+        .cell.selected {
+            background-color: #b6e3bc;
+            border-color: #88c88e;
+        }
+        .cell.special {
+            background-color: #6bbf70; /* 更深的綠色，表示特殊價格 */
+        }
+        .form-container {
+            margin: 20px 0;
+        }
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        .checkbox-group label {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="form-container">
+    <form id="specialPricingForm">
+        <div class="checkbox-group">
+            <label><input type="checkbox" id="selectAll"> Select All</label>
+            <label><input type="checkbox" name="day" value="1"> Monday</label>
+            <label><input type="checkbox" name="day" value="2"> Tuesday</label>
+            <label><input type="checkbox" name="day" value="3"> Wednesday</label>
+            <label><input type="checkbox" name="day" value="4"> Thursday</label>
+            <label><input type="checkbox" name="day" value="5"> Friday</label>
+            <label><input type="checkbox" name="day" value="6"> Saturday</label>
+            <label><input type="checkbox" name="day" value="7"> Sunday</label>
+        </div>
+        <label>
+            Start Hour:
+            <input type="number" id="startHour" min="0" max="23" required>
+        </label>
+        <label>
+            End Hour:
+            <input type="number" id="endHour" min="0" max="23" required>
+        </label>
+        <button type="submit">Set Special Pricing</button>
+    </form>
+</div>
+
+<div class="calendar" id="calendar">
+    <!-- 行事曆表頭 -->
+    <div class="time"></div>
+    <div class="day-header">Mon</div>
+    <div class="day-header">Tue</div>
+    <div class="day-header">Wed</div>
+    <div class="day-header">Thu</div>
+    <div class="day-header">Fri</div>
+    <div class="day-header">Sat</div>
+    <div class="day-header">Sun</div>
+
+    <!-- 時間與單元格 -->
+    <script>
+        // 動態生成行事曆表格
+        for (let hour = 0; hour < 24; hour++) {
+            document.write(`<div class="time">${hour}:00</div>`);
+            for (let day = 1; day <= 7; day++) {
+                document.write(`<div class="cell" data-day="${day}" data-hour="${hour}"></div>`);
+            }
+        }
+
+        // 模擬從後端獲取高亮營業時間資料
+        const selectedHours = {
+            1: [9, 10, 11, 12, 13, 14, 15], // 星期一
+            2: [9, 10, 11, 12, 13, 14, 15], // 星期二
+            3: [9, 10, 11, 12, 13, 14, 15], // 星期三
+            4: [9, 10, 11, 12, 13, 14, 15], // 星期四
+            5: [9, 10, 11, 12, 13, 14, 15], // 星期五
+            6: [], // 星期六
+            7: []  // 星期日
+        };
+
+        // 高亮已設定的營業時間
+        document.querySelectorAll('.cell').forEach(cell => {
+            const day = parseInt(cell.dataset.day);
+            const hour = parseInt(cell.dataset.hour);
+            if (selectedHours[day] && selectedHours[day].includes(hour)) {
+                cell.classList.add('selected');
+            }
+        });
+
+        // 選擇全部或取消全部的邏輯
+        document.getElementById('selectAll').addEventListener('change', (e) => {
+            const isChecked = e.target.checked;
+            document.querySelectorAll('input[name="day"]').forEach(checkbox => {
+                checkbox.checked = isChecked;
+            });
+        });
+
+        // 表單提交邏輯，設置特殊價格
+        const form = document.getElementById('specialPricingForm');
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const selectedDays = Array.from(document.querySelectorAll('input[name="day"]:checked')).map(input => parseInt(input.value));
+            const startHour = parseInt(document.getElementById('startHour').value);
+            const endHour = parseInt(document.getElementById('endHour').value);
+
+            if (selectedDays.length === 0) {
+                alert("Please select at least one day.");
+                return;
+            }
+
+            if (endHour < startHour) {
+                alert("End hour must be greater than or equal to start hour.");
+                return;
+            }
+
+            // 設置特殊價格的邏輯
+            selectedDays.forEach(day => {
+                for (let hour = startHour; hour <= endHour; hour++) {
+                    const cell = document.querySelector(`.cell[data-day="${day}"][data-hour="${hour}"]`);
+                    if (cell && cell.classList.contains('selected')) {
+                        cell.classList.add('special');
+                    }
+                }
+            });
+        });
+    </script>
+</div>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootstrap Carousel with Indicators</title>
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- 引入 Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* 主分頁導航 */
+        .tabs {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tabs > a {
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* 子分頁 */
+        .sub-tabs {
+            display: flex;
+            gap: 15px;
+            margin-left: 20px; /* 子分頁縮進 */
+        }
+
+        .sub-tabs a {
+            padding: 8px 12px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* 當前頁面的樣式 */
+        .active-tab {
+            background-color: #007bff; /* 藍色背景 */
+            color: white;
+            pointer-events: none; /* 禁用連結行為 */
+            cursor: default;
+        }
+
+        /* 非當前頁面的樣式 */
+        .inactive-tab {
+            background-color: #f0f0f0; /* 淺灰背景 */
+            color: #333;
+            border: 1px solid #ccc;
+        }
+
+        .inactive-tab:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+    </style>
+</head>
+
+<body>
+<div x-data="tabsController()" x-init="initialize()" class="tabs">
+    <!-- 主分頁：場地管理 -->
+    <a
+            :href="currentPage !== 'venue' ? `/vneBiz/manageVenue/${Detail.vneId}` : '#'"
+            :class="currentPage === 'venue' ? 'active-tab' : 'inactive-tab'"
+            x-text="`${Detail.name}場地管理`">
+    </a>
+
+    <!-- 主分頁：營業時間管理 -->
+    <a
+            :href="currentPage !== 'timeslot' ? `/vneBiz/manageTslot/${Detail.vneId}` : '#'"
+            :class="currentPage === 'timeslot' ? 'active-tab' : 'inactive-tab'"
+            x-text="`${Detail.name}營業時間管理`">
+    </a>
+
+    <!-- 子分頁（僅在 timeslot 分頁下顯示） -->
+    <div x-show="currentPage === 'timeslot'" class="sub-tabs">
+        <!-- 子分頁：營業時間管理 -->
+        <a
+                :href="currentSubPage !== 'timeslotMain' ? `/vneBiz/manageTslot/${Detail.vneId}` : '#'"
+                :class="currentSubPage === 'timeslotMain' ? 'active-tab' : 'inactive-tab'"
+                x-text="`${Detail.name}營業時間管理`">
+        </a>
+
+        <!-- 子分頁：價錢管理 -->
+        <a
+                :href="currentSubPage !== 'pricing' ? `/vneBiz/managePrice/${Detail.vneId}` : '#'"
+                :class="currentSubPage === 'pricing' ? 'active-tab' : 'inactive-tab'"
+                x-text="`${Detail.name}價錢管理`">
+        </a>
+    </div>
+</div>
+
+<script>
+    function tabsController() {
+        return {
+            Detail: {}, // 存放場地詳細數據
+            currentPage: '', // 當前主頁面（'venue' 或 'timeslot'）
+            currentSubPage: '', // 當前子頁面（'timeslotMain' 或 'pricing'）
+
+            initialize() {
+                this.detectCurrentPage();
+                this.detectCurrentSubPage();
+                this.loadDetail();
+            },
+
+            // 檢測當前主頁面類型
+            detectCurrentPage() {
+                const path = window.location.pathname;
+                if (path.includes('manageVenue')) {
+                    this.currentPage = 'venue';
+                } else if (path.includes('manageTslot')) {
+                    this.currentPage = 'timeslot';
+                }
+            },
+
+            // 檢測當前子頁面類型（僅在 timeslot 主頁面下）
+            detectCurrentSubPage() {
+                const path = window.location.pathname;
+                if (path.includes('managePrice')) {
+                    this.currentSubPage = 'pricing';
+                } else if (path.includes('manageTslot')) {
+                    this.currentSubPage = 'timeslotMain';
+                }
+            },
+
+            // 加載場地詳細數據
+            loadDetail() {
+                const pathArray = window.location.pathname.split('/');
+                const vneId = pathArray[pathArray.length - 1];
+
+                // 模擬 AJAX 請求獲取場地詳細數據
+                $.ajax({
+                    url: `/vne/Detail/${vneId}`,
+                    method: "GET",
+                    dataType: "json",
+                    success: (data) => {
+                        console.log(data);
+                        this.Detail = data; // 存入 Detail
+                    },
+                    error: (xhr, status, error) => {
+                        console.error('Error loading detail:', error);
+                    }
+                });
+            }
+        };
+    }
+
+</script>
+</body>
+</html>

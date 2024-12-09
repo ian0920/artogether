@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekly Calendar</title>
+    <!-- 引入必要的外部資源 -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        /* 整體樣式設定 */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+        }
+        .calendar {
+            display: grid;
+            grid-template-columns: 50px repeat(7, 1fr);
+            border: 1px solid #cccccc;
+            background-color: #ffffff;
+        }
+        .calendar div {
+            border: 1px solid #e0e0e0;
+            text-align: center;
+            padding: 5px;
+        }
+        .time {
+            background-color: #f0f4fa;
+            text-align: right;
+            padding-right: 10px;
+            grid-column: 1;
+            color: #2b3a4a;
+            font-weight: bold;
+        }
+        .day-header {
+            font-weight: bold;
+            background-color: #dbe7f3;
+            color: #2b3a4a;
+            cursor: pointer;
+        }
+        .control {
+            font-weight: bold;
+            background-color: #f0f4fa;
+            color: #2b3a4a;
+            cursor: pointer;
+            text-align: center;
+        }
+        .cell {
+            height: 50px;
+            cursor: pointer;
+            background-color: #ffffff;
+            transition: background-color 0.2s;
+        }
+        .cell.selected {
+            background-color: #b6e3bc;
+            border-color: #88c88e;
+        }
+        .cell:hover {
+            background-color: #cde8f7;
+        }
+        /* 確認按鈕樣式 */
+        button#confirm-selection {
+            margin: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #ffffff;
+            background-color: #2b8a3e;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button#confirm-selection:hover {
+            background-color: #246d2d;
+        }
+    </style>
+</head>
+<body>
+<!-- 日曆結構 -->
+<div class="calendar" id="calendar">
+    <!-- 橫向控制按鈕 -->
+    <div class="control" id="toggle-time">Time</div>
+    <div class="day-header" data-day="1">Mon</div>
+    <div class="day-header" data-day="2">Tue</div>
+    <div class="day-header" data-day="3">Wed</div>
+    <div class="day-header" data-day="4">Thu</div>
+    <div class="day-header" data-day="5">Fri</div>
+    <div class="day-header" data-day="6">Sat</div>
+    <div class="day-header" data-day="7">Sun</div>
+
+    <!-- 時間與單元格 -->
+    <script>
+        for (let hour = 0; hour < 24; hour++) {
+            document.write(`<div class="control" data-hour="${hour}">${hour}:00</div>`);
+            for (let day = 1; day <= 7; day++) {
+                document.write(`<div class="cell" data-day="${day}" data-hour="${hour}"></div>`);
+            }
+        }
+    </script>
+</div>
+
+<script>
+    // 定義日曆資料與操作邏輯
+    const calendarData = {
+        days: {
+            hourOfMon: [],
+            hourOfTue: [],
+            hourOfWed: [],
+            hourOfThu: [],
+            hourOfFri: [],
+            hourOfSat: [],
+            hourOfSun: [],
+        },
+        currentPage: '', // 當前頁面（'venue' 或 'timeslot'）
+        initialize() {
+            this.detectCurrentPage();
+            this.fetchData(); // 獲取場地詳細數據
+        },
+        // 檢測當前頁面
+        detectCurrentPage() {
+            const path = window.location.pathname;
+            if (path.includes('manageVenue')) {
+                this.currentPage = 'venue';
+            } else if (path.includes('manageTslot')) {
+                this.currentPage = 'timeslot';
+            }
+        },
+        // 載入之前的選擇設定
+        loadPreviousSelection() {
+            const vneId = window.location.pathname.split('/').pop();
+            $.ajax({
+                url: `/vne/tslot/${vneId}`,
+                type: 'GET',
+                dataType: 'json',
+                success: (data) => {
+                    this.days = {
+                        hourOfMon: data.hourOfMon || [],
+                        hourOfTue: data.hourOfTue || [],
+                        hourOfWed: data.hourOfWed || [],
+                        hourOfThu: data.hourOfThu || [],
+                        hourOfFri: data.hourOfFri || [],
+                        hourOfSat: data.hourOfSat || [],
+                        hourOfSun: data.hourOfSun || [],
+                    };
+                    this.updateCells();
+                },
+                error: (jqXHR, textStatus, errorThrown) => {
+                    console.error('Error loading data:', textStatus, errorThrown);
+                }
+            });
+        },
+
+        // 更新單元格的樣式
+        updateCells() {
+            document.querySelectorAll('.cell').forEach(cell => {
+                const day = parseInt(cell.dataset.day);
+                const hour = parseInt(cell.dataset.hour);
+                const dayKeys = ['hourOfMon', 'hourOfTue', 'hourOfWed', 'hourOfThu', 'hourOfFri', 'hourOfSat', 'hourOfSun'];
+
+                if (this.days[dayKeys[day - 1]].includes(hour)) {
+                    cell.classList.add('selected');
+                } else {
+                    cell.classList.remove('selected');
+                }
+            });
+        },
+
+        // 切換一天的全選或全取消
+        toggleDay(day) {
+            const dayKeys = ['hourOfMon', 'hourOfTue', 'hourOfWed', 'hourOfThu', 'hourOfFri', 'hourOfSat', 'hourOfSun'];
+            const key = dayKeys[day - 1];
+            const allSelected = this.days[key].length === 24;
+
+            if (allSelected) {
+                this.days[key] = [];
+            } else {
+                this.days[key] = Array.from({ length: 24 }, (_, i) => i);
+            }
+            this.updateCells();
+        },
+
+        // 切換一小時的全選或全取消
+        toggleHour(hour) {
+            const dayKeys = ['hourOfMon', 'hourOfTue', 'hourOfWed', 'hourOfThu', 'hourOfFri', 'hourOfSat', 'hourOfSun'];
+            let allSelected = dayKeys.every(key => this.days[key].includes(hour));
+
+            dayKeys.forEach(key => {
+                if (allSelected) {
+                    this.days[key] = this.days[key].filter(h => h !== hour);
+                } else if (!this.days[key].includes(hour)) {
+                    this.days[key].push(hour);
+                }
+            });
+            this.updateCells();
+        },
+
+        // 確認選擇並上傳到後端
+        confirmSelection() {
+            const vneId = window.location.pathname.split('/').pop();
+            const payload = {
+                vneId: parseInt(vneId),
+                ...this.days,
+            };
+
+            $.ajax({
+                url: `/vneBiz/updateTslot/${vneId}`,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(payload),
+                success: () => {
+                    alert('Selection saved successfully!');
+                },
+                error: (jqXHR, textStatus, errorThrown) => {
+                    console.error('Error saving data:', textStatus, errorThrown);
+                    alert('Failed to save selection.');
+                }
+            });
+        }
+    };
+
+    // 滑動選擇的邏輯
+    let isDragging = false;
+    let currentAction = 'select';
+
+    document.querySelectorAll('.cell').forEach(cell => {
+        cell.addEventListener('mousedown', () => {
+            isDragging = true;
+            currentAction = cell.classList.contains('selected') ? 'deselect' : 'select';
+            toggleCellSelection(cell);
+        });
+
+        cell.addEventListener('mousemove', () => {
+            if (isDragging) {
+                toggleCellSelection(cell);
+            }
+        });
+    });
+
+    document.addEventListener('mouseup', () => {
+        isDragging = false;
+    });
+
+    function toggleCellSelection(cell) {
+        const day = parseInt(cell.dataset.day);
+        const hour = parseInt(cell.dataset.hour);
+        const dayKeys = ['hourOfMon', 'hourOfTue', 'hourOfWed', 'hourOfThu', 'hourOfFri', 'hourOfSat', 'hourOfSun'];
+
+        if (currentAction === 'select' && !calendarData.days[dayKeys[day - 1]].includes(hour)) {
+            calendarData.days[dayKeys[day - 1]].push(hour);
+            cell.classList.add('selected');
+        } else if (currentAction === 'deselect') {
+            calendarData.days[dayKeys[day - 1]] = calendarData.days[dayKeys[day - 1]].filter(h => h !== hour);
+            cell.classList.remove('selected');
+        }
+    }
+
+    // 綁定一天的全開關
+    document.querySelectorAll('.day-header').forEach(dayHeader => {
+        dayHeader.addEventListener('click', () => {
+            const day = parseInt(dayHeader.dataset.day);
+            calendarData.toggleDay(day);
+        });
+    });
+
+    // 綁定一小時的全開關
+    document.querySelectorAll('.control[data-hour]').forEach(control => {
+        control.addEventListener('click', () => {
+            const hour = parseInt(control.dataset.hour);
+            calendarData.toggleHour(hour);
+        });
+    });
+
+    // 初始化日曆
+    calendarData.loadPreviousSelection();
+</script>
+
+<!-- 確認按鈕 -->
+<button id="confirm-selection" onclick="calendarData.confirmSelection()">Confirm Selection</button>
+</body>
+</html>
