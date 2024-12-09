@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class EvtCoupRestService {
@@ -41,6 +44,28 @@ public class EvtCoupRestService {
         if (eventId != -1) {
             List<EvtCoup> result = evtCoupDAO.getEvtCoupsByCriteria(eventId, couponName, type, startDate, endDate, status);
             return result.stream().map(EvtCoupDTO::transformFromEvtCoup).toList();
+        }
+
+        return null;
+    }
+
+    public EvtCoup updateEvtCoup(EvtCoup evtCoup) {
+
+        Optional<EvtCoup> origin = evtCoupRepo.findById(evtCoup.getId());
+
+
+        if (origin.isPresent()) {
+            EvtCoup update = origin.get();
+            update.setEvtCoupName(evtCoup.getEvtCoupName());
+            update.setStartDate(evtCoup.getStartDate());
+            update.setEndDate(evtCoup.getEndDate());
+            update.setType(evtCoup.getType());
+            update.setRatio(evtCoup.getRatio());
+            update.setDeduction(evtCoup.getDeduction());
+            update.setDuration(evtCoup.getDuration());
+            update.setThreshold(evtCoup.getThreshold());
+            update.setStatus(evtCoup.getStatus());
+            return evtCoupRepo.save(update);
         }
 
         return null;

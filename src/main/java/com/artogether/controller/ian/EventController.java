@@ -130,6 +130,7 @@ public class EventController {
         Integer memberId = (Integer) session.getAttribute("member");
 
 
+
         Map<Event, EvtOrder> map = evtOrderService.getEventsToMyOrders(memberId);
         Predicate<Event> filter = e -> Objects.equals(e.getId(), eventId);
         boolean match = map.keySet().stream().anyMatch(filter);

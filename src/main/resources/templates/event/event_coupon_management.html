@@ -77,17 +77,24 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            width: 50px;
+            font-size: 12px
         }
         .btn-revise:hover { background-color: #536e27; }
-        .btn-off{
+
+        .btn-save{
             padding: 3px 8px;
-            background-color: #cc3c3c;
+            background-color: #e8b677;
             color: #fff;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            width: 50px;
+            font-size: 12px
         }
-        .btn-off:hover { background-color: #8f2c2c; }
+
+        .btn-save:hover { background-color: #be884f; }
+
         th, td {
             padding: 8px;
             border: 1px solid #ddd;
@@ -165,16 +172,15 @@
         <table class="coupon-table">
             <thead>
             <tr>
-                <th>活動名稱</th>
-                <th>優惠券名稱</th>
-                <th>適用日期</th>
-                <th>折扣類型</th>
-                <th>折扣</th>
-                <th>效期</th>
-                <th>適用門檻</th>
-                <th>優惠券狀態</th>
-                <th></th>
-                <th></th>
+                <th style="width: 150px">活動名稱</th>
+                <th style="width: 230px">優惠券名稱</th>
+                <th style="width: 160px">適用日期</th>
+                <th style="width: 105px">折扣類型</th>
+                <th style="width: 80px">折扣</th>
+                <th style="width: 80px">效期</th>
+                <th style="width: 100px">適用門檻</th>
+                <th style="width: 120px">優惠券狀態</th>
+                <th style="width: 70px"></th>
             </tr>
             </thead>
             <tbody id="couponTableBody">
@@ -259,16 +265,16 @@
                         response.data.forEach(coupon => {
                             tbody.append(`
                             <tr>
+                                <input type="hidden" name="id" value="${coupon.id}">
                                 <td>${coupon.eventName}</td>
                                 <td>${coupon.coupName}</td>
-                                <td>${coupon.startDate} ~ ${coupon.endDate}</td>
+                                <td>${coupon.startDate} ~ <div>${coupon.endDate}</div></td>
                                 <td>${coupon.type}</td>
                                 <td>${coupon.discount > 1 ? coupon.discount +'元' : coupon.discount * 100+'%'}</td>
                                 <td>${coupon.duration === null ? '永久' : coupon.duration + '天'}</td>
                                 <td>${coupon.threshold === null ? '' : coupon.threshold +'元'}</td>
-                                <td>${coupon.status === 1 ? '上架中' : '已下架'}</td>
-                                <td><button class="btn-revise">修改</button></td>
-                                <td><button class="btn-off">下架</button></td>
+                                <td>${coupon.status === 1 ? '上架' : '下架'}</td>
+                                <td><button id="btn-revise" class="btn-revise">修改</button></td>
                             </tr>
                         `);
                         });
@@ -278,7 +284,7 @@
                     }
                 },
                 error: function () {
-                    alert('無法取得資料，請稍後再試。');
+                    pupOutAlter('連線異常請稍號再試', 'warning')
                 }
             });
         });
@@ -287,6 +293,11 @@
     //搜尋優惠券
     $(document).ready(function () {
         $('#searchBtn').on('click', function () {
+
+            if($('#eventId').val() === -1){
+                alert('請選擇活動');
+            }
+
             // Gather form data
             const formData = {
                 eventId: $('#eventId').val(),
@@ -311,16 +322,16 @@
                         response.data.forEach(coupon => {
                             tbody.append(`
                             <tr>
+                                <input type="hidden" name="id" value="${coupon.id}">
                                 <td>${coupon.eventName}</td>
                                 <td>${coupon.coupName}</td>
                                 <td>${coupon.startDate} ~ ${coupon.endDate}</td>
                                 <td>${coupon.type}</td>
                                 <td>${coupon.discount > 1 ? coupon.discount +'元' : coupon.discount * 100+'%'}</td>
-                                <td>${coupon.duration}</td>
-                                <td>${coupon.threshold === null ? '永久' : coupon.threshold +'天'}</td>
-                                <td>${coupon.status === 1 ? '上架中' : '已下架'}</td>
-                                <td><button class="btn-revise">修改</button></td>
-                                <td><button class="btn-off">下架</button></td>
+                                <td>${coupon.duration === null ? '永久' : coupon.duration + '天'}</td>
+                                <td>${coupon.threshold === null ? '' : coupon.threshold +'元'}</td>
+                                <td>${coupon.status === 1 ? '上架' : '下架'}</td>
+                                <td><button id="btn-revise" class="btn-revise">修改</button></td>
                             </tr>
                         `);
                         });
@@ -330,7 +341,7 @@
                     }
                 },
                 error: function () {
-                    alert('搜尋失敗，請稍後再試。');
+                    pupOutAlter('請選擇活動名稱', 'warning')
                 }
             });
         });
@@ -340,15 +351,175 @@
 
 
 
+    //修改優惠券
+    $(document).on('click', '.btn-revise', function () {
+        const row = $(this).closest('tr');
+        const id = row.find('input[name="id"]').val();
+
+        // Convert table cells to editable inputs/selects
+        row.find('td').each(function (index) {
+            switch (index) {
+                case 1: // 優惠券名稱 (text)
+                    const evtCoupName = $(this).text();
+                    $(this).html(`<input type="text" value="${evtCoupName}" class="form-control">`);
+                    break;
+                case 2: // 適用日期 (two datetime-local inputs)
+                    const dates = $(this).text().split(" ~ ");
+                    const startDate = dates[0].trim();
+                    const endDate = dates[1].trim();
+
+                    // Ensure the values are in the correct format for datetime-local
+                    const formatToDatetimeLocal = (dateStr) => {
+                        const date = new Date(dateStr);
+                        if (!isNaN(date.getTime())) {
+                            // Format the date as yyyy-MM-ddThh:mm
+                            return date.toISOString().slice(0, 16);
+                        }
+                        return ''; // Return empty if invalid date
+                    };
+
+                    $(this).html(`
+        <input type="datetime-local" class="form-control mb-1" value="${formatToDatetimeLocal(startDate)}">
+        <input type="datetime-local" class="form-control" value="${formatToDatetimeLocal(endDate)}">
+    `);
+                    break;
+                case 3: // 折扣類型 (type)
+                    $(this).html(`
+                    <select class="form-control">
+                        <option value="0">比例</option>
+                        <option value="1">金額</option>
+                    </select>
+                `);
+                    break;
+                case 4: // 折扣 (discount: ratio/ deduction)
+                    const discount = $(this).text().replace(/[元%]/g, '');
+                    $(this).html(`<input type="number" value="${discount}" class="form-control">`);
+                    break;
+                case 5: // 效期 (duration)
+                    const duration = $(this).text().replace(/天/g, '') || '';
+                    $(this).html(`<input type="number" value="${duration}" class="form-control">`);
+                    break;
+
+                case 6: // 適用門檻 (threshold)
+                    let threshold = $(this).text().replace(/[^\d.-]/g, ''); // Keep only numbers, periods, or minus signs
+                    threshold = threshold.trim() === '' ? '' : parseFloat(threshold); // Handle empty or invalid values gracefully
+                    $(this).html(`<input type="number" value="${threshold}" class="form-control">`);
+                    break;
+                case 7: // 優惠券狀態 (status)
+                    $(this).html(`
+                    <select class="form-control">
+                        <option value="0">下架</option>
+                        <option value="1">上架</option>
+                    </select>
+                `);
+                    break;
+                default:
+                    break;
+            }
+        });
+
+        // Change button to "Save"
+        $(this).text('保存').removeClass('btn-revise').addClass('btn-save');
+    });
+
+    // Save Changes
+    $(document).on('click', '.btn-save', function () {
+        const row = $(this).closest('tr');
+        const id = parseInt(row.find('input[name="id"]').val());
+        const type = parseInt(row.find('td:nth-child(5) select').val());
+        const discount = parseInt(row.find('td:nth-child(6) input').val());
+        let ratio;
+
+        let deduction;
+        if(type === 0){
+            ratio = (discount/100).toFixed(2);
+            deduction = null
+        }
+        if(type === 1){
+            deduction = discount;
+            ratio = null;
+        }
+
+        // Validate and gather updated data
+        const updatedCoupon = {
+
+            id: id,
+            evtCoupName: row.find('td:nth-child(3) input').val(),
+            startDate: row.find('td:nth-child(4) input:nth-child(1)').val(),
+            endDate: row.find('td:nth-child(4) input:nth-child(2)').val(),
+            type: parseInt(row.find('td:nth-child(5) select').val()),
+            ratio: ratio,
+            deduction: deduction,
+            duration: parseInt(row.find('td:nth-child(7) input').val()),
+            threshold: parseInt(row.find('td:nth-child(8) input').val()) || null,
+            status: parseInt(row.find('td:nth-child(9) select').val()),
+
+        };
+
+        // Validation checks
+        if (new Date(updatedCoupon.startDate) > new Date(updatedCoupon.endDate)) {
+            pupOutAlter('開始日期不能晚於結束日期', 'warning');
+            return;
+        }
+
+        if (updatedCoupon.type === 0 && updatedCoupon.ratio >= 1) {
+            pupOutAlter('折扣類型為比例時，折扣值需小於100', 'warning');
+            return;
+        }
+
+        // Send the updated data to the backend
+        $.ajax({
+            url: '/business/event/coupons/update',
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(updatedCoupon),
+            success: function (response) {
+                // Update the row with the saved data
+                row.find('td:nth-child(3)').text(updatedCoupon.evtCoupName);
+                row.find('td:nth-child(4)').text(`${formatDatetimeLocalToDate(updatedCoupon.startDate)} ~ ${formatDatetimeLocalToDate(updatedCoupon.endDate)}`);
+                row.find('td:nth-child(5)').text(updatedCoupon.type === 0 ? '比例' : '金額');
+                row.find('td:nth-child(6)').text(
+                    updatedCoupon.type === 0
+                        ? updatedCoupon.ratio*100 + '%'
+                        : updatedCoupon.deduction + '元'
+                );
+                row.find('td:nth-child(7)').text(updatedCoupon.duration + '天');
+                row.find('td:nth-child(8)').text(updatedCoupon.threshold ? updatedCoupon.threshold + '元' : '');
+                row.find('td:nth-child(9)').text(updatedCoupon.status === 1 ? '上架' : '下架');
+
+                // Change button back to "Modify"
+                row.find('.btn-save').text('修改').removeClass('btn-save').addClass('btn-revise');
+            },
+            error: function () {
+                pupOutAlter('更新失敗，請稍後再試','warning');
+            },
+        });
+    });
+
+
+
+
+
     //彈窗
-    const pupOutAlter = function (){
+    const pupOutAlter = function (title, status){
 
         Swal.fire({
-            title: 'test',
-            text: '',
-            icon: 'warning',
-            confirmButtonText: 'OK'
+            title: '',
+            text: title,
+            icon: status,
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#2c95c6',
         });
+    };
+
+    //日期時間格式轉換
+    function formatDatetimeLocalToDate(datetimeLocal) {
+        const date = new Date(datetimeLocal); // Parse the datetime-local string
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+        const day = String(date.getDate()).padStart(2, '0');
+
+        return `${year}-${month}-${day}`;
     }
 
 

@@ -2,14 +2,12 @@ package com.artogether.controller.ian;
 
 import com.artogether.common.business_member.BusinessMember;
 import com.artogether.event.dto.EvtCoupDTO;
+import com.artogether.event.evt_coup.EvtCoup;
 import com.artogether.event.evt_coup.EvtCoupRestService;
 import com.artogether.util.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
@@ -97,4 +95,19 @@ public class RestEventBusinessController {
 
         return ResponseEntity.ok(new ApiResponse<>(false, "沒有相關搜尋結果", null,null));
     }
+
+    //修改優惠券
+    @PutMapping("coupons/update")
+    public ResponseEntity<ApiResponse<EvtCoupDTO>> updateCoupon (@RequestBody EvtCoup evtCoup) {
+
+
+        EvtCoup updatedEvtCoup = evtCoupRestService.updateEvtCoup(evtCoup);
+        if (updatedEvtCoup != null){
+            EvtCoupDTO updatedEvtCoupDTO = EvtCoupDTO.transformFromEvtCoup(updatedEvtCoup);
+            return ResponseEntity.ok(new ApiResponse<>(true, "優惠券更新成功",updatedEvtCoupDTO, null));
+        }
+
+        return ResponseEntity.ok(new ApiResponse<>(false, "優惠券更新失敗，請再重試一次", null, null));
+    }
+
 }

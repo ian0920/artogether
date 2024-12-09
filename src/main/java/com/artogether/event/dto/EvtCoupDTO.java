@@ -14,6 +14,7 @@ import java.sql.Date;
 @Builder
 public class EvtCoupDTO {
 
+    private Integer id;
     private Integer eventId;
     private String eventName;
     private String coupName;
@@ -28,6 +29,7 @@ public class EvtCoupDTO {
 
     public static EvtCoupDTO transformFromEvtCoup(EvtCoup evtCoup) {
         EvtCoupDTO dto = EvtCoupDTO.builder()
+                .id(evtCoup.getId())
                 .eventId(evtCoup.getEvent().getId())
                 .eventName(evtCoup.getEvent().getName())
                 .coupName(evtCoup.getEvtCoupName())
