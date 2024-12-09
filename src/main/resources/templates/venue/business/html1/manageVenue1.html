@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" th:href="@{/web_design/style/style_business.css}" />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+            rel="stylesheet"
+    />
+    <style>
+        main {
+            font-family: Arial, sans-serif;
+            max-width: 85%;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        form div, .upload-row {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"], textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .upload-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .upload-row input[type="file"] {
+            flex: 1;
+        }
+
+        .upload-row span {
+            color: #555;
+            font-size: 14px;
+        }
+
+        .upload-row button {
+            margin-left: auto;
+        }
+
+        .upload-row:last-child {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+<script>
+    function handleData() {
+        return {
+            Detail: {}, // 存放請求返回的場地詳細數據
+            fetchData() {
+                // 提取 vneId
+                const pathArray = window.location.pathname.split('/');
+                const vneId = pathArray[pathArray.length - 1]; // 獲取最後一段 URL 作為 vneId
+
+                // AJAX 請求
+                $.ajax({
+                    url: `/vne/Detail/${vneId}`,
+                    method: "GET",
+                    dataType: "json",
+                    success: (data) => {
+                        console.log(data);
+                        this.Detail = data; // 正確設置到 Detail 屬性
+                    },
+                    error: (xhr, status, error) => {
+                        console.error('Error fetching data:', error);
+                        // 你可以在這裡設置 isError 或其他錯誤提示
+                    }
+                });
+            },
+            getUpdateImgUrl() {
+                // 動態生成更新圖片的 URL
+                return `/vneBiz/updateImg/${this.Detail.vneId}`;
+            },
+            submitForm() {
+                $.ajax({
+                    url: `/vneBiz/updateVenue/${this.Detail.vneId}`,
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(this.Detail),
+                    success: (response) => {
+                        alert('提交成功');
+                    },
+                    error: (error) => {
+                        console.error('提交失敗:', error);
+                    }
+                });
+            }
+        }
+    }
+</script>
+<!-- 導航 -->
+<div class="bs-navbar">
+    <div class="bs-navbar-main">
+        <div class="bs-navbar-logo">
+            <img src="../asset/images/ARTOGETHER.svg" alt="" />
+            <div id="div_back_to_homepage" class="link-button">
+                <a th:href="@{/business_logout}">返回首頁</a
+                ><span class="material-symbols-outlined">exit_to_app</span>
+            </div>
+        </div>
+        <hr />
+        <nav>
+            <ul>
+                <li clickable class="bs-navbar-item -open">
+                    <div clickable class="bs-navbar-header">
+                <span class="material-symbols-outlined">storefront</span
+                ><a href="#">商家基本資訊</a>
+                    </div>
+                </li>
+                <li clickable class="bs-navbar-item">
+                    <div clickable class="bs-navbar-header">
+                <span class="material-symbols-outlined">inbox</span
+                ><a href="#">收件匣</a>
+                    </div>
+                </li>
+                <li clickable class="bs-navbar-item">
+                    <div clickable class="bs-navbar-header">
+                <span class="material-symbols-outlined"
+                >admin_panel_settings</span
+                ><a href="#">管理員權限設定</a>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+        <hr />
+        <nav>
+            <ul>
+                <li clickable class="bs-navbar-item">
+                    <div clickable class="bs-navbar-header">
+                        <span class="material-symbols-outlined">sell</span>商品管理
+                    </div>
+                    <ul class="bs-navbar-submenu">
+                        <li clickable class="bs-navbar-subitem">
+                            <a href="#">訂單管理</a>
+                        </li>
+                        <li clickable class="bs-navbar-subitem">
+                            <a href="#">優惠券管理</a>
+                        </li>
+                        <li clickable class="bs-navbar-subitem">
+                            <a href="#">商品管理</a>
+                        </li>
+                    </ul>
+                </li>
+                <li clickable class="bs-navbar-item">
+                    <div clickable class="bs-navbar-header">
+                        <span class="material-symbols-outlined">roofing</span>場地管理
+                    </div>
+                    <ul class="bs-navbar-submenu">
+                        <li clickable class="bs-navbar-subitem">
+                            <a href="/vneBiz/Orders">訂單管理</a>
+                        </li>
+                        <li clickable class="bs-navbar-subitem">
+                            <a href="#">優惠券管理</a>
+                        </li>
+                        <li clickable class="bs-navbar-subitem">
+                            <a href="/venue/vneList">場地管理</a>
+                        </li>
+                    </ul>
+                </li>
+                <li clickable class="bs-navbar-item">
+                    <div clickable class="bs-navbar-header">
+                <span class="material-symbols-outlined">local_activity</span
+                >活動管理
+                    </div>
+                    <ul class="bs-navbar-submenu">
+                        <li clickable class="bs-navbar-subitem">
+                            <a href="#">訂單管理</a>
+                        </li>
+                        <li clickable class="bs-navbar-subitem">
+                            <a href="#">優惠券管理</a>
+                        </li>
+                        <li clickable class="bs-navbar-subitem">
+                            <a href="#">活動管理</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <div class="bs-navbar-user-control">
+        <div class="bs-navbar-user-menu -hidden" th:if="${#session.getAttribute('businessMembers').size()>1}">
+            <div clickable class="bs-navbar-user-item" th:each="businessMember: ${#session.getAttribute('businessMembers')}">
+                <div class="bs-navbar-user-thumbnail">
+                    <img src="../asset/images/bgimg.png" alt="" />
+                </div>
+                <div>
+                    <a class="bs-navbar-user-name"
+                       th:href="@{/businessMemberSwitch(index=${#session.getAttribute('businessMembers').indexOf(businessMember)})}"
+                       th:text="${businessMember.name}">商家名稱</a>
+                </div>
+                <hr />
+            </div>
+        </div>
+
+        <div clickable class="bs-navbar-user-field">
+            <div class="bs-navbar-user-item">
+                <div class="bs-navbar-user-thumbnail">
+                    <img src="../asset/images/bgimg.png" alt="" />
+                </div>
+                <p class="bs-navbar-user-name" th:text="${#session.getAttribute('presentBusinessMember').name}">商家名稱</p>
+                <span class="material-symbols-outlined unfold" id="icon_unfold"
+                >unfold_more</span
+                >
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- main區塊 -->
+<main x-data="handleData()" x-init="fetchData()" >
+    <form x-modle="Detail"  method="post">
+<!--        action=`vneBiz/updateVenue/${this.Detail.vneId}`-->
+        <!-- 場地名稱 -->
+        <div>
+            <label for="name">場地名稱:</label>
+            <input type="text" id="name" name="name" maxlength="100"
+                   x-model="Detail.name" required :value="Detail.name || ''">
+        </div>
+
+        <!-- 場地類別描述 -->
+        <div>
+            <label for="type">場地類別描述:</label>
+            <select id="type" name="type" x-model="Detail.type">
+                <option value="indoor">戶外</option>
+                <option value="outdoor">室內</option>
+            </select>
+        </div>
+
+        <!-- 場地描述 -->
+        <div>
+            <label for="description">場地描述:</label>
+            <textarea id="description" name="description" maxlength="1000"
+                      x-model="Detail.description">
+
+            </textarea>
+        </div>
+
+        <!-- 可容許預約天數 -->
+        <div>
+            <label for="availableDays">可容許預約天數:</label>
+            <select id="availableDays" name="availableDays"
+                    x-model="Detail.availableDays" required>
+                <option value="14" selected>14天</option>
+                <option value="28" >28天</option>
+                <option value="42" >42天</option>
+                <option value="56" >56天</option>
+                <option value="84" >84天</option>
+            </select>
+        </div>
+
+        <!-- 提交按鈕 -->
+        <div>
+            <button type="submit"  @click.prevent="submitForm">提交</button>
+        </div>
+    </form>
+    <div x-data="uploadApp()" x-init="setUrls(getUpdateImgUrl())">
+        <template x-for="(upload, index) in uploads" :key="index">
+            <div>
+                <label>上傳位置 <span x-text="upload.position"></span></label>
+                <input type="file" @change="upload.file = $event.target.files[0]" />
+                <button @click.prevent="handleUpload(index)">上傳</button>
+                <p x-text="upload.status"></p>
+            </div>
+        </template>
+    </div>
+</main>
+<script>
+    function uploadApp() {
+        return {
+            uploads: [
+                { file: null, status: '未上傳', url: null, position: 1 },
+                { file: null, status: '未上傳', url: null, position: 2 },
+                { file: null, status: '未上傳', url: null, position: 3 }
+            ],
+            handleUpload(index) {
+                const upload = this.uploads[index];
+                if (!upload.file) {
+                    alert('請選擇文件後再上傳！');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('image', upload.file);
+
+                $.ajax({
+                    url: upload.url, // 使用對應的上傳 URL
+                    method: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: () => {
+                        upload.status = '已上傳';
+                    },
+                    error: (xhr, status, error) => {
+                        console.error('Upload failed:', error);
+                        upload.status = '上傳失敗';
+                    }
+                });
+            },
+            setUrls(url) {
+                // 設置所有上傳項的 URL
+                this.uploads.forEach((upload) => {
+                    upload.url = url;
+                });
+            }
+        };
+    }
+
+</script>
+<script th:src="@{/platform_backend/js/bizpage-modle.js}"></script>
+</body>
+</html>
