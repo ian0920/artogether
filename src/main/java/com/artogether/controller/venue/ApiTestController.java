@@ -1,16 +1,21 @@
 package com.artogether.controller.venue;
 
 import com.artogether.common.business_member.BusinessMember;
+import com.artogether.util.BinaryTools;
+import com.artogether.venue.tslot.TslotService;
 import com.artogether.venue.venue.VenueService;
+import com.artogether.venue.vnedto.TslotDTO;
 import com.artogether.venue.vnedto.VneCardDTO;
+import com.artogether.venue.vnedto.VneDetailDTO;
 import com.artogether.venue.vneimg.VneImgService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -21,8 +26,10 @@ public class ApiTestController {
     private VneImgService vneImgService;
     @Autowired
     private VenueService venueService;
+    @Autowired
+    private TslotService tslotService;
 
-
+    //取出該商家所有場地
     @GetMapping("/vneList")
     public List<VneCardDTO> vneListApi(HttpSession session) {
         BusinessMember businessMember = (BusinessMember) session.getAttribute("presentBusinessMember");
@@ -31,12 +38,19 @@ public class ApiTestController {
         return vneCardDTOs;
     }
 
-    @GetMapping("/vne")
-    public VneCardDTO vne() {
-        Integer vneId = 1;
-        VneCardDTO vneCardDTO = new VneCardDTO();
-        vneCardDTO = venueService.getVenue(vneId);
-        return vneCardDTO;
+    //取出該場地的細節
+    @GetMapping("/Detail/{vneId}")
+    public VneDetailDTO vneDetail(@PathVariable("vneId") Integer vneId) {
+        VneDetailDTO vneDetailDTO = venueService.getDetailVenue(vneId);
+        return vneDetailDTO;
+    }
+
+    //取出該場地的時間細節
+    @GetMapping("/tslot/{vneId}")
+    public TslotDTO nearestTslot(@PathVariable("vneId") Integer vneId) {
+        LocalDateTime now = LocalDateTime.now();
+        TslotDTO tslotDTO = tslotService.nearestTslot(vneId,now);
+        return tslotDTO;
     }
 
     @PostMapping("/test1")

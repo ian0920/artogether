@@ -18,7 +18,6 @@ import javax.servlet.http.HttpSession;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/vneBiz")
@@ -93,29 +92,24 @@ public class VenueController {
 
 
     //營業時間設置頁面
-    @GetMapping("/manageTslot")
-    public String nearestTslot(@RequestParam("vneId") Integer vneId, Model model) {
-        LocalDateTime now = LocalDateTime.now();
-        List<Integer> weeklyTslots = tslotService.getWeeklyTslots(vneId, now);
-        for (int i = 0; i <= weeklyTslots.size()-1; i++) {
-            List<Integer> daylyTslot = BinaryTools.toList(weeklyTslots.get(i),24);
-            int dayOfWeek = 1;
-            dayOfWeek += i;
-            String dayName = DayOfWeek.of(dayOfWeek).toString();
-            model.addAttribute(dayName, daylyTslot);
-        }
+    @GetMapping("/manageTslot/{vneId}")
+    public String nearestTslot() {
         return "/venue/business/html/manageTslot";
     }
     //調整營業時間
-    @PostMapping("/updateTslot")
-    public String manageTslot(@ModelAttribute TslotDTO tslotDTO) {
+    @PostMapping("/updateTslot/{vneId}")
+    public String manageTslot(@PathVariable Integer vneId,@RequestBody TslotDTO tslotDTO) {
+        System.out.println("manageTslot");
         LocalDateTime submissionTime = LocalDateTime.now();
+        tslotDTO.setVneId(vneId);
+        System.out.println(tslotDTO);
         tslotService.updateTslot(submissionTime, tslotDTO);
-        return "redirect:manageTslot";
+        return "redirect:/vneBiz/managePrice/"+vneId;
     }
     //價錢設置頁面
-    @GetMapping("/managePrice")
-    public String nearestPrice() {
+    @GetMapping("/managePrice/{vneId}")
+    public String managePrice() {
+        System.out.println("managePrice");
         return "/venue/business/html/managePrice";
     }
     //調整價錢
@@ -126,7 +120,7 @@ public class VenueController {
         return "redirect:managePrice";
     }
     //場地總覽，確認後可以上下架
-    @GetMapping("/checkVenue")
+    @GetMapping("/checkVenue/{vneId}")
     public String checkVenue() {
         return "/venue/business/html/checkVenue";
     }
