@@ -66,7 +66,7 @@ public class EventController {
         Integer memberId = (Integer)session.getAttribute("member");
         Map<Event, EvtOrder> map = evtOrderService.getEventsToMyOrders(memberId);
         model.addAttribute("orders", map);
-        return "event/orders";
+        return "event/member_event_orders";
     }
 
 
