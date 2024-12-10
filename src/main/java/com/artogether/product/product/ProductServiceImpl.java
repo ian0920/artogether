@@ -107,6 +107,7 @@ public class ProductServiceImpl implements ProductService {
 
     public ProductDto toProductDto(Product product) {
         return new ProductDto(
+
                 product.getId(),
                 product.getName(),
                 product.getPrice(),
@@ -114,6 +115,7 @@ public class ProductServiceImpl implements ProductService {
                 product.getDescription(),
                 product.getStatus(),
                 product.getBusinessMember() != null ? product.getBusinessMember().getName() : null
+
         );
     }
 
@@ -145,6 +147,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
 
+
     public Product addProduct(Product product, List<MultipartFile> images, HttpSession session) throws IOException {
         // 獲取當前登入的商家
         BusinessMember businessMember = (BusinessMember) session.getAttribute("presentBusinessMember");
@@ -173,6 +176,7 @@ public class ProductServiceImpl implements ProductService {
     public List<PrdImg> getPrdImgsByProductId(Integer productId) {
         return prdImgRepository.getPrdImgByProductId(productId);
     }
+
 
 
 }

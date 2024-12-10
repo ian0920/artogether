@@ -1,7 +1,9 @@
 package com.artogether.controller.eason;
 
 import java.util.List;
+
 import java.util.Optional;
+
 
 import com.artogether.common.business_member.BusinessMember;
 import com.artogether.product.prd_catalog.PrdCatalog;
@@ -14,6 +16,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 import com.artogether.product.product.Product;
 import com.artogether.product.product.ProductDto;
@@ -43,6 +50,35 @@ public class NewProductController {
         model.addAttribute("products", productDtos);
         return "product/products";
     }
+
+    
+    
+    @GetMapping("/product/vendorproducts")
+	public String showVendorProductPage(@RequestParam(value = "businessId", required = false) Integer businessId, Model model) {
+	    
+	    
+	    List<Product> products = productService.getAllProducts();
+
+	    //過濾出只需要的商家商品
+	    if (businessId != null) {
+	        products = products.stream()
+	                           .filter(product -> product.getBusinessMember() != null &&
+	                                              product.getBusinessMember().getId().equals(businessId))
+	                           .collect(Collectors.toList());
+	    }
+
+	    List<ProductDto> productDtos = productService.toProductDtoList(products);	
+	    
+	    System.out.println("商家商品:"+ productDtos);
+	    
+	    model.addAttribute("vendorproducts", productDtos);
+	    
+	   
+	    
+	    return "product/vendorproducts";
+	}
+}
+
 
 
     @GetMapping("/businessProducts")

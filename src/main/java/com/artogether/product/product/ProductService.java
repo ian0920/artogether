@@ -32,9 +32,11 @@ public interface ProductService {
     
     List<ProductDto> toProductDtoList(List<Product> products);
 
+
     List <Product> getProductsByBusinessMemberId(Integer businessMemberId);
 
     Product addProduct(Product product, List<MultipartFile> images, HttpSession session) throws IOException;
+
 
 }
 

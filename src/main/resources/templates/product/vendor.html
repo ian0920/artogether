@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>商家總覽</title>
+</head>
+<body>
+
+<div class="showcase-cards-box">
+      <div clickable class="showcase-card card business">
+        <img src="./asset/images/bgimg.png" alt="" />
+        <div class="card-content">
+          <div class="card-title">
+            <div class="tag business">商家</div>
+          	<div th:each="vendor, stat : ${vendors}" th:if="${stat.index == 0}">
+            	<h3 class="card-title-text" th:text="${vendor.name}">
+              	Vendor Name
+            	</h3>
+          	</div> 
+          </div>
+          <div class="card-info">
+            <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
+          </div>
+          <div class="tags-box">
+            <div class="tag hot">
+                  <span class="material-icons">local_fire_department</span
+                  >哈燒精選
+            </div>
+            <div class="tag hot">
+                  <span class="material-icons">local_fire_department</span
+                  >哈燒精選
+            </div>
+          </div>
+      	<h3>選擇商家商品</h3>
+<div>
+    <!-- 如果沒有選擇商家，設置默認的商家 ID -->
+    <a href="product/vendorproducts?businessId=1" class="btn btn-primary">查看商品</a>
+</div>
+
+
+
+      
+        </div>
+      </div>
+      
+       <div clickable class="showcase-card card business">
+        <img src="./asset/images/bgimg.png" alt="" />
+        <div class="card-content">
+          <div class="card-title">
+            <div class="tag business">商家</div>
+          	<div th:each="vendor, stat : ${vendors}" th:if="${stat.index == 1}">
+            	<h3 class="card-title-text" th:text="${vendor.name}">
+              	Vendor Name
+            	</h3>
+          	</div> 
+          </div>
+          <div class="card-info">
+            <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
+          </div>
+          <div class="tags-box">
+            <div class="tag hot">
+                  <span class="material-icons">local_fire_department</span
+                  >哈燒精選
+            </div>
+            <div class="tag hot">
+                  <span class="material-icons">local_fire_department</span
+                  >哈燒精選
+            </div>
+          </div>
+        </div>
+      </div>
+      
+       <div clickable class="showcase-card card business">
+        <img src="./asset/images/bgimg.png" alt="" />
+        <div class="card-content">
+          <div class="card-title">
+            <div class="tag business">商家</div>
+          	<div th:each="vendor, stat : ${vendors}" th:if="${stat.index == 2}">
+            	<h3 class="card-title-text" th:text="${vendor.name}">
+              	Vendor Name
+            	</h3>
+          	</div> 
+          </div>
+          <div class="card-info">
+            <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
+          </div>
+          <div class="tags-box">
+            <div class="tag hot">
+                  <span class="material-icons">local_fire_department</span
+                  >哈燒精選
+            </div>
+            <div class="tag hot">
+                  <span class="material-icons">local_fire_department</span
+                  >哈燒精選
+            </div>
+          </div>
+        </div>
+      </div>
+      
+       <div clickable class="showcase-card card business">
+        <img src="./asset/images/bgimg.png" alt="" />
+        <div class="card-content">
+          <div class="card-title">
+            <div class="tag business">商家</div>
+          	<div th:each="vendor, stat : ${vendors}" th:if="${stat.index == 3}">
+            	<h3 class="card-title-text" th:text="${vendor.name}">
+              	Vendor Name
+            	</h3>
+          	</div> 
+          </div>
+          <div class="card-info">
+            <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
+          </div>
+          <div class="tags-box">
+            <div class="tag hot">
+                  <span class="material-icons">local_fire_department</span
+                  >哈燒精選
+            </div>
+            <div class="tag hot">
+                  <span class="material-icons">local_fire_department</span
+                  >哈燒精選
+            </div>
+          </div>
+        </div>
+      </div>
+</div>
+           
+</body>
+</html>

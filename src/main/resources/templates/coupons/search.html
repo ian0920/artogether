@@ -1,43 +1,49 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>查詢優惠券</title>
+    <title>搜尋優惠券</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: #f9f9f9;
+            background-color: #f5f5f5;
         }
 
-        h1 {
-            color: #4CAF50;
+        .form-container {
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
-        form {
-            margin-bottom: 20px;
+        h2 {
+            text-align: center;
+            color: #333;
         }
 
         label {
+            font-weight: bold;
             display: block;
             margin-bottom: 5px;
-            font-weight: bold;
+            margin-top: 15px;
         }
 
-        input {
+        input, select, button {
             width: 100%;
-            padding: 8px;
+            padding: 10px;
             margin-bottom: 15px;
-            border: 1px solid #ddd;
             border-radius: 4px;
+            border: 1px solid #ccc;
         }
 
         button {
             background-color: #4CAF50;
             color: white;
-            padding: 10px 20px;
+            font-size: 16px;
             border: none;
-            border-radius: 4px;
             cursor: pointer;
         }
 
@@ -45,75 +51,74 @@
             background-color: #45a049;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background-color: #fff;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
+        .merchant-info {
             text-align: center;
-        }
-
-        th {
-            background-color: #4CAF50;
-            color: white;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        tr:hover {
-            background-color: #f1f1f1;
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #555;
         }
     </style>
 </head>
 <body>
-    <h1>查詢優惠券</h1>
-    <form th:action="@{/coupons/search}" method="get">
-        <label>名稱：</label>
-        <input type="text" name="name" />
-        <label>折扣類型：</label>
-        <input type="number" name="type" />
-        <label>狀態：</label>
-        <input type="number" name="status" />
-        <label>門檻：</label>
-        <input type="number" name="threshold" />
-        <button type="submit">查詢</button>
-    </form>
+    <div class="form-container">
+        <h2>搜尋優惠券</h2>
+       
 
-    <!-- 檢查是否執行搜尋，當 coupons 初始化且有內容時顯示結果 -->
-    <div th:if="${coupons != null}">
-        <div th:if="${#lists.size(coupons) > 0}">
-            <h2>查詢結果</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>名稱</th>
-                        <th>類型</th>
-                        <th>狀態</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="coupon : ${coupons}">
-                        <td th:text="${coupon.id}"></td>
-                        <td th:text="${coupon.name}"></td>
-                        <td th:text="${coupon.type}"></td>
-                        <td th:text="${coupon.status}"></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <!-- 搜尋表單 -->
+        <form th:action="@{/coupons/search}" method="get">
+            <!-- 優惠券名稱 -->
+            <label for="name">優惠券名稱</label>
+            <input type="text" id="name" name="name" th:value="${param.name}" placeholder="輸入優惠券名稱">
 
-        <!-- 無查詢結果時顯示提示 -->
-        <div th:if="${#lists.size(coupons) == 0}">
-            <p>查無結果，請修改搜尋條件。</p>
-        </div>
+            <!-- 狀態 -->
+            <label for="status">狀態</label>
+            <select id="status" name="status">
+    		<option value="" th:selected="${param.status == null}">-- 請選擇 --</option>
+    		<option value="1" th:selected="${param.status == 1}">上架</option>
+    		<option value="0" th:selected="${param.status == 0}">下架</option>
+			</select>
+
+            <!-- 折扣類型 -->
+            <label for="type">折扣類型</label>
+            <select id="type" name="type" >
+                <option value=""  th:selected="${param.type == null}">-- 請選擇 --</option>
+                <option value="1" th:selected="${param.type == 1}">金額折扣</option>
+                <option value="0" th:selected="${param.type == 0}">比例折扣</option>
+            </select>
+
+            <!-- 門檻 -->
+            <label for="threshold">門檻</label>
+            <input type="number" id="threshold" name="threshold" th:value="${param.threshold}" placeholder="輸入門檻值">
+
+            <!-- 搜尋按鈕 -->
+            <button type="submit">搜尋</button>
+        </form>
+    </div>
+
+    <!-- 搜尋結果顯示 -->
+    <div class="result-container" th:if="${coupons != null}">
+        <h3>搜尋結果</h3>
+        
+        <table th:if="${!#lists.isEmpty(coupons)}">
+            <thead>
+                <tr>
+                  
+                    <th>名稱</th>
+                    <th>狀態</th>
+                    <th>折扣類型</th>
+                    <th>門檻</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="coupon : ${coupons}">
+                    
+                    <td th:text="${coupon.name}"></td>
+                    <td th:text="${coupon.status == 1 ? '上架' : '下架'}"></td>
+                    <td th:text="${coupon.type == 1 ? '金額折扣' : '比例折扣'}"></td>
+                    <td th:text="${coupon.threshold}"></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </body>
 </html>

@@ -11,10 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -66,8 +63,20 @@ public class EventController {
         Integer memberId = (Integer)session.getAttribute("member");
         Map<Event, EvtOrder> map = evtOrderService.getEventsToMyOrders(memberId);
         model.addAttribute("orders", map);
-        return "event/orders";
+        return "event/member_event_orders";
     }
+
+    //刪除活動訂單
+    @GetMapping("/order/cancel/{id}")
+    public String cancelOrder (@PathVariable Integer id) {
+
+        System.out.println(id);
+
+        evtOrderService.cancelOrder(id);
+
+        return "redirect:/event/orders";
+    }
+
 
 
     //瀏覽活動
@@ -130,6 +139,7 @@ public class EventController {
         Integer memberId = (Integer) session.getAttribute("member");
 
 
+
         Map<Event, EvtOrder> map = evtOrderService.getEventsToMyOrders(memberId);
         Predicate<Event> filter = e -> Objects.equals(e.getId(), eventId);
         boolean match = map.keySet().stream().anyMatch(filter);
@@ -146,9 +156,5 @@ public class EventController {
     }
 
 
-    @GetMapping("coupons")
-    public String coupons() {
 
-        return "event/event_coupon_management";
-    }
 }
