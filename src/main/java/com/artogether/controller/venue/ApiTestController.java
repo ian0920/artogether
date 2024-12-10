@@ -7,7 +7,9 @@ import com.artogether.venue.venue.VenueService;
 import com.artogether.venue.vnedto.TslotDTO;
 import com.artogether.venue.vnedto.VneCardDTO;
 import com.artogether.venue.vnedto.VneDetailDTO;
+import com.artogether.venue.vnedto.VnePriceDTO;
 import com.artogether.venue.vneimg.VneImgService;
+import com.artogether.venue.vneprice.VnePriceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +30,8 @@ public class ApiTestController {
     private VenueService venueService;
     @Autowired
     private TslotService tslotService;
+    @Autowired
+    private VnePriceService vnePriceService;
 
     //取出該商家所有場地
     @GetMapping("/vneList")
@@ -52,7 +56,13 @@ public class ApiTestController {
         TslotDTO tslotDTO = tslotService.nearestTslot(vneId,now);
         return tslotDTO;
     }
-
+    @GetMapping("/price/{vneId}")
+    public VnePriceDTO nearestPrice(@PathVariable("vneId") Integer vneId) {
+        LocalDateTime now = LocalDateTime.now();
+        VnePriceDTO vnePriceDTO =vnePriceService.getNearestVnePrice(vneId, now);
+        System.out.println(vnePriceDTO);
+        return vnePriceDTO;
+    }
     @PostMapping("/test1")
     public List<VneCardDTO> testApi1() {
         int businessId = 1;

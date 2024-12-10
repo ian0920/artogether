@@ -121,7 +121,8 @@ public class BinaryTools {
     }
     //String.last
     public static Integer last(String binaryString) {
-        return toList(binaryString).get(binaryString.length() - 1);
+        List<Integer> list = toList(binaryString);
+        return list.get(list.size() - 1);
     }
 }
 
