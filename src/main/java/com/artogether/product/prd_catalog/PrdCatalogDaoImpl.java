@@ -13,6 +13,9 @@ public class PrdCatalogDaoImpl implements PrdCatalogDao {
 
 	@Autowired
 	EntityManagerFactory sessionFactory;
+
+	@Autowired
+	public PrdCatalogRepository prdCatalogRepository;
 	
 	@Override
 	public int add(PrdCatalog prdCatalog) {

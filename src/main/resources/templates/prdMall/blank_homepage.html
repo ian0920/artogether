@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>All events</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" th:href="@{/web_design/style/style_general.css}" />
+    <link rel="stylesheet" th:href="@{/web_design/style/style_homepage.css}" />
+    <link
+            href="https://fonts.googleapis.com/icon?family=Material+Icons"
+            rel="stylesheet"
+    />
+
+
+</head>
+<body>
+<header class="header navbar_homepage" th:include="homepage::header"></header>
+
+<main>
+
+
+
+
+
+</main>
+
+
+<div class="nav-menu-box" th:include="homepage::nav-menu-box"></div>
+<div class="user-menu-box" th:include="homepage::user-menu-box"></div>
+<footer th:include="homepage::footer"></footer>
+
+<script th:src="@{/web_design/components/web_components/navbar_hompage.js}"></script>
+<script>
+    var el_nav_item_discover = document.querySelector("div.navbar-item");
+    var el_div_nav_menu_box = document.querySelector("div.nav-menu-box");
+    var el_div_nav_user_box = document.querySelector("div.user_div");
+    var el_div_nav_menu = document.querySelector("div.nav-menu");
+    var el_eiv_user_menu = document.querySelector("div.user-menu-box");
+
+    //=====================觸發視窗========================
+    // 1. 探索
+    el_nav_item_discover.addEventListener("mouseenter", function () {
+        if (!el_div_nav_menu_box.classList.contains("open"))
+            el_div_nav_menu_box.classList.add("open");
+    });
+    console.log(el_div_nav_menu);
+    el_div_nav_menu.addEventListener("mouseleave", function () {
+        if (el_div_nav_menu_box.classList.contains("open"))
+            el_div_nav_menu_box.classList.remove("open");
+    });
+
+    // 2. 會員
+    el_div_nav_user_box.addEventListener("mouseenter", function () {
+        if (!el_eiv_user_menu.classList.contains("open"))
+            el_eiv_user_menu.classList.add("open");
+    });
+    el_eiv_user_menu.addEventListener("mouseleave", function () {
+        if (el_eiv_user_menu.classList.contains("open"))
+            el_eiv_user_menu.classList.remove("open");
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Disable link clicks for disabled pagination controls
+        document.querySelectorAll(".page-link.disabled").forEach(function (link) {
+            link.addEventListener("click", function (e) {
+                e.preventDefault(); // Prevent navigation
+            });
+        });
+    });
+</script>
+</body>
+</html>

@@ -113,13 +113,13 @@ public class CommonController {
         return "redirect:/platform/management";
     }
 
-    // 刪除平台管理員
-    @RequestMapping(value = "/system-managers/{id}", method = RequestMethod.DELETE)
-    public String deleteSystemManager(@PathVariable int id) {
-        SystemManager systemManager = systemManagerService.findById(id);
-        if (systemManager != null) {
-            systemManagerService.delete(id);
-        }
-        return "redirect:/platform/management";
-    }
+//    // 刪除平台管理員
+//    @RequestMapping(value = "/system-managers/{id}", method = RequestMethod.DELETE)
+//    public String deleteSystemManager(@PathVariable int id) {
+//        SystemManager systemManager = systemManagerService.findById(id);
+//        if (systemManager != null) {
+//            systemManagerService.delete(id);
+//        }
+//        return "redirect:/platform/management";
+//    }
 }
