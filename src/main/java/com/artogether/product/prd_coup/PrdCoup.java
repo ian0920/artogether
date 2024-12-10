@@ -7,6 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+
+
+
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Set;
@@ -44,9 +47,11 @@ public class PrdCoup {
 	@Column(name = "ratio")
 	private  BigDecimal ratio;
 
+	
 	@Column(name = "start_date")
 	private Timestamp startDate;
-
+	
+	
 	@Column(name = "end_date")
 	private Timestamp endDate;
 

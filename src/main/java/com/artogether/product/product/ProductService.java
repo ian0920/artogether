@@ -26,5 +26,8 @@ public interface ProductService {
     ProductDto toProductDto(Product product);
     
     List<ProductDto> toProductDtoList(List<Product> products);
+    
+    
+    
 }
 
