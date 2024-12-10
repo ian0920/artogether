@@ -1,8 +1,12 @@
 package com.artogether.event.evt_coup;
 
+import com.artogether.common.member.Member;
+import com.artogether.common.member.MemberRepo;
 import com.artogether.event.dto.EvtCoupDTO;
 import com.artogether.event.event.Event;
 import com.artogether.event.event.EventRepo;
+import com.artogether.event.my_evt_coup.MyEvtCoup;
+import com.artogether.event.my_evt_coup.MyEvtCoupRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +27,12 @@ public class EvtCoupRestService {
 
     @Autowired
     EvtCoupDAO evtCoupDAO;
+
+    @Autowired
+    MemberRepo memberRepo;
+
+    @Autowired
+    MyEvtCoupRepo myEvtCoupRepo;
 
     public Map<Integer, String> getEventNameAndIdByBusinessId (Integer businessId) {
         Map<Integer, String> eventNameAndId = new HashMap<>();
@@ -69,5 +79,39 @@ public class EvtCoupRestService {
         }
 
         return null;
+    }
+
+    public EvtCoup addNewEvtCoup(EvtCoup evtCoup, Integer eventId) {
+
+        /*
+            將優惠券新增進去資料庫v
+            將優惠券發放給所有會員: 撈出所有會員(已啟用 1) -> 要分發的優惠券id -> 寫進我的優惠券資料庫(新執行緒)
+         */
+
+
+        //存入資料庫
+        Event e = eventRepo.getReferenceById(eventId);
+        evtCoup.setEvent(e);
+
+        EvtCoup newEvtCoup = evtCoupRepo.save(evtCoup);
+
+        //若優惠券狀態是上架則分發給所有會員(另建執行緒來執行)
+        if(newEvtCoup.getStatus() == 1){
+
+            new Thread(() -> deliverCoupon(newEvtCoup)).start();
+
+        }
+
+        return newEvtCoup;
+
+    }
+
+
+    //factory method for 發送優惠券給所有會員
+    public void deliverCoupon(EvtCoup newEvtCoup){
+
+        List<Member> memberList = memberRepo.findAll();
+        memberList.forEach(m -> myEvtCoupRepo.save(new MyEvtCoup(m, newEvtCoup, (byte) 0, new Timestamp(System.currentTimeMillis()),null)));
+
     }
 }

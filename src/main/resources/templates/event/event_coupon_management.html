@@ -93,7 +93,25 @@
             font-size: 12px
         }
 
+
         .btn-save:hover { background-color: #be884f; }
+
+        .btn-cancel{
+
+            padding: 3px 8px;
+            background-color: #d36686;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 50px;
+            font-size: 12px;
+            margin-top: 3px;
+
+
+        }
+
+        .btn-cancel:hover { background-color: #af546f; }
 
         th, td {
             padding: 8px;
@@ -102,6 +120,113 @@
             font-size: 15px;
         }
         th { background-color: #f2f2f2; }
+
+
+    /*    新增優惠券燈箱效果     */
+
+        /* Modal Overlay */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1000; /* On top of other elements */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* Enable scrolling if needed */
+            background-color: rgba(0, 0, 0, 0.5); /* Black with transparency */
+        }
+
+
+        /* Modal Content */
+        .modal form {
+            background-color: #fff;
+            margin: 3% auto; /* 10% from the top and centered */
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%; /* Default width */
+            max-width: 700px; /* Max width for larger screens */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Form Elements */
+        .modal form div {
+            margin-bottom: 15px;
+        }
+
+        .modal form label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .modal form input,
+        .modal form select {
+            width: 100%;
+            padding: 8px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .modal form input:focus,
+        .modal form select:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 4px rgba(0, 123, 255, 0.25);
+        }
+
+
+        .button-addform-container {
+            display: flex;
+            justify-content: flex-end;
+            text-align: center;
+        }
+
+        .button-addform-container button {
+            margin-left: 10px;
+            padding: 8px 15px;
+            font-size: 14px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-addform-cancel {
+            background-color: #ccc;
+            color: #000;
+        }
+
+        .btn-addform-cancel:hover {
+            background-color: #bbb;
+        }
+
+        .btn-addform-save {
+            background-color: #2c95c6;
+            color: #fff;
+        }
+
+        .btn-addform-save:hover {
+            background-color: #297a9b;;
+        }
+
+        /* Warning Text */
+        .warning-text {
+            color: #d9534f;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .modal form {
+                width: 95%;
+                margin: 15% auto;
+            }
+        }
+
 
 
     </style>
@@ -163,7 +288,7 @@
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <h3 style="margin: 0;">優惠券列表</h3>
             <div class="button-container" style="margin: 0px;">
-                <button class="btn-add-evtCoup" id="btn-add-evtCoup" style="margin-right: 20px">新增優惠券</button>
+                <button class="btn-add-evtCoup" id="addCouponBtn" style="margin-right: 20px">新增優惠券</button>
                 <button class="btn-show-all-evtCoup" id="show-all-evtCoup">顯示所有優惠券</button>
             </div>
         </div>
@@ -188,6 +313,80 @@
             </tbody>
         </table>
     </div>
+
+        <!--    新增優惠券表單-->
+
+    <div id="addCouponModal" class="modal">
+        <form id="addCouponForm">
+            <h3>新增優惠券</h3><div></div><div></div>
+            <div>
+                <div><label for="newEventId">活動名稱</label></div>
+                <select id="newEventId" name="newEventId">
+                    <option value="-1" disabled selected hidden>請選擇活動</option>
+                    <option th:if="${eventMap.isEmpty()}" value="-1" disabled>尚未建立活動</option>
+                    <option th:unless="${eventMap.isEmpty()}"
+                            th:each="entry : ${eventMap}"
+                            th:value="${entry.key}"
+                            th:text="${entry.value}">
+                    </option>
+                </select>
+            </div>
+            <div>
+                <div><label for="newCouponName">優惠券名稱</label></div>
+                <input type="text" id="newCouponName" name="couponName" placeholder="輸入優惠券名稱">
+            </div>
+            <div>
+                <div><label for="newDiscountType">折扣類型</label></div>
+                <select id="newDiscountType" name="discountType">
+                    <option value="-1">選擇折扣類型</option>
+                    <option value="0">比例</option>
+                    <option value="1">金額</option>
+                </select>
+            </div>
+            <div>
+                <div><label for="newDiscount">折扣</label>
+
+                </div>
+
+                <input type="number" id="newDiscount" name="discount" min="0" placeholder="輸入折扣值">
+
+            </div>
+            <div>
+                <div><label for="newDuration">效期（天數）</label></div>
+                <input type="number" id="newDuration" name="duration" min="0" placeholder="輸入效期天數">
+            </div>
+            <div>
+                <div><label for="newThreshold">適用門檻</label></div>
+                <input type="number" id="newThreshold" name="threshold" min="0" placeholder="輸入適用門檻">
+            </div>
+            <div>
+                <div><label for="newStartDate">適用日期（起）</label></div>
+                <input type="datetime-local" id="newStartDate" name="startDate">
+            </div>
+            <div>
+                <div><label for="newEndDate">適用日期（迄）</label></div>
+                <input type="datetime-local" id="newEndDate" name="endDate">
+
+            </div>
+            <div>
+                <div><label for="newCouponStatus">優惠券狀態</label></div>
+                <select id="newCouponStatus" name="couponStatus">
+                    <option value="-1">選擇優惠券狀態</option>
+                    <option value="1">上架中</option>
+                    <option value="0">已下架</option>
+                </select>
+            </div>
+            <div><span class="warning-text" id="newDiscountWarning" style="display: none; font-size: 12px;">「比例」折扣值10為 10% off</span></div>
+            <div><span class="warning-text" id="newDateWarning" style="display: none; font-size: 12px;">結束日期不得早於開始日期。</span></div>
+            <div class="button-addform-container">
+                <button type="submit" class="btn-addform-save" id="saveNewCoupon">新增</button>
+                <button type="button" class="btn-addform-cancel" id="cancelNewCoupon">取消</button>
+            </div>
+        </form>
+    </div>
+
+
+
 </main>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
@@ -274,7 +473,9 @@
                                 <td>${coupon.duration === null ? '永久' : coupon.duration + '天'}</td>
                                 <td>${coupon.threshold === null ? '' : coupon.threshold +'元'}</td>
                                 <td>${coupon.status === 1 ? '上架' : '下架'}</td>
-                                <td><button id="btn-revise" class="btn-revise">修改</button></td>
+                                <td>
+                                    <button id="btn-revise" class="btn-revise">修改</button>
+                                </td>
                             </tr>
                         `);
                         });
@@ -284,7 +485,7 @@
                     }
                 },
                 error: function () {
-                    pupOutAlter('連線異常請稍號再試', 'warning')
+                    pupOutAlter('連線異常 請稍後再試', 'warning')
                 }
             });
         });
@@ -348,13 +549,25 @@
     });
 
 
-
-
-
     //修改優惠券
     $(document).on('click', '.btn-revise', function () {
         const row = $(this).closest('tr');
         const id = row.find('input[name="id"]').val();
+
+
+        // Store original values to restore in case of cancel
+        const originalData = {
+            eventName: row.find('td').eq(0).text(),
+            coupName: row.find('td').eq(1).text(),
+            dateRange: row.find('td').eq(2).text(),
+            type: row.find('td').eq(3).text(),
+            discount: row.find('td').eq(4).text(),
+            duration: row.find('td').eq(5).text(),
+            threshold: row.find('td').eq(6).text(),
+            status: row.find('td').eq(7).text()
+        };
+
+
 
         // Convert table cells to editable inputs/selects
         row.find('td').each(function (index) {
@@ -393,17 +606,17 @@
                     break;
                 case 4: // 折扣 (discount: ratio/ deduction)
                     const discount = $(this).text().replace(/[元%]/g, '');
-                    $(this).html(`<input type="number" value="${discount}" class="form-control">`);
+                    $(this).html(`<input type="number" min="0" value="${discount}" class="form-control">`);
                     break;
                 case 5: // 效期 (duration)
                     const duration = $(this).text().replace(/天/g, '') || '';
-                    $(this).html(`<input type="number" value="${duration}" class="form-control">`);
+                    $(this).html(`<input type="number" min="0" value="${duration}" class="form-control">`);
                     break;
 
                 case 6: // 適用門檻 (threshold)
                     let threshold = $(this).text().replace(/[^\d.-]/g, ''); // Keep only numbers, periods, or minus signs
                     threshold = threshold.trim() === '' ? '' : parseFloat(threshold); // Handle empty or invalid values gracefully
-                    $(this).html(`<input type="number" value="${threshold}" class="form-control">`);
+                    $(this).html(`<input type="number" min="0" value="${threshold}" class="form-control">`);
                     break;
                 case 7: // 優惠券狀態 (status)
                     $(this).html(`
@@ -420,9 +633,34 @@
 
         // Change button to "Save"
         $(this).text('保存').removeClass('btn-revise').addClass('btn-save');
+        $(this).closest('td').append(`<button class="btn-cancel" style="">取消</button>`);
+
+
+        //
+        row.data('original', originalData);
     });
 
-    // Save Changes
+    // 取消修改 (Cancel changes)
+    $(document).on('click', '.btn-cancel', function () {
+        const row = $(this).closest('tr');
+        const originalData = row.data('original');
+
+        // Revert the table cells back to the original data
+        row.find('td').eq(0).text(originalData.eventName);
+        row.find('td').eq(1).text(originalData.coupName);
+        row.find('td').eq(2).text(originalData.dateRange);
+        row.find('td').eq(3).text(originalData.type);
+        row.find('td').eq(4).text(originalData.discount);
+        row.find('td').eq(5).text(originalData.duration);
+        row.find('td').eq(6).text(originalData.threshold);
+        row.find('td').eq(7).text(originalData.status);
+
+        // Remove "Save" and "Cancel" buttons and restore the "Revise" button
+        $(this).closest('td').find('.btn-save').text('修改').removeClass('btn-save').addClass('btn-revise');
+        $(this).remove(); // Remove the "Cancel" button
+    });
+
+    // 保存修改優惠券
     $(document).on('click', '.btn-save', function () {
         const row = $(this).closest('tr');
         const id = parseInt(row.find('input[name="id"]').val());
@@ -495,6 +733,120 @@
             },
         });
     });
+
+
+    //新增優惠券
+
+    $(document).ready(function () {
+
+        //燈箱效果
+        // Open Modal
+        $('#addCouponBtn').on('click', function () {
+            $('#addCouponModal').fadeIn();
+        });
+
+        // Close Modal
+        $('#cancelNewCoupon').on('click', function () {
+            $('#addCouponModal form')[0].reset();
+            $('#addCouponModal').fadeOut();
+        });
+
+        // Close modal when clicking outside of the form
+        $(window).on('click', function (e) {
+            if ($(e.target).is('#addCouponModal')) {
+                $('#addCouponModal').fadeOut();
+            }
+        });
+
+
+
+        // Validate discount field based on discount type
+        $('#newDiscountType').on('change', function () {
+            const discountType = $(this).val();
+            const discountInput = $('#newDiscount');
+            const warning = $('#newDiscountWarning');
+
+            if (discountType === "0") { // Ratio
+                discountInput.attr('max', 100);
+                warning.show();
+            } else {
+                discountInput.removeAttr('max');
+                warning.hide();
+            }
+        });
+
+        // Validate date fields
+        $('#newStartDate, #newEndDate').on('change', function () {
+            const startDate = new Date($('#newStartDate').val());
+            const endDate = new Date($('#newEndDate').val());
+            const warning = $('#newDateWarning');
+
+            if (startDate && endDate && endDate < startDate) {
+                warning.show();
+            } else {
+                warning.hide();
+            }
+        });
+
+        const eventId = parseInt($('#newEventId').val());
+
+
+        // Handle form submission
+        $('#addCouponForm').on('submit', function (e) {
+            e.preventDefault(); // Prevent default form submission
+            const eventId = parseInt($('#newEventId').val());
+            const type = $('#newDiscountType').val();
+            const discount = $('#newDiscount').val();
+
+            if (eventId===-1) {
+                pupOutAlter('請選擇要新增優惠券的活動', 'warning');
+                return;
+            }
+
+            let ratio;
+            let deduction;
+            if(type ==='0'){
+                ratio = (discount/100).toFixed(2);
+                deduction = null;
+            }
+            if(type === '1'){
+                deduction = discount;
+                ratio = null;
+            }
+
+            // Collect form data
+            const newCoupon = {
+                evtCoupName: $('#newCouponName').val(),
+                type: $('#newDiscountType').val(),
+                ratio: ratio,
+                deduction: deduction,
+                duration: $('#newDuration').val(),
+                threshold: $('#newThreshold').val(),
+                startDate: $('#newStartDate').val(),
+                endDate: $('#newEndDate').val(),
+                status: $('#newCouponStatus').val()
+            };
+
+
+            // Submit via AJAX
+            $.ajax({
+                url: `/business/event/coupons/add?eventId=${eventId}`,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(newCoupon),
+                dataType: 'json',
+                success: function (response) {
+                    pupOutAlter('新增成功！', 'success');
+                    $('#addCouponModal form')[0].reset();
+                    $('#addCouponModal').fadeOut();
+                },
+                error: function () {
+                    pupOutAlter('新增失敗，請再試一次！', 'warning');
+                }
+            });
+        });
+    });
+
 
 
 

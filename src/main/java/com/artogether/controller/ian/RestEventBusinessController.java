@@ -110,4 +110,14 @@ public class RestEventBusinessController {
         return ResponseEntity.ok(new ApiResponse<>(false, "優惠券更新失敗，請再重試一次", null, null));
     }
 
+    @PostMapping("coupons/add")
+    public ResponseEntity<ApiResponse<EvtCoupDTO>> addCoupon(@RequestBody EvtCoup evtCoup, @RequestParam Integer eventId){
+
+
+        EvtCoup newEvtcoup = evtCoupRestService.addNewEvtCoup(evtCoup, eventId);
+        EvtCoupDTO newEvtCoupDTO = EvtCoupDTO.transformFromEvtCoup(newEvtcoup);
+
+        return ResponseEntity.ok(new ApiResponse<>(true, "優惠券新增成功", newEvtCoupDTO, null));
+    }
+
 }

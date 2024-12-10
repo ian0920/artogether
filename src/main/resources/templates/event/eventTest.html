@@ -175,7 +175,7 @@
 
                 if (selectedCoupon < 1) {
                     // Percentage discount
-                    discountAmount = (totalAmount * (1 - selectedCoupon)).toFixed(0);
+                    discountAmount = (totalAmount * selectedCoupon).toFixed(0);
                 } else if (selectedCoupon >= 1) {
                     // Fixed amount discount
                     discountAmount = selectedCoupon * qty;
