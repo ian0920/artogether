@@ -34,7 +34,7 @@ public class CartController {
     }
 
     @PostMapping("/add")
-    public String  addProductToCart(@RequestParam Integer productId, @RequestParam Integer qty, HttpSession session) {
+    public String  addProductToCart(@RequestParam(value = "productId", required = true) Integer productId, @RequestParam(value = "qty", required = false, defaultValue = "1") Integer qty, HttpSession session) {
         Integer memberId = (Integer) session.getAttribute("member");
 
         if (memberId == null) {

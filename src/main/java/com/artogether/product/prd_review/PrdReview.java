@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "prd_review")
@@ -34,6 +35,19 @@ public class PrdReview {
 
     @Column(name = "star", nullable = false)
     private Byte stars;
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PrdReview prdReview = (PrdReview) o;
+        return Objects.equals(id, prdReview.id);
+    }
 
     
 }

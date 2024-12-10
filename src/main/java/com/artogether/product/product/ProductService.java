@@ -1,5 +1,10 @@
 package com.artogether.product.product;
 
+import com.artogether.common.business_member.BusinessMember;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,8 +31,12 @@ public interface ProductService {
     ProductDto toProductDto(Product product);
     
     List<ProductDto> toProductDtoList(List<Product> products);
-    
-    
-    
+
+
+    List <Product> getProductsByBusinessMemberId(Integer businessMemberId);
+
+    Product addProduct(Product product, List<MultipartFile> images, HttpSession session) throws IOException;
+
+
 }
 

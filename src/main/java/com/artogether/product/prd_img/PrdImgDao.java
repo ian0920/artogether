@@ -9,5 +9,6 @@ public interface PrdImgDao {
 	int delete(Integer Id);
 	PrdImg findByPK(Integer Id);
 	List<PrdImg> getAll();
+	void saveAll(List<PrdImg> images);
 
 }

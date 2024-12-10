@@ -97,5 +97,12 @@ public class BusinessMember {
         }
     }
 
+    @Override
+    public String toString() {
+        return "BusinessMember{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 
 }
