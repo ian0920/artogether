@@ -28,6 +28,7 @@ public class EvtCoup {
     @Column(name = "evt_coup_name", nullable = false)
     private String evtCoupName;
 
+    //0→下架 1→上架
     private Byte status;
     //0→比例折扣 1→金額折扣
     private Byte type;
@@ -44,7 +45,7 @@ public class EvtCoup {
     private Integer threshold;
 
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "evtCoup", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "evtCoup", cascade = CascadeType.ALL)
     private Set<MyEvtCoup> myEvtCoups;
 
     public int hashCode() {
