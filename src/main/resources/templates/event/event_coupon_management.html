@@ -495,9 +495,14 @@
     $(document).ready(function () {
         $('#searchBtn').on('click', function () {
 
-            if($('#eventId').val() === -1){
-                alert('請選擇活動');
+            if(parseInt($('#eventId').val()) < 1){
+                pupOutAlter('請選擇活動', 'warning');
             }
+
+            if($('#startDate').val() > $('#endDate').val()){
+                pupOutAlter('適用開始日不得晚於結束日', 'warning');
+            }
+
 
             // Gather form data
             const formData = {
@@ -640,7 +645,7 @@
         row.data('original', originalData);
     });
 
-    // 取消修改 (Cancel changes)
+    // 取消修改
     $(document).on('click', '.btn-cancel', function () {
         const row = $(this).closest('tr');
         const originalData = row.data('original');
