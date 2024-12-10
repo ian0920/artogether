@@ -82,6 +82,7 @@
         <thead>
             <tr>
                 <th>ID</th>
+                <th>商家名稱</th>
                 <th>商家編號</th>
                 <th>名稱</th>             
                 <th>折扣類型</th>
@@ -96,7 +97,8 @@
         <tbody>
             <tr th:each="coupon : ${coupons}">
                 <td th:text="${coupon.id}"></td>
-                <td th:text="${coupon.businessMember.id}"></td>    
+                <td th:text="${coupon.businessMemberName}"></td>
+				<td th:text="${coupon.businessMemberId}"></td>    
                 <td th:text="${coupon.name}"></td>
                 <td th:text="${coupon.type == 1 ? '金額折扣' : '比例折扣'}">金額折扣</td>
                 <td th:text="${coupon.status==0 ?'下架' : '上架'}"></td>

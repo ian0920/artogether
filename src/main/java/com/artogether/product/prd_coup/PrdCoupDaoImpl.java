@@ -31,7 +31,7 @@ public class PrdCoupDaoImpl implements PrdCoupDao {
     public int update(PrdCoup prdCoup) {
         try {
             entityManager.merge(prdCoup); // 使用 merge 更新
-            return 1; // 成功返回 1
+            
         } catch (Exception e) {
             e.printStackTrace();
         }

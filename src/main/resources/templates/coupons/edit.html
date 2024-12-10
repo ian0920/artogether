@@ -35,7 +35,7 @@
             color: #555;
         }
 
-        input {
+        input, select {
             width: calc(100% - 20px);
             padding: 10px;
             margin-bottom: 15px;
@@ -44,7 +44,7 @@
             font-size: 14px;
         }
 
-        input:focus {
+        input:focus, select:focus {
             border-color: #007bff;
             outline: none;
             box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
@@ -68,23 +68,39 @@
     </style>
 </head>
 <body>
-    <form th:action="@{/coupons/update/{id}(id=${prdCoup.id})}" method="post">
+    <form th:action="@{/coupons/edit/{id}(id=${prdCoup.id})}" method="post">
         <h1>編輯優惠券</h1>
+        <input type="hidden" name="id" th:value="${prdCoup.id}" />
+
         <label>名稱：</label>
         <input type="text" name="name" th:value="${prdCoup.name}" required />
-        <label>商家編號：</label>
-        <input type="text" name="name" th:value="${prdCoup.businessMember.id}" required />
+
+
         <label>折扣類型：</label>
-        <input type="number" name="type" th:value="${prdCoup.type}" required />
+        <select name="type" required>
+            <option value="0" th:selected="${prdCoup.type == 0}">比例折扣</option>
+            <option value="1" th:selected="${prdCoup.type == 1}">金額折扣</option>
+        </select>
+
         <label>狀態：</label>
-        <input type="number" name="status" th:value="${prdCoup.status}" required />
+        <select name="status" required>
+            <option value="0" th:selected="${prdCoup.status == 0}">下架</option>
+            <option value="1" th:selected="${prdCoup.status == 1}">上架</option>
+        </select>
+        
+        <label>效期：</label>
+        <input type="number" name="duration" th:value="${prdCoup.duration != null ? prdCoup.duration : 0}" />
+
         <label>門檻：</label>
-        <input type="number" name="threshold" th:value="${prdCoup.threshold}" />
-        <label>開始日期：</label>
-        <input type="datetime-local" name="startDate" th:value="${#dates.format(prdCoup.startDate, 'yyyy-MM-dd HH:mm')}" />
-        <label>結束日期：</label>
-        <input type="datetime-local" name="endDate" th:value="${#dates.format(prdCoup.endDate, 'yyyy-MM-dd HH:mm')}" />
-        <button type="submit">更新</button>
+        <input type="number" name="threshold" th:value="${prdCoup.threshold != null ? prdCoup.threshold : 0}" />
+
+        <label>開始日期：</label> 
+        <input type="text" name="startDate"th:value="${#dates.format(prdCoup.startDate, 'yyyy-MM-dd HH:mm:ss')}"placeholder="格式：yyyy-MM-dd HH:mm:ss" required /> 
+			
+		<label>結束日期：</label> 
+		<input type="text" name="endDate"th:value="${#dates.format(prdCoup.endDate, 'yyyy-MM-dd HH:mm:ss')}"placeholder="格式：yyyy-MM-dd HH:mm:ss" required />
+
+		<button type="submit">更新</button>
     </form>
 </body>
 </html>

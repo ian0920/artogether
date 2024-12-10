@@ -79,7 +79,8 @@ public class ProductServiceImpl implements ProductService {
             product.getQty(),
             product.getDescription(),
             product.getStatus(),
-            product.getBusinessMember() != null ? product.getBusinessMember().getName() : null
+            product.getBusinessMember() != null ? product.getBusinessMember().getName() : null,
+            product.getBusinessMember() != null ? product.getBusinessMember().getId() : null	
         );
     }
     
@@ -89,6 +90,9 @@ public class ProductServiceImpl implements ProductService {
                        .map(this::toProductDto) // 調用單個轉換方法
                        .collect(Collectors.toList());
     }
+    
+    
+    
 }
 
 
