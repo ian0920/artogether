@@ -111,7 +111,24 @@
 	    })
 	    .then(data => {
 	        alert(data.message);
-	        // 清空表單
+	     // 動態更新表格
+	        const tableBody = document.querySelector("tbody");
+	        data.newStaff.forEach(staff => {
+	            const newRow = document.createElement("tr");
+	            newRow.innerHTML = `
+	                <th scope="row">${staff.id}</th>
+	                <td>${staff.name}</td>
+	                <td><input type="checkbox" ${staff.evtPerm ? "checked" : ""}></td>
+	                <td><input type="checkbox" ${staff.prdPerm ? "checked" : ""}></td>
+	                <td><input type="checkbox" ${staff.vnePerm ? "checked" : ""}></td>
+	                <td>
+	                    <button onclick="updateStatus(1, ${staff.id})">${staff.status === 0 ? "停權" : "啟用"}</button>
+	                </td>
+	            `;
+	            tableBody.appendChild(newRow);
+	        });
+
+	        // 表格清除
 	        form.reset();
 	    })
 	    .catch(error => {

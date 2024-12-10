@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -73,6 +74,7 @@ public class Wynn_BusinessController {
 		return "business/staff_management";
 	}
 	
+	// 更新員工權限
 	@PostMapping("/updatePerms")
 	public String updateStaff(@RequestParam Map<String, String> formData, HttpSession session) {
 	    // 使用 Map<Integer, Map<String, Boolean>> 來儲存解析的數據
@@ -94,9 +96,9 @@ public class Wynn_BusinessController {
 	    });
 
 	    // 從資料庫中重新獲取 BusinessMember
-	    Integer businessMemberId = ((BusinessMember)session.getAttribute("presentBusinessMember")).getId();
-	    BusinessMember businessMember = BusinessMember.builder().id(businessMemberId).build();
-
+	    BusinessMember businessMember = (BusinessMember)session.getAttribute("presentBusinessMember");
+	    Integer businessMemberId=businessMember.getId();
+	    
 	    // 將解析後的數據轉換為 List<BusinessPerm>
 	    List<BusinessPerm> businessPerms = new ArrayList<>();
 
@@ -104,14 +106,15 @@ public class Wynn_BusinessController {
 	        Integer memberId = entry.getKey();
 	        Map<String, Boolean> perms = entry.getValue();
 
-	        BusinessPerm businessPerm = new BusinessPerm();
+	        // 設定PK
+	        BusinessPerm.BusinessPermComposite compositeId = new BusinessPerm.BusinessPermComposite(businessMemberId, memberId);	        
+	        BusinessPerm businessPerm = businessPermService.findByPK(memberId, businessMemberId);
 
-	        // BusinessMember 和 Member 的設置
-	        Member member = memberService.findById(memberId);
-
-	        businessPerm.setBusinessMember(businessMember);
-	        businessPerm.setMember(member);
-
+//	        // BusinessMember 和 Member 的設置
+//	        Member member = memberService.findById(memberId);
+//	        businessPerm.setBusinessMember(businessMember);
+//	        businessPerm.setMember(member);
+	        
 	        // 設定權限
 	        businessPerm.setEvtPerm(perms.getOrDefault("evtPerm", false));
 	        businessPerm.setPrdPerm(perms.getOrDefault("prdPerm", false));
@@ -120,13 +123,11 @@ public class Wynn_BusinessController {
 	        businessPerms.add(businessPerm);
 	    }
 
-	    // 打印結果進行驗證
-	    businessPerms.forEach(System.out::println);
+	    // 更新資料庫
+	    businessPermService.saveAll(businessPerms);
+	    
 
 	    return "redirect:/business/staff_management";
 	}
-
-
-
 	
 }

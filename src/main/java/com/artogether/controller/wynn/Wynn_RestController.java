@@ -136,7 +136,7 @@ public class Wynn_RestController {
 	        nonMemberList.forEach(email ->mailManager.sendInviteMail(email, bm.getName()));
 	    }
 
-	    return ResponseEntity.ok(Map.of("message", message));
+	    return ResponseEntity.ok(Map.of("message", message, "newStaff", doneBPerms));
 		
 	}
 	

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BusinessPermService {
@@ -22,4 +23,9 @@ public class BusinessPermService {
     public List<BusinessPerm> saveAll(List<BusinessPerm> bPermList){
     	return repo.saveAll(bPermList);
     }
+    
+    public BusinessPerm findByPK(Integer memberId, Integer businessMemberId) {
+        BusinessPerm.BusinessPermComposite compositeId = new BusinessPerm.BusinessPermComposite(businessMemberId, memberId);
+        return repo.findById(compositeId).orElse(new BusinessPerm());
+	}
 }
