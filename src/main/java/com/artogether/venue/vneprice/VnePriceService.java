@@ -45,7 +45,7 @@ public class VnePriceService {
                 vnePriceDTO.setEndTime(BinaryTools.last(priceTslot));
             }
         });
-                return vnePriceDTO;
+        return vnePriceDTO;
     }
     // 創建或更新價錢
     @Transactional
