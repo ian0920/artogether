@@ -2,20 +2,19 @@ package com.artogether.product.product;
 
 import com.artogether.common.business_member.BusinessMember;
 import com.artogether.common.business_member.BusinessMemberRepo;
-import com.artogether.product.prd_catalog.PrdCatalog;
 import com.artogether.product.prd_catalog.PrdCatalogRepository;
 import com.artogether.product.prd_img.PrdImg;
 import com.artogether.product.prd_img.PrdImgRepository;
-import com.artogether.util.ImageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import com.artogether.product.product.Product;
-import com.artogether.common.business_member.BusinessMember;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -114,8 +113,8 @@ public class ProductServiceImpl implements ProductService {
                 product.getQty(),
                 product.getDescription(),
                 product.getStatus(),
-                product.getBusinessMember() != null ? product.getBusinessMember().getName() : null
-
+                product.getBusinessMember() != null ? product.getBusinessMember().getName() : null,
+                product.getBusinessMember() != null ? product.getBusinessMember().getId() : null
         );
     }
 

@@ -1,33 +1,24 @@
 package com.artogether.controller.eason;
 
-import java.util.List;
-
-import java.util.Optional;
-
-
 import com.artogether.common.business_member.BusinessMember;
 import com.artogether.product.prd_catalog.PrdCatalog;
 import com.artogether.product.prd_catalog.PrdCatalogDaoImpl;
 import com.artogether.product.prd_catalog.PrdCatalogRepository;
-import com.artogether.product.prd_img.PrdImg;
+import com.artogether.product.product.Product;
+import com.artogether.product.product.ProductDto;
+import com.artogether.product.product.ProductService;
 import com.artogether.product.product.ProductServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-
-import com.artogether.product.product.Product;
-import com.artogether.product.product.ProductDto;
-import com.artogether.product.product.ProductService;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -77,7 +68,7 @@ public class NewProductController {
 	    
 	    return "product/vendorproducts";
 	}
-}
+
 
 
 
