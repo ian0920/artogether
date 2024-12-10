@@ -109,11 +109,12 @@
         <div th:if="${orders.size() != 0}" class="accordion">
             <div th:each="entry : ${orders}" class="accordion-item">
                 <div class="accordion-header" onclick="toggleAccordion(this)">
-                    <span th:text="${entry.key.name} +'  '+ ${#dates.format(entry.key.startDate, 'yyyy-MM-dd')}">
+                    <span th:text="${entry.value.event.name} +'  '+ ${#dates.format(entry.key.startDate, 'yyyy-MM-dd')}">
                         Art Exhibition (2024-12-01)
                     </span>
                 </div>
                 <div class="accordion-body">
+                    <input type="hidden"  th:value="${entry.value.id}" />
                     <div><strong>報名日期：</strong> <span th:text="${#dates.format(entry.value.orderDate, 'yyyy-MM-dd HH:mm')}"></span></div>
                     <div><strong>報名人數：</strong> <span th:text="${entry.value.qty}"></span></div>
                     <div><strong>活動地點：</strong> <span th:text="${entry.key.location}"></span></div>
@@ -126,7 +127,7 @@
                     <div th:if="${entry.value.refundApplyDate!= null}" ><strong>退款完成日期：</strong> <span th:text="${entry.value.refundDate}"></span></div>
                     <div th:if="${entry.value.refundApplyDate!= null}"><strong>退款金額：</strong> <span th:text="${entry.value.refund}"></span></div>
                     <div th:if="${entry.value.refundApplyDate== null}"></div>
-                    <button style="margin-left: 300px" class="cancel-btn" th:attr="onclick='cancelEvent(\''+ ${entry.key.name} + '\')'" th:text="${entry.value.status == 0 ? '取消報名' : '已取消報名'}" th:disabled="${entry.value.status == 1}"></button>
+                    <button style="margin-left: 300px" class="cancel-btn" th:attr="onclick='cancelEvent(\''+ ${entry.key.name} + '\' , \'' + ${entry.value.id} +'\' )'" th:text="${entry.value.status == 0 ? '取消報名' : '已取消報名'}" th:disabled="${entry.value.status == 1}"></button>
                 </div>
             </div>
         </div>
@@ -209,10 +210,11 @@
         body.classList.toggle('visible');
     }
 
-    function cancelEvent(eventName) {
+    function cancelEvent(eventName, orderId) {
+
         Swal.fire({
             title: '確定取消報名嗎?',
-            text: `您將取消 "${eventName}" 活動的報名?`,
+            text: `您將取消 "${eventName}" id=${orderId} 活動的報名?`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#dc3546e8',
@@ -227,7 +229,8 @@
                     `"${eventName}"的活動報名已取消`,
                     'success'
                 );
-                // Perform the cancellation logic here (e.g., send request to backend)
+
+                window.location = "/event/order/cancel/" +orderId;
             }
         });
     }
