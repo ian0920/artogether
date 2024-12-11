@@ -77,6 +77,19 @@ public class EventController {
         return "redirect:/event/orders";
     }
 
+    //瀏覽會員活動優惠券
+    @GetMapping("/coupons")
+    public String coupons(Model model, HttpSession session) {
+
+        Integer memberId = (Integer)session.getAttribute("member");
+        Map<String, List<MyEvtCoup>> map =  myEvtCoupService.findByMemberId(memberId);
+
+
+        model.addAttribute("coupons", map);
+
+        return "event/member_event_coupons";
+    }
+
 
 
     //瀏覽活動
