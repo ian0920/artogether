@@ -106,7 +106,7 @@
             text-align: center;
         }
         .cell {
-            height: 50px;
+            height: 35px;
             cursor: pointer;
             background-color: #ffffff;
             transition: background-color 0.2s;
@@ -130,9 +130,30 @@
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s ease;
+            float: right; /* 新增這行 */
         }
         button#confirm-selection:hover {
             background-color: #246d2d;
+        }
+        .control[data-hour="0"],
+        .control[data-hour="1"],
+        .control[data-hour="2"],
+        .control[data-hour="3"],
+        .control[data-hour="4"],
+        .control[data-hour="5"],
+        .control[data-hour="6"],
+        .control[data-hour="7"],
+        .control[data-hour="8"],
+        .cell[data-hour="0"],
+        .cell[data-hour="1"],
+        .cell[data-hour="2"],
+        .cell[data-hour="3"],
+        .cell[data-hour="4"],
+        .cell[data-hour="5"],
+        .cell[data-hour="6"],
+        .cell[data-hour="7"],
+        .cell[data-hour="8"] {
+            height: 20px; /* 縮減的行高 */
         }
     </style>
 </head>
@@ -257,6 +278,7 @@
 
     <!-- main區塊 -->
     <main>
+        <!--分頁-->
         <div x-data="tabsController()" x-init="initialize()" class="tabs">
             <!-- 主分頁：場地管理 -->
             <a
@@ -289,6 +311,8 @@
                 </a>
             </div>
         </div>
+        <!-- 確認按鈕 -->
+        <button id="confirm-selection" onclick="calendarData.confirmSelection()">Confirm Selection</button>
         <div class="calendar" id="calendar">
             <!-- 橫向控制按鈕 -->
             <div class="control" id="toggle-time">Time</div>
@@ -310,8 +334,7 @@
                 }
             </script>
         </div>
-        <!-- 確認按鈕 -->
-        <button id="confirm-selection" onclick="calendarData.confirmSelection()">Confirm Selection</button>
+
         <script>
             // 定義日曆資料與操作邏輯
             const calendarData = {
@@ -355,6 +378,7 @@
                                 hourOfSat: data.hourOfSat || [],
                                 hourOfSun: data.hourOfSun || [],
                             };
+                            this.originalDays = { ...this.days }; // 保存初始值
                             this.updateCells();
                         },
                         error: (jqXHR, textStatus, errorThrown) => {
@@ -362,7 +386,6 @@
                         }
                     });
                 },
-
                 // 更新單元格的樣式
                 updateCells() {
                     document.querySelectorAll('.cell').forEach(cell => {
@@ -410,10 +433,23 @@
                 // 確認選擇並上傳到後端
                 confirmSelection() {
                     const vneId = window.location.pathname.split('/').pop();
+
+                    // 比較方法：檢查是否有改變
+                    const hasChanges = JSON.stringify(this.days) !== JSON.stringify(this.originalDays);
+                    if (!hasChanges) {
+                        alert('No changes detected.'); // 無變更則提示
+                        return;
+                    }
+
                     const payload = {
                         vneId: parseInt(vneId),
                         ...this.days,
                     };
+
+                    // 禁用按鈕
+                    const button = document.getElementById('confirm-selection');
+                    button.disabled = true;
+                    button.innerText = "Submitting...";
 
                     $.ajax({
                         url: `/vneBiz/updateTslot/${vneId}`,
@@ -422,15 +458,19 @@
                         data: JSON.stringify(payload),
                         success: () => {
                             alert('Selection saved successfully!');
+                            this.originalDays = { ...this.days }; // 更新初始值
                         },
                         error: (jqXHR, textStatus, errorThrown) => {
                             console.error('Error saving data:', textStatus, errorThrown);
                             alert('Failed to save selection.');
+                        },
+                        complete: () => {
+                            button.disabled = false;
+                            button.innerText = "Confirm Selection"; // 恢復按鈕狀態
                         }
                     });
                 }
             };
-
             // 滑動選擇的邏輯
             let isDragging = false;
             let currentAction = 'select';
@@ -487,6 +527,7 @@
             calendarData.loadPreviousSelection();
         </script>
     </main>
+    <!--分頁JS-->
     <script>
         function tabsController() {
             return {
