@@ -65,11 +65,6 @@ public class VenueController {
         return "redirect:/vneBiz/manageVenue/"+vneId;
     }
     //上傳場地圖片
-//    @PostMapping("/updateImg")
-//    public String manageImg( @ModelAttribute VneImgBytesDTO vneImgBytesDTO ) {
-//        vneImgService.updateVneImg(vneImgBytesDTO);
-//        return "redirect:manageVenue";
-//    }
     @PostMapping("/updateImg/{vneId}")
     public String manageImg(@RequestParam("file") MultipartFile file,
                             @PathVariable("vneId") Integer vneId,
@@ -89,8 +84,6 @@ public class VenueController {
             return "error"; // 返回錯誤頁面或提示
         }
     }
-
-
     //營業時間設置頁面
     @GetMapping("/manageTslot/{vneId}")
     public String nearestTslot() {
@@ -98,7 +91,7 @@ public class VenueController {
     }
     //調整營業時間
     @PostMapping("/updateTslot/{vneId}")
-    public String manageTslot(@PathVariable Integer vneId,@RequestBody TslotDTO tslotDTO) {
+    public String manageTslot(@PathVariable Integer vneId, @RequestBody TslotDTO tslotDTO) {
         System.out.println("manageTslot");
         LocalDateTime submissionTime = LocalDateTime.now();
         tslotDTO.setVneId(vneId);
@@ -109,15 +102,16 @@ public class VenueController {
     //價錢設置頁面
     @GetMapping("/managePrice/{vneId}")
     public String managePrice() {
-        System.out.println("managePrice");
         return "/venue/business/html/managePrice";
     }
     //調整價錢
-    @PostMapping("/updatePrice")
-    public String managePrice(@ModelAttribute VnePriceDTO vnePriceDTO) {
+    @PostMapping("/updatePrice/{vneId}")
+    public String managePrice(@PathVariable Integer vneId, @RequestBody VnePriceDTO vnePriceDTO) {
         LocalDateTime submissionTime = LocalDateTime.now();
+        vnePriceDTO.setVneId(vneId);
+        System.out.println(vnePriceDTO);
         vnePriceService.updateVnePrice(submissionTime, vnePriceDTO);
-        return "redirect:managePrice";
+        return "redirect:/vneBiz/managePrice/"+vneId;
     }
     //場地總覽，確認後可以上下架
     @GetMapping("/checkVenue/{vneId}")
@@ -125,17 +119,8 @@ public class VenueController {
         return "/venue/business/html/checkVenue";
     }
     //調整上下架
-    @PostMapping("/venueStatus")
+    @PostMapping("/vneStatus")
     public String manageVenue(@ModelAttribute VneDetailDTO venDetailDTO, HttpSession session) {
         return "redirect:list";
     }
-    //測試用
-    @GetMapping("/manageImg")
-    public  String tryupload(Model model, HttpSession session) {
-//        (@RequestParam Integer vneId, Model model, HttpSession session)
-        return "/venue/business/html/test4";
-    }
-
-
-
 }
