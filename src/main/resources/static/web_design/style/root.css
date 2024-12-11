@@ -34,7 +34,7 @@
   --background-danger-hover-sds-dark: var(--red-700);
   --background-disabled-default-sds-light: var(--brand-300);
   --background-disabled-default-sds-dark: var(--brand-700);
-  --text-default-default-sds-light: var(--gray-800);
+  --text-default-default-sds-light: var(--gray-600);
   --text-default-default-sds-dark: var(--white-1000);
   --text-default-secondary-sds-light: var(--gray-500);
   --text-default-secondary-sds-dark: var(--white-500);
@@ -354,7 +354,7 @@
   --pink-800: #8a226f;
   --pink-900: #57184a;
   --pink-1000: #3f1536;
-  --gray-100: #f5f5f5;
+  --gray-100: #fefefe;
   --gray-200: #e6e6e6;
   --gray-300: #d9d9d9;
   --gray-400: #b3b3b3;
@@ -367,6 +367,7 @@
 
   /* 我自己定義ㄉcolor */
   --brand-shop: #2c95c6;
+  --brand-shop-tint: #e5ecf0;
   --brand-event: #a6df20;
   --brand-venue: #1aa355;
   --brand-product: #f9cb00;

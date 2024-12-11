@@ -1,31 +1,113 @@
-<!-- 導航 -->
-<header class="header navbar_homepage">
-  <div class="header_box">
-    <div class="logo">
-      <img src="./asset/images/ARTOGETHER.svg" alt="" />
-    </div>
-    <nav class="navbar">
-      <div clickable class="navbar-item">
-        探索
-        <span class="material-icons"> arrow_drop_down </span>
-      </div>
-    </nav>
-    <div class="search_bar">
-      <input type="text" placeholder="Search by shop, event, location..." />
-      <span class="material-icons">search</span>
-    </div>
-    <div clickable class="cart_div">
-      <span class="badge" id="cart_amount">3</span>
-      <span class="material-icons">shopping_bag</span>
-    </div>
-    <div clickable class="user_div">
-      <div class="thumbnail-box">
-        <img src="./asset/images/bgimg.png" alt="" class="thumbnail" />
-      </div>
-      <span id="user_name">Alice Wang</span
-      ><span class="material-icons"> arrow_drop_down </span>
-    </div>
-    <button clickable class="fab">成為商家</button>
-    <span class="material-icons btn_menu">menu</span>
-  </div>
-</header>
+<div th:fragment="navbar">
+	<!-- 導航 -->
+	<header class="header navbar_homepage" th:fragment="navbar">
+		<div class="header_box">
+			<div class="logo">
+				<img th:src="@{/web_design/asset/images/ARTOGETHER.svg}" alt="" />
+			</div>
+			<nav class="navbar">
+				<div clickable class="navbar-item">
+					探索 <span class="material-symbols-outlined"> arrow_drop_down
+					</span>
+				</div>
+			</nav>
+			<div class="search_bar">
+				<input type="text" placeholder="Search by shop, event, location..." />
+				<span class="material-symbols-outlined">search</span>
+			</div>
+			<div clickable class="cart_div"
+				onclick="window.location.href='/cart/page'">
+				<span class="badge" id="cart_amount">3</span> <span
+					class="material-symbols-outlined">shopping_bag</span>
+			</div>
+			<div th:if="${#ctx.session.getOrDefault('islogin',false)}" clickable
+				class="user_div">
+				<div class="thumbnail-box">
+					<img th:src="@{/web_design/asset/images/bgimg.png}" alt="" class="thumbnail" />
+				</div>
+				<span id="user_name"
+					th:text="${#ctx.session.memberName == null? '' : #ctx.session.memberName}"></span>
+				<span class="material-symbols-outlined"> arrow_drop_down </span>
+			</div>
+			<div th:unless="${#ctx.session.getOrDefault('islogin',false)}">
+				<button clickable class="button-secondary button-big"
+					onclick="location.href='/login'">登入/註冊</button>
+			</div>
+			<button clickable class="button-primary button-big"
+				onclick="location.href='/business/registerBusiness'">成為商家</button>
+			<span class="material-symbols-outlined btn_menu">menu</span>
+		</div>
+	</header>
+
+	<!-- 導航欄-探索視窗 -->
+	<div class="nav-menu-box">
+		<div class="nav-menu-mask"></div>
+		<div class="nav-menu">
+			<div class="nav-menu-content">
+				<div class="nav-menu-content-item selected">
+					<div>
+						探索內容 <span class="material-symbols-outlined">chevron_right</span>
+					</div>
+					<p>探索所有你喜愛的內容</p>
+				</div>
+				<div class="nav-menu-content-item">
+					<div>
+						內容查找 <span class="material-symbols-outlined">chevron_right</span>
+					</div>
+					<p>眾裡尋他千百度</p>
+				</div>
+			</div>
+			<div class="nav-menu-submenu">
+				<div clickable role="link" class="nav-menu-submenu-item selected">
+					活動 <span class="material-symbols-outlined">local_activity</span>
+				</div>
+				<div clickable role="link" class="nav-menu-submenu-item">
+					場地 <span class="material-symbols-outlined">roofing</span>
+				</div>
+				<div clickable role="link" class="nav-menu-submenu-item">
+					商品 <span class="material-symbols-outlined">sell</span>
+				</div>
+			</div>
+			<div class="nav-menu-submenu">
+				<div clickable role="link" class="nav-menu-submenu-item">類型1</div>
+				<div clickable role="link" class="nav-menu-submenu-item">類型1</div>
+				<div clickable role="link" class="nav-menu-submenu-item">類型1</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 會員視窗 -->
+	<div class="user-menu-box" th:fragment="user-menu-box">
+		<div clickable class="user-info-box">
+			<div class="thumbnail">
+				<img th:src="@{/web_design/asset/images/bgimg.png}" alt="" />
+			</div>
+			<div class="user-info-text"
+				th:text="${#ctx.session.memberName == null? '' : #ctx.session.memberName}"></div>
+			<span class="material-symbols-outlined">chevron_right</span>
+		</div>
+		<hr />
+		<div class="user-menu-group">
+			<div clickable onclick="location.href='/member'"
+				class="user-menu-item">
+				<span class="material-symbols-outlined">bookmark</span> 我的珍藏
+			</div>
+			<div clickable onclick="location.href='/member'"
+				class="user-menu-item">
+				<span class="material-symbols-outlined">description</span> 訂單紀錄
+			</div>
+			<div clickable onclick="location.href='/member'"
+				class="user-menu-item">
+				<span class="material-symbols-outlined">settings</span> 帳號設定
+			</div>
+		</div>
+		<hr />
+		<div class="user-menu-group">
+			<button clickable class="button-primary button-big"
+				onclick="location.href='/business_login'">前往商家後台</button>
+			<button clickable class="button-secondary button-big"
+				onclick="location.href='/logout'">登出</button>
+		</div>
+	</div>
+	<script th:src="@{/web_design/js/script_navbar_homepage.js}"></script>
+</div>

@@ -7,49 +7,16 @@
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <link rel="stylesheet" th:href="@{/web_design/style/style_general.css}" />
   <link rel="stylesheet" th:href="@{/web_design/style/style_homepage.css}" />
-  <link
-          href="https://fonts.googleapis.com/icon?family=Material+Icons"
-          rel="stylesheet"
-  />
+ <link
+	  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+	  rel="stylesheet"
+	/>
 </head>
 <body>
-<!-- 導航 -->
-<header class="header navbar_homepage" th:fragment="header">
-  <div class="header_box">
-    <div class="logo">
-      <img src="./asset/images/ARTOGETHER.svg" alt="" />
-    </div>
-    <nav class="navbar">
-      <div clickable class="navbar-item">
-        探索
-        <span class="material-icons"> arrow_drop_down </span>
-      </div>
-    </nav>
-    <div class="search_bar">
-      <input type="text" placeholder="Search by shop, event, location..." />
-      <span class="material-icons">search</span>
-    </div>
-    <div clickable class="cart_div" onclick="window.location.href='/cart/page'">
-      <span class="badge" id="cart_amount">3</span>
-      <span class="material-icons">shopping_bag</span>
-    </div>
-    <div th:if="${#ctx.session.getOrDefault('islogin',false)}" clickable class="user_div">
-      <div class="thumbnail-box">
-        <img src="./asset/images/bgimg.png" alt="" class="thumbnail" />
-      </div>
-      <span id="user_name" th:text="${#ctx.session.memberName == null? '' : #ctx.session.memberName}"></span>
-      <span class="material-icons"> arrow_drop_down </span>
-    </div>
-    <div th:unless="${#ctx.session.getOrDefault('islogin',false)}">
-      <button clickable class="button-primary button-big" onclick="location.href='/login'">
-        登入/註冊
-      </button>
-    </div>
-    <button clickable class="fab" onclick="location.href='/business/registerBusiness'">成為商家</button>
-    <span class="material-icons btn_menu">menu</span>
-  </div>
-</header>
-
+ <!-- 導航 -->
+	<div th:replace="~{/components/navbar_homepage::navbar}"></div>
+	
+	
 <main>
   <section class="sec-carousel normal-width"></section>
 
@@ -61,7 +28,7 @@
       </div>
       <div class="showcase-browse-all link-button">
         <a href="#">查看更多</a>
-        <span class="material-icons">chevron_right</span>
+        <span class="material-symbols-outlined">chevron_right</span>
       </div>
     </div>
     <div class="showcase-cards-box">
@@ -79,35 +46,11 @@
           </div>
           <div class="tags-box">
             <div class="tag hot">
-                  <span class="material-icons">local_fire_department</span
+                  <span class="material-symbols-outlined">local_fire_department</span
                   >哈燒精選
             </div>
             <div class="tag hot">
-                  <span class="material-icons">local_fire_department</span
-                  >哈燒精選
-            </div>
-          </div>
-        </div>
-      </div>
-      <div clickable class="showcase-card card business">
-        <img src="./asset/images/bgimg.png" alt="" />
-        <div class="card-content">
-          <div class="card-title">
-            <div class="tag business">商家</div>
-            <h3 class="card-title-text">
-              這是一家好奇怪好奇怪好奇怪好奇怪的店家
-            </h3>
-          </div>
-          <div class="card-info">
-            <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
-          </div>
-          <div class="tags-box">
-            <div class="tag hot">
-                  <span class="material-icons">local_fire_department</span
-                  >哈燒精選
-            </div>
-            <div class="tag hot">
-                  <span class="material-icons">local_fire_department</span
+                  <span class="material-symbols-outlined">local_fire_department</span
                   >哈燒精選
             </div>
           </div>
@@ -127,11 +70,11 @@
           </div>
           <div class="tags-box">
             <div class="tag hot">
-                  <span class="material-icons">local_fire_department</span
+                  <span class="material-symbols-outlined">local_fire_department</span
                   >哈燒精選
             </div>
             <div class="tag hot">
-                  <span class="material-icons">local_fire_department</span
+                  <span class="material-symbols-outlined">local_fire_department</span
                   >哈燒精選
             </div>
           </div>
@@ -151,11 +94,35 @@
           </div>
           <div class="tags-box">
             <div class="tag hot">
-                  <span class="material-icons">local_fire_department</span
+                  <span class="material-symbols-outlined">local_fire_department</span
                   >哈燒精選
             </div>
             <div class="tag hot">
-                  <span class="material-icons">local_fire_department</span
+                  <span class="material-symbols-outlined">local_fire_department</span
+                  >哈燒精選
+            </div>
+          </div>
+        </div>
+      </div>
+      <div clickable class="showcase-card card business">
+        <img src="./asset/images/bgimg.png" alt="" />
+        <div class="card-content">
+          <div class="card-title">
+            <div class="tag business">商家</div>
+            <h3 class="card-title-text">
+              這是一家好奇怪好奇怪好奇怪好奇怪的店家
+            </h3>
+          </div>
+          <div class="card-info">
+            <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
+          </div>
+          <div class="tags-box">
+            <div class="tag hot">
+                  <span class="material-symbols-outlined">local_fire_department</span
+                  >哈燒精選
+            </div>
+            <div class="tag hot">
+                  <span class="material-symbols-outlined">local_fire_department</span
                   >哈燒精選
             </div>
           </div>
@@ -172,7 +139,7 @@
       </div>
       <div class="showcase-browse-all link-button">
         <a th:href="@{/event/all}">查看更多</a>
-        <span class="material-icons">chevron_right</span>
+        <span class="material-symbols-outlined">chevron_right</span>
       </div>
     </div>
 
@@ -196,9 +163,9 @@
             </div>
           </div>
           <div class="tags-box">
-            <span class="material-icons">location_on</span>
+            <span class="material-symbols-outlined">location_on</span>
             <span class="tag plain-tag" th:text="${topThree.location.substring(0,3)}"></span>
-            <span class="material-icons">calendar_today</span>
+            <span class="material-symbols-outlined">calendar_today</span>
             <span th:text="${#dates.format(topThree.startDate, 'yyyy-MM-dd')}"></span>
           </div>
         </div>
@@ -214,7 +181,7 @@
       </div>
       <div class="showcase-browse-all link-button">
         <a href="/venue/recommend">查看更多</a>
-        <span class="material-icons">chevron_right</span>
+        <span class="material-symbols-outlined">chevron_right</span>
       </div>
     </div>
     <div class="showcase-cards-box">
@@ -232,10 +199,10 @@
           </div>
           <div class="tags-box">
             <div class="tag plain-tag">
-              <span class="material-icons">location_on</span>台北市
+              <span class="material-symbols-outlined">location_on</span>台北市
             </div>
             <div class="tag plain-tag">
-              <span class="material-icons">schedule</span>08:00-17:00
+              <span class="material-symbols-outlined">schedule</span>08:00-17:00
             </div>
           </div>
         </div>
@@ -254,10 +221,10 @@
           </div>
           <div class="tags-box">
             <div class="tag plain-tag">
-              <span class="material-icons">location_on</span>台北市
+              <span class="material-symbols-outlined">location_on</span>台北市
             </div>
             <div class="tag plain-tag">
-              <span class="material-icons">schedule</span>08:00-17:00
+              <span class="material-symbols-outlined">schedule</span>08:00-17:00
             </div>
           </div>
         </div>
@@ -276,10 +243,10 @@
           </div>
           <div class="tags-box">
             <div class="tag plain-tag">
-              <span class="material-icons">location_on</span>台北市
+              <span class="material-symbols-outlined">location_on</span>台北市
             </div>
             <div class="tag plain-tag">
-              <span class="material-icons">schedule</span>08:00-17:00
+              <span class="material-symbols-outlined">schedule</span>08:00-17:00
             </div>
           </div>
         </div>
@@ -295,7 +262,7 @@
       </div>
       <div class="showcase-browse-all link-button">
         <a href="#">查看更多</a>
-        <span class="material-icons">chevron_right</span>
+        <span class="material-symbols-outlined">chevron_right</span>
       </div>
     </div>
     <div class="showcase-cards-box">
@@ -411,108 +378,7 @@
   </div>
 </footer>
 
-<!-- 導航欄-探索視窗 -->
-<div class="nav-menu-box" th:fragment="nav-menu-box">
-  <div class="nav-menu-mask"></div>
-  <div class="nav-menu">
-    <div class="nav-menu-content">
-      <div class="nav-menu-content-item selected">
-        <div>
-          探索內容 <span class="material-icons">chevron_right</span>
-        </div>
-        <p>探索所有你喜愛的內容</p>
-      </div>
-      <div class="nav-menu-content-item">
-        <div>
-          內容查找
-          <span class="material-icons">chevron_right</span>
-        </div>
-        <p>眾裡尋他千百度</p>
-      </div>
-    </div>
-    <div class="nav-menu-submenu">
-      <div clickable role="link" class="nav-menu-submenu-item selected">
-        活動
-        <span class="material-icons">local_activity</span>
-      </div>
-      <div clickable role="link" class="nav-menu-submenu-item">
-        場地
-        <span class="material-icons">roofing</span>
-      </div>
-      <div clickable role="link" class="nav-menu-submenu-item">
-        商品
-        <span class="material-icons">sell</span>
-      </div>
-    </div>
-    <div class="nav-menu-submenu">
-      <div clickable role="link" class="nav-menu-submenu-item">類型1</div>
-      <div clickable role="link" class="nav-menu-submenu-item">類型1</div>
-      <div clickable role="link" class="nav-menu-submenu-item">類型1</div>
-    </div>
-  </div>
-</div>
-
-<!-- 會員視窗 -->
-<div class="user-menu-box" th:fragment="user-menu-box">
-  <div clickable class="user-info-box">
-    <div class="thumbnail">
-      <img src="./asset/images/bgimg.png" alt="" />
-    </div>
-    <div class="user-info-text"   th:text="${#ctx.session.memberName == null? '' : #ctx.session.memberName}"></div>
-    <span class="material-icons">chevron_right</span>
-  </div>
-  <hr />
-  <div class="user-menu-group">
-    <div clickable onclick="location.href='/member'" class="user-menu-item">
-      <span class="material-icons">bookmark</span>
-      我的珍藏
-    </div>
-    <div clickable onclick="location.href='/member'" class="user-menu-item">
-      <span class="material-icons">description</span>
-      訂單紀錄
-    </div>
-    <div clickable onclick="location.href='/member'" class="user-menu-item">
-      <span class="material-icons">settings</span>
-      帳號設定
-    </div>
-  </div>
-  <hr />
-  <div class="user-menu-group">
-    <button clickable class="button-primary button-big" onclick="location.href='/business_login'">
-      前往商家後台
-    </button>
-    <button clickable class="button-secondary button-big" onclick="location.href='/logout'">登出</button>
-  </div>
-</div>
 <script th:src="@{/web_design/components/web_components/navbar_hompage.js}"></script>
-<script>
-  var el_nav_item_discover = document.querySelector("div.navbar-item");
-  var el_div_nav_menu_box = document.querySelector("div.nav-menu-box");
-  var el_div_nav_user_box = document.querySelector("div.user_div");
-  var el_div_nav_menu = document.querySelector("div.nav-menu");
-  var el_eiv_user_menu = document.querySelector("div.user-menu-box");
 
-  //=====================觸發視窗========================
-  // 1. 探索
-  el_nav_item_discover.addEventListener("mouseenter", function () {
-    if (!el_div_nav_menu_box.classList.contains("open"))
-      el_div_nav_menu_box.classList.add("open");
-  });
-  console.log(el_div_nav_menu);
-  el_div_nav_menu.addEventListener("mouseleave", function () {
-    if (el_div_nav_menu_box.classList.contains("open"))
-      el_div_nav_menu_box.classList.remove("open");
-  });
-
-  // 2. 會員
-  el_div_nav_user_box.addEventListener("mouseenter", function () {
-    if (!el_eiv_user_menu.classList.contains("open"))
-      el_eiv_user_menu.classList.add("open");
-  });
-  el_eiv_user_menu.addEventListener("mouseleave", function () {
-    if (el_eiv_user_menu.classList.contains("open"))
-      el_eiv_user_menu.classList.remove("open");
-  });
-</script>
 </body>
 </html>

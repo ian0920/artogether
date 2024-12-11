@@ -187,7 +187,7 @@ section.sec-showcase div.showcase-cards-box div.showcase-card {
 
 div.nav-menu-box {
   position: absolute;
-  top: 72px;
+  top: 64px;
   visibility: hidden;
 }
 div.nav-menu-box.open {
@@ -195,7 +195,7 @@ div.nav-menu-box.open {
 }
 div.nav-menu-box.open div.nav-menu-mask {
   position: fixed;
-  height: calc(100dvh - 72px);
+  height: calc(100dvh - 64px);
   width: 100%;
   background-color: rgba(0, 0, 0, 0.15);
 }
@@ -275,7 +275,7 @@ div.user-menu-box {
   width: 280px;
   visibility: hidden;
   position: fixed;
-  top: 72px;
+  top: 64px;
   right: 60px;
   z-index: 5;
   background-color: #fff;
@@ -492,4 +492,17 @@ main.map-page div.div-search div.search-column div.search-result-box .div-search
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   overflow: hidden;
+}
+
+main.card-wrap-page section {
+  width: 100%;
+}
+main.card-wrap-page section div.card-box {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  gap: 16px;
+}
+main.card-wrap-page section div.card-box div.card {
+  max-width: 400px;
 }/*# sourceMappingURL=style_homepage.css.map */

@@ -1,52 +1,83 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-<meta charset="UTF-8">
-<title>我所發布的活動</title>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>我所發布的活動</title>
+    <link rel="stylesheet" th:href="@{/web_design/style/style_general.css}" />
+ 	<link rel="stylesheet" th:href="@{/web_design/style/style_business.css}" />
+	<link
+	  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+	  rel="stylesheet"
+	/>
+  </head>
+  <body>
+    <!-- 導航 -->
+	<div th:replace="~{/components/navbar_business::navbar('event','event')}"></div>
+	<main>
+      <div class="title flex margin-b-20">
+        <h2 class="inline-b flex-auto">我所發布的活動</h2>
+        <button clickable class="button-primary" onclick="location.href='/event/add'">
+          <span class="material-symbols-outlined">add</span>新增活動
+        </button>
+      </div>
+      <!-- 	<p>共有<span th:text=${evtList}></span>筆</p> -->
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">名稱</th>
+            <th scope="col">狀態</th>
+            <th scope="col">編輯</th>
+            <th scope="col">延期</th>
+            <th scope="col">取消</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="e : ${page.content}">
+            <th scope="row" th:text="${e.id}">ID</th>
+            <td th:text="${e.name}"></td>
+            <td th:switch="${e.status}">
+            	<p th:case="0">待審核</p>	
+            	<p th:case="1">正常</p>	
+            	<p th:case="2">延期</p>	
+            	<p th:case="3">取消</p>	
+            	<p th:case="4">審核被拒</p>	
+            	<p th:case="5">結束</p>	
+           	</td>
+            <td>
+              <button clickable th:onclick="location.href='/event/edit/' + [[${e.id}]]">
+                編輯
+              </button>
+            </td>
+            <td>
+              <button clickable th:if="${e.status != 2}" th:onclick="updateStatus(2, [[${e.id}]])">延期</button>
+            </td>
+            <td>
+              <button clickable th:if="${e.status != 3}" th:onclick="updateStatus(3, [[${e.id}]])">取消</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </main>
 
-<h4>我所發布的活動</h4>
-<!-- 	<p>共有<span th:text=${evtList}></span>筆</p> -->
-	<table>
-		<thead>
-			<tr>
-				<th scope="col">ID</th>
-				<th scope="col">名稱</th>
-				<th scope="col">狀態</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr th:each="e : ${page.content}">
-				<th scope = "row" th:text="${e.id}">ID</th>	
-				<td th:text="${e.name}"></td>
-				<td th:text="${e.status}"></td>
-				<td><button th:onclick="location.href='/event/edit/' + [[${e.id}]]">編輯</button></td>
-				<td><button th:onclick="updateStatus(2, [[${e.id}]])">延期</button></td>
-				<td><button th:onclick="updateStatus(3, [[${e.id}]])">取消</button></td>
-			
-			</tr>
-		</tbody>
-	</table>
-	
-	<script type="text/javascript" th:inline="javascript">
-		var updateStatus = async function(status, eid){
-			const payload = {
-				    eventId: eid,
-				    status: status
-				};
-			let response = await fetch("/api/event/updateStatus", {
-	            method: "POST",
-	            headers: {
-	                "Content-Type": "application/json",
-	            },
-	            body: JSON.stringify(payload),
-	        });
-			if(response.ok){
-				let data = await response.json(); // 解析 JSON 資料
-	            alert(data.message);
-			}
-		}
-	</script>
-</body>
+    <script type="text/javascript" th:inline="javascript">
+      var updateStatus = async function (status, eid) {
+        const payload = {
+          eventId: eid,
+          status: status,
+        };
+        let response = await fetch("/api/event/updateStatus", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+        if (response.ok) {
+          let data = await response.json(); // 解析 JSON 資料
+          alert(data.message);
+        }
+      };
+    </script>
+  </body>
 </html>

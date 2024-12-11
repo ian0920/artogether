@@ -3,53 +3,111 @@
 <head>
 <meta charset="UTF-8">
 <title>event edit</title>
+<link rel="stylesheet" th:href="@{/web_design/style/style_general.css}" />
+<link rel="stylesheet" th:href="@{/web_design/style/style_business.css}" />
+<link
+	href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+	rel="stylesheet" />
 </head>
 <body>
-	<form th:action="${#strings.isEmpty(event.id) ? '/event/create' : '/event/update'}"  th:object="${event}" method="post" enctype="multipart/form-data">
-		<input type="hidden" th:field="*{id}">
-		<input type="hidden" th:field="*{businessMember.id}">
-		<input type="text" th:field="*{name}">
-		<input type="datetime-local" th:field="*{startDate}">
-		<input type="datetime-local" th:field="*{endDate}">
-		<input type="text" th:field="*{catalog}">
-		<input type="text" th:field="*{description}">
-		<input type="number" th:field="*{price}">
-		<input type="text" th:field="*{location}">
-		<input type="number" th:field="*{maximum}">
-		<input type="number" th:field="*{minimum}">
-		
-    <!-- 顯示已存在的圖片 -->
-    <div>
-        <h3>目前的圖片</h3>
-        <ul>
-            <li th:each="image : ${evtImgList}">
-                <img th:src="@{/event/DBImgReader/} + ${image.id}" width="100px">
-                <label>
-                    <input type="checkbox" name="imagesToDelete" th:value="${image.id}">
-                    刪除
-                </label>
-            </li>
-        </ul>
-        <button id="btn_delete_imgs">刪除選定圖片</button>
-        
-    </div>
+	<!-- 導航 -->
+	<div
+		th:replace="~{/components/navbar_business::navbar('event','event')}"></div>
 
-    <!-- 新圖片上傳 -->
-    <label>新增圖片：</label>
-    <input type="file" name="evtImgList" multiple>
+	<main>
+		<h2 th:text="${event.id != null} ? '編輯活動':'新增活動'"></h2>
+		<form
+			th:action="${#strings.isEmpty(event.id) ? '/event/create' : '/event/update'}"
+			th:object="${event}" method="post" enctype="multipart/form-data">
 
-	<button type="submit">確認更新</button>
-	</form>
-<!-- 	<form th:action="${#strings.isEmpty(evtImg.id) ? '/event/uploadImg' : '/event/updateImg'}"  th:object="${evtImg}" method="post" enctype="multipart/form-data"> -->
-<!-- 		<img th:src="@{/event/DBImgReader/} + ${id}" width="100px"> -->
-<!-- 	</form> -->
-<script type="text/javascript" th:inline="javascript">
+			<!-- 			隱藏欄位 -->
+			<input type="hidden" th:field="*{id}">
+			<input type="hidden" th:field="*{businessMember.id}">
+
+			<!-- 			顯示欄位 -->
+			<fieldset>
+				<label class="label-input">活動名稱
+					<input type="text" th:field="*{name}" class="solo">
+				</label>
+				<div class="row">
+					<label class="label-input flex-auto">票價
+						<input type="number" th:field="*{price}" class="solo">
+					</label>
+					<label class="label-input flex-auto">活動類別
+						<input type="text" th:field="*{catalog}" class="solo">
+					</label>
+				</div>
+			</fieldset>
+			
+			<fieldset>
+				<label class="label-input">活動地點
+					<input type="text"	th:field="*{location}" class="solo">
+				</label>
+				<div class="row">
+					<label class="label-input flex-auto">開始日期
+						<input type="datetime-local" th:field="*{startDate}" class="solo">
+					</label>
+					
+					<label class="label-input flex-auto">結束日期
+						<input type="datetime-local" th:field="*{endDate}" class="solo">
+					</label>
+				</div>
+			</fieldset>
+			
+			<fieldset>
+				<label class="label-input">活動描述
+					<textarea style="resize: none;" 
+							  type="text" th:field="*{description}"
+							  class="solo" rows="5"></textarea>
+				</label>
+				
+				<div class="row">
+					<label class="label-input flex-auto">人數上限
+						<input type="number" th:field="*{maximum}" class="solo">
+					</label>
+					<label class="label-input flex-auto">人數下限
+						<input type="number" th:field="*{minimum}" class="solo">
+					</label>
+				</div>
+			</fieldset>
+
+			<fieldset>
+			<!-- 顯示已存在的圖片 -->
+			<div>
+				<div class="row">
+					<div th:each="image : ${evtImgList}">
+						<input type="checkbox" name="imagesToDelete"
+							th:value="${image.id}">
+						<img th:src="@{/event/DBImgReader/} + ${image.id}" height="100px">
+					</div>
+				</div>
+				<button id="btn_delete_imgs">刪除選定圖片</button>
+
+			</div>
+			
+			<!-- 新圖片上傳 -->
+			<label>上傳新圖片：
+				<input type="file" name="evtImgList" multiple onchange="addImages(event)">
+			</label>
+			<div id="imagePreviewContainer"></div>
+			
+
+			<div class="row">
+				<button clickable type="button" class="button-tertiary flex-auto" onclick="history.back()">取消</button>
+				<button clickable type="submit" class="button-primary flex-auto">確認更新</button>
+			</div>
+			</fieldset>
+		</form>
+	</main>
+
+	<script type="text/javascript" th:inline="javascript">
 	var el_btn_delete_imgs = document.querySelector("#btn_delete_imgs")
 	el_btn_delete_imgs.addEventListener("click", function(e){
 		e.preventDefault();
 		deleteEvtImgs();
 	});
 
+	// AJAX處理：刪除資料庫既有圖片
 	var deleteEvtImgs = async function() {
 		var selectedImgList=[];
 		var checkboxes = document.querySelectorAll('input[name="imagesToDelete"]:checked');
@@ -85,6 +143,83 @@
 	        alert("請求發送失敗，請稍後再試。");
 	    }
 	}
-</script>	
+	
+	//======================上傳新的圖片============================
+	let selectedFiles = []; // 用於保存所有選中的檔案
+
+	function addImages(event) {
+	    const files = Array.from(event.target.files); // 獲取新選中的檔案列表
+	    const previewContainer = document.getElementById("imagePreviewContainer");
+	
+	    // 更新檔案清單
+	    files.forEach(file => {
+	        const fileExists = selectedFiles.some(selected => selected.name === file.name && selected.size === file.size);
+	        if (!fileExists) {
+	            selectedFiles.push(file);
+	        }
+	    });
+	
+	    // 清空文件輸入框，避免選擇相同檔案時無法觸發onchange
+	    event.target.value = "";
+	
+	    // 更新預覽
+	    renderPreview(previewContainer);
+	}
+	
+	function renderPreview(container) {
+	    container.innerHTML = ""; // 清空現有的預覽內容
+	    selectedFiles.forEach((file, index) => {
+	        const reader = new FileReader();
+	        reader.onload = (e) => {
+	            container.insertAdjacentHTML('beforeend', `
+	                <div style="position:relative; display:inline-block; margin:5px;">
+	                    <img src="${e.target.result}" style="width:100px;" />
+	                    <button type="button" onclick="removeImage(${index})" 
+	                            style="position:absolute;top:0;right:0;background:red;color:white;border:none;cursor:pointer;">
+	                        <span class="material-symbols-outlined">close</span>
+	                    </button>
+	                </div>
+	            `);
+	        };
+	        reader.readAsDataURL(file);
+	    });
+	}
+
+	// 移除指定預覽圖片
+	function removeImage(index) {
+// 	    event.preventDefault(); // 阻止默認行為
+	    selectedFiles.splice(index, 1); // 移除對應的檔案
+	    renderPreview(document.getElementById("imagePreviewContainer")); // 重新渲染
+	}
+
+	//====================提交表單時更新evtImgList=========================
+	document.querySelector('form').addEventListener('submit', function (e) {
+	    // 在提交前將 selectedFiles 動態加入表單
+	    const form = e.target;
+
+	    // 刪除舊的隱藏欄位（避免多次附加）
+	    document.querySelectorAll('.hidden-file-input').forEach(el => el.remove());
+
+	    // 將 selectedFiles 中的每個檔案都附加到表單
+	    selectedFiles.forEach((file, index) => {
+	        const fileInput = document.createElement('input');
+	        fileInput.type = 'file';
+	        fileInput.name = 'evtImgList'; // 確保名字對應後端接收參數
+	        fileInput.files = createFileList([file]); // 將單個檔案包裝為 FileList
+	        fileInput.style.display = 'none'; // 隱藏
+	        fileInput.classList.add('hidden-file-input');
+	        form.appendChild(fileInput);
+	    });
+	});
+
+	// 將單個檔案轉換為 FileList 的輔助函式
+	function createFileList(files) {
+	    const dataTransfer = new DataTransfer();
+	    files.forEach(file => dataTransfer.items.add(file));
+	    return dataTransfer.files;
+	}
+
+
+</script>
 </body>
 </html>

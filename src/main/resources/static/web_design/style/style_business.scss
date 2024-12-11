@@ -220,3 +220,29 @@ main {
   padding: 24px;
   height: 100vh;
 }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  border-radius: 4px;
+  outline: 1px solid var(--brand-shop-tint);
+
+  thead {
+    @include font-body-small;
+    background-color: var(--brand-shop-tint);
+  }
+  tbody {
+    background-color: var(--background-default-secondary-sds-light);
+    tr {
+      border-bottom: 1px solid var(--brand-shop-tint);
+      &:last-child {
+        border: none;
+      }
+    }
+  }
+  th,
+  td {
+    padding: 8px;
+  }
+}

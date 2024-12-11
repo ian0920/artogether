@@ -1,25 +1,42 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
 <title>註冊成為商家</title>
+<link rel="stylesheet" th:href="@{/web_design/style/style_general.css}" />
+<link rel="stylesheet" th:href="@{/web_design/style/style_homepage.css}" />
+<link
+	href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+	rel="stylesheet" />
+</head>
 </head>
 <body>
-<form th:action="@{/applyForBusiness}" method="post" th:object=${businessMember}>
-	<label>名稱
-		<input type="text" th:field="*{name}">
-	</label>
-	<label>email
-		<input type="email" th:field="*{email}">
-	</label>
-	<label>地址
-		<input type="text" th:field="*{addr}">
-	</label>
-	<label>稅號
-		<input type="text" th:field="*{taxId}">
-	</label>
-	<button type="submit">送出</button>
-</form>
+	<div th:replace="~{/components/navbar_homepage::navbar}"></div>
+
+	<main>
+		<form th:action="@{/applyForBusiness}" method="post" th:object=${businessMember} class="narrow-width">
+	<h2>註冊商家表單</h2>
+			<fieldset>
+				<label class="label-input">商家名稱
+					<input type="text" th:field="*{name}" class="solo">
+				</label>
+				<label class="label-input">商家email
+					<input type="email" th:field="*{email}" class="solo">
+				</label>
+				<label class="label-input">商家地址
+					<input type="text" th:field="*{addr}" class="solo">
+				</label>
+				<label class="label-input">稅號
+					<input type="text" th:field="*{taxId}" class="solo">
+				</label>
+				<div class="row">
+					<button type="button" class="button-secondary button-big flex-1" onclick="history.back()">取消</button>
+					<button type="submit" class="button-primary button-big flex-2">送出</button>
+				</div>
+			</fieldset>
+			
+		</form>
+	</main>
 
 </body>
 </html>

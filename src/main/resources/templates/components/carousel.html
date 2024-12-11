@@ -1,0 +1,24 @@
+<!-- 
+	如果需要控制carousel的高度，請在作為fragment的div加上：
+		style="--carousel-height: 500px;" 
+	高度可以自行修改
+-->
+
+<div th:fragment="carousel(evtImgList)" style="--carousel-height: 600px;">
+	<div id="carouselContainer">
+		<div id="carousel" class="carousel">
+			<div class="carousel-item" th:each="image, iterStat : ${evtImgList}"
+				th:classappend="${iterStat.index == 0} ? 'active' : ''">
+				<img th:src="@{/event/DBImgReader/} + ${image.id}" alt="活動圖片" />
+			</div>
+		</div>
+		<button id="prev" class="carousel-control prev">
+			<span class="material-symbols-outlined">chevron_backward</span>
+		</button>
+		<button id="next" class="carousel-control next">
+			<span class="material-symbols-outlined">chevron_forward</span>
+		</button>
+	</div>
+
+	<script th:src="@{/web_design/js/script_carousel.js}"></script>
+</div>
