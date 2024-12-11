@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>查詢優惠券</title>
+    <title>查詢退換貨</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -73,22 +73,21 @@
     </style>
 </head>
 <body>
-    <h1>查詢優惠券</h1>
-    <form th:action="@{/coupons/search}" method="get">
+    <h1>查詢退換貨訂單</h1>
+    <form th:action="@{/product/search}" method="get">
         <label>名稱：</label>
-        <input type="text" name="name" />
+        <input type="text" name="prdName" />
         <label>折扣類型：</label>
         <input type="number" name="type" />
         <label>狀態：</label>
         <input type="number" name="status" />
-        <label>門檻：</label>
-        <input type="number" name="threshold" />
+               
         <button type="submit">查詢</button>
     </form>
 
-    <!-- 檢查是否執行搜尋，當 coupons 初始化且有內容時顯示結果 -->
-    <div th:if="${coupons != null}">
-        <div th:if="${#lists.size(coupons) > 0}">
+    <!-- 檢查是否執行搜尋，當 returns 初始化且有內容時顯示結果 -->
+    <div th:if="${returns != null}">
+        <div th:if="${#lists.size(returns) > 0}">
             <h2>查詢結果</h2>
             <table>
                 <thead>
@@ -100,18 +99,18 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="coupon : ${coupons}">
-                        <td th:text="${coupon.id}"></td>
-                        <td th:text="${coupon.name}"></td>
-                        <td th:text="${coupon.type}"></td>
-                        <td th:text="${coupon.status}"></td>
+                    <tr th:each="return : ${returns}">
+                        <td th:text="${return.id}"></td>
+                        <td th:text="${return.prdName}"></td>
+                        <td th:text="${return.type}"></td>
+                        <td th:text="${return.status}"></td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
         <!-- 無查詢結果時顯示提示 -->
-        <div th:if="${#lists.size(coupons) == 0}">
+        <div th:if="${#lists.size(returns) == 0}">
             <p>查無結果，請修改搜尋條件。</p>
         </div>
     </div>

@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,7 +23,7 @@ public class PrdReturn {
 	@Column(name = "id", updatable = false)
 	private Integer id;
 	
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "order_id", referencedColumnName = "id")
 	private PrdOrder prdOrder;
 
@@ -35,10 +37,10 @@ public class PrdReturn {
 	private Integer type;
 	
 	@Column(name = "apply_date")
-	private LocalDateTime applyDate;
+	private Timestamp applyDate;
 	
 	@Column(name = "return_date")
-	private LocalDateTime returnDate;
+	private Timestamp returnDate;
 	
 	@Column(name="refund")
 	private Integer refund;

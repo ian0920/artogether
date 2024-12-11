@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>退換貨列表</title>
+    <style>
+        /* Add your styles here */
+    </style>
+</head>
+<body>
+    <h1>退換貨列表</h1>
+    <div class="button-group">
+        <a href="/product/add">新增退換貨</a>
+        <a href="/product/search">搜尋退換貨</a>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>訂單編號</th>
+                <th>商品名稱</th>
+                <th>退換貨原因</th>
+                <th>類型</th>
+                <th>狀態</th>
+                <th>申請日期</th>
+                <th>退換日期</th>
+                <th>退款金額</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="return : ${returns}">
+                <td th:text="${return.id}"></td>
+                <td th:text="${return.orderId}"></td>
+                <td th:text="${return.prdName}"></td>
+                <td th:text="${return.reason}"></td>
+                <td th:text="${return.type == 1 ? '換貨' : '退貨'}"></td>
+                <td th:text="${return.status == 1 ? '完成' : '處理中'}"></td>
+                <td th:text="${return.applyDate}"></td>
+                <td th:text="${return.returnDate}"></td>
+                <td th:text="${return.refund}"></td>
+                <td>
+                    <a th:href="@{'/product/edit/' + ${return.id}}">編輯</a>
+                    <form th:action="@{'/product/delete/' + ${return.id}}" method="post" style="display: inline;">
+                        <button type="submit">刪除</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

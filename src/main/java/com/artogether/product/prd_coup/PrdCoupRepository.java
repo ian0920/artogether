@@ -10,7 +10,7 @@ public interface PrdCoupRepository extends JpaRepository<PrdCoup, Integer> {
 	
 	    List<PrdCoup> findByBusinessMemberId(Integer businessMemberId);
 	    List<PrdCoup> findByBusinessMemberIdAndNameContainingAndTypeAndStatusAndThresholdGreaterThanEqual(
-	            Integer businessMemberId, String name, Integer type, Integer status, Integer threshold);
+	    	Integer	businessMemberId, String name, Integer type, Integer status, Integer threshold);
 	
 
 }
