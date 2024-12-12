@@ -1,17 +1,65 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
+<link rel="stylesheet" th:href="@{/web_design/style/style_general.css}" />
+<link rel="stylesheet" th:href="@{/web_design/style/style_homepage.css}" />
+<link
+  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+  rel="stylesheet"
+/>
 <title>event_list_all_tracks</title>
 </head>
 <body>
-<ul>
-        <!-- 使用 th:each 遍歷 List -->
-        <li th:each="evt : ${evtTrackList}">
-            <p th:text="'Event ID: ' + ${evt.event.id}"></p>
-<!--             <p th:text="'Event Name: ' + ${evt.name}"></p> -->
-<!--             <p th:text="'Event Start Date: ' + ${evt.startDate}"></p> -->
-        </li>
-    </ul>
+<main>
+<ul style="list-style:none">
+<!-- 使用 th:each 遍歷 List -->
+	<li th:each="et : ${evtTrackList}">
+	     <div class="info-card-outline">
+	     	<div class="info-card-horizontal">
+	     	<div class="info-box">
+		         <h4 th:text="${et.event.name}"></h4>
+<!-- 		         <p th:text="'Event ID: ' + ${et.event.id}"></p> -->
+		         <p th:text="${et.event.businessMember.name}"></p>
+	     	</div>
+			<button class="button-big-icon" th:onclick="trackEvt([[${et.event.id}]],[[${et.member.id}]])" style="height:min-content">
+				<span class="material-symbols-outlined">bookmark</span>
+			</button>
+	     	</div>
+	     </div>
+
+	</li>
+</ul>
+</main>
+    
+	<script type="text/javascript" th:inline="javascript">
+	var trackEvt = async function(eventId,memberId) {
+    const payload = {
+		    eventId: eventId,
+		    memberId: memberId
+		};
+	    try {
+	        let response = await fetch("/api/event/toggleTrack", {
+	            method: "POST",
+	            headers: {
+	                "Content-Type": "application/json",
+	            },
+	            body: JSON.stringify(payload),
+	        });
+	
+	        console.log(response);
+	        if (response.ok) {
+	            let data = await response.json(); // 解析 JSON 資料
+	            alert(data.message);
+	        } else {
+	            alert("追蹤失敗，請稍後再試。");
+	        }
+	    } catch (error) {
+	        console.error("Error:", error);
+	        alert("請求發送失敗，請稍後再試。");
+	    }
+	}
+    
+    </script>
 </body>
 </html>

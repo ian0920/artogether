@@ -1,24 +1,32 @@
 <!-- 
-	如果需要控制carousel的高度，請在作為fragment的div加上：
-		style="--carousel-height: 500px;" 
-	高度可以自行修改
+  請傳入兩個參數：
+  1. 圖片列表
+  2. 指定 carousel 高度
+  3. 是否啟用自動播放（true:false）
 -->
 
-<div th:fragment="carousel(evtImgList)" style="--carousel-height: 600px;">
-	<div id="carouselContainer">
-		<div id="carousel" class="carousel">
-			<div class="carousel-item" th:each="image, iterStat : ${evtImgList}"
-				th:classappend="${iterStat.index == 0} ? 'active' : ''">
-				<img th:src="@{/event/DBImgReader/} + ${image.id}" alt="活動圖片" />
-			</div>
-		</div>
-		<button id="prev" class="carousel-control prev">
-			<span class="material-symbols-outlined">chevron_backward</span>
-		</button>
-		<button id="next" class="carousel-control next">
-			<span class="material-symbols-outlined">chevron_forward</span>
-		</button>
-	</div>
+<div th:fragment="carousel(evtImgList, carouselHeight, autoPlay)">
+  <div id="carouselContainer" th:style="'--carousel-height: ' + ${carouselHeight} + 'px'">
+    <div id="carousel" class="carousel">
+      <div class="carousel-item" th:each="image, iterStat : ${evtImgList}"
+           th:classappend="${iterStat.index == 0} ? 'active' : ''">
+        <img th:src="@{/event/DBImgReader/} + ${image.id}" alt="活動圖片" />
+      </div>
+    </div>
+    <button id="prev" class="carousel-control prev">
+      <span class="material-symbols-outlined">chevron_backward</span>
+    </button>
+    <button id="next" class="carousel-control next">
+      <span class="material-symbols-outlined">chevron_forward</span>
+    </button>
+  </div>
+  
+    <!-- 使用 th:inline="javascript" 和 Thymeleaf 表達式將變數傳遞給 JavaScript -->
+  <script th:inline="javascript">
+    /*<![CDATA[*/
+    var autoPlay = /*[[${autoPlay}]]*/ false;  // 在這裡傳遞 autoPlay 參數
+    /*]]>*/
+  </script>
 
-	<script th:src="@{/web_design/js/script_carousel.js}"></script>
+  <script th:src="@{/web_design/js/script_carousel.js}" th:inline="javascript" th:with="autoPlay=${autoPlay}"></script>
 </div>

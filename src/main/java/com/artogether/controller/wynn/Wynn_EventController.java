@@ -79,6 +79,7 @@ public class Wynn_EventController {
 		List<EvtImg> evtImgList= evtImgService.findAllByEventId(evtId);
 		model.addAttribute("evt", evt);
 		model.addAttribute("evtImgList", evtImgList);
+		
 		return "event/event_details";
 	}
 	

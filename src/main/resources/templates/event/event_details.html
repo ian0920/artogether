@@ -15,24 +15,48 @@
 <div th:replace="~{/components/navbar_homepage::navbar}"></div>
 
 <main>
-<div th:replace="~{/components/carousel::carousel(${evtImgList})}"></div>
+	<div th:replace="~{/components/carousel::carousel(${evtImgList},'400', false)}"></div>
+<div class="normal-width row" style="margin:40px 0">
+	
+	<section class="flex-3 info-card-outline">
+		<p>活動詳情 <span class="material-symbols-outlined">chevron_forward</span> <span th:text="${evt.id}"></span></p>
+		<h2 th:text="${evt.name}"></h2>
+		<div class="info-card-outline row">
+			<div class="info-card-horizontal flex-1">
+				<div class="icon-box">
+					<span class="material-symbols-outlined">schedule</span>
+				</div>
+				<div class="info-box">
+					<h6 class="info-name" th:text="${evt.endDate != null} ? '起始時間' : '活動日期'">起始時間</h6>
+			    	<p class="info-text" th:text="${evt.startDate}">20xx-xx-xx</p>
+				</div>
+			</div>
+			
+			<div th:if="${evt.endDate}" class="info-card-horizontal flex-1">
+				<div class="icon-box">
+					<span class="material-symbols-outlined">schedule</span>
+				</div>
+				<div class="info-box">
+					<h6 class="info-name">結束時間</h6>
+			    	<p class="info-text" th:text="${evt.endDate}">xxxx-xx-xx</p>
+				</div>
+			</div>
+		</div>
+		
+		<p th:if="${evt.delayDate}" th:text="${evt.delayDate?}"></p>
+		<p th:text="${evt.description}"></p>
+	</section>
+	<aside class="info-card-outline flex-1" style="height:min-content;">
+		<h3 th:text="${evt.businessMember.name}"></h3>
+		<p th:text="${evt.businessMember.addr}"></p>
+		<div class="row">
+<!-- 			<button class="button-big button-primary flex-auto">立即報名</button> -->
+<!-- 			<div th:replace="~{/event/eventTest::registerButton}"></div> -->
+			<button class="button-icon-big" id=btn_track><span class="material-symbols-outlined">bookmark</span></button>
+		</div>
+	</aside>
+</div>
 
-<h3 th:text="${evt.name}"></h3>
-<p th:text="${evt.id}"></p>
-<p th:text="${evt.startDate}"></p>
-<p th:text="${evt.endDate}"></p>
-<p th:if="${evt.delayDate}" th:text="${evt.delayDate?}"></p>
-    <!-- 顯示已存在的圖片 -->
-    <div>
-        <h3>目前的圖片</h3>
-        <ul>
-            <li th:each="image : ${evtImgList}">
-                <img th:src="@{/event/DBImgReader/} + ${image.id}" width="100px">
-                
-            </li>
-        </ul>
-    </div>
-<button id=btn_track>追蹤</button>
 </main>
 
 <script type="text/javascript" th:inline="javascript">

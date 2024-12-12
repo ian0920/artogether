@@ -78,7 +78,7 @@
     </style>
 </head>
 <body>
-
+<div th:fragment="registerButton">
 <!-- Open Form Button -->
 <button th:if="${#session.getAttribute('member') != null}" id="openFormButton" class="btn btn-lg openFormButton" th:disabled="${match==true}" >報名活動</button>
 <button th:unless="${#session.getAttribute('member') != null}" id="to-login" class="btn btn-lg" onclick="location.href='/login'">請先登入</button>
@@ -117,8 +117,8 @@
                     <option th:if="${myEvtCoups.size()>0}"
                             th:each=" myEvtCoup :${myEvtCoups}"
                             th:value="${myEvtCoup.getEvtCoup().getId()}"
-                            th:text="${myEvtCoup.getEvtCoup().getEvtCoupName()}"}></option>
-                    <option th:unless="${myEvtCoups.size()>0}" value="" th:text="無優惠券可使用">
+                            th:text="${myEvtCoup.getEvtCoup().getEvtCoupName()}"></option>
+                    <option th:unless="${myEvtCoups.size()>0}" value="" th:text="無優惠券可使用"></option>
                 </select>
 
             </div>
@@ -215,6 +215,7 @@
     // Initially update amounts on page load (in case of pre-selected values)
     updateAmounts();
 </script>
+</div>
 
 </body>
 </html>

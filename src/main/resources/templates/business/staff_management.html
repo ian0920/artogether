@@ -3,17 +3,30 @@
 <head>
 <meta charset="UTF-8">
 <title>商家-員工管理</title>
+<link rel="stylesheet" th:href="@{/web_design/style/style_general.css}" />
+<link rel="stylesheet" th:href="@{/web_design/style/style_business.css}" />
+<link
+  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+  rel="stylesheet"
+/>
 </head>
 <body>
+<!-- 導航 -->
+<div th:replace="~{/components/navbar_business::navbar('info','')}"></div>
+
+<main>
 	<h2>商家-員工管理</h2>
-	<h4>新增員工</h4>
-	<p>請輸入該員工之註冊信箱</p>
+	<h3>新增員工</h3>
 	<form id="addStaffForm" onsubmit="return addNewStaff(event);">
-	    <label>email
-	        <input type="email" name="emails" id="addStaff_email" multiple required>
-	    </label>
-	    <fieldset>
-	        <legend>設定員工權限</legend>
+		<fieldset>
+		    <label class="label-input">員工信箱
+		        <input type="email" name="emails" id="addStaff_email" class="solo" 
+		        placeholder="請輸入欲加入員工之註冊信箱，如有多筆請以逗號(,)區隔"
+		        multiple required>
+		    </label>
+	    <div>
+	        <h4>設定員工權限</h4>
+	        <div class="row">
 	        <label>
 	            <input class="add-perm-checkbox" name="evtPerm" type="checkbox" value="true">
 	            活動管理
@@ -25,12 +38,18 @@
 	        <label>
 	            <input class="add-perm-checkbox" name="vnePerm" type="checkbox" value="true">
 	            場地管理
-	        </label>
+	        </label></div>
+	    </div>
+	    <button clickable type="submit" class="button-primary button-big">新增</button>
 	    </fieldset>
-	    <button type="submit">新增</button>
+	    
 	</form>
-	
+	<div style="height:20px"></div>
 	<form id="updatePermsForm" action="/business/updatePerms" method="POST" th:object="${bPerms}">
+	<div class="row">
+		<h3 class="flex-auto">員工列表</h3>
+		<button clickable type="submit" class="button-secondary">更新權限</button>
+	</div>
 	<table>
 		<thead>
 			<tr>
@@ -64,9 +83,9 @@
 			</tr>
 		</tbody>
 	</table>
-	<button type="submit">更新</button>
 	</form>
 
+</main>
 	
 	<script type="text/javascript" th:inline="javascript">
 	function addNewStaff(event) {
