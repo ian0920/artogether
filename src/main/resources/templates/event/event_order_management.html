@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>訂單查詢</title>
+    <link rel="stylesheet" th:href="@{/web_design/style/style_business.css}" />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+            rel="stylesheet"
+    />
+    <style>
+
+        .container {
+            background: #fff;
+            padding: 15px;
+            margin: auto;
+        }
+        h3 { margin-bottom: 15px; }
+        form {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* Three inputs per row */
+            gap: 15px; /* Space between grid items */
+            align-items: center; /* Vertically align items */
+            margin-left: 50px;
+            margin-top:20px;
+        }
+        label { font-weight: bold; }
+        input, select {
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 85%;
+        }
+        .button-container {
+            grid-column: span 4;
+            display: flex;
+            justify-content: flex-end;
+
+        }
+        .btn-search{
+            padding: 8px 15px;
+            background-color: #2c95c6;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-search:hover { background-color: #297a9b; }
+        .btn-add-evtCoup{
+            padding: 8px 15px;
+            background-color: #2c95c6;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-add-evtCoup:hover { background-color: #297a9b; }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+        .btn-show-refund{
+            padding: 8px 15px;
+            background-color: #2c95c6;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-show-refund:hover { background-color: #297a9b; }
+
+
+        th, td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-align: center;
+            font-size: 15px;
+        }
+        th { background-color: #f2f2f2; }
+
+
+    /*    新增優惠券燈箱效果     */
+
+        /* Modal Overlay */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1000; /* On top of other elements */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* Enable scrolling if needed */
+            background-color: rgba(0, 0, 0, 0.5); /* Black with transparency */
+        }
+
+
+        /* Modal Content */
+        .modal form {
+            background-color: #fff;
+            margin: 3% auto; /* 10% from the top and centered */
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%; /* Default width */
+            max-width: 700px; /* Max width for larger screens */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Form Elements */
+        .modal form div {
+            margin-bottom: 15px;
+        }
+
+        .modal form label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .modal form input,
+        .modal form select {
+            width: 100%;
+            padding: 8px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .modal form input:focus,
+        .modal form select:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 4px rgba(0, 123, 255, 0.25);
+        }
+
+
+        .button-addform-container {
+            display: flex;
+            justify-content: flex-end;
+            text-align: center;
+        }
+
+        .button-addform-container button {
+            margin-left: 10px;
+            padding: 8px 15px;
+            font-size: 14px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-addform-cancel {
+            background-color: #ccc;
+            color: #000;
+        }
+
+        .btn-addform-cancel:hover {
+            background-color: #bbb;
+        }
+
+        .btn-addform-save {
+            background-color: #2c95c6;
+            color: #fff;
+        }
+
+        .btn-addform-save:hover {
+            background-color: #297a9b;;
+        }
+
+        /* Warning Text */
+        .warning-text {
+            color: #d9534f;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+
+
+
+
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="bs-navbar" th:include="homepage_business::navbar"></div>
+<main>
+    <div class="container">
+        <h3>訂單查詢</h3>
+        <form id="searchForm">
+            <div>
+                <div><label for="eventId">活動名稱</label></div>
+                <select id="eventId" name="eventId">
+                    <option value="-1" disabled selected hidden>請選擇活動</option>
+                    <option th:if="${eventMap.isEmpty()}" value="-1" disabled>尚未建立活動</option>
+                    <option th:unless="${eventMap.isEmpty()}"
+                            th:each="entry : ${eventMap}"
+                            th:value="${entry.key}"
+                            th:text="${entry.value}">
+                    </option>
+                </select>
+            </div>
+            <div>
+                <div><label for="status">訂單狀態</label></div>
+                <select id="status" name="status">
+                    <option value="-1">選擇訂單狀態</option>
+                    <option value="0">報名中</option>
+                    <option value="1">取消</option>
+                </select>
+            </div>
+            <div>
+                <div><label for="startDate">報名日期（起）</label></div>
+                <input type="datetime-local" id="startDate" name="startDate">
+            </div>
+            <div>
+                <div><label for="endDate">報名日期（迄）</label></div>
+                <input type="datetime-local" id="endDate" name="endDate">
+            </div>
+            <div class="button-container">
+                <button type="button" class="btn-search" id="searchBtn">搜尋訂單</button>
+            </div>
+        </form>
+
+        <hr style="margin:15px 0px">
+
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3 id="data-count" style="margin: 0;">訂單列表</h3>
+            <div class="button-container" style="margin: 0px;">
+                <button class="btn-show-refund" id="show-refund">顯示退款資訊</button>
+            </div>
+        </div>
+
+
+
+        <table class="data-table" id="dataTable">
+            <thead>
+            <tr>
+                <th>活動名稱</th>
+                <th>名字</th>
+                <th>報名日期</th>
+                <th>報名人數</th>
+                <th>狀態</th>
+                <th>付款方式</th>
+                <th>優惠券</th>
+                <th>訂單金額</th>
+                <th>折扣金額</th>
+                <th>實付金額</th>
+                <th>退款申請日期</th>
+                <th>退款日期</th>
+                <th>退款金額</th>
+            </tr>
+            </thead>
+            <tbody id="orderTableBody">
+            <!-- Data will be dynamically inserted here -->
+            </tbody>
+        </table>
+        <div class="btn-container" id="btn-container">
+<!--            <button id="prevPageButton">Previous</button>-->
+<!--            <button id="nextPageButton">Next</button>-->
+        </div>
+
+
+    </div>
+
+
+
+</main>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // 設定最下方的user control菜單收合
+    var el_nav_user_field = document.querySelector(".bs-navbar-user-field");
+    el_nav_user_field.addEventListener("click", function (e) {
+        e.stopPropagation();
+        let el_nav_user_menu = document.querySelector(".bs-navbar-user-menu");
+        el_nav_user_menu.classList.toggle("-hidden");
+        let el_field_icon = document.querySelector(
+            ".bs-navbar-user-field #icon_unfold"
+        );
+        if (el_field_icon.classList.contains("unfold")) {
+            el_field_icon.classList.remove("unfold");
+            el_field_icon.innerHTML = "unfold_less";
+        } else {
+            el_field_icon.classList.add("unfold");
+            el_field_icon.innerHTML = "unfold_more";
+        }
+    });
+
+    // 設定user-item的選取範圍
+    var els_nav_user_item = document.querySelectorAll(
+        "div.bs-navbar-user-menu .bs-navbar-user-item"
+    );
+    for (let i = 0; i < els_nav_user_item.length; i++) {
+        els_nav_user_item[i].addEventListener("click", function (e) {
+            console.log("hi");
+            // TODO: 這裡要補上跳轉連結
+            this.lastElementChild.click();
+            el_nav_user_field.click();
+        });
+    }
+
+    // 設定nav-item的選取效果
+    var els_nav_item = document.querySelectorAll(".bs-navbar-item");
+    var els_nav_header = document.querySelectorAll(".bs-navbar-header");
+    var els_nav_submenu = document.querySelectorAll(".bs-navbar-submenu");
+    var els_nav_subitem = document.querySelectorAll(".bs-navbar-subitem");
+    for (let i = 0; i < els_nav_item.length; i++) {
+        els_nav_item[i].addEventListener("click", function () {
+            els_nav_header.forEach((e) => e.classList.remove("-open"));
+            els_nav_submenu.forEach((e) => e.classList.remove("-open"));
+            this.firstElementChild.classList.add("-open");
+            this.lastElementChild.classList.add("-open");
+            // 觸發a tag點擊事件
+            this.lastElementChild.click();
+        });
+    }
+    // 設定nav-subitem的選取效果
+    for (let i = 0; i < els_nav_subitem.length; i++) {
+        els_nav_subitem[i].addEventListener("click", function () {
+            els_nav_subitem.forEach((e) => e.classList.remove("-focus"));
+            this.classList.add("-focus");
+        });
+    }
+</script>
+
+<script>
+    //顯示退款資訊
+    $(document).ready(function() {
+        // 退款資訊預設為隱藏
+        $('#dataTable td:nth-child(11), #dataTable th:nth-child(11)').hide();
+        $('#dataTable td:nth-child(12), #dataTable th:nth-child(12)').hide();
+        $('#dataTable td:nth-child(13), #dataTable th:nth-child(13)').hide();
+
+        // Toggle the visibility of the columns on button click
+        $('#show-refund').click(function() {
+        var isVisible = $('#dataTable th:nth-child(11)').is(':visible');
+
+        if (isVisible) {
+            // If columns are visible, hide them and change button text to "Open"
+            $('#dataTable td:nth-child(11), #dataTable th:nth-child(11)').hide();
+            $('#dataTable td:nth-child(12), #dataTable th:nth-child(12)').hide();
+            $('#dataTable td:nth-child(13), #dataTable th:nth-child(13)').hide();
+            $(this).text('顯示退款資訊');
+        } else {
+            // If columns are hidden, show them and change button text to "Close"
+            $('#dataTable td:nth-child(11), #dataTable th:nth-child(11)').show();
+            $('#dataTable td:nth-child(12), #dataTable th:nth-child(12)').show();
+            $('#dataTable td:nth-child(13), #dataTable th:nth-child(13)').show();
+            $(this).text('隱藏退款資訊');
+        }
+        });
+    });
+
+
+    //搜尋訂單
+
+    // $(document).ready(function () {
+    //
+    //     $('#searchBtn').on('click', function (){
+    //         // Default pagination settings
+    //         let currentPage = 0;
+    //         const pageSize = 10;
+    //
+    //         $('#dataTable td:nth-child(11), #dataTable th:nth-child(11)').hide();
+    //         $('#dataTable td:nth-child(12), #dataTable th:nth-child(12)').hide();
+    //         $('#dataTable td:nth-child(13), #dataTable th:nth-child(13)').hide();
+    //
+    //         // Function to fetch orders
+    //         function fetchOrders(page) {
+    //             const searchCriteria = {
+    //                 eventId: $("#eventId").val(),
+    //                 status: $("#status").val(),
+    //                 startDate: $("#startDate").val(),
+    //                 endDate: $("#endDate").val(),
+    //             };
+    //
+    //             $.ajax({
+    //                 url: "/business/event/searchOrders",
+    //                 type: "POST",
+    //                 contentType: "application/json",
+    //                 data: JSON.stringify({
+    //                     ...searchCriteria,
+    //                     page: page,
+    //                     size: pageSize
+    //                 }),
+    //                 success: function (response) {
+    //                     if (response.status) {
+    //                         populateTable(response.data.content);
+    //                         updatePagination(response.metadata);
+    //                     } else {
+    //                         alert("Error: " + response.message);
+    //                     }
+    //                 },
+    //                 error: function (response) {
+    //                     const tableBody = $("#orderTableBody");
+    //                     tableBody.empty();
+    //                     tableBody.append(`<tr><td colspan="10">${response.message}</td></tr>`);
+    //                 }
+    //             });
+    //         }
+    //
+    //         // Function to populate the table
+    //         function populateTable(data) {
+    //             const tableBody = $("#orderTableBody");
+    //             tableBody.empty(); // Clear existing data
+    //
+    //             data.forEach(order => {
+    //                 const row = `
+    //                 <tr>
+    //                     <td>${order.eventName || ""}</td>
+    //                     <td>${order.memberName || ""}</td>
+    //                     <td>${order.orderDate || ""}</td>
+    //                     <td>${order.qty || ""}</td>
+    //                     <td>${order.status == 0 ? '已付款' : '取消'}</td>
+    //                     <td>${order.paymentMethod == 0 ? '信用卡' : (order.paymentMethod == 1 ? '行動支付' : 'ATM轉帳')}</td>
+    //                     <td>${order.evtCoupName || "未使用優惠券"}</td>
+    //                     <td>${order.totalPrice || ""}</td>
+    //                     <td>${order.discount || "0"}</td>
+    //                     <td>${order.paid || ""}</td>
+    //                     <td>${order.refundApplyDate || "-"}</td>
+    //                     <td>${order.refundDate || "-"}</td>
+    //                     <td>${order.refund || "-"}</td>
+    //                 </tr>
+    //             `;
+    //                 tableBody.append(row);
+    //                 $('#dataTable td:nth-child(11), #dataTable th:nth-child(11)').hide();
+    //                 $('#dataTable td:nth-child(12), #dataTable th:nth-child(12)').hide();
+    //                 $('#dataTable td:nth-child(13), #dataTable th:nth-child(13)').hide();
+    //             });
+    //         }
+    //
+    //         // Function to update pagination controls
+    //         function updatePagination(metadata) {
+    //             // Display pagination controls or information
+    //             console.log(`Page: ${metadata.currentPage + 1}/${metadata.totalPages}`);
+    //             // Add logic for next/previous buttons if necessary
+    //         }
+    //
+    //         // Initial fetch
+    //         fetchOrders(currentPage);
+    //
+    //         // Example: Add event listener for pagination buttons
+    //         $("#nextPageButton").on("click", function () {
+    //             if (currentPage < metadata.totalPages - 1) {
+    //                 currentPage++;
+    //                 fetchOrders(currentPage);
+    //             }
+    //         });
+    //
+    //         $("#prevPageButton").on("click", function () {
+    //             if (currentPage > 0) {
+    //                 currentPage--;
+    //                 fetchOrders(currentPage);
+    //             }
+    //         });
+    //     });
+    // });
+
+
+    $(document).ready(function () {
+        // Default pagination settings
+        let currentPage = 0;
+        const pageSize = 1;
+
+        $('#searchBtn').on('click', function () {
+            $('#dataTable td:nth-child(11), #dataTable th:nth-child(11)').hide();
+            $('#dataTable td:nth-child(12), #dataTable th:nth-child(12)').hide();
+            $('#dataTable td:nth-child(13), #dataTable th:nth-child(13)').hide();
+
+            // Function to fetch orders
+            function fetchOrders(page) {
+                const searchCriteria = {
+                    eventId: $("#eventId").val(),
+                    status: $("#status").val(),
+                    startDate: $("#startDate").val(),
+                    endDate: $("#endDate").val(),
+                };
+
+                $.ajax({
+                    url: "/business/event/searchOrders",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        ...searchCriteria,
+                        page: page,
+                        size: pageSize
+                    }),
+                    success: function (response) {
+                        if (response.status) {
+                            populateTable(response.data.content, response.data.totalElements);
+                            updatePagination(response.metadata);
+                        } else {
+                            alert("Error: " + response.message);
+                        }
+                    },
+                    error: function () {
+                        const tableBody = $("#orderTableBody");
+                        tableBody.empty();
+                        tableBody.append(`<tr><td colspan="13">Error fetching data</td></tr>`);
+                    }
+                });
+            }
+
+            // Function to populate the table
+            function populateTable(data, totalElements) {
+                const tableBody = $("#orderTableBody");
+                tableBody.empty(); // Clear existing data
+
+                const dataCount = $("#data-count");
+                const totalCount = totalElements;
+                dataCount.empty();
+
+                dataCount.text('資料總筆數：' + totalCount +'筆');
+
+                data.forEach(order => {
+                    const row = `
+                <tr>
+                    <td>${order.eventName || ""}</td>
+                    <td>${order.memberName || ""}</td>
+                    <td>${order.orderDate || ""}</td>
+                    <td>${order.qty || ""}</td>
+                    <td>${order.status == 0 ? '已付款' : '取消'}</td>
+                    <td>${order.paymentMethod == 0 ? '信用卡' : (order.paymentMethod == 1 ? '行動支付' : 'ATM轉帳')}</td>
+                    <td>${order.evtCoupName || "未使用優惠券"}</td>
+                    <td>${order.totalPrice || ""}</td>
+                    <td>${order.discount || "0"}</td>
+                    <td>${order.paid || ""}</td>
+                    <td>${order.refundApplyDate || "-"}</td>
+                    <td>${order.refundDate || "-"}</td>
+                    <td>${order.refund || "-"}</td>
+                </tr>
+            `;
+                    tableBody.append(row);
+                });
+
+                // Hide refund-related columns initially
+                $('#dataTable td:nth-child(11), #dataTable th:nth-child(11)').hide();
+                $('#dataTable td:nth-child(12), #dataTable th:nth-child(12)').hide();
+                $('#dataTable td:nth-child(13), #dataTable th:nth-child(13)').hide();
+            }
+
+            // Function to update pagination controls
+            function updatePagination(metadata) {
+                const paginationContainer = $("#btn-container");
+                paginationContainer.empty(); // Clear existing buttons
+
+                // Previous button
+                const prevButton = $(`<button id="prevPageButton" class="prevPageButton">上一頁</button>`);
+                if (metadata.currentPage > 0) {
+                    prevButton.prop("disabled", false);
+                    prevButton.on("click", function () {
+                        currentPage--;
+                        fetchOrders(currentPage);
+                    });
+                } else {
+                    prevButton.prop("disabled", true);
+                }
+                paginationContainer.append(prevButton);
+
+                // Page numbers
+                for (let i = 0; i < metadata.totalPages; i++) {
+                    const pageButton = $(`<button>${i + 1}</button>`);
+                    if (i === metadata.currentPage) {
+                        pageButton.addClass("active");
+                    }
+                    pageButton.on("click", function () {
+                        currentPage = i;
+                        fetchOrders(currentPage);
+                    });
+                    paginationContainer.append(pageButton);
+                }
+
+                // Next button
+                const nextButton = $(`<button id="nextPageButton" class="nextPageButton">下一頁</button>`);
+                if (metadata.currentPage < metadata.totalPages - 1) {
+                    nextButton.prop("disabled", false);
+                    nextButton.on("click", function () {
+                        currentPage++;
+                        fetchOrders(currentPage);
+                    });
+                } else {
+                    nextButton.prop("disabled", true);
+                }
+                paginationContainer.append(nextButton);
+            }
+
+            // Initial fetch
+            fetchOrders(currentPage);
+        });
+    });
+
+
+
+
+
+    //彈窗
+    const pupOutAlter = function (title, status){
+
+        Swal.fire({
+            title: '',
+            text: title,
+            icon: status,
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#2c95c6',
+        });
+    };
+
+</script>
+
+
+
+
+</body>
+</html>

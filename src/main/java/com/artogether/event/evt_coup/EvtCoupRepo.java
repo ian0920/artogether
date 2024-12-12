@@ -8,4 +8,7 @@ import java.util.List;
 @Repository
 public interface EvtCoupRepo extends JpaRepository<EvtCoup, Integer> {
     List<EvtCoup> findByEvent_BusinessMember_IdOrderByEventId(Integer businessMemberId);
+
+
+    List<EvtCoup> findEvtCoupsByEvent_BusinessMember_Id(Integer businessId);
 }

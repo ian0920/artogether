@@ -107,9 +107,9 @@ public class EventController {
         Event e = eventService.findById(eventId);
 
 
-        //確認是否已報名過此活動 (已報名則報名按鈕disable)
+        //撈出報名中的訂單 (報名中則報名按鈕disable)
         Map<Event, EvtOrder> map = evtOrderService.getEventsToMyOrders(memberId);
-        Predicate<Event> filter = p -> Objects.equals(p.getId(), eventId);
+        Predicate<Event> filter = p -> (Objects.equals(p.getId(), eventId));
         boolean match = map.keySet().stream().anyMatch(filter);
 
         if(match){

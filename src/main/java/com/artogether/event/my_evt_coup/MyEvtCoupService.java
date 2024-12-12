@@ -42,6 +42,7 @@ public class MyEvtCoupService {
 
     }
 
+    //我的優惠券頁面資訊
     public Map<String, List<MyEvtCoup>> findByMemberId(Integer memberId) {
 
         Map<String, List<MyEvtCoup>> map = new HashMap<>();
@@ -62,14 +63,6 @@ public class MyEvtCoupService {
             }
         }
 
-//        Set<Map.Entry<String, List<MyEvtCoup>>>  result =  map.entrySet();
-//
-//        for (Map.Entry<String, List<MyEvtCoup>> entry : result){
-//
-//            System.out.println("活動名稱 = " + entry.getKey());
-//            entry.getValue().forEach(e -> System.out.println(e.getEvtCoup().getEvtCoupName()));
-//
-//        }
 
         return map;
 
