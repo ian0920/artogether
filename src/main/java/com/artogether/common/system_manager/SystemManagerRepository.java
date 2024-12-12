@@ -1,4 +1,4 @@
-package com.artogether.common.system_mamager;
+package com.artogether.common.system_manager;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

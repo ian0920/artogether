@@ -1,8 +1,8 @@
 package com.artogether.controller.ian;
 
 import com.artogether.common.member.MemberService;
-import com.artogether.common.system_mamager.SystemManager;
-import com.artogether.common.system_mamager.SystemManagerService;
+import com.artogether.common.system_manager.SystemManager;
+import com.artogether.common.system_manager.SystemManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

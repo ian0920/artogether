@@ -1,8 +1,9 @@
-package com.artogether.common.system_mamager;
+package com.artogether.common.system_manager;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
 
@@ -33,12 +34,14 @@ public class SystemManager {
 	private String password;
 	
 	@Column(name = "register_date")
+	@CreationTimestamp // Bean
 	private Timestamp  register_date;
 	
 	@Column(name = "phone")
 	private String phone;
 	
 	@Column(name = "assign_date")
+	@CreationTimestamp
 	private Timestamp  assign_date;
 
 	@Column(name = "status")
