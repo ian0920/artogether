@@ -168,7 +168,12 @@ public class GeneralController {
 
             BusinessMember presentBusinessMember = sortedBusinessMember.get(0);
             List<BusinessMember> listedBusinessMember = new ArrayList();
-            sortedBusinessMember.stream().filter(s -> !s.equals(presentBusinessMember)).forEach(listedBusinessMember::add);
+            for(BusinessMember m : sortedBusinessMember) {
+                if(m.getId() != presentBusinessMember.getId()) {
+                    listedBusinessMember.add(m);
+                }
+            }
+
 
 
             //將第一個商家作為預設登入的商家並寫入session
@@ -192,17 +197,27 @@ public class GeneralController {
         //從清單抓出要切換的商家，加入session
         BusinessMember PresentBusinessMember = businessMembers.get(index);
 
-        //將選取到的商家從清單剔除，並加回原先的商家
-        businessMembers.remove(PresentBusinessMember);
-        businessMembers.add(oldPresentBusinessMember);
+
+        //排除選到的商家，創建新list(舊的list immutable，所以創一個新的來裝)
+        List<BusinessMember> newList = new ArrayList();
+        for(BusinessMember m : businessMembers) {
+            if(m.getId() != PresentBusinessMember.getId()) {
+                newList.add(m);
+            }
+        }
+
+        //將切換前的商家加回來
+        newList.add(oldPresentBusinessMember);
+
 
         //將要呈現回去的商家排序
         businessMembers.sort(Comparator.comparing(BusinessMember::getId));
 
 
         //將切換至的商家寫入session
+
         session.setAttribute("presentBusinessMember", PresentBusinessMember);
-        session.setAttribute("businessMembers", businessMembers);
+        session.setAttribute("businessMembers", newList);
 
 
         return "homepage_business";
