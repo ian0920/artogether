@@ -18,6 +18,7 @@ import org.hibernate.annotations.DynamicUpdate;
 public class EvtImg {
 
 	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private Integer id;
 

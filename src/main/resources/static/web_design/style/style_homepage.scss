@@ -159,13 +159,13 @@ section.sec-showcase {
 // 導航-探索選單
 div.nav-menu-box {
   position: absolute;
-  top: 72px;
+  top: $navbar-height;
   visibility: hidden;
   &.open {
     visibility: visible;
     div.nav-menu-mask {
       position: fixed;
-      height: calc(100dvh - 72px);
+      height: calc(100dvh - $navbar-height);
       width: 100%;
       background-color: rgba(0, 0, 0, 0.15);
     }
@@ -230,7 +230,7 @@ div.user-menu-box {
   width: 280px;
   visibility: hidden;
   position: fixed;
-  top: 72px;
+  top: $navbar-height;
   right: 60px;
   z-index: 5;
   background-color: #fff;
@@ -422,6 +422,22 @@ main.map-page {
             }
           }
         }
+      }
+    }
+  }
+}
+
+//=================卡片wrap頁面=======================
+main.card-wrap-page {
+  section {
+    width: 100%;
+    div.card-box {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      gap: 16px;
+      div.card {
+        max-width: 400px;
       }
     }
   }

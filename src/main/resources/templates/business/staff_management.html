@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>商家-員工管理</title>
+</head>
+<body>
+	<h2>商家-員工管理</h2>
+	<h4>新增員工</h4>
+	<p>請輸入該員工之註冊信箱</p>
+	<form id="addStaffForm" onsubmit="return addNewStaff(event);">
+	    <label>email
+	        <input type="email" name="emails" id="addStaff_email" multiple required>
+	    </label>
+	    <fieldset>
+	        <legend>設定員工權限</legend>
+	        <label>
+	            <input class="add-perm-checkbox" name="evtPerm" type="checkbox" value="true">
+	            活動管理
+	        </label>
+	        <label>
+	            <input class="add-perm-checkbox" name="prdPerm" type="checkbox" value="true">
+	            商品管理
+	        </label>
+	        <label>
+	            <input class="add-perm-checkbox" name="vnePerm" type="checkbox" value="true">
+	            場地管理
+	        </label>
+	    </fieldset>
+	    <button type="submit">新增</button>
+	</form>
+	
+	<form id="updatePermsForm" action="/business/updatePerms" method="POST" th:object="${bPerms}">
+	<table>
+		<thead>
+			<tr>
+				<th scope="col">ID</th>
+				<th scope="col">名稱</th>
+				<th scope="col">活動權限</th>
+				<th scope="col">商品權限</th>
+				<th scope="col">場地權限</th>
+				<th scope="col">啟用狀態</th>
+				
+			</tr>
+		</thead>
+		<tbody th:if="${bPerms!=null}">
+			<tr th:each="bp : ${bPerms}" >
+				<th scope = "row" th:text="${bp.member.id}">ID</th>	
+				<td th:text="${bp.member.name}">名稱</td>
+				<td>
+                    <input type="checkbox" th:name="${bp.member.id} + '[evtPerm]'" th:checked="${bp.evtPerm}" />
+				</td>
+				<td>
+                    <input type="checkbox" th:name="${bp.member.id} + '[prdPerm]'" th:checked="${bp.prdPerm}" />
+				</td>
+				<td>
+                    <input type="checkbox" th:name="${bp.member.id} + '[vnePerm]'" th:checked="${bp.vnePerm}" />
+				</td>
+
+				<td th:switch="${bp.status}">
+					<button th:case="0" th:onclick="updateStatus(1,[[${bp.member.id}]])">停權</button>
+					<button th:case="1" th:onclick="updateStatus(2,[[${bp.member.id}]])">啟用</button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<button type="submit">更新</button>
+	</form>
+
+	
+	<script type="text/javascript" th:inline="javascript">
+	function addNewStaff(event) {
+	    event.preventDefault(); // 防止表單默認提交行為
+
+	    // 使用 FormData 獲取表單資料
+	    const form = document.getElementById("addStaffForm");
+	    const formData = new FormData(form);
+
+	    // 獲取 email 列表（處理逗號分隔的輸入）
+	    const emailInput = formData.get("emails");
+	    const emails = emailInput.split(",").map(email => email.trim());
+
+	    // 獲取權限
+	    const evtPerm = formData.get("evtPerm") === "true";
+	    const prdPerm = formData.get("prdPerm") === "true";
+	    const vnePerm = formData.get("vnePerm") === "true";
+
+	    // 構造請求資料
+	    const payload = {
+	        emails: emails,
+	        perms: {
+	            evtPerm: evtPerm,
+	            prdPerm: prdPerm,
+	            vnePerm: vnePerm
+	        }
+	    };
+
+	    // 發送資料到後端
+	    fetch("/api/business/addStaff", { // 替換 123 為實際 businessId
+	        method: "POST",
+	        headers: {
+	            "Content-Type": "application/json"
+	        },
+	        body: JSON.stringify(payload)
+	    })
+	    .then(response => {
+	        if (!response.ok) {
+	            throw new Error("新增失敗，請檢查輸入或稍後再試。");
+	        }
+	        return response.json();
+	    })
+	    .then(data => {
+	        alert(data.message);
+	     // 動態更新表格
+	        const tableBody = document.querySelector("tbody");
+	        data.newStaff.forEach(staff => {
+	            const newRow = document.createElement("tr");
+	            newRow.innerHTML = `
+	                <th scope="row">${staff.id}</th>
+	                <td>${staff.name}</td>
+	                <td><input type="checkbox" ${staff.evtPerm ? "checked" : ""}></td>
+	                <td><input type="checkbox" ${staff.prdPerm ? "checked" : ""}></td>
+	                <td><input type="checkbox" ${staff.vnePerm ? "checked" : ""}></td>
+	                <td>
+	                    <button onclick="updateStatus(1, ${staff.id})">${staff.status === 0 ? "停權" : "啟用"}</button>
+	                </td>
+	            `;
+	            tableBody.appendChild(newRow);
+	        });
+
+	        // 表格清除
+	        form.reset();
+	    })
+	    .catch(error => {
+	        alert(`操作失敗：${error.message}`);
+	    });
+
+	    return false; // 阻止默認的表單提交行為
+	}
+
+	</script>
+	
+</body>
+</html>

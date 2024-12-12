@@ -20,12 +20,12 @@ public class BusinessPerm {
 
     @Id
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "business_id", referencedColumnName = "id")
+    @JoinColumn(name = "business_id", referencedColumnName = "id", insertable = false, updatable = false)
     private BusinessMember businessMember;
 
     @Id
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "member_id", referencedColumnName = "id")
+    @JoinColumn(name = "member_id", referencedColumnName = "id", insertable = false, updatable = false)
     private Member member;
 
     @Column(name = "prd_perm")
@@ -37,9 +37,10 @@ public class BusinessPerm {
     @Column(name = "venue_perm")
     private boolean vnePerm;
 
-    @Column(name = "assign_date")
+    @Column(name = "assign_date", insertable = false)
     private Timestamp assignDate;
 
+    @Column(name = "status", insertable = false)
     private Byte status;
 
     public BusinessPermComposite getBusinessPermComposite() {
@@ -55,6 +56,7 @@ public class BusinessPerm {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
+	public
     static class BusinessPermComposite implements Serializable {
         private static final long serialVersionUID = 1L;
         Integer businessMember;

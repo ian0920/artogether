@@ -7,6 +7,7 @@ import com.artogether.product.prd_coup.PrdCoup;
 import com.artogether.product.product.Product;
 import com.artogether.venue.venue.Venue;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -22,6 +23,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Builder
 @Table(name = "business_member")
 public class BusinessMember {
 

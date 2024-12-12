@@ -2,49 +2,72 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/web_design/style/style_general.css}" />
+ 	<link rel="stylesheet" th:href="@{/web_design/style/style_homepage.css}" />
+	<link
+	  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+	  rel="stylesheet"
+	/>
     <title>event details</title>
 </head>
 <body>
-This is event_details
-<hr>
-<p th:text="${evt.name}"></p>
+<!-- 導航 -->
+<div th:replace="~{/components/navbar_homepage::navbar}"></div>
+
+<main>
+<div th:replace="~{/components/carousel::carousel(${evtImgList})}"></div>
+
+<h3 th:text="${evt.name}"></h3>
 <p th:text="${evt.id}"></p>
 <p th:text="${evt.startDate}"></p>
-<img th:src="@{/event/DBImgReader/} + ${evtImg.id}" width="100px">
+<p th:text="${evt.endDate}"></p>
+<p th:if="${evt.delayDate}" th:text="${evt.delayDate?}"></p>
+    <!-- 顯示已存在的圖片 -->
+    <div>
+        <h3>目前的圖片</h3>
+        <ul>
+            <li th:each="image : ${evtImgList}">
+                <img th:src="@{/event/DBImgReader/} + ${image.id}" width="100px">
+                
+            </li>
+        </ul>
+    </div>
 <button id=btn_track>追蹤</button>
-<script type="text/javascript" th:inline="javascript">
-var el_btn_track=document.querySelector("#btn_track")
-el_btn_track.addEventListener("click", function(){
-	trackEvt();
-})
-const eventId = /*[[${evt.id}]]*/ 'defaultEvtId';
-const memberId = /*[[${session.member}]]*/ 'defaultMemberId';
-const payload = {
-	    eventId: eventId,
-	    memberId: memberId
-	};
-var trackEvt = async function() {
-    try {
-        let response = await fetch("/api/event/toggleTrack", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(payload),
-        });
+</main>
 
-        console.log(response);
-        if (response.ok) {
-            let data = await response.json(); // 解析 JSON 資料
-            alert(data.message);
-        } else {
-            alert("追蹤失敗，請稍後再試。");
-        }
-    } catch (error) {
-        console.error("Error:", error);
-        alert("請求發送失敗，請稍後再試。");
-    }
-}
+<script type="text/javascript" th:inline="javascript">
+	var el_btn_track=document.querySelector("#btn_track")
+	el_btn_track.addEventListener("click", function(){
+		trackEvt();
+	});
+	const eventId = /*[[${evt.id}]]*/ 'defaultEvtId';
+	const memberId = /*[[${session.member}]]*/ 'defaultMemberId';
+	const payload = {
+		    eventId: eventId,
+		    memberId: memberId
+		};
+	var trackEvt = async function() {
+	    try {
+	        let response = await fetch("/api/event/toggleTrack", {
+	            method: "POST",
+	            headers: {
+	                "Content-Type": "application/json",
+	            },
+	            body: JSON.stringify(payload),
+	        });
+	
+	        console.log(response);
+	        if (response.ok) {
+	            let data = await response.json(); // 解析 JSON 資料
+	            alert(data.message);
+	        } else {
+	            alert("追蹤失敗，請稍後再試。");
+	        }
+	    } catch (error) {
+	        console.error("Error:", error);
+	        alert("請求發送失敗，請稍後再試。");
+	    }
+	}
 </script>
 </body>
 </html>
