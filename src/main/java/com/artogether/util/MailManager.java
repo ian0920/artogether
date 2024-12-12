@@ -22,6 +22,7 @@ public class MailManager {
         try{
             MimeMessage mimeMailMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMailMessage, true);
+            helper.setFrom("ian555077@gmail.com");
             helper.setTo(receiverMail);
             helper.setSubject(subject);
             helper.setText(registerSuccessContentTransformer(name, memberId), true);
