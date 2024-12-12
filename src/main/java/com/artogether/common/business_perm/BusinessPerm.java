@@ -55,7 +55,7 @@ public class BusinessPerm {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    static class BusinessPermComposite implements Serializable {
+    public static class BusinessPermComposite implements Serializable {
         private static final long serialVersionUID = 1L;
         Integer businessMember;
         Integer member;
