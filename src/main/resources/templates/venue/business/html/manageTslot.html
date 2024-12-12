@@ -498,11 +498,11 @@
                 const hour = parseInt(cell.dataset.hour);
                 const dayKeys = ['hourOfMon', 'hourOfTue', 'hourOfWed', 'hourOfThu', 'hourOfFri', 'hourOfSat', 'hourOfSun'];
 
-                if (currentAction === 'select' && !calendarData.days[dayKeys[day - 1]].includes(hour)) {
-                    calendarData.days[dayKeys[day - 1]].push(hour);
+                if (currentAction === 'select' && !calendarData.days[dayKeys[day]].includes(hour)) {
+                    calendarData.days[dayKeys[day]].push(hour);
                     cell.classList.add('selected');
                 } else if (currentAction === 'deselect') {
-                    calendarData.days[dayKeys[day - 1]] = calendarData.days[dayKeys[day - 1]].filter(h => h !== hour);
+                    calendarData.days[dayKeys[day]] = calendarData.days[dayKeys[day]].filter(h => h !== hour);
                     cell.classList.remove('selected');
                 }
             }
