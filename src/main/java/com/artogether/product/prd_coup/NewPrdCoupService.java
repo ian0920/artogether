@@ -88,10 +88,10 @@ public class NewPrdCoupService {
     
    
     @Transactional(readOnly = true)
-    public List<PrdCoupDto> findCouponsByCriteria(Integer businessMemberId, String name, Integer type, Integer status, Integer threshold) {
+    public List<PrdCoupDto> findCouponsByCriteria(Integer businessMemberId ,String name, Integer type, Integer status, Integer threshold) {
         return prdCoupRepository
                 .findByBusinessMemberIdAndNameContainingAndTypeAndStatusAndThresholdGreaterThanEqual(
-                        businessMemberId, name, type, status, threshold)
+                businessMemberId, name, type, status, threshold)
                 .stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());

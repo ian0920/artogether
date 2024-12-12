@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
+
 
 @Service
 public class PrdReturnServiceImpl implements PrdReturnService {
@@ -88,7 +90,7 @@ public class PrdReturnServiceImpl implements PrdReturnService {
     // 按申請時間範圍查詢退換貨申請
     @Override
     @Transactional(readOnly = true)
-    public List<PrdReturn> findPrdReturnsByApplyDateRange(LocalDateTime startDate, LocalDateTime endDate) {
+    public List<PrdReturn> findPrdReturnsByApplyDateRange(Timestamp startDate, Timestamp endDate) {
         try {
             return prdReturnDao.findByApplyDateRange(startDate, endDate);
         } catch (Exception e) {
@@ -133,17 +135,7 @@ public class PrdReturnServiceImpl implements PrdReturnService {
         }
     }
 
-    // 查詢即將過期的退換貨申請
-    @Override
-    @Transactional(readOnly = true)
-    public List<PrdReturn> findExpiredReturns(LocalDateTime currentDate, Integer days) {
-        try {
-            return prdReturnDao.findExpiredReturns(currentDate, days);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return List.of(); // 查詢失敗返回空列表
-        }
-    }
+    
 
     // 單筆更新退換貨申請狀態
     @Override

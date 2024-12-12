@@ -11,6 +11,7 @@ import com.artogether.common.business_member.BusinessService;
 import com.artogether.product.prd_coup.NewPrdCoupService;
 import com.artogether.product.prd_coup.PrdCoup;
 import com.artogether.product.prd_coup.PrdCoupDto;
+import com.artogether.product.prd_coup.PrdCoupService;
 
 import java.util.List;
 
@@ -24,7 +25,8 @@ public class NewPrdCoupController {
     private NewPrdCoupService newPrdCoupService;
     @Autowired
     private BusinessService businessService;
-
+    @Autowired
+    private PrdCoupService prdCoupService;
     // ==============================
     // 優惠券列表頁面
     // ==============================
@@ -154,43 +156,61 @@ public class NewPrdCoupController {
     }
     
     
+    
     @GetMapping("/search")
-    public String showSearchCouponForm(    		
-    		@RequestParam(required = false) Integer testBusinessId, // 測試用參數    	          
+    public String findCouponsByCriteria(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Integer type,
             @RequestParam(required = false) Integer status,
             @RequestParam(required = false) Integer threshold,
-            HttpSession session,
             Model model) {
-        // 從 Session 或測試參數中獲取當前商家
-        BusinessMember presentBusinessMember = (BusinessMember) session.getAttribute("presentBusinessMember");
-        if (presentBusinessMember == null && testBusinessId != null) {
-            presentBusinessMember = businessService.findById(testBusinessId);
-            session.setAttribute("presentBusinessMember", presentBusinessMember);
-        }
-        if (presentBusinessMember == null) {
-            throw new IllegalStateException("未登入且未提供測試商家 ID");
-        }
-
-        // 傳遞當前商家到模板
-        model.addAttribute("presentBusinessMember", presentBusinessMember);
-
-        if (name == null && status == null && type == null && threshold == null) {
-            model.addAttribute("coupons", null);
-            return "coupons/search";
-        }
-        
-        List<PrdCoupDto> coupons = newPrdCoupService.findCouponsByCriteria(
-                presentBusinessMember.getId(), name, type, status, threshold);
-        
-        System.out.println("查詢結果數量: " + (coupons != null ? coupons.size() : 0));
-
-                                                                                                                                 
+        List<PrdCoup> coupons = prdCoupService.findCouponsByCriteria(name, type, status, threshold); // 調用 Service 查詢方法
         model.addAttribute("coupons", coupons);
+        return "coupons/search"; // 返回查詢結果的 Thymeleaf 模板
+    }
+    
+    
+    
+    
+//    @GetMapping("/search")
+//    public String showSearchCouponForm(    		
+////    		@RequestParam(required = false) Integer testBusinessId,   	          
+//            @RequestParam(required = false) String name,
+//            @RequestParam(required = false) Integer type,
+//            @RequestParam(required = false) Integer status,
+//            @RequestParam(required = false) Integer threshold,
+//            HttpSession session,
+//            Model model) {
+//        
+////        BusinessMember presentBusinessMember = (BusinessMember) session.getAttribute("presentBusinessMember");
+////        if (presentBusinessMember == null && testBusinessId != null) {
+////            presentBusinessMember = businessService.findById(testBusinessId);
+////            session.setAttribute("presentBusinessMember", presentBusinessMember);
+////        }
+////        if (presentBusinessMember == null) {
+////            throw new IllegalStateException("未登入且未提供測試商家 ID");
+////        }
+////
+////        // 傳遞當前商家到模板
+////        model.addAttribute("presentBusinessMember", presentBusinessMember);
+////
+////        if (name == null && status == null && type == null && threshold == null) {
+////            model.addAttribute("coupons", null);
+////            return "coupons/search";
+////        }
+////        
+//        List<PrdCoupDto> coupons = newPrdCoupService.findCouponsByCriteria(
+//                name, type, status, threshold);
+//        
+//        System.out.println("查詢結果數量: " + (coupons != null ? coupons.size() : 0));
+//
+//                                                                                                                                 
+//        model.addAttribute("coupons", coupons);
+//
+//        return "coupons/search";       
+//            }
 //        model.addAttribute("vendors", businessService.findAll());
-        return "coupons/search";
-    }//        PrdCoup searchCriteria = new PrdCoup(); // 創建一個空的對象供模板使用
+//        PrdCoup searchCriteria = new PrdCoup(); // 創建一個空的對象供模板使用
 //        model.addAttribute("searchCriteria", new PrdCoup());
 
 
@@ -210,6 +230,9 @@ public class NewPrdCoupController {
 //
 //        return "coupons/list";
 //    }
+    
+    
+
 
     
     

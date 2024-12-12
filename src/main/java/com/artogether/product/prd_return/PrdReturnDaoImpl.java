@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManagerFactory;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -112,7 +113,7 @@ public class PrdReturnDaoImpl implements PrdReturnDao {
 	}
 	
 	@Override
-	public List<PrdReturn> findByApplyDateRange(LocalDateTime startDate, LocalDateTime endDate) {
+	public List<PrdReturn> findByApplyDateRange(Timestamp startDate, Timestamp endDate) {
 	    Session session = sessionFactory.unwrap(Session.class);
 	    try {
 	        session.beginTransaction();
@@ -218,24 +219,7 @@ public class PrdReturnDaoImpl implements PrdReturnDao {
 	    return -1; // 發生錯誤返回 -1
 	}
 
-	@Override
-	public List<PrdReturn> findExpiredReturns(LocalDateTime currentDate, Integer days) {
-	    Session session = sessionFactory.unwrap(Session.class);
-	    try {
-	        session.beginTransaction();
-	        String hql = "FROM PrdReturn WHERE returnDate <= :expiryDate";
-	        LocalDateTime expiryDate = currentDate.plusDays(days);
-	        List<PrdReturn> list = session.createQuery(hql, PrdReturn.class)
-	                                      .setParameter("expiryDate", expiryDate)
-	                                      .list();
-	        session.getTransaction().commit();
-	        return list; // 返回即將過期的記錄
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        session.getTransaction().rollback();
-	    }
-	    return null; // 發生錯誤返回 null
-	}
+	
 
 
 
