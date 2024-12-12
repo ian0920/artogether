@@ -77,6 +77,19 @@ public class EventController {
         return "redirect:/event/orders";
     }
 
+    //瀏覽會員活動優惠券
+    @GetMapping("/coupons")
+    public String coupons(Model model, HttpSession session) {
+
+        Integer memberId = (Integer)session.getAttribute("member");
+        Map<String, List<MyEvtCoup>> map =  myEvtCoupService.findByMemberId(memberId);
+
+
+        model.addAttribute("coupons", map);
+
+        return "event/member_event_coupons";
+    }
+
 
 
     //瀏覽活動
@@ -94,9 +107,9 @@ public class EventController {
         Event e = eventService.findById(eventId);
 
 
-        //確認是否已報名過此活動 (已報名則報名按鈕disable)
+        //撈出報名中的訂單 (報名中則報名按鈕disable)
         Map<Event, EvtOrder> map = evtOrderService.getEventsToMyOrders(memberId);
-        Predicate<Event> filter = p -> Objects.equals(p.getId(), eventId);
+        Predicate<Event> filter = p -> (Objects.equals(p.getId(), eventId));
         boolean match = map.keySet().stream().anyMatch(filter);
 
         if(match){

@@ -11,4 +11,6 @@ import java.util.List;
 public interface MyEvtCoupRepo extends JpaRepository<MyEvtCoup, MyEvtCoup.Composite> {
     @Query("select mec from MyEvtCoup mec where mec.member.id = :memberId and mec.evtCoup.event.id = :eventId")
     List<MyEvtCoup> getMyEvtCoupsByMemberIdAndEventId(Integer memberId, Integer eventId);
+
+    List<MyEvtCoup> findAllByMember_Id(Integer memberId);
 }

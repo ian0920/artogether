@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" th:href="@{/web_design/style/style_business.css}" />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+            rel="stylesheet"
+    />
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        body {
+            display: flex;
+            margin: 0;
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+
+        .container {
+            margin: 20px;
+        }
+
+        .accordion {
+            width: 100%;
+        }
+
+        .accordion .accordion-item {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .accordion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px 15px;
+            background-color: #2c95c6;
+            color: #fff;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .accordion-body {
+            display: none;
+            font-size: 0.95rem;
+            color: #333;
+            padding: 15px;
+            grid-template-columns: 3fr 3fr;
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .accordion-body.visible {
+            display: grid;
+        }
+
+
+        .table-title{
+            margin-bottom: 20px;
+        }
+
+    </style>
+
+<body>
+<div class="bs-navbar" th:include="member_page::member_navbar"></div>
+
+<main>
+    <div class="container">
+        <h2 class="table-title">活動優惠券</h2>
+        <div th:if="${coupons.size() != 0}" class="accordion">
+            <div th:each="entry : ${coupons}" class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <span th:text="${entry.key}">
+                        Art Exhibition (2024-12-01)
+                    </span>
+                </div>
+                <div class="accordion-body">
+                    <div th:each="coupon:${entry.getValue()}"  clickable class="showcases-card card event" style="margin:10px 20px;">
+                        <div class="card-content">
+                            <div class="card-title">
+                                <div class="tag event" th:text="${coupon.status == 0 ? '未使用' : '已使用'}"
+                                     th:style="${coupon.status == 1 ? 'background: #1AA355FF;' :''}"></div>
+                                <h3 class="card-title-text" th:text="${coupon.evtCoup.evtCoupName}">
+                                </h3>
+                            </div>
+                            <div class="info" style="flex-wrap: nowrap; flex-direction: column; margin-top: 5px;">
+                                <span th:text="'收到日期： ' + ${#dates.format(coupon.receiveDate, 'yyyy-MM-dd')}"></span>
+                                <span style="margin-left: 20px" th:if="${coupon.useDate != null}" th:text="'使用日期：' + ${#dates.format(coupon.useDate, 'yyyy-MM-dd')}"></span>
+                                <div class="progress">
+                                    <div
+                                            th:class="${coupon.status == 0 ? 'progress-bar bgcolor-event' : 'progress-bar bgcolor-venue'}"
+                                            role="progressbar"
+                                    ></div>
+                                </div>
+                            </div>
+                            <div class="tags-box" style="flex-wrap: nowrap; flex-direction: column;">
+                                <div style="width: 150px;" th:text="'折扣類型： ' + ${coupon.evtCoup.type == 0 ? '比例' : '金額'}"></div>
+                                <div style="width: 150px;" th:text="'折扣： ' + ${coupon.evtCoup.type == 0 ? (coupon.evtCoup.ratio*100 + '% off') : (coupon.evtCoup.deduction + '元')}"></div>
+                                <div th:text="'使用門檻： ' + ${coupon.evtCoup.threshold == null ? '無使用門檻' : (coupon.evtCoup.threshold + '元')}"></div>
+                                <div th:if="${coupon.evtCoup.endDate == null}" th:text="'無使用期限'"></div>
+                                <div th:text="'使用期限： ' + ${#dates.format(coupon.evtCoup.startDate, 'yyyy-MM-dd') + ' 至 ' + (#dates.format(coupon.evtCoup.endDate, 'yyyy-MM-dd'))}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:unless="${coupons.size() != 0}" style="font-size: larger; color: red;">尚未擁有活動優惠券</div>
+</main>
+
+<script>
+    // 設定最下方的user control菜單收合
+    var el_nav_user_field = document.querySelector(".bs-navbar-user-field");
+    el_nav_user_field.addEventListener("click", function (e) {
+        e.stopPropagation();
+        let el_nav_user_menu = document.querySelector(".bs-navbar-user-menu");
+        el_nav_user_menu.classList.toggle("-hidden");
+        let el_field_icon = document.querySelector(
+            ".bs-navbar-user-field #icon_unfold"
+        );
+        if (el_field_icon.classList.contains("unfold")) {
+            el_field_icon.classList.remove("unfold");
+            el_field_icon.innerHTML = "unfold_less";
+        } else {
+            el_field_icon.classList.add("unfold");
+            el_field_icon.innerHTML = "unfold_more";
+        }
+    });
+
+    // 設定user-item的選取範圍
+    var els_nav_user_item = document.querySelectorAll(
+        "div.bs-navbar-user-menu .bs-navbar-user-item"
+    );
+    for (let i = 0; i < els_nav_user_item.length; i++) {
+        els_nav_user_item[i].addEventListener("click", function (e) {
+            console.log("hi");
+            // TODO: 這裡要補上跳轉連結
+            this.lastElementChild.click();
+            el_nav_user_field.click();
+        });
+    }
+
+    // 設定nav-item的選取效果
+    var els_nav_item = document.querySelectorAll(".bs-navbar-item");
+    var els_nav_header = document.querySelectorAll(".bs-navbar-header");
+    var els_nav_submenu = document.querySelectorAll(".bs-navbar-submenu");
+    var els_nav_subitem = document.querySelectorAll(".bs-navbar-subitem");
+    for (let i = 0; i < els_nav_item.length; i++) {
+        els_nav_item[i].addEventListener("click", function () {
+            els_nav_header.forEach((e) => e.classList.remove("-open"));
+            els_nav_submenu.forEach((e) => e.classList.remove("-open"));
+            this.firstElementChild.classList.add("-open");
+            this.lastElementChild.classList.add("-open");
+            // 觸發a tag點擊事件
+            this.lastElementChild.click();
+        });
+    }
+    // 設定nav-subitem的選取效果
+    for (let i = 0; i < els_nav_subitem.length; i++) {
+        els_nav_subitem[i].addEventListener("click", function () {
+            els_nav_subitem.forEach((e) => e.classList.remove("-focus"));
+            this.classList.add("-focus");
+        });
+    }
+</script>
+<!-- SweetAlert2 Library -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+
+    function toggleAccordion(header) {
+
+        const accordion = header.closest('.accordion');
+        const allBodies = accordion.querySelectorAll('.accordion-body');
+        const body = header.nextElementSibling;
+
+        // Close all accordion bodies except the clicked one
+        allBodies.forEach(item => {
+        if (item !== body) {
+        item.classList.remove('visible');
+        }
+        });
+
+            // Toggle the visibility of the clicked accordion body
+            body.classList.toggle('visible');
+    }
+</script>
+
+</body>
+</html>

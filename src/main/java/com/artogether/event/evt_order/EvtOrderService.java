@@ -1,8 +1,12 @@
 package com.artogether.event.evt_order;
 
 import com.artogether.common.member.MemberService;
+import com.artogether.event.dto.EvtOrderDTO;
 import com.artogether.event.event.Event;
 import com.artogether.event.event.EventService;
+import com.artogether.event.evt_coup.EvtCoup;
+import com.artogether.event.evt_coup.EvtCoupRepo;
+import com.artogether.event.evt_coup.EvtCoupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -10,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +31,13 @@ public class EvtOrderService {
 
     @Autowired
     private EventService eventService;
+
+    @Autowired
+    private EvtOrderDAO evtOrderDAO;
+    @Autowired
+    private EvtCoupService evtCoupService;
+    @Autowired
+    private EvtCoupRepo evtCoupRepo;
 
     //null handling not be done
     public EvtOrder findById(int id) {
@@ -63,7 +75,9 @@ public class EvtOrderService {
     public Map<Event, EvtOrder> getEventsToMyOrders(Integer memberId) {
         Map<Event, EvtOrder> eventsToMyOrders = new HashMap();
         List<EvtOrder> myOrders = repo.findByMemberId(memberId);
-        myOrders.forEach((o) -> {
+
+        //過濾掉已經取消報名的訂單，回傳只有報名中的訂單
+        myOrders.stream().filter(e -> e.getStatus() != 1 ).forEach((o) -> {
             eventsToMyOrders.put(o.getEvent(), o);
         });
         return eventsToMyOrders;
@@ -152,4 +166,29 @@ public class EvtOrderService {
     }
 
 
+    public Page<EvtOrderDTO> findEvtOrders(Integer businessId, Integer eventId, Timestamp formattedStartDate,
+                                        Timestamp formattedEndDate, Integer status, int page, int size) {
+
+        List<EvtOrder> result = evtOrderDAO.getEvtOrderByCriteria(businessId, eventId, formattedStartDate,formattedEndDate, status, page, size);
+
+        //從會員id找出所有活動的優惠券，並將優惠券的id跟名字放入map
+        Map<Integer, String> evtCoupIdNameMap = new HashMap();
+        List<EvtCoup> evtCoupList = evtCoupRepo.findEvtCoupsByEvent_BusinessMember_Id(businessId);
+        evtCoupList.forEach(e -> evtCoupIdNameMap.put(e.getId(),e.getEvtCoupName()));
+
+        //將EvtOrder轉成DTO傳出去 1.透過DTOTransformer轉成DTO，再透過Map去對應EvtCoupId跟EvtCoupName並將EvtCoupName設進DTO
+        List<EvtOrderDTO> DTOresult = result.stream().map(EvtOrderDTO::EvtOrderDTOTransformer)
+                .map(e ->{
+                    if(evtCoupIdNameMap.containsKey(e.getEvtCoupId()))
+                        e.setEvtCoupName(evtCoupIdNameMap.get(e.getEvtCoupId()));
+                    return e;
+                }).toList();
+
+        long totalCount = evtOrderDAO.countEvtOrderByCriteria(businessId, eventId, formattedStartDate, formattedEndDate, status);
+
+
+        Pageable pageable = PageRequest.of(page,size);
+
+        return new PageImpl<>(DTOresult, pageable, totalCount);
+    }
 }
