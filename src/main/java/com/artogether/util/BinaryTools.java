@@ -62,7 +62,7 @@ public class BinaryTools {
             stringBuilder.append(bitSet.get(i) ? '1' : '0');
         }
         //.reverse() 是 Java 中 StringBuilder 類別的一個方法，用於反轉 StringBuilder 中的字元順序。
-        return stringBuilder.reverse().toString(); // 從左到右還原
+        return stringBuilder.toString(); // 從左到右還原
     }
 
     //List轉String
@@ -121,7 +121,8 @@ public class BinaryTools {
     }
     //String.last
     public static Integer last(String binaryString) {
-        return toList(binaryString).get(binaryString.length() - 1);
+        List<Integer> list = toList(binaryString);
+        return list.get(list.size() - 1);
     }
 }
 

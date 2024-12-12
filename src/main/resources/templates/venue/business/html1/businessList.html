@@ -25,7 +25,7 @@
     <section class="sec-showcase showcase-venue ">
         <template x-for="vne in vneList" :key="vne.vneId">
             <div class="showcase-cards-box">
-                <div @click="location.href = '/venue/details/' + vne.vneId" clickable class="showcase-card card venue">
+                <div @click="location.href = '/vneBiz/details/' + vne.vneId" clickable class="showcase-card card venue">
                     <img :src="vne.vneImgUrl" alt="" />
                     <div class="card-content">
                         <div class="card-title">
@@ -49,5 +49,5 @@
             </div>
         </template>
     </section>
-    <a href="/venue/addVenue">新增場地</a>
+    <a href="/vneBiz/addVenue">新增場地</a>
 </main>

@@ -8,6 +8,7 @@ import com.artogether.venue.vneorder.VneOrder;
 import com.artogether.venue.vneorder.VneOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
@@ -37,7 +38,23 @@ public class TslotService {
         tslotViewService.createTslotScheduleView();
     }
 
-    //找不到是給初始設定用的
+    public TslotDTO nearestTslot(Integer vneId, LocalDateTime now) {
+        List<Integer> weeklyInteger = getWeeklyTslots(vneId, now);
+        TslotDTO tslotDTO = TslotDTO.builder()
+                .vneId(vneId)
+                .vneName(venueRepository.findById(vneId).get().getName())
+                .hourOfMon(BinaryTools.toList(weeklyInteger.get(0), 24))
+                .hourOfTue(BinaryTools.toList(weeklyInteger.get(1), 24))
+                .hourOfWed(BinaryTools.toList(weeklyInteger.get(2), 24))
+                .hourOfThu(BinaryTools.toList(weeklyInteger.get(3), 24))
+                .hourOfFri(BinaryTools.toList(weeklyInteger.get(4), 24))
+                .hourOfSat(BinaryTools.toList(weeklyInteger.get(5), 24))
+                .hourOfSun(BinaryTools.toList(weeklyInteger.get(6), 24))
+                .build();
+        return tslotDTO;
+    }
+
+        //找不到是給初始設定用的
     public List<Integer> getWeeklyTslots(Integer vneId, LocalDateTime submissionTime) {
         Optional<Tslot> tslotOptional = tslotRepository.getNearestPastRecord(vneId, submissionTime);
         if (tslotOptional.isEmpty()) {
@@ -52,8 +69,8 @@ public class TslotService {
             List<Integer> weeklyTslots = new ArrayList<>();
             // 遍歷一周的每一天
             for(int i = 1; i <= 7; i++){
-                Integer daylyTslots = getDaylyTslotsByDay(tslot, DayOfWeek.of(i));
-                weeklyTslots.add(daylyTslots);
+                Integer dailyTslots = getDailyTslotsByDay(tslot, DayOfWeek.of(i));
+                weeklyTslots.add(dailyTslots);
             }
             return weeklyTslots;
         }
@@ -73,7 +90,7 @@ public class TslotService {
     }
 
     //單日有營業的數字
-    private Integer getDaylyTslotsByDay(Tslot tslot, DayOfWeek day) {
+    private Integer getDailyTslotsByDay(Tslot tslot, DayOfWeek day) {
         String hourOfDay;
         //這邊不用".name()"是因為"switch"支持枚舉類
         switch (day) {
@@ -86,8 +103,8 @@ public class TslotService {
             case SUNDAY -> hourOfDay = tslot.getHourOfSun();
             default -> throw new IllegalArgumentException("無效數字");
         }
-        Integer daylyTslot = BinaryTools.toBinaryInteger(hourOfDay);
-        return daylyTslot;
+        Integer dailyTslot = BinaryTools.toBinaryInteger(hourOfDay);
+        return dailyTslot;
     }
 
     // 創建或更新時段
@@ -103,14 +120,18 @@ public class TslotService {
     //不論有沒有找到都新建一個
         Tslot tslot = Tslot.builder()
                 .venue(Venue.id(vneId)) // Venue 有靜態方法"id()"(嘗試看看)
-                .hourOfMon(BinaryTools.toBinaryString(tslotDTO.getHourOfMon(),24))
-                .hourOfTue(BinaryTools.toBinaryString(tslotDTO.getHourOfTue(),24))
-                .hourOfWed(BinaryTools.toBinaryString(tslotDTO.getHourOfWed(),24))
-                .hourOfThu(BinaryTools.toBinaryString(tslotDTO.getHourOfThu(),24))
-                .hourOfFri(BinaryTools.toBinaryString(tslotDTO.getHourOfFri(),24))
-                .hourOfSat(BinaryTools.toBinaryString(tslotDTO.getHourOfSat(),24))
-                .hourOfSun(BinaryTools.toBinaryString(tslotDTO.getHourOfSun(),24))
+                .hourOfMon(BinaryTools.toBinaryString(BinaryTools.toBitSet(tslotDTO.getHourOfMon()),24))
+                .hourOfTue(BinaryTools.toBinaryString(BinaryTools.toBitSet(tslotDTO.getHourOfTue()),24))
+                .hourOfWed(BinaryTools.toBinaryString(BinaryTools.toBitSet(tslotDTO.getHourOfWed()),24))
+                .hourOfThu(BinaryTools.toBinaryString(BinaryTools.toBitSet(tslotDTO.getHourOfThu()),24))
+                .hourOfFri(BinaryTools.toBinaryString(BinaryTools.toBitSet(tslotDTO.getHourOfFri()),24))
+                .hourOfSat(BinaryTools.toBinaryString(BinaryTools.toBitSet(tslotDTO.getHourOfSat()),24))
+                .hourOfSun(BinaryTools.toBinaryString(BinaryTools.toBitSet(tslotDTO.getHourOfSun()),24))
+                .effectiveTime(submissionTime)
                 .build();
+        tslotRepository.save(tslot);
+        System.out.println("updateTslot");
+        System.out.println(tslot);
     }
 
     //有個Multimap(Guava Library)可能可以用

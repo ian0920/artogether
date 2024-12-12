@@ -1,10 +1,7 @@
 package com.artogether.venue.vneprice;
 
 import com.artogether.venue.venue.Venue;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
@@ -14,6 +11,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
+@EqualsAndHashCode(exclude="venue")
+@ToString(exclude="venue")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -32,6 +31,7 @@ public class VnePrice implements Serializable {
     // 預設價格
     @NotNull
     @Min(0)
+    @Column(name = "default_price")
     private Integer defaultPrice;
 
     // 開始時間與結束時間
@@ -41,6 +41,7 @@ public class VnePrice implements Serializable {
 //    private LocalDateTime endTime;
 
     // 星期設定 (例如：'0111110' 表示哪些日子適用此價格)
+    @Column(name = "day_of_week")
     private String dayOfWeek;
 
     // 特定時段的價格

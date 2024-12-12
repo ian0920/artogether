@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" th:href="@{/web_design/style/style_business.css}" />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+            rel="stylesheet"
+    />
+    <style>
+        main {
+            font-family: Arial, sans-serif;
+            max-width: 85%;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        /* 主分頁導航 */
+        .tabs {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .tabs > a {
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        /* 子分頁 */
+        .sub-tabs {
+            display: flex;
+            gap: 15px;
+            margin-left: 20px; /* 子分頁縮進 */
+        }
+        .sub-tabs a {
+            padding: 8px 12px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        /* 當前頁面的樣式 */
+        .active-tab {
+            background-color: #007bff; /* 藍色背景 */
+            color: white;
+            pointer-events: none; /* 禁用連結行為 */
+            cursor: default;
+        }
+        /* 非當前頁面的樣式 */
+        .inactive-tab {
+            background-color: #f0f0f0; /* 淺灰背景 */
+            color: #333;
+            border: 1px solid #ccc;
+        }
+        .inactive-tab:hover {
+            background-color: #007bff;
+            color: white;
+        }
+        .calendar {
+            display: grid;
+            grid-template-columns: 50px repeat(7, 1fr);
+            border: 1px solid #cccccc;
+            background-color: #ffffff;
+        }
+        .calendar div {
+            border: 1px solid #e0e0e0;
+            text-align: center;
+        }
+        .time {
+            background-color: #f0f4fa;
+            text-align: right;
+            padding-right: 10px;
+            grid-column: 1;
+            color: #2b3a4a;
+            font-weight: bold;
+        }
+        .day-header {
+            font-weight: bold;
+            background-color: #dbe7f3;
+            color: #2b3a4a;
+        }
+        .cell {
+            height: 35px;
+            background-color: #ffffff;
+        }
+        .cell.selected {
+            background-color: #b6e3bc;
+            border-color: #88c88e;
+        }
+        .cell.special {
+            background-color: #6bbf70; /* 更深的綠色，表示特殊價格 */
+            border-color: #4e9b57; /* 調整邊框顏色以配合深色背景 */
+        }
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px; /* 控制每個項目的間距 */
+            margin-top: 10px;
+            align-items: center; /* 垂直方向對齊 */
+        }
+        .checkbox-group input[type="checkbox"] {
+            display: none; /* 隱藏原生的 checkbox */
+        }
+        .checkbox-group label {
+            display: inline-block;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f1f1f1;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .checkbox-group input[type="checkbox"]:checked + label {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        .checkbox-group input[type="checkbox"]:focus + label {
+            outline: 2px solid #007bff;
+        }
+        .control[data-hour="0"],
+        .control[data-hour="1"],
+        .control[data-hour="2"],
+        .control[data-hour="3"],
+        .control[data-hour="4"],
+        .control[data-hour="5"],
+        .control[data-hour="6"],
+        .control[data-hour="7"],
+        .control[data-hour="8"],
+        .cell[data-hour="0"],
+        .cell[data-hour="1"],
+        .cell[data-hour="2"],
+        .cell[data-hour="3"],
+        .cell[data-hour="4"],
+        .cell[data-hour="5"],
+        .cell[data-hour="6"],
+        .cell[data-hour="7"],
+        .cell[data-hour="8"] {
+            height: 20px; /* 縮減的行高 */
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .form-container label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+            color: #555;
+        }
+        .form-container input[type="number"],
+        .form-container select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .form-container input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        .form-container .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .form-container .checkbox-group label {
+            background: #f1f1f1;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .form-container .checkbox-group input:checked + label {
+            background: #007bff;
+            color: white;
+        }
+        .form-container button {
+            width: 100%;
+            padding: 10px;
+            background: #007bff;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .form-container button:hover {
+            background: #0056b3;
+        }
+        .form-container .error {
+            color: red;
+            font-size: 14px;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+        .layout-container {
+            display: flex;
+            gap: 20px; /* 設置價錢設定表和行事曆之間的間距 */
+            align-items: flex-start; /* 保持兩部分頂部對齊 */
+        }
+        .price-form {
+            flex: 1; /* 設置價錢設定表占用的比例 */
+            max-width: 400px; /* 限制價錢設定表的最大寬度 */
+        }
+        .calendar-container {
+            flex: 2; /* 設置行事曆視圖占用的比例 */
+        }
+    </style>
+</head>
+<body>
+<!-- 導航 -->
+<div class="bs-navbar">
+    <div class="bs-navbar-main">
+        <div class="bs-navbar-logo">
+            <img src="../asset/images/ARTOGETHER.svg" alt="" />
+            <div id="div_back_to_homepage" class="link-button">
+                <a th:href="@{/business_logout}">返回首頁</a
+                ><span class="material-symbols-outlined">exit_to_app</span>
+            </div>
+        </div>
+        <hr />
+        <nav>
+            <ul>
+                <li clickable class="bs-navbar-item -open">
+                    <div clickable class="bs-navbar-header">
+                    <span class="material-symbols-outlined">storefront</span
+                    ><a href="#">商家基本資訊</a>
+                    </div>
+                </li>
+                <li clickable class="bs-navbar-item">
+                    <div clickable class="bs-navbar-header">
+                    <span class="material-symbols-outlined">inbox</span
+                    ><a href="#">收件匣</a>
+                    </div>
+                </li>
+                <li clickable class="bs-navbar-item">
+                    <div clickable class="bs-navbar-header">
+                    <span class="material-symbols-outlined"
+                    >admin_panel_settings</span
+                    ><a href="#">管理員權限設定</a>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+        <hr />
+        <nav>
+            <ul>
+                <li clickable class="bs-navbar-item">
+                    <div clickable class="bs-navbar-header">
+                        <span class="material-symbols-outlined">sell</span>商品管理
+                    </div>
+                    <ul class="bs-navbar-submenu">
+                        <li clickable class="bs-navbar-subitem">
+                            <a href="#">訂單管理</a>
+                        </li>
+                        <li clickable class="bs-navbar-subitem">
+                            <a href="#">優惠券管理</a>
+                        </li>
+                        <li clickable class="bs-navbar-subitem">
+                            <a href="#">商品管理</a>
+                        </li>
+                    </ul>
+                </li>
+                <li clickable class="bs-navbar-item">
+                    <div clickable class="bs-navbar-header">
+                        <span class="material-symbols-outlined">roofing</span>場地管理
+                    </div>
+                    <ul class="bs-navbar-submenu">
+                        <li clickable class="bs-navbar-subitem">
+                            <a href="/vneBiz/Orders">訂單管理</a>
+                        </li>
+                        <li clickable class="bs-navbar-subitem">
+                            <a href="#">優惠券管理</a>
+                        </li>
+                        <li clickable class="bs-navbar-subitem">
+                            <a href="/vneBiz/vneList">場地管理</a>
+                        </li>
+                    </ul>
+                </li>
+                <li clickable class="bs-navbar-item">
+                    <div clickable class="bs-navbar-header">
+                    <span class="material-symbols-outlined">local_activity</span
+                    >活動管理
+                    </div>
+                    <ul class="bs-navbar-submenu">
+                        <li clickable class="bs-navbar-subitem">
+                            <a href="#">訂單管理</a>
+                        </li>
+                        <li clickable class="bs-navbar-subitem">
+                            <a href="#">優惠券管理</a>
+                        </li>
+                        <li clickable class="bs-navbar-subitem">
+                            <a href="#">活動管理</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <div class="bs-navbar-user-control">
+        <div class="bs-navbar-user-menu -hidden" th:if="${#session.getAttribute('businessMembers').size()>1}">
+            <div clickable class="bs-navbar-user-item" th:each="businessMember: ${#session.getAttribute('businessMembers')}">
+                <div class="bs-navbar-user-thumbnail">
+                    <img src="../asset/images/bgimg.png" alt="" />
+                </div>
+                <div>
+                    <a class="bs-navbar-user-name"
+                       th:href="@{/businessMemberSwitch(index=${#session.getAttribute('businessMembers').indexOf(businessMember)})}"
+                       th:text="${businessMember.name}">商家名稱</a>
+                </div>
+                <hr />
+            </div>
+        </div>
+
+        <div clickable class="bs-navbar-user-field">
+            <div class="bs-navbar-user-item">
+                <div class="bs-navbar-user-thumbnail">
+                    <img src="../asset/images/bgimg.png" alt="" />
+                </div>
+                <p class="bs-navbar-user-name" th:text="${#session.getAttribute('presentBusinessMember').name}">商家名稱</p>
+                <span class="material-symbols-outlined unfold" id="icon_unfold"
+                >unfold_more</span
+                >
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- main區塊 -->
+<main x-data="calendarData()" x-init="initialize()">
+    <!--分頁-->
+    <div x-data="tabsController()" x-init="initialize()" class="tabs">
+        <!-- 主分頁：場地管理 -->
+        <a
+                :href="currentPage !== 'venue' ? `/vneBiz/manageVenue/${Detail.vneId}` : '#'"
+                :class="currentPage === 'venue' ? 'active-tab' : 'inactive-tab'"
+                x-text="`${Detail.name}場地管理`">
+        </a>
+
+        <!-- 主分頁：營業時間管理 -->
+        <a
+                :href="currentPage !== 'timeslot' ? `/vneBiz/manageTslot/${Detail.vneId}` : '#'"
+                :class="currentPage === 'timeslot' ? 'active-tab' : 'inactive-tab'"
+                x-text="`${Detail.name}營業時間管理`">
+        </a>
+
+        <!-- 子分頁（僅在 timeslot 分頁下顯示） -->
+        <div x-show="currentPage === 'timeslot'" class="sub-tabs">
+            <!-- 子分頁：營業時間管理 -->
+            <a
+                    :href="currentSubPage !== 'timeslotMain' ? `/vneBiz/manageTslot/${Detail.vneId}` : '#'"
+                    :class="currentSubPage === 'timeslotMain' ? 'active-tab' : 'inactive-tab'"
+                    x-text="`${Detail.name}營業時間管理`">
+            </a>
+
+            <!-- 子分頁：價錢管理 -->
+            <a
+                    :href="currentSubPage !== 'pricing' ? `/vneBiz/managePrice/${Detail.vneId}` : '#'"
+                    :class="currentSubPage === 'pricing' ? 'active-tab' : 'inactive-tab'"
+                    x-text="`${Detail.name}價錢管理`">
+            </a>
+        </div>
+    </div>
+    <div class="layout-container">
+        <!--價錢設定表-->
+        <div x-data="formHandler()" x-init="loadData()" class="form-container price-form">
+            <h2>價錢設定表</h2>
+            <form @submit.prevent="submitForm">
+                <!-- Default Price -->
+                <div>
+                    <label for="defaultPrice">Default Price:</label>
+                    <input type="number" id="defaultPrice" x-model.number="formData.defaultPrice" @input="validatePrices">
+                    <span x-show="errors.defaultPrice" style="color: red;">Default price must be greater than 0.</span>
+                </div>
+
+                <!-- 是否需要針對特定時段設立價位 -->
+                <div>
+                    <label>
+                        <input type="checkbox" x-model="enableTimeSpecificPricing" @change="resetTimeSpecificFields"> 是否需要針對特定時段設立價位
+                    </label>
+                </div>
+
+                <!-- 時段相關表單 -->
+                <div x-show="enableTimeSpecificPricing">
+                    <div>
+                        <label for="price">Price:</label>
+                        <input type="number" id="price" x-model.number="formData.price" @input="validatePrices">
+                        <span x-show="errors.price" style="color: red;">Price must be greater than 0.</span>
+                    </div>
+                    <div>
+                        <label for="startTime">Start Time:</label>
+                        <select id="startTime" x-model.number="formData.startTime" @change="validateTimes">
+                            <option value="" disabled>Select start time</option>
+                            <template x-for="time in timeOptions" :key="time">
+                                <option :value="time" x-text="time + ':00'"></option>
+                            </template>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="endTime">End Time:</label>
+                        <select id="endTime" x-model.number="formData.endTime" @change="validateTimes">
+                            <option value="" disabled>Select end time</option>
+                            <template x-for="time in timeOptions" :key="time">
+                                <option :value="time" x-text="time + ':00'"></option>
+                            </template>
+                        </select>
+                        <span x-show="errors.time" style="color: red;">End time must be greater than start time.</span>
+                    </div>
+                    <div>
+                        <label>Day of Week:</label>
+                        <div class="checkbox-group">
+                            <div>
+                                <input type="checkbox" id="selectAll" :checked="selectAll" @change="toggleAll()">
+                                <label for="selectAll">全選</label>
+                            </div>
+                            <template x-for="(day, index) in ['週一', '週二', '週三', '週四', '週五', '週六', '週日']" :key="index">
+                                <div>
+                                    <input
+                                            type="checkbox"
+                                            :id="`day-${index}`"
+                                            :value="index"
+                                            x-model="formData.dayOfWeek"
+                                            @change="syncSelectAll()"
+                                    >
+                                    <label :for="`day-${index}`" x-text="day"></label>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+        <!--行事曆視圖-->
+        <div  class="calendar-container">
+
+        <div class="calendar" id="calendar">
+            <!-- 橫向控制按鈕 -->
+            <div class="control">Time</div>
+            <div class="day-header">Mon</div>
+            <div class="day-header">Tue</div>
+            <div class="day-header">Wed</div>
+            <div class="day-header">Thu</div>
+            <div class="day-header">Fri</div>
+            <div class="day-header">Sat</div>
+            <div class="day-header">Sun</div>
+
+            <script>
+                for (let hour = 0; hour < 24; hour++) {
+                    document.write(`<div class="control" data-hour="${hour}">${hour}:00</div>`);
+                    for (let day = 1; day <= 7; day++) {
+                        document.write(`<div class="cell" data-day="${day}" data-hour="${hour}"></div>`);
+                    }
+                }
+            </script>
+        </div>
+    </div>
+    </div>
+    <!--行事曆視圖JS-->
+    <script>
+        function calendarData() {
+            return {
+                days: {},
+
+                initialize() {
+                    this.loadPreviousSelection();
+                },
+
+                loadPreviousSelection() {
+                    const vneId = window.location.pathname.split('/').pop();
+                    $.ajax({
+                        url: `/vne/tslot/${vneId}`,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: (data) => {
+                            this.days = data || {};
+                            this.updateCells();
+                        },
+                        error: (jqXHR, textStatus, errorThrown) => {
+                            console.error('Error loading data:', textStatus, errorThrown);
+                        }
+                    });
+                },
+
+                updateCells() {
+                    document.querySelectorAll('.cell').forEach(cell => {
+                        const day = parseInt(cell.dataset.day);
+                        const hour = parseInt(cell.dataset.hour);
+                        const dayKeys = ['hourOfMon', 'hourOfTue', 'hourOfWed', 'hourOfThu', 'hourOfFri', 'hourOfSat', 'hourOfSun'];
+
+                        if (this.days[dayKeys[day - 1]]?.includes(hour)) {
+                            cell.classList.add('selected');
+                        } else {
+                            cell.classList.remove('selected');
+                        }
+                    });
+                }
+            };
+        }
+
+    </script>
+    <!--價錢設定表JS-->
+    <script>
+        function formHandler() {
+            return {
+                originalData: null, // 用於保存初始數據
+                formData: {
+                    defaultPrice: null,
+                    price: null,
+                    startTime: null,
+                    endTime: null,
+                    dayOfWeek: []
+                },
+                enableTimeSpecificPricing: false,
+                timeOptions: Array.from({ length: 24 }, (_, i) => i),
+                selectAll: false,
+                errors: {
+                    defaultPrice: false,
+                    price: false,
+                    time: false
+                },
+                submitInProgress: false, // 防止多次點擊
+
+                loadData() {
+                    const vneId = window.location.pathname.split('/').pop();
+                    $.ajax({
+                        url: `/vne/price/${vneId}`,
+                        method: 'GET',
+                        success: (data) => {
+                            this.formData = {
+                                defaultPrice: data.defaultPrice || null,
+                                price: data.price || null,
+                                startTime: data.startTime || null,
+                                endTime: data.endTime || null,
+                                dayOfWeek: data.dayOfWeek || []
+                            };
+                            this.originalData = JSON.parse(JSON.stringify(this.formData)); // 保存初始數據
+                            this.enableTimeSpecificPricing = !!this.formData.price;
+                            this.syncSelectAll();
+                            this.applySpecialTags(); // 更新標籤
+                        },
+                        error: (xhr, status, error) => {
+                            alert('Error loading data: ' + error);
+                        }
+                    });
+                },
+
+                hasChanges() {
+                    // 比較當前資料與初始資料
+                    return JSON.stringify(this.formData) !== JSON.stringify(this.originalData);
+                },
+
+                submitForm() {
+                    if (this.submitInProgress) return; // 防止多次提交
+
+                    // 驗證表單
+                    this.validateForm();
+                    if (Object.values(this.errors).some(error => error)) {
+                        alert('Please fix the errors before submitting.');
+                        return;
+                    }
+
+                    // 檢查是否有變動
+                    if (!this.hasChanges()) {
+                        alert('No changes detected.');
+                        return;
+                    }
+
+                    // 禁用按鈕並提交資料
+                    this.submitInProgress = true;
+                    const submitButton = document.querySelector('button[type="submit"]');
+                    submitButton.disabled = true;
+                    submitButton.innerText = "Submitting...";
+
+                    const vneId = window.location.pathname.split('/').pop();
+                    $.ajax({
+                        url: `/vneBiz/updatePrice/${vneId}`,
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(this.formData),
+                        success: (result) => {
+                            alert('Data submitted successfully: ' + JSON.stringify(result));
+                            this.originalData = JSON.parse(JSON.stringify(this.formData)); // 更新初始數據
+                        },
+                        error: (xhr, status, error) => {
+                            alert('Error submitting data: ' + error);
+                        },
+                        complete: () => {
+                            this.submitInProgress = false;
+                            submitButton.disabled = false;
+                            submitButton.innerText = "Submit";
+                        }
+                    });
+                },
+                loadData() {
+                    // 使用 jQuery 獲取資料並自動綁定
+                    const vneId = window.location.pathname.split('/').pop();
+                    $.ajax({
+                        url: `/vne/price/${vneId}`,
+                        method: 'GET',
+                        success: (data) => {
+                            this.formData.defaultPrice = data.defaultPrice || null;
+                            this.formData.price = data.price || null;
+                            this.formData.startTime = data.startTime || null;
+                            this.formData.endTime = data.endTime || null;
+                            this.formData.dayOfWeek = data.dayOfWeek || [];
+                            this.enableTimeSpecificPricing = !!this.formData.price; // 根據 price 是否為 null 設定複選框狀態
+                            this.syncSelectAll(); // 同步全選狀態
+                        },
+                        error: (xhr, status, error) => {
+                            alert('Error loading data: ' + error);
+                        }
+                    });
+                },
+                resetTimeSpecificFields() {
+                    // 清空時段相關欄位
+                    this.formData.price = null;
+                    this.formData.startTime = null;
+                    this.formData.endTime = null;
+                    this.formData.dayOfWeek = [];
+                    this.applySpecialTags();
+                },
+                validateForm() {
+                    // 驗證 Default Price
+                    this.errors.defaultPrice = !(this.formData.defaultPrice > 0);
+
+                    // 驗證 Price，僅在啟用特定時段價位時進行
+                    this.errors.price = this.enableTimeSpecificPricing && !(this.formData.price > 0);
+
+                    // 驗證時間，僅在啟用特定時段價位時進行
+                    this.errors.time = this.enableTimeSpecificPricing &&
+                        !(this.formData.startTime !== null &&
+                            this.formData.endTime !== null &&
+                            this.formData.endTime > this.formData.startTime);
+                    this.applySpecialTags();
+                },
+                toggleAll() {
+                    if (this.selectAll) {
+                        this.formData.dayOfWeek = [];
+                        this.selectAll = false;
+                    } else {
+                        this.formData.dayOfWeek = ['0', '1', '2', '3', '4', '5', '6'];
+                        this.selectAll = true;
+                    }
+                    this.applySpecialTags(); // 更新標籤
+                },
+                syncSelectAll() {
+                    this.selectAll = this.formData.dayOfWeek.length === 7;
+                    this.applySpecialTags();
+                },
+                applySpecialTags() {
+                    // 清空現有的 special 標籤
+                    document.querySelectorAll('.cell.special').forEach(cell => {
+                        cell.classList.remove('special');
+                    });
+                    console.log('Day of Week:', this.formData.dayOfWeek);
+                    console.log('Start Time:', this.formData.startTime);
+                    console.log('End Time:', this.formData.endTime);
+                    // 根據當前的表單數據，為選取的時間段添加 special 標籤
+                    if (this.enableTimeSpecificPricing && this.formData.startTime !== null && this.formData.endTime !== null) {
+                        this.formData.dayOfWeek.forEach(day => {
+                            for (let hour = this.formData.startTime; hour <= this.formData.endTime; hour++) {
+                                const cell = document.querySelector(`.cell[data-day="${parseInt(day) + 1}"][data-hour="${hour}"]`);
+                                if (cell && cell.classList.contains('selected')) {
+                                    cell.classList.add('special');
+                                }
+                            }
+                        });
+                    }
+                }
+
+            };
+        }F
+    </script>
+    <!--分頁JS-->
+    <script>
+        function tabsController() {
+            return {
+                Detail: {}, // 存放場地詳細數據
+                currentPage: '', // 當前主頁面（'venue' 或 'timeslot'）
+                currentSubPage: '', // 當前子頁面（'timeslotMain' 或 'pricing'）
+
+                initialize() {
+                    this.detectCurrentPage();
+                    this.detectCurrentSubPage();
+                    this.loadDetail();
+                },
+
+                // 檢測當前主頁面類型
+                detectCurrentPage() {
+                    const path = window.location.pathname;
+                    if (path.includes('manageVenue')) {
+                        this.currentPage = 'venue';
+                    } else if (path.includes('manageTslot')) {
+                        this.currentPage = 'timeslot';
+                    }
+                },
+
+                // 檢測當前子頁面類型（僅在 timeslot 主頁面下）
+                detectCurrentSubPage() {
+                    const path = window.location.pathname;
+                    if (path.includes('managePrice')) {
+                        this.currentSubPage = 'pricing';
+                    } else if (path.includes('manageTslot')) {
+                        this.currentSubPage = 'timeslotMain';
+                    }
+                },
+
+                // 加載場地詳細數據
+                loadDetail() {
+                    const pathArray = window.location.pathname.split('/');
+                    const vneId = pathArray[pathArray.length - 1];
+
+                    // 模擬 AJAX 請求獲取場地詳細數據
+                    $.ajax({
+                        url: `/vne/Detail/${vneId}`,
+                        method: "GET",
+                        dataType: "json",
+                        success: (data) => {
+                            console.log(data);
+                            this.Detail = data; // 存入 Detail
+                        },
+                        error: (xhr, status, error) => {
+                            console.error('Error loading detail:', error);
+                        }
+                    });
+                }
+            };
+        }
+    </script>
+</main>
+</body>
+</html>

@@ -60,9 +60,77 @@
         button:hover {
             background-color: #0056b3;
         }
-        </style>
+
+        .upload-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .upload-row input[type="file"] {
+            flex: 1;
+        }
+
+        .upload-row span {
+            color: #555;
+            font-size: 14px;
+        }
+
+        .upload-row button {
+            margin-left: auto;
+        }
+
+        .upload-row:last-child {
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
+<script>
+    function handleData() {
+        return {
+            Detail: {}, // 存放請求返回的場地詳細數據
+            fetchData() {
+                // 提取 vneId
+                const pathArray = window.location.pathname.split('/');
+                const vneId = pathArray[pathArray.length - 1]; // 獲取最後一段 URL 作為 vneId
+
+                // AJAX 請求
+                $.ajax({
+                    url: `/vne/Detail/${vneId}`,
+                    method: "GET",
+                    dataType: "json",
+                    success: (data) => {
+                        console.log(data);
+                        this.Detail = data; // 正確設置到 Detail 屬性
+                    },
+                    error: (xhr, status, error) => {
+                        console.error('Error fetching data:', error);
+                        // 你可以在這裡設置 isError 或其他錯誤提示
+                    }
+                });
+            },
+            getUpdateImgUrl() {
+                // 動態生成更新圖片的 URL
+                return `/vneBiz/updateImg/${this.Detail.vneId}`;
+            },
+            submitForm() {
+                $.ajax({
+                    url: `/vneBiz/updateVenue/${this.Detail.vneId}`,
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(this.Detail),
+                    success: (response) => {
+                        alert('提交成功');
+                    },
+                    error: (error) => {
+                        console.error('提交失敗:', error);
+                    }
+                });
+            }
+        }
+    }
+</script>
 <!-- 導航 -->
 <div class="bs-navbar">
     <div class="bs-navbar-main">
@@ -182,49 +250,106 @@
 </div>
 
 <!-- main區塊 -->
-<main>
-<form action="/vneBiz/createVenue" method="POST">
-    <h2>場地資料填寫</h2>
+<main x-data="handleData()" x-init="fetchData()" >
+    <form x-modle="Detail"  method="post">
+<!--        action=`vneBiz/updateVenue/${this.Detail.vneId}`-->
+        <!-- 場地名稱 -->
+        <div>
+            <label for="name">場地名稱:</label>
+            <input type="text" id="name" name="name" maxlength="100"
+                   x-model="Detail.name" required :value="Detail.name || ''">
+        </div>
 
-    <!-- 場地名稱 -->
-    <div>
-        <label for="name">場地名稱:</label>
-        <input type="text" id="name" name="name" maxlength="100" required>
-    </div>
+        <!-- 場地類別描述 -->
+        <div>
+            <label for="type">場地類別描述:</label>
+            <select id="type" name="type" x-model="Detail.type">
+                <option value="indoor">戶外</option>
+                <option value="outdoor">室內</option>
+            </select>
+        </div>
 
-    <!-- 場地類別描述 -->
-    <div>
-        <label for="type">場地類別描述:</label>
-        <select id="type" name="type">
-            <option value="indoor">戶外</option>
-            <option value="outdoor">室內</option>
-        </select>
-    </div>
+        <!-- 場地描述 -->
+        <div>
+            <label for="description">場地描述:</label>
+            <textarea id="description" name="description" maxlength="1000"
+                      x-model="Detail.description">
 
-    <!-- 場地描述 -->
-    <div>
-        <label for="description">場地描述:</label>
-        <textarea id="description" name="description" maxlength="1000"></textarea>
-    </div>
+            </textarea>
+        </div>
 
-    <!-- 可容許預約天數 -->
-    <div>
-        <label for="availableDays">可容許預約天數:</label>
-        <select id="availableDays" name="availableDays" required>
-            <option value="14" selected>14天</option>
-            <option value="28" >28天</option>
-            <option value="42" >42天</option>
-            <option value="56" >56天</option>
-            <option value="84" >84天</option>
-        </select>
-    </div>
+        <!-- 可容許預約天數 -->
+        <div>
+            <label for="availableDays">可容許預約天數:</label>
+            <select id="availableDays" name="availableDays"
+                    x-model="Detail.availableDays" required>
+                <option value="14" selected>14天</option>
+                <option value="28" >28天</option>
+                <option value="42" >42天</option>
+                <option value="56" >56天</option>
+                <option value="84" >84天</option>
+            </select>
+        </div>
 
-    <!-- 提交按鈕 -->
-    <div>
-        <button type="submit">提交</button>
+        <!-- 提交按鈕 -->
+        <div>
+            <button type="submit"  @click.prevent="submitForm">提交</button>
+        </div>
+    </form>
+    <div x-data="uploadApp()" x-init="setUrls(getUpdateImgUrl())">
+        <template x-for="(upload, index) in uploads" :key="index">
+            <div>
+                <label>上傳位置 <span x-text="upload.position"></span></label>
+                <input type="file" @change="upload.file = $event.target.files[0]" />
+                <button @click.prevent="handleUpload(index)">上傳</button>
+                <p x-text="upload.status"></p>
+            </div>
+        </template>
     </div>
-</form>
 </main>
+<script>
+    function uploadApp() {
+        return {
+            uploads: [
+                { file: null, status: '未上傳', url: null, position: 1 },
+                { file: null, status: '未上傳', url: null, position: 2 },
+                { file: null, status: '未上傳', url: null, position: 3 }
+            ],
+            handleUpload(index) {
+                const upload = this.uploads[index];
+                if (!upload.file) {
+                    alert('請選擇文件後再上傳！');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('image', upload.file);
+
+                $.ajax({
+                    url: upload.url, // 使用對應的上傳 URL
+                    method: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: () => {
+                        upload.status = '已上傳';
+                    },
+                    error: (xhr, status, error) => {
+                        console.error('Upload failed:', error);
+                        upload.status = '上傳失敗';
+                    }
+                });
+            },
+            setUrls(url) {
+                // 設置所有上傳項的 URL
+                this.uploads.forEach((upload) => {
+                    upload.url = url;
+                });
+            }
+        };
+    }
+
+</script>
 <script th:src="@{/platform_backend/js/bizpage-modle.js}"></script>
 </body>
 </html>

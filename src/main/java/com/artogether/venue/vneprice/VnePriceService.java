@@ -45,7 +45,7 @@ public class VnePriceService {
                 vnePriceDTO.setEndTime(BinaryTools.last(priceTslot));
             }
         });
-                return vnePriceDTO;
+        return vnePriceDTO;
     }
     // 創建或更新價錢
     @Transactional
@@ -61,12 +61,13 @@ public class VnePriceService {
 
         VnePrice.VnePriceBuilder builder = VnePrice.builder()
                 .venue(Venue.id(vneId)) // Venue 有靜態方法"id()"(嘗試看看)
-                .defaultPrice(vnePriceDTO.getDefaultPrice());
+                .defaultPrice(vnePriceDTO.getDefaultPrice())
+                .effectiveTime(submissionTime);
         Integer price = vnePriceDTO.getPrice();
         if (price != null) {
              builder.price(vnePriceDTO.getPrice())
-            .priceTslot(BinaryTools.toBinaryString(getPriceTslotList(startTime, endTime), 24))
-            .dayOfWeek(BinaryTools.toBinaryString(vnePriceDTO.getDayOfWeek(), 7));
+            .priceTslot(BinaryTools.toBinaryString(BinaryTools.toBitSet(getPriceTslotList(startTime, endTime)),24))
+            .dayOfWeek(BinaryTools.toBinaryString(BinaryTools.toBitSet(vnePriceDTO.getDayOfWeek()),7));
         }
         VnePrice vnePrice = builder.build();
         vnePriceRepository.save(vnePrice);
