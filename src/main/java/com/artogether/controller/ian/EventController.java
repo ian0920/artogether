@@ -61,7 +61,7 @@ public class EventController {
     public String order(Model model, HttpSession session) {
 
         Integer memberId = (Integer)session.getAttribute("member");
-        Map<Event, EvtOrder> map = evtOrderService.getEventsToMyOrders(memberId);
+        Map<Event, EvtOrder> map = evtOrderService.getEventsToMyOrders(memberId, false);
         model.addAttribute("orders", map);
         return "event/member_event_orders";
     }
@@ -108,7 +108,7 @@ public class EventController {
 
 
         //撈出報名中的訂單 (報名中則報名按鈕disable)
-        Map<Event, EvtOrder> map = evtOrderService.getEventsToMyOrders(memberId);
+        Map<Event, EvtOrder> map = evtOrderService.getEventsToMyOrders(memberId, true);
         Predicate<Event> filter = p -> (Objects.equals(p.getId(), eventId));
         boolean match = map.keySet().stream().anyMatch(filter);
 
@@ -153,7 +153,7 @@ public class EventController {
 
 
 
-        Map<Event, EvtOrder> map = evtOrderService.getEventsToMyOrders(memberId);
+        Map<Event, EvtOrder> map = evtOrderService.getEventsToMyOrders(memberId, true);
         Predicate<Event> filter = e -> Objects.equals(e.getId(), eventId);
         boolean match = map.keySet().stream().anyMatch(filter);
         if (match) {

@@ -72,14 +72,21 @@ public class EvtOrderService {
 
     }
 
-    public Map<Event, EvtOrder> getEventsToMyOrders(Integer memberId) {
+    public Map<Event, EvtOrder> getEventsToMyOrders(Integer memberId, boolean filter) {
         Map<Event, EvtOrder> eventsToMyOrders = new HashMap();
         List<EvtOrder> myOrders = repo.findByMemberId(memberId);
 
-        //過濾掉已經取消報名的訂單，回傳只有報名中的訂單
-        myOrders.stream().filter(e -> e.getStatus() != 1 ).forEach((o) -> {
-            eventsToMyOrders.put(o.getEvent(), o);
-        });
+
+        //是否要過濾掉報名狀態
+        if(filter){
+            //過濾掉已經取消報名的訂單，回傳只有報名中的訂單
+            myOrders.stream().filter(e -> e.getStatus() != 1 ).forEach((o) -> {
+                eventsToMyOrders.put(o.getEvent(), o);
+            });
+        } else {
+            myOrders.forEach(o -> eventsToMyOrders.put(o.getEvent(), o));
+        }
+
         return eventsToMyOrders;
     }
 
