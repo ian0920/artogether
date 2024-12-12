@@ -73,7 +73,7 @@ public class BusinessMember {
 
 
     /*    Event    */
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "businessMember", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "businessMember", cascade = CascadeType.ALL)
     private Set<Event> events;
 
 
@@ -99,5 +99,12 @@ public class BusinessMember {
         }
     }
 
+    @Override
+    public String toString() {
+        return "BusinessMember{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 
 }

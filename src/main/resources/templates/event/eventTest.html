@@ -62,6 +62,16 @@
             background-color: #2982a8;
         }
 
+        #to-login{
+            color: white;
+            background-color: #e8b677;
+        }
+
+        #to-login:hover{
+            color: white;
+            background-color: #c99e68;
+        }
+
 
 
 
@@ -70,10 +80,11 @@
 <body>
 
 <!-- Open Form Button -->
-<button id="openFormButton" class="btn btn-lg openFormButton" th:disabled="${match==true}" >報名活動</button>
+<button th:if="${#session.getAttribute('member') != null}" id="openFormButton" class="btn btn-lg openFormButton" th:disabled="${match==true}" >報名活動</button>
+<button th:unless="${#session.getAttribute('member') != null}" id="to-login" class="btn btn-lg" onclick="location.href='/login'">請先登入</button>
 
 <!-- Popup Form -->
-<div id="popupForm" class="popup hidden">
+<div th:if="${#session.getAttribute('member') != null}" id="popupForm" class="popup hidden">
     <div class="form-container">
         <h2 class="text-center mb-4">報名表單</h2>
 
@@ -175,7 +186,7 @@
 
                 if (selectedCoupon < 1) {
                     // Percentage discount
-                    discountAmount = (totalAmount * (1 - selectedCoupon)).toFixed(0);
+                    discountAmount = (totalAmount * selectedCoupon).toFixed(0);
                 } else if (selectedCoupon >= 1) {
                     // Fixed amount discount
                     discountAmount = selectedCoupon * qty;

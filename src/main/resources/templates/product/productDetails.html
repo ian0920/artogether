@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>All events</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" th:href="@{/web_design/style/style_general.css}" />
+    <link rel="stylesheet" th:href="@{/web_design/style/style_homepage.css}" />
+    <link
+            href="https://fonts.googleapis.com/icon?family=Material+Icons"
+            rel="stylesheet"
+    />
+    <style>
+        /* 確保 HTML 和 body 撐滿整個視窗 */
+        html, body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 主內容區域需要撐開剩餘空間 */
+        main {
+            flex: 1; /* 自動填滿可用空間 */
+        }
+
+        /* Footer 置底 */
+        footer {
+            text-align: center;
+            padding: 10px 20px;
+            border-top: 1px solid #ddd;
+        }
+    </style>
+    <style>
+
+        /* 主容器樣式 */
+    .product-detail-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+    }
+
+    .product-info {
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+    }
+
+    .product-image {
+        max-width: 300px;
+        width: 100%;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* 右側資訊 */
+    .product-meta {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .product-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .product-price {
+        font-size: 20px;
+        color: #e74c3c;
+        margin-bottom: 5px;
+    }
+
+    .product-status {
+        font-size: 16px;
+        color: green;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .product-id {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 10px;
+    }
+
+    .divider {
+        border: none;
+        height: 1px;
+        background: #ddd;
+        margin: 10px 0;
+    }
+
+    .product-description {
+        font-size: 16px;
+        color: #333;
+        margin-bottom: 10px;
+        line-height: 1.5;
+    }
+
+    /* 數量選擇器 */
+    .product-quantity {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .quantity-controls {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .quantity-btn {
+        padding: 5px 10px;
+        background-color: #f1f1f1;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .quantity-btn:hover {
+        background-color: #ddd;
+    }
+
+    input#quantity {
+        width: 50px;
+        text-align: center;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    /* 按鈕樣式 */
+    .btn-container {
+        display: flex;
+        gap: 15px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background-color: #0085ea;
+        color: white;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #0085ea;
+    }
+
+    .btn-outline-secondary {
+        background-color: transparent;
+        color: #0085ea;
+        border: 1px solid #0085ea;
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: #0085ea;
+        color: white;
+    }
+
+    /* 社交圖示 */
+    .social-icons {
+        display: flex;
+        gap: 15px;
+        margin-top: 15px;
+    }
+
+    .social-icons i {
+        font-size: 24px;
+        color: #555;
+        cursor: pointer;
+    }
+
+    .social-icons i:hover {
+        color: #0085ea;
+    }
+
+
+
+    </style>
+
+</head>
+<body>
+<header class="header navbar_homepage" th:include="homepage::header"></header>
+
+<main>
+
+    <div class="product-detail-container">
+<!--        <h1>商品詳情</h1>-->
+
+        <!-- Product Information -->
+        <div class="product-info">
+            <img th:src="${product?.img}" alt="商品圖片" class="product-image" />
+
+            <div class="product-meta">
+                <h2 th:text="${product.name}">商品名稱</h2>
+                <p><strong>價格:</strong> <span th:text="${product.price}">100</span> 元</p>
+                <p><strong>剩餘數量:</strong> <span th:text="${product.qty}">10</span> 件</p>
+                <p><strong>描述:</strong> <span th:text="${product.description}">描述文字</span></p>
+                <p><strong>狀態:</strong> <span th:text="${product.status == 1 ? '上架' : '下架'}">上架</span></p>
+                <p><strong>分類:</strong> <span th:text="${product.prdCatalog?.name}">分類名稱</span></p>
+                <!-- Buttons -->
+                <div class="btn-container">
+                    <!-- 商品數量選擇器 -->
+                    <div class="product-quantity">
+                        <label for="qty"><strong>數量:</strong></label>
+                        <div class="quantity-controls">
+                            <input type="hidden" id="qtyStock" name="qtyStock" th:value="${product.qty}" />
+                        </div>
+                </div>
+                </div>
+                <div class="buttons">
+                    <form action="/cart/add" method="post">
+                        <input  id="qty" name="qty" type="number" min="1" value="1" />
+                        <input type="hidden" name="productId" th:value="${product.id}" />
+                        <button type="submit" class="btn btn-primary">加入購物車</button>
+                    </form>
+                    <button class="btn btn-outline-secondary">加入收藏</button>
+                </div>
+
+
+
+                <!-- Social Icons -->
+<!--                <div class="social-icons mt-4">-->
+<!--                    <i class="material-icons">facebook</i>-->
+<!--                    <i class="material-icons">instagram</i>-->
+<!--                    <i class="material-icons">linkedin</i>-->
+<!--                    <i class="material-icons">share</i>-->
+<!--                </div>-->
+            </div>
+        </div>
+    </div>
+
+
+
+<!--        &lt;!&ndash; Review Section &ndash;&gt;-->
+<!--        <div class="product-reviews">-->
+<!--            <h3>評論 (共 <span th:text="${product?.allReviews}">0</span> 條)</h3>-->
+<!--            <ul>-->
+<!--                <li th:each="review : ${product?.prdReviews}">-->
+<!--                    <p><strong>評分:</strong> <span th:text="${review?.stars}">5</span> 星</p>-->
+<!--                    <p th:text="${review?.comment}">評論內容</p>-->
+<!--                </li>-->
+<!--            </ul>-->
+<!--        </div>-->
+
+
+
+
+</main>
+
+
+<div class="nav-menu-box" th:include="homepage::nav-menu-box"></div>
+<div class="user-menu-box" th:include="homepage::user-menu-box"></div>
+<footer th:include="homepage::footer"></footer>
+
+<script th:src="@{/web_design/components/web_components/navbar_hompage.js}"></script>
+<script>
+    var el_nav_item_discover = document.querySelector("div.navbar-item");
+    var el_div_nav_menu_box = document.querySelector("div.nav-menu-box");
+    var el_div_nav_user_box = document.querySelector("div.user_div");
+    var el_div_nav_menu = document.querySelector("div.nav-menu");
+    var el_eiv_user_menu = document.querySelector("div.user-menu-box");
+
+    //=====================觸發視窗========================
+    // 1. 探索
+    el_nav_item_discover.addEventListener("mouseenter", function () {
+        if (!el_div_nav_menu_box.classList.contains("open"))
+            el_div_nav_menu_box.classList.add("open");
+    });
+    console.log(el_div_nav_menu);
+    el_div_nav_menu.addEventListener("mouseleave", function () {
+        if (el_div_nav_menu_box.classList.contains("open"))
+            el_div_nav_menu_box.classList.remove("open");
+    });
+
+    // 2. 會員
+    el_div_nav_user_box.addEventListener("mouseenter", function () {
+        if (!el_eiv_user_menu.classList.contains("open"))
+            el_eiv_user_menu.classList.add("open");
+    });
+    el_eiv_user_menu.addEventListener("mouseleave", function () {
+        if (el_eiv_user_menu.classList.contains("open"))
+            el_eiv_user_menu.classList.remove("open");
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Disable link clicks for disabled pagination controls
+        document.querySelectorAll(".page-link.disabled").forEach(function (link) {
+            link.addEventListener("click", function (e) {
+                e.preventDefault(); // Prevent navigation
+            });
+        });
+    });
+</script>
+
+
+<script>
+    function increaseQuantity() {
+        const qtyInput = document.getElementById("quantity");
+        qtyInput.value = parseInt(qtyInput.value) + 1;
+    }
+
+    function decreaseQuantity() {
+        const qtyInput = document.getElementById("quantity");
+        if (parseInt(qtyInput.value) > 1) {
+            qtyInput.value = parseInt(qtyInput.value) - 1;
+        }
+    }
+
+        // 动态限制 qty 的最大值为 qtyStock
+        document.addEventListener("DOMContentLoaded", function () {
+        const qtyInput = document.getElementById("qty");
+        const qtyStock = document.getElementById("qtyStock").value;
+
+        // 设置输入框的最大值
+        qtyInput.setAttribute("max", qtyStock);
+
+    });
+
+</script>
+
+
+</body>
+</html>

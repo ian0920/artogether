@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>新增退換貨</title>
+    <style>
+        /* Add your styles here */
+    </style>
+</head>
+<body>
+    <h1>申請退換貨</h1>
+    <form th:action="@{/product/add}" th:object="${prdReturn}" method="post">
+        <label for="orderId">訂單編號</label>
+        <input type="text" id="orderId" th:field="*{prdOrder.id}"  required>
+
+        <label for="prdName">商品名稱</label>
+        <input type="text" id="prdName" name="prdName" required>
+
+        <label for="reason">退換貨原因</label>
+        <textarea id="reason" name="reason"></textarea>
+
+        <label>退換類型：</label>
+        <select th:field="*{type}" required>
+            <option value="-1" th:selected="*{type == -1}">請選擇折扣類型</option>
+            <option value="1" th:selected="*{type == 1}">退貨</option>
+            <option value="0" th:selected="*{type == 0}">換貨</option>
+        </select>
+        
+        <label>狀態：</label>
+        <select th:field="*{status}" required>
+            <option value="-0" th:selected="*{type == -0}">未處理</option>
+           
+        </select>
+            
+
+        <label>開始日期：</label>
+        <input type="text" th:field="*{applyDate}" placeholder="YYYY-MM-DD HH:MM:SS" />
+      
+
+        <button type="submit">新增</button>
+    </form>
+</body>
+</html>

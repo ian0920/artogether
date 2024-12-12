@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>新增商品</title>
+</head>
+<body>
+<h1>新增商品</h1>
+
+<form th:action="@{/product/addProduct}" method="post" enctype="multipart/form-data">
+    <!-- 商品名稱 -->
+    <div>
+        <label for="name">商品名稱:</label>
+        <input type="text" id="name" name="name" required>
+    </div>
+
+    <!-- 商品價格 -->
+    <div>
+        <label for="price">價格:</label>
+        <input type="number" id="price" name="price" required>
+    </div>
+
+    <!-- 商品數量 -->
+    <div>
+        <label for="qty">數量:</label>
+        <input type="number" id="qty" name="qty" required>
+    </div>
+
+    <!-- 商品描述 -->
+    <div>
+        <label for="description">描述:</label>
+        <textarea id="description" name="description" rows="4" cols="50" required></textarea>
+    </div>
+
+    <!-- 商品分類 -->
+    <div>
+        <label for="catalogId">分類:</label>
+        <select id="catalogId" name="catalogId" required>
+            <option value="" disabled selected>選擇分類</option>
+            <!-- 從後端動態填充分類列表 -->
+            <option th:each="catalog : ${catalogs}"
+                    th:value="${catalog.id}"
+                    th:text="${catalog.name}">
+            </option>
+        </select>
+    </div>
+
+    <!-- 狀態 -->
+    <div>
+        <label for="status">狀態:</label>
+        <select id="status" name="status" required>
+            <option value="1">上架</option>
+            <option value="0">下架</option>
+        </select>
+    </div>
+
+    <!-- 上傳圖片 -->
+    <div>
+        <label for="images">圖片:</label>
+        <input type="file" id="images" name="images" multiple required>
+    </div>
+
+    <!-- 提交按鈕 -->
+    <div>
+        <button type="submit">新增商品</button>
+    </div>
+</form>
+</body>
+</html>

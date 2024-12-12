@@ -2,22 +2,16 @@ package com.artogether.event.event;
 
 import com.artogether.common.business_member.BusinessMember;
 import com.artogether.event.evt_coup.EvtCoup;
-
 import com.artogether.event.evt_img.EvtImg;
 import com.artogether.event.evt_order.EvtOrder;
 import com.artogether.event.evt_track.EvtTrack;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
-
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.format.annotation.DateTimeFormat;
-
 import java.sql.Timestamp;
 import java.util.Objects;
 import java.util.Set;
@@ -58,6 +52,7 @@ public class Event {
     private String catalog;
     private Integer price;
     private String description;
+    //0→下架(預設) 1→上架 2→延期 3→取消 4→審核被拒 5→結束
     private Byte status;
     private Integer maximum;
     private Integer minimum;
