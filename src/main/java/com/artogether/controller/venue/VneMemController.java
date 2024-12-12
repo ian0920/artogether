@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/venue/mem")
-public class VenueMemberController {
+public class VneMemController {
 
     @Autowired
     private VenueService venueService;

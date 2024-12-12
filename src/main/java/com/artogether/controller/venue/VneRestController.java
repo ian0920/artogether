@@ -1,7 +1,6 @@
 package com.artogether.controller.venue;
 
 import com.artogether.common.business_member.BusinessMember;
-import com.artogether.util.BinaryTools;
 import com.artogether.venue.tslot.TslotService;
 import com.artogether.venue.venue.VenueService;
 import com.artogether.venue.vnedto.TslotDTO;
@@ -11,18 +10,15 @@ import com.artogether.venue.vnedto.VnePriceDTO;
 import com.artogether.venue.vneimg.VneImgService;
 import com.artogether.venue.vneprice.VnePriceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
-import java.time.DayOfWeek;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/vne")
-public class ApiTestController {
+public class VneRestController {
 
     @Autowired
     private VneImgService vneImgService;
