@@ -161,15 +161,25 @@ public class EvtOrderService {
         return new PageImpl<>(paginatedEventList, pageable, myOrders.size());
     }
 
-    public void cancelOrder(Integer orderId) {
+    public boolean cancelOrder(Integer orderId) {
 
-        repo.findById(orderId).ifPresent((o) -> {
-            if(o.getStatus() == 0) {
-                o.setStatus((byte)1);
-                repo.save(o);
-            }
+        boolean success = false;
+        EvtOrder o = repo.findById(orderId).get();
 
-        });
+        Event event = eventService.findById(o.getEvent().getId());
+        Timestamp today = new Timestamp(System.currentTimeMillis());
+
+
+        // 確認是否已經取消且在活動開始前三天
+        if(o.getStatus() == 0 && (today.getTime() + 86400000) <= event.getStartDate().getTime()) {
+            o.setStatus((byte)1);
+            repo.save(o);
+            success = true;
+        }
+
+
+
+        return success;
     }
 
 
