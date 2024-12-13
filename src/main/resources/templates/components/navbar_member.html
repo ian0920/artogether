@@ -1,3 +1,23 @@
+<!-- 
+使用時請填入兩個參數，分別對應預設選取的項目，與所選取的子項目
+1. 基本資訊->'info'
+	收件匣->'inbox'
+	--
+	場地管理->'venue'
+	活動管理->'event'
+	商品管理->'product'
+
+2. 訂單查詢->'order'
+	優惠券->'coupon'
+	場地追蹤->'venue'
+	活動追蹤->'event'
+	商品追蹤->'product'
+ -->
+<!-- 
+	使用範例： 
+	<div th:replace="~{/components/navbar_member::navbar('event','event')}"></div>	
+-->
+
 <!-- 導航 -->
 <div th:fragment="navbar(selectedItem,selectedSubItem)">
 	<style>
