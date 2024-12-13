@@ -40,57 +40,72 @@ public class PlatformMsgService {
     }
 
     // 發送訊息給單個會員
-    public void sendToOne(PlatformMsg platformMsg) {
-        Member member = memberRepo.findById(platformMsg.getMember().getId()).orElse(null);
-        if (member != null) {
-            PlatformMsg platformMsgId = new PlatformMsg();
-            platformMsgId.setMember(member);
-            platformMsgId.setMessage(platformMsg.getMessage());
-            platformMsgId.setMsgTime(new Timestamp(System.currentTimeMillis()));
-            platformMsgId.setStatus((byte) 0);
-            platformMsgRepo.save(platformMsg);
-        }
+    public PlatformMsg sendToOne(String message, Integer memberId) {
+        PlatformMsg platformMsg = new PlatformMsg();
+        Member member = new Member();
+        member.setId(memberId);
+
+        platformMsg.setMember(member);
+        platformMsg.setMessage(message);
+        platformMsg.setMsgTime(new Timestamp(System.currentTimeMillis()));
+        platformMsg.setStatus((byte) 0);
+        return platformMsgRepo.save(platformMsg);
     }
 
     // 發送訊息給所有會員
     public void sendToAll(String message) {
         List<Member> members = memberRepo.findAll();
-        for (Member member : members) {
-            PlatformMsg platformMsg = new PlatformMsg();
-            platformMsg.setMember(member);
-            platformMsg.setMessage(message);
-            platformMsg.setMsgTime(new Timestamp(System.currentTimeMillis()));
-            platformMsg.setStatus((byte) 0);
-            platformMsgRepo.save(platformMsg);
+
+        if(!members.isEmpty()){
+
+            new Thread(() -> {
+                for (Member member : members) {
+                    PlatformMsg platformMsg = new PlatformMsg();
+                    platformMsg.setMember(member);
+                    platformMsg.setMessage(message);
+                    platformMsg.setMsgTime(new Timestamp(System.currentTimeMillis()));
+                    platformMsg.setStatus((byte) 0);
+                    platformMsgRepo.save(platformMsg);
+                }
+            }).start();
         }
+
     }
 
     // 發送訊息給單個商家
-    public void sendToOneBusiness(PlatformMsg platformMsg) {
-        BusinessMember businessMember = businessMemberRepo.findById(platformMsg.getBusinessMember().getId()).orElse(null);
-        if (businessMember != null) {
-            PlatformMsg platformMsgB = new PlatformMsg();
-            platformMsgB.setBusinessMember(businessMember);
-            platformMsgB.setMessage(platformMsg.getMessage());
-            platformMsgB.setMsgTime(new Timestamp(System.currentTimeMillis()));
-            platformMsgB.setStatus((byte) 0);
-            platformMsgRepo.save(platformMsg);
-        }
+//    public void sendToOneBusiness(PlatformMsg platformMsg) {
+//        BusinessMember businessMember = businessMemberRepo.findById(platformMsg.getBusinessMember().getId()).orElse(null);
+//        if (businessMember != null) {
+//            PlatformMsg platformMsgB = new PlatformMsg();
+//            platformMsgB.setBusinessMember(businessMember);
+//            platformMsgB.setMessage(platformMsg.getMessage());
+//            platformMsgB.setMsgTime(new Timestamp(System.currentTimeMillis()));
+//            platformMsgB.setStatus((byte) 0);
+//            platformMsgRepo.save(platformMsg);
+//        }
 
         // 發送訊息給所有商家
-//        public void sendToAllBusinesses(String message) {
-//            List<BusinessMember> businessMembers = businessMemberRepo.findAll();
-//            for (BusinessMember businessMember : businessMembers) {
-//                PlatformMsg platformMsg = new PlatformMsg();
-//                platformMsg.setBusinessMember(businessMember);
-//                platformMsg.setMessage(message);
-//                platformMsg.setMsgTime(new Timestamp(System.currentTimeMillis()));
-//                platformMsg.setStatus((byte) 0);
-//                platformMsgRepo.save(platformMsg);
-//            }
-//        }
+        public void sendToAllBusinesses(String message) {
+            List<BusinessMember> businessMembers = businessMemberRepo.findAll();
+
+            if (!businessMembers.isEmpty()) {
+
+                // 新的執行續去處理每筆商家訊息新增
+                new Thread(() -> {
+                    for (BusinessMember businessMember : businessMembers) {
+                        PlatformMsg platformMsg = new PlatformMsg();
+                        platformMsg.setBusinessMember(businessMember);
+                        platformMsg.setMessage(message);
+                        platformMsg.setMsgTime(new Timestamp(System.currentTimeMillis()));
+                        platformMsg.setStatus((byte) 0);
+                        platformMsgRepo.save(platformMsg);
+                    }
+
+                }).start();
+            }
+
+
+        }
 
     }
 
-
-}

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -39,6 +40,14 @@ public class SystemManagerController {
     // 處理新增系統管理員的請求
     @PostMapping("/smadd")
     public String addSystemManager(@ModelAttribute SystemManager systemManager, Model model) {
+
+
+        List<String> errors = systemManagerService.validateInput(systemManager);
+        if (!errors.isEmpty()) {
+            model.addAttribute("errors", errors);
+            return "platform/smadd";
+        }
+
         systemManagerService.add(systemManager);
         List<SystemManager> systemManagers = systemManagerService.findAll();
         model.addAttribute("systemManagers", systemManagers);

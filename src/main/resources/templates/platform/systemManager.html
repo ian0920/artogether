@@ -144,80 +144,22 @@
                 <section>
                     <h2>平台功能說明</h2>
 
-                    <!-- 查詢功能說明按鈕 -->
-                    <button type="button" class="btn btn-primary"
-                            id="btntest"
-                            onclick="showModalAndRedirect()">
-                        查詢功能說明
-                    </button>
-
+                    <!--新增說明按鈕-->
                     <a th:href="@{/systemManager/smadd}">
                         <button type="button" class="btn btn-primary" id="BTNADD">
-                            新增測試
+                            新增管理員
                         </button>
                     </a>
-
-                    <!-- 查詢功能說明的模態框 -->
-                    <div class="modal fade" id="queryPermDescModal" tabindex="-1"
-                         aria-labelledby="queryPermDescModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="queryPermDescModalLabel">查詢功能說明</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <!-- 顯示所有功能說明 -->
-                                    <table class="table">
-                                        <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>帳號</th>
-                                            <th>密碼</th>
-                                            <th>電話</th>
-                                            <th>日期1</th>
-                                            <th>日期</th>
-                                            <th>狀態</th>
-                                            <th>操作</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <!-- 使用 Thymeleaf 顯示功能說明 -->
-                                        <tr th:each="systemManager : ${systemManagers}">
-                                            <td th:text="${systemManager.id}"></td> <!-- 顯示 ID -->
-                                            <td th:text="${systemManager.account}"></td> <!-- 顯示描述 -->
-                                            <td th:text="${systemManager.password}"></td>
-                                            <td th:text="${systemManager.phone}"></td>
-                                            <td th:text="${systemManager.register_date}"></td>
-                                            <td th:text="${systemManager.assign_date}"></td>
-                                            <td th:text="${systemManager.status}"></td>
-                                            <td>
-                                                <!-- 刪除功能 -->
-                                                <!--                                                <form th:action="@{/platform/permDesc/delete/{id}(id=${permDesc.id})}"-->
-                                                <!--                                                      method="POST" onsubmit="return confirm('確定要刪除嗎?');">-->
-                                                <!--                                                    <input type="hidden" name="_method" value="DELETE">-->
-                                                <!--                                                    &lt;!&ndash; 使用偽造 DELETE 方法 &ndash;&gt;-->
-                                                <!--                                                    <button type="submit" class="btn btn-danger">刪除</button>-->
-                                                <!--                                                </form>-->
-                                            </td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
                     <div class="modal fade" id="testadd" tabindex="-1" aria-labelledby="testaddLabel"
                          aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="testaddLabel">測試加加</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                </div>
+<!--                                <div class="modal-header">-->
+<!--                                    <h5 class="modal-title" id="testaddLabel">測試加加</h5>-->
+<!--                                    <button type="button" class="btn-close" data-bs-dismiss="modal"-->
+<!--                                            aria-label="Close"></button>-->
+<!--                                </div>-->
                                 <div class="modal-body">
                                     <form>
 
@@ -228,10 +170,6 @@
                     </div>
                     <!--                    systemManagers-->
                     <div class="modal-content">
-                        <!--                        <div class="modal-header">-->
-                        <!--                            <h5 class="modal-title" id="queryPermDescModalLabel">查詢功能說明</h5>-->
-                        <!--                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
-                        <!--                        </div>-->
                         <div class="modal-body">
                             <!-- 顯示所有功能說明 -->
                             <table class="table">
@@ -256,8 +194,6 @@
                                     <td th:text="${systemManager.register_date}"></td>
                                     <td th:text="${systemManager.assign_date}"></td>
                                     <td th:text="${systemManager.status}"></td>
-                                    <!--                                    </td>-->
-                                    <!--                                    <td>-->
                                     <!--                                        <button id="editButton">更新</button>-->
                                     <!--                                        &lt;!&ndash;                                        &lt;!&ndash; 刪除功能 &ndash;&gt;&ndash;&gt;-->
                                     <!--                                        &lt;!&ndash;                                        <form th:action="@{/platform/permDesc/delete/{id}(id=${permDesc.id})}" method="POST" onsubmit="return confirm('確定要刪除嗎?');">&ndash;&gt;-->

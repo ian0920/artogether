@@ -1,6 +1,9 @@
 package com.artogether.controller.ou;
 
+import com.artogether.common.perm_desc.PermDesc;
+import com.artogether.common.perm_desc.PermDescRepository;
 import com.artogether.common.permission.Permission;
+import com.artogether.common.permission.PermissionDTO;
 import com.artogether.common.permission.PermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,22 +18,32 @@ public class PermissionController {
 
     @Autowired
     private PermissionService permissionService;
+    @Autowired
+    private PermDescRepository permDescRepository;
 
     // 查詢所有權限
     @GetMapping("/pm")
     public String getAllPermissions(Model model) {
-        List<Permission> permissions = permissionService.findAll();
-        model.addAttribute("permissions", permissions);
+        List<PermissionDTO> permissionDTOS = permissionService.findAllDTO();
+        model.addAttribute("permissions", permissionDTOS);
         return "platform/permission";  // JSP/HTML file to display the list of permissions
     }
+
+//        List<Permission> permissions = permissionService.findAll();
+//        model.addAttribute("permissions", permissions);
+//        return "platform/permission";  // JSP/HTML file to display the list of permissions
+//    }
 
     /*=======================
     顯示新增權限頁面與處理新增請求
      ========================*/
     @GetMapping("/pmadd")
     public String showAddPermissionForm(Model model) {
-        Permission permission = new Permission();
-        model.addAttribute("permission", new Permission());
+//        Permission permission = new Permission();
+//        model.addAttribute("permission", new Permission());
+//        List<PermDesc> list = permDescRepository.findAll();
+        List<PermissionDTO> permissionDTOS = permissionService.findAllDTO();
+        model.addAttribute("permDescs", permissionDTOS);
         return "platform/pmadd"; // 返回 Thymeleaf 模板名稱
     }
 
