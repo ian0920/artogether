@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>會員優惠券</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">會員優惠券列表</h1>
+        
+	<div class="text-center mb-4">
+    	<a th:href="@{/coupons/available(memberId=${memberId})}" class="btn btn-primary">查看可領取的優惠券</a>
+	</div>
+        
+        <table class="table table-bordered table-hover mt-4">
+            <thead class="thead-dark">
+                <tr>
+                    <th>優惠券編號</th>
+                    <th>優惠券名稱</th>
+                    <th>狀態</th>
+                    <th>接收日期</th>
+                    <th>使用日期</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 使用 Thymeleaf 循環渲染優惠券資料 -->
+                <tr th:each="coupon : ${coupons}">
+                    <td th:text="${coupon.couponId}">1</td>
+                    <td th:text="${coupon.couponName}">折扣券</td>
+                    <td th:text="${coupon.status} == 1 ? '可使用' : '已使用'">可使用</td>
+                    <td th:text="${#dates.format(coupon.receiveDate, 'yyyy-MM-dd HH:mm:ss')}">2024-12-12 10:00:00</td>
+                    <td th:text="${#dates.format(coupon.useDate, 'yyyy-MM-dd HH:mm:ss') ?: '無'}">無</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div th:if="${coupons.size() == 0}" class="alert alert-warning text-center">
+            此會員目前沒有可用的優惠券。
+        </div>
+    </div>
+</body>
+</html>

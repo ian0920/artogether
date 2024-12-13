@@ -117,8 +117,8 @@ public class NewPrdCoupService {
     }
     
     @Transactional(readOnly = true)
-    public List<PrdCoupDto> getCouponsByMemberId(Integer memberId) {
-        return prdCoupRepository.findByBusinessMemberId(memberId).stream()
+    public List<PrdCoupDto> getCouponsByMemberId(Integer businessMemberId) {
+        return prdCoupRepository.findByBusinessMemberId(businessMemberId).stream()
                 .map(this::toDto) // 將優惠券實體轉換為 DTO
                 .collect(Collectors.toList());
     }

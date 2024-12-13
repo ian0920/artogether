@@ -10,6 +10,7 @@ import com.artogether.product.prd_coup.PrdCoup;
 
 import javax.persistence.EntityManagerFactory;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -161,29 +162,29 @@ public class MyPrdCoupDaoImpl implements MyPrdCoupDao {
 	    return false; // 錯誤情況返回 false
 	}
 
-	@Override
-	public List<MyPrdCoup> findCouponsExpiringSoonForMember(Integer memberId, LocalDateTime currentDate, Integer days) {
-	    Session session = sessionFactory.unwrap(Session.class);
-	    try {
-	        session.beginTransaction();
-	        String hql = "FROM MyPrdCoup m WHERE m.member.id = :memberId " +
-	                     "AND m.prdCoup.endDate BETWEEN :currentDate AND :expiryDate";
-	        List<MyPrdCoup> list = session.createQuery(hql, MyPrdCoup.class)
-	                                      .setParameter("memberId", memberId)
-	                                      .setParameter("currentDate", currentDate)
-	                                      .setParameter("expiryDate", currentDate.plusDays(days))
-	                                      .list();
-	        session.getTransaction().commit();
-	        return list; // 返回即將到期的優惠券
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        session.getTransaction().rollback();
-	    }
-	    return List.of(); // 錯誤情況返回空列表
-	}
+//	@Override
+//	public List<MyPrdCoup> findCouponsExpiringSoonForMember(Integer memberId, Timestamp currentDate, Integer days) {
+//	    Session session = sessionFactory.unwrap(Session.class);
+//	    try {
+//	        session.beginTransaction();
+//	        String hql = "FROM MyPrdCoup m WHERE m.member.id = :memberId " +
+//	                     "AND m.prdCoup.endDate BETWEEN :currentDate AND :expiryDate";
+//	        List<MyPrdCoup> list = session.createQuery(hql, MyPrdCoup.class)
+//	                                      .setParameter("memberId", memberId)
+//	                                      .setParameter("currentDate", currentDate)
+//	                                      .setParameter("expiryDate", currentDate.plusDays(days))
+//	                                      .list();
+//	        session.getTransaction().commit();
+//	        return list; // 返回即將到期的優惠券
+//	    } catch (Exception e) {
+//	        e.printStackTrace();
+//	        session.getTransaction().rollback();
+//	    }
+//	    return List.of(); // 錯誤情況返回空列表
+//	}
 
 	@Override
-	public boolean receiveCoupon(MyPrdCoup.MyPrdCoupId myPrdCoupId, LocalDateTime receiveDate) {
+	public boolean receiveCoupon(MyPrdCoup.MyPrdCoupId myPrdCoupId, Timestamp receiveDate) {
 	    // 檢查輸入參數是否為空
 	    if (myPrdCoupId == null || receiveDate == null) {
 	        throw new IllegalArgumentException("myPrdCoupId and receiveDate must not be null");
@@ -239,7 +240,7 @@ public class MyPrdCoupDaoImpl implements MyPrdCoupDao {
 
 
 	@Override
-	public boolean useCoupon(MyPrdCoup.MyPrdCoupId myPrdCoupId, LocalDateTime useDate) {
+	public boolean useCoupon(MyPrdCoup.MyPrdCoupId myPrdCoupId, Timestamp useDate) {
 	    Session session = sessionFactory.unwrap(Session.class);
 	    try {
 	        session.beginTransaction();
@@ -260,7 +261,7 @@ public class MyPrdCoupDaoImpl implements MyPrdCoupDao {
 	}
 
 	@Override
-	public List<MyPrdCoup> findValidCouponsForMember(Integer memberId, LocalDateTime currentDate) {
+	public List<MyPrdCoup> findValidCouponsForMember(Integer memberId, Timestamp currentDate) {
 	    Session session = sessionFactory.unwrap(Session.class);
 	    try {
 	        session.beginTransaction();

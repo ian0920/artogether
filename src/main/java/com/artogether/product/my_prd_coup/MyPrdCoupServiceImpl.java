@@ -3,6 +3,7 @@ package com.artogether.product.my_prd_coup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -92,18 +93,18 @@ public class MyPrdCoupServiceImpl implements MyPrdCoupService {
         }
     }
 
-    @Override
-    public List<MyPrdCoup> findCouponsExpiringSoon(Integer memberId, LocalDateTime currentDate, Integer days) {
-        try {
-            return myPrdCoupDao.findCouponsExpiringSoonForMember(memberId, currentDate, days);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return List.of(); // 查詢失敗返回空列表
-        }
-    }
+//    @Override
+//    public List<MyPrdCoup> findCouponsExpiringSoon(Integer memberId, LocalDateTime currentDate, Integer days) {
+//        try {
+//            return myPrdCoupDao.findCouponsExpiringSoonForMember(memberId, currentDate, days);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return List.of(); // 查詢失敗返回空列表
+//        }
+//    }
 
     @Override
-    public boolean receiveCoupon(MyPrdCoup.MyPrdCoupId myPrdCoupId, LocalDateTime receiveDate) {
+    public boolean receiveCoupon(MyPrdCoup.MyPrdCoupId myPrdCoupId, Timestamp receiveDate) {
         try {
             return myPrdCoupDao.receiveCoupon(myPrdCoupId, receiveDate);
         } catch (Exception e) {
@@ -113,7 +114,7 @@ public class MyPrdCoupServiceImpl implements MyPrdCoupService {
     }
 
     @Override
-    public boolean useCoupon(MyPrdCoup.MyPrdCoupId myPrdCoupId, LocalDateTime useDate) {
+    public boolean useCoupon(MyPrdCoup.MyPrdCoupId myPrdCoupId, Timestamp useDate) {
         try {
             return myPrdCoupDao.useCoupon(myPrdCoupId, useDate);
         } catch (Exception e) {
@@ -123,7 +124,7 @@ public class MyPrdCoupServiceImpl implements MyPrdCoupService {
     }
 
     @Override
-    public List<MyPrdCoup> findValidCouponsForMember(Integer memberId, LocalDateTime currentDate) {
+    public List<MyPrdCoup> findValidCouponsForMember(Integer memberId, Timestamp currentDate) {
         try {
             return myPrdCoupDao.findValidCouponsForMember(memberId, currentDate);
         } catch (Exception e) {

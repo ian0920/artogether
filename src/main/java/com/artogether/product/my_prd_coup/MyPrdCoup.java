@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 
@@ -35,10 +36,10 @@ public class MyPrdCoup {
 	private Integer status;
 	
 	@Column(name = "receive_date")
-	private  LocalDateTime receiveDate;
+	private  Timestamp receiveDate;
 	
 	@Column(name = "use_date")
-	private  LocalDateTime useDate;
+	private  Timestamp useDate;
 
 	/********************************
 	 以下複合主鍵的用法建議再老師確認是否正確
