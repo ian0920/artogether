@@ -184,12 +184,18 @@ public class TslotService {
         }
         return nonBizDays;
     }
-
+    //處理轉型
+    public List<LocalDate> getAvailableDates(Integer availableDays) {
+        List<java.sql.Date> sqlDates = tslotRepository.getAvailableDates(availableDays);
+        return sqlDates.stream()
+                .map(java.sql.Date::toLocalDate)
+                .toList();
+    }
     //找出表訂不能預約的天數(尚須排除已預約
     public List<LocalDate> getNonBizDays(Integer vneId){
         Venue venue = venueRepository.findById(vneId).get();
         Integer availableDays = venue.getAvailableDays();
-        List<LocalDate> openDates = venueRepository.getAvailableDates(availableDays);
+        List<LocalDate> openDates = getAvailableDates(availableDays);
         List<LocalDate> disableDates = new ArrayList<>();
         int binaryWeek = getBinaryWeek(vneId, LocalDateTime.now());
 
@@ -219,7 +225,7 @@ public class TslotService {
     //設定該場地可預約的日期
     public FlatpickrDTO getFlatpickrDTO(Integer vneId, LocalDateTime submissionTime) {
         Integer days = venueRepository.findById(vneId).get().getAvailableDays();
-        List<LocalDate> availableDates = venueRepository.getAvailableDates(days);
+        List<LocalDate> availableDates = getAvailableDates(days);
         LocalDate first = availableDates.get(0);
         LocalDate last = availableDates.get(availableDates.size()-1);
         List<LocalDate> disableDates = getDisableDates(vneId, submissionTime);
@@ -319,5 +325,10 @@ public class TslotService {
             }
             return priceMap;
         }
+    }
+    public List<LocalDate> test(Integer i){
+        List<LocalDate> availableDates = getAvailableDates(i);
+        System.out.println(availableDates);
+        return availableDates;
     }
 }
