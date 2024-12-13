@@ -91,15 +91,15 @@ public class ProductServiceImpl implements ProductService {
     public Optional<Product> getProductById(Integer id) {
         Optional<Product> productOptional = productRepository.findById(id);
 
-        // 如果商品存在，处理图片
+        // 如果商品存在，處理圖片
         productOptional.ifPresent(product -> {
             List<PrdImg> prdImgs = prdImgRepository.getPrdImgByProductId(product.getId());
             if (prdImgs != null && !prdImgs.isEmpty()) {
                 byte[] prdImgData = prdImgs.get(0).getImageFile();
                 if (prdImgData != null) {
-                    // 将字节数组转换为 Base64 编码字符串
+                    // 將字節數組轉換為 Base64 編碼字串符
                     String base64Img = "data:image/jpeg;base64," + Base64.getEncoder().encodeToString(prdImgData);
-                    product.setImg(base64Img); // 假设 `img` 字段为 `String`
+                    product.setImg(base64Img); // 假設 `img` 字段為 `String`
                 }
             }
         });
@@ -169,14 +169,14 @@ public class ProductServiceImpl implements ProductService {
 
     public void setProductsImg(List<Product> products) {
         for (Product product : products) {
-            // 获取图片列表并处理可能为空的情况
+            // 獲取圖片列表並處理可能為空的情況
             List<PrdImg> prdImgs = prdImgRepository.getPrdImgByProductId(product.getId());
             if (prdImgs != null && !prdImgs.isEmpty()) {
                 byte[] prdImgData = prdImgs.get(0).getImageFile();
                 if (prdImgData != null) {
-                    // 将字节数组转换为 Base64 编码字符串
+                	// 將字節數組轉換為 Base64 編碼字串符
                     String base64Img = "data:image/jpeg;base64," + Base64.getEncoder().encodeToString(prdImgData);
-                    product.setImg(base64Img); // 假设 `img` 字段已更改为 `String`
+                    product.setImg(base64Img); // 假設 `img` 字段已更給為 `String`
                 }
             }
         }
