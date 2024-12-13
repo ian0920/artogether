@@ -55,6 +55,7 @@ public class PermissionAop {
 //            manager.setPhone("000");
 
         SystemManager manager = permissionService.findManagerById(managerId); // 假設你有這個方法
+        // 因為這個人不存在permission這張table 所以這個人也不會有任何權限
         if (manager == null) {
             // 資料庫中沒有該用戶，跳轉到登錄錯誤頁面
             request.setAttribute("errorMessage", "User not found in the database.");
@@ -66,6 +67,7 @@ public class PermissionAop {
 //            throw new IllegalStateException("User not logged in");
 //        }
 
+        // permission可能是1,2,3,4,5,6 要先把字串裝入List
         Integer requiredPerm = Integer.parseInt(permissionAnn.value());
         System.out.println("需要權限 " + requiredPerm);
 

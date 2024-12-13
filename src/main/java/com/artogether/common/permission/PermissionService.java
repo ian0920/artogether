@@ -5,9 +5,7 @@
     import org.springframework.beans.factory.annotation.Autowired;
     import org.springframework.stereotype.Service;
 
-    import java.util.ArrayList;
-    import java.util.List;
-    import java.util.Optional;
+    import java.util.*;
 
     // 平台功能權限 新增 更新 刪除 查詢全部
 
@@ -37,6 +35,23 @@
         // 找全部
         public List<Permission> findAll() {
             return permissionRepo.findAll();
+        }
+
+        // FindALLDTO 創建集合取出所有
+        public List<PermissionDTO> findAllDTO() {
+            List<Permission> permissions = permissionRepo.findAll();
+            System.out.println(permissions);
+            List<PermissionDTO> permissionDTOs = new ArrayList<>();
+            for (Permission permission : permissions) {
+                PermissionDTO permissionDTO = PermissionDTO.builder()
+                        .managerId(permission.getPermissionId().getManagerId())
+                        .descId(permission.getPermissionId().getDescId())
+                        .descName(permission.getPermDesc().getDescription())
+                        .build();
+                permissionDTOs.add(permissionDTO);
+            }
+            System.out.println(permissionDTOs);
+            return permissionDTOs;
         }
 
         // 更新權限

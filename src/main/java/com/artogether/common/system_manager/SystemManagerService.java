@@ -3,6 +3,7 @@ package com.artogether.common.system_manager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 // 平台管理員 新增 更新 刪除 查全部
@@ -15,14 +16,22 @@ public class SystemManagerService {
 
     // 新增平台管理員，返回新增的管理員
     public SystemManager add(SystemManager system_manager) {
-        if (system_manager.getPassword().length() < 8 || system_manager.getPassword().length() > 20) {
-            throw new IllegalArgumentException("Password must be between 8 and 20 characters.");
-        }
 
-        // 驗證 phone 格式 (必須以 09 開頭，並且長度為 10 位)
-        if (system_manager.getPhone() == null || !system_manager.getPhone().startsWith("09") || system_manager.getPhone().length() != 10) {
-            throw new IllegalArgumentException("Phone number must start with '09' and be 10 digits long.");
-        }
+//        if (system_manager.getAccount().length() < 8 || system_manager.getAccount().length() > 20) {
+//            throw new IllegalArgumentException("Password must be between 8 and 20 characters.");
+//
+//        }
+//
+//        if (system_manager.getPassword().length() < 8 || system_manager.getPassword().length() > 20) {
+//            throw new IllegalArgumentException("Password must be between 8 and 20 characters.");
+//        }
+//
+//        // 驗證 phone 格式 (必須以 09 開頭，並且長度為 10 位)
+//        if (system_manager.getPhone() == null || !system_manager.getPhone().startsWith("09") || system_manager.getPhone().length() != 10) {
+//            throw new IllegalArgumentException("Phone number must start with '09' and be 10 digits long.");
+//        }
+
+
 
         // 設置創建日期 (此處假設有 getCreatedDate 方法) 已有自動設置@CreationTimestamp
 //        system_manager.setRegister_date(new Date());
@@ -71,5 +80,19 @@ public class SystemManagerService {
     //用登入帳號查詢管理員
     public SystemManager findByAccount(String account) {
         return system_managerRepo.findByAccount(account);
+    }
+
+    public List<String> validateInput(SystemManager systemManager){
+        List<String> errors = new ArrayList<>();
+        if (systemManager.getAccount().length() < 8 || systemManager.getAccount().length() > 20){
+            errors.add("Account must be between 8 and 20 characters.");
+        }
+        if (systemManager.getPassword().length() < 8 || systemManager.getPassword().length() > 20) {
+            errors.add("Password must be between 8 and 20 characters.");
+        }
+        if (systemManager.getPhone() == null || !systemManager.getPhone().startsWith("09") || systemManager.getPhone().length() != 10) {
+            errors.add("Phone number must start with '09' and be 10 digits long.");
+        }
+        return errors;
     }
 }

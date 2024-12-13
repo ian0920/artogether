@@ -76,7 +76,8 @@
 </head>
 <body>
 <form th:action="@{/systemManager/smadd}" th:object="${systemManager}" method="post">
-  <h1>新增管理員</h1>
+<div> <h1>新增管理員</h1>
+  <div class="text-center" style="color: red" th:text="${errors}"></div></div>
 <!--  自增主鍵  -->
 <!--  <label>管理員編號：</label>-->
 <!--  <input type="number" th:field="*{id}" required />-->

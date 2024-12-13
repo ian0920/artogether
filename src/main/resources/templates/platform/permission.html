@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -45,7 +45,6 @@
     </ul>
 </nav>
 <div id="layoutSidenav">
-    <!--側邊攔-->
     <div id="layoutSidenav_nav">
         <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
             <div class="sb-sidenav-menu">
@@ -129,8 +128,9 @@
             </div>
         </nav>
     </div>
-    <!-- 主內容區域 -->
 
+
+    <!-- 主內容區域 -->
     <div id="layoutSidenav_content">
         <main>
             <div class="container-fluid px-4">
@@ -143,56 +143,51 @@
                 <section>
                     <h2>平台功能說明</h2>
 
-                    <a th:href="@{/permDesc/pdfadd}">
+                    <!-- 查詢功能說明按鈕 -->
+                    <button type="button" class="btn btn-primary"
+                            id="btntest"
+                            onclick="showModalAndRedirect()">
+                        查詢功能說明
+                    </button>
+
+                    <a th:href="@{/permission/pmadd}">
                         <button type="button" class="btn btn-primary" id="BTNADD">
-                            新增平台功能說明
+                            新增管理員權限
                         </button>
                     </a>
 
 
                     <!-- 查詢功能說明的模態框 -->
-                    <div class="modal fade" id="queryPermDescModal" tabindex="-1"
-                         aria-labelledby="queryPermDescModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="queryPermDescModalLabel">查詢功能說明</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <!-- 顯示所有功能說明 -->
-                                    <table class="table">
-                                        <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>平台功能說明</th>
-                                            <th>操作</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <!-- 使用 Thymeleaf 顯示功能說明 -->
-                                        <tr th:each="permDesc : ${permDescs}">
-                                            <td th:text="${permDesc.id}"></td> <!-- 顯示 ID -->
-                                            <td th:text="${permDesc.description}"></td> <!-- 顯示描述 -->
-                                            <td>
-                                                <!-- 刪除功能 -->
-                                                <!--                                                <form th:action="@{/platform/permDesc/delete/{id}(id=${permDesc.id})}"-->
-                                                <!--                                                      method="POST" onsubmit="return confirm('確定要刪除嗎?');">-->
-                                                <!--                                                    <input type="hidden" name="_method" value="DELETE">-->
-                                                <!--                                                    &lt;!&ndash; 使用偽造 DELETE 方法 &ndash;&gt;-->
-                                                <!--                                                    <button type="submit" class="btn btn-danger">刪除</button>-->
-                                                <!--                                                </form>-->
-                                            </td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!--訊息提示-->
-                    <!--                    <div th:if="${message}" class="message" th:text="${message}" style="color: red; text-align: center;"></div>-->
+<!--                    <div class="modal fade" id="queryPermDescModal" tabindex="-1"-->
+<!--                         aria-labelledby="queryPermDescModalLabel" aria-hidden="true">-->
+<!--                        <div class="modal-dialog">-->
+<!--                            <div class="modal-content">-->
+<!--                                <div class="modal-header">-->
+<!--                                    <h5 class="modal-title" id="queryPermDescModalLabel">查詢功能說明</h5>-->
+<!--                                    <button type="button" class="btn-close" data-bs-dismiss="modal"-->
+<!--                                            aria-label="Close"></button>-->
+<!--                                </div>-->
+<!--                                <div class="modal-body">-->
+<!--                                    &lt;!&ndash; 顯示所有功能說明 &ndash;&gt;-->
+<!--                                    <table class="table">-->
+<!--                                        <thead>-->
+<!--                                        <tr>-->
+<!--                                            <th>ID</th>-->
+<!--                                            <th>權限</th>-->
+<!--                                        </tr>-->
+<!--                                        </thead>-->
+<!--                                        <tbody>-->
+<!--                                        &lt;!&ndash; 使用 Thymeleaf 顯示功能說明 &ndash;&gt;-->
+<!--                                        <tr th:each="permission : ${permissions}">-->
+<!--                                            <td th:text="${permission.permissionId.managerId}"></td> &lt;!&ndash; 顯示 Key1 &ndash;&gt;-->
+<!--                                            <td th:text="${permission.permissionId.description}"></td> &lt;!&ndash; 顯示描述 &ndash;&gt;-->
+<!--                                        </tr>-->
+<!--                                        </tbody>-->
+<!--                                    </table>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
 
                     <div class="modal fade" id="testadd" tabindex="-1" aria-labelledby="testaddLabel"
                          aria-hidden="true">
@@ -202,33 +197,6 @@
                                     <h5 class="modal-title" id="testaddLabel">測試加加</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                             aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <!-- 顯示所有功能說明 -->
-                                    <!--                                    <table class="table">-->
-                                    <!--                                        <thead>-->
-                                    <!--                                        <tr>-->
-                                    <!--                                            <th>ID</th>-->
-                                    <!--                                            <th>平台功能說明</th>-->
-                                    <!--                                            <th>操作</th>-->
-                                    <!--                                        </tr>-->
-                                    <!--                                        </thead>-->
-                                    <!--                                        <tbody>-->
-                                    <!--                                        &lt;!&ndash; 使用 Thymeleaf 顯示功能說明 &ndash;&gt;-->
-                                    <!--                                        <tr th:each="permDesc : ${permDescs}">-->
-                                    <!--                                            <td th:text="${permDesc.id}"></td> &lt;!&ndash; 顯示 ID &ndash;&gt;-->
-                                    <!--                                            <td th:text="${permDesc.description}"></td> &lt;!&ndash; 顯示描述 &ndash;&gt;-->
-                                    <!--                                            <td>-->
-                                    <!--                                                &lt;!&ndash; 刪除功能 &ndash;&gt;-->
-                                    <!--                                                <form th:action="@{/platform/permDesc/delete/{id}(id=${permDesc.id})}" method="POST" onsubmit="return confirm('確定要刪除嗎?');">-->
-                                    <!--                                                    <input type="hidden" name="_method" value="DELETE"> &lt;!&ndash; 使用偽造 DELETE 方法 &ndash;&gt;-->
-                                    <!--                                                    <button type="submit" class="btn btn-danger">刪除</button>-->
-                                    <!--                                                </form>-->
-                                    <!--                                            </td>-->
-                                    <!--                                        </tr>-->
-                                    <!--                                        </tbody>-->
-                                    <!--                                    </table>-->
-
                                 </div>
                             </div>
                         </div>
@@ -245,23 +213,17 @@
                                 <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>平台功能說明</th>
-                                    <th>操作</th>
+                                    <th>權限</th>
+                                    <th>權限名稱</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <!-- 使用 Thymeleaf 顯示功能說明 -->
-                                <tr th:each="permDesc : ${permDescs}" id="content" contenteditable="false">
-                                    <td th:text="${permDesc.id}"></td> <!-- 顯示 ID -->
-                                    <td th:text="${permDesc.description}"></td> <!-- 顯示描述 -->
-                                    <td>
-                                        <button id="editButton">更新</button>
-                                        <!-- 刪除功能 -->
-                                        <!--                                                                                <form th:action="@{/platform/permDesc/delete/{id}(id=${permDesc.id})}" method="POST" onsubmit="return confirm('確定要刪除嗎?');">-->
-                                        <!--                                            <input type="hidden" name="_method" value="DELETE"> &lt;!&ndash; 使用偽造 DELETE 方法 &ndash;&gt;-->
-                                        <!--                                            <button type="submit" class="btn btn-danger">刪除</button>-->
-                                        <!--                                        </form>-->
-                                    </td>
+                                <tr th:each="permission : ${permissions}" id="content" contenteditable="false">
+
+                                    <td th:text="${permission.managerId}"></td> <!-- 顯示 ID -->
+                                    <td th:text="${permission.descId}"></td> <!-- 顯示描述 -->
+                                    <td th:text="${permission.descName}"></td>
                                 </tr>
                                 </tbody>
                             </table>
