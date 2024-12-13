@@ -3,16 +3,15 @@ package com.artogether.controller.venue;
 import com.artogether.common.business_member.BusinessMember;
 import com.artogether.venue.tslot.TslotService;
 import com.artogether.venue.venue.VenueService;
-import com.artogether.venue.vnedto.TslotDTO;
-import com.artogether.venue.vnedto.VneCardDTO;
-import com.artogether.venue.vnedto.VneDetailDTO;
-import com.artogether.venue.vnedto.VnePriceDTO;
+import com.artogether.venue.vnedto.*;
 import com.artogether.venue.vneimg.VneImgService;
 import com.artogether.venue.vneprice.VnePriceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -52,12 +51,26 @@ public class VneRestController {
         TslotDTO tslotDTO = tslotService.nearestTslot(vneId,now);
         return tslotDTO;
     }
+    //取出該場地的價錢細節
     @GetMapping("/price/{vneId}")
     public VnePriceDTO nearestPrice(@PathVariable("vneId") Integer vneId) {
         LocalDateTime now = LocalDateTime.now();
         VnePriceDTO vnePriceDTO =vnePriceService.getNearestVnePrice(vneId, now);
         System.out.println(vnePriceDTO);
         return vnePriceDTO;
+    }
+
+    //取出該場地的可預約的日期
+    @GetMapping("/order/date/{vneId}")
+    public FlatpickrDTO getFlatpickrDTO(@PathVariable("vneId") Integer vneId){
+        LocalDateTime now = LocalDateTime.now();
+        return tslotService.getFlatpickrDTO(vneId, now);
+    }
+    //取出該場地的可預約的時間細節
+    @GetMapping("/order/available/{vneId}")
+    public AvailableDTO getAvailableDTO(@PathVariable("vneId") Integer vneId,
+                                        @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date){
+        return tslotService.getAvailableDTO(vneId, date);
     }
     @PostMapping("/test1")
     public List<VneCardDTO> testApi1() {

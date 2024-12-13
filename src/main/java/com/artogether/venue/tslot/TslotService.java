@@ -6,6 +6,7 @@ import com.artogether.venue.venue.VenueRepository;
 import com.artogether.venue.vnedto.AvailableDTO;
 import com.artogether.venue.vnedto.FlatpickrDTO;
 import com.artogether.venue.vnedto.TslotDTO;
+import com.artogether.venue.vnedto.VnePriceDTO;
 import com.artogether.venue.vneorder.VneOrder;
 import com.artogether.venue.vneorder.VneOrderRepository;
 import com.artogether.venue.vneprice.VnePriceService;
@@ -272,9 +273,51 @@ public class TslotService {
     public AvailableDTO getAvailableDTO(Integer vneId, LocalDate bookingDate){
         AvailableDTO availableDTO = AvailableDTO.builder()
                 .availableSegments(getAvailableSegments(vneId,bookingDate))
-                .hourlyPrice(vnePriceService.getPriceMap(vneId,bookingDate))
+                .hourlyPrice(getPriceMap(vneId,bookingDate))
                 .build();
         return availableDTO;
     }
 
+    //製作可營業的時間價錢對照表
+    public Map<Integer, Integer> getPriceMap (Integer vneId, LocalDate bookingDate) {
+        Map<Integer, Integer> priceMap = new HashMap<>();
+        VnePriceDTO vnePriceDTO = vnePriceService.getNearestVnePrice(vneId, LocalDateTime.now());
+        List<Integer> dayOfWeek = vnePriceDTO.getDayOfWeek();
+        int value = bookingDate.getDayOfWeek().getValue();
+        Integer defaultPrice = vnePriceDTO.getDefaultPrice();
+        Integer price = vnePriceDTO.getPrice();
+        BitSet availableHours = getAvailableBitSet(vneId, bookingDate);
+
+        if (dayOfWeek.contains(value)) {
+            if (price != null) {
+                int start = availableHours.nextSetBit(0);
+                while (start != -1) {
+                    priceMap.put(start, defaultPrice);
+                    start = availableHours.nextSetBit(start + 1);
+                }
+                return priceMap;
+            }else {
+                Integer startTime = vnePriceDTO.getStartTime();
+                Integer endTime = vnePriceDTO.getEndTime();
+                BitSet specialPriceList = BinaryTools.toBitSet(vnePriceService.getPriceTslotList(startTime, endTime));
+                int start = availableHours.nextSetBit(0);
+                while (start != -1) {
+                    if (specialPriceList.get(start)) {
+                        priceMap.put(start, price);
+                    }else {
+                        priceMap.put(start, defaultPrice);
+                    }
+                    start = availableHours.nextSetBit(start + 1);
+                }
+                return priceMap;
+            }
+        }else {
+            int start = availableHours.nextSetBit(0);
+            while (start != -1) {
+                priceMap.put(start, defaultPrice);
+                start = availableHours.nextSetBit(start + 1);
+            }
+            return priceMap;
+        }
+    }
 }

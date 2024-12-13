@@ -20,8 +20,6 @@ public class VnePriceService {
     private VenueRepository venueRepository;
     @Autowired
     private VnePriceRepository vnePriceRepository;
-    @Autowired
-    private TslotService tslotService;
 
     //獲取上一次的紀錄
     public VnePriceDTO getNearestVnePrice(Integer vneId, LocalDateTime submissionTime) {
@@ -78,46 +76,5 @@ public class VnePriceService {
         return slotList;
     }
 
-    //製作可營業的時間價錢對照表
-    public Map<Integer, Integer> getPriceMap (Integer vneId, LocalDate bookingDate) {
-        Map<Integer, Integer> priceMap = new HashMap<>();
-        VnePriceDTO vnePriceDTO = getNearestVnePrice(vneId, LocalDateTime.now());
-        List<Integer> dayOfWeek = vnePriceDTO.getDayOfWeek();
-        int value = bookingDate.getDayOfWeek().getValue();
-        Integer defaultPrice = vnePriceDTO.getDefaultPrice();
-        Integer price = vnePriceDTO.getPrice();
-        BitSet availableHours = tslotService.getAvailableBitSet(vneId, bookingDate);
 
-        if (dayOfWeek.contains(value)) {
-            if (price != null) {
-                int start = availableHours.nextSetBit(0);
-                while (start != -1) {
-                    priceMap.put(start, defaultPrice);
-                    start = availableHours.nextSetBit(start + 1);
-                }
-                return priceMap;
-            }else {
-                Integer startTime = vnePriceDTO.getStartTime();
-                Integer endTime = vnePriceDTO.getEndTime();
-                BitSet specialPriceList = BinaryTools.toBitSet(getPriceTslotList(startTime, endTime));
-                int start = availableHours.nextSetBit(0);
-                while (start != -1) {
-                    if (specialPriceList.get(start)) {
-                        priceMap.put(start, price);
-                    }else {
-                        priceMap.put(start, defaultPrice);
-                    }
-                    start = availableHours.nextSetBit(start + 1);
-                }
-                return priceMap;
-            }
-        }else {
-            int start = availableHours.nextSetBit(0);
-            while (start != -1) {
-                priceMap.put(start, defaultPrice);
-                start = availableHours.nextSetBit(start + 1);
-            }
-            return priceMap;
-        }
-    }
 }
