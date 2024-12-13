@@ -1,5 +1,6 @@
 package com.artogether.product.my_prd_coup;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,11 +22,11 @@ public interface MyPrdCoupService {
 
 	boolean hasMemberReceivedCoupon(MyPrdCoup.MyPrdCoupId myPrdCoupId); // 檢查會員是否已領取特定優惠券
 
-	List<MyPrdCoup> findCouponsExpiringSoon(Integer memberId, LocalDateTime currentDate, Integer days); // 查詢會員即將到期的優惠券
+//	List<MyPrdCoup> findCouponsExpiringSoon(Integer memberId, LocalDateTime currentDate, Integer days); // 查詢會員即將到期的優惠券
 
-	boolean receiveCoupon(MyPrdCoup.MyPrdCoupId myPrdCoupId, LocalDateTime receiveDate); // 領取優惠券
+	boolean receiveCoupon(MyPrdCoup.MyPrdCoupId myPrdCoupId, Timestamp receiveDate); // 領取優惠券
 
-	boolean useCoupon(MyPrdCoup.MyPrdCoupId myPrdCoupId, LocalDateTime useDate); // 使用優惠券
+	boolean useCoupon(MyPrdCoup.MyPrdCoupId myPrdCoupId, Timestamp useDate); // 使用優惠券
 
-	List<MyPrdCoup> findValidCouponsForMember(Integer memberId, LocalDateTime currentDate); // 查詢會員有效的優惠券
+	List<MyPrdCoup> findValidCouponsForMember(Integer memberId, Timestamp currentDate); // 查詢會員有效的優惠券
 }

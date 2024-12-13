@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>可領取的優惠券</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">尚未領取的優惠券</h1>
+
+        <!-- 顯示優惠券列表 -->
+        <table class="table table-bordered table-hover mt-4">
+            <thead class="thead-dark">
+                <tr>
+                    <th>優惠券名稱</th>                  
+                    <th>有效期限</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="coupon : ${coupons}">
+                    <td th:text="${coupon.name}">優惠券名稱</td>                 
+                    <td th:text="${coupon.endDate}">有效期限</td>
+                    <td>
+                        <!-- 領取按鈕 -->
+                        <form th:action="@{/coupons/claim}" method="post">
+                            <input type="hidden" name="memberId" th:value="${memberId}" />
+                            <input type="hidden" name="couponId" th:value="${coupon.id}" />
+                            <button type="submit" class="btn btn-primary">領取</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- 如果沒有可領取的優惠券，顯示提示 -->
+        <div th:if="${#lists.isEmpty(coupons)}" class="alert alert-warning text-center">
+            目前沒有可領取的優惠券。
+        </div>
+    </div>
+</body>
+</html>

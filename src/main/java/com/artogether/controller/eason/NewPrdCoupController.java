@@ -27,27 +27,15 @@ public class NewPrdCoupController {
     private BusinessService businessService;
     @Autowired
     private PrdCoupService prdCoupService;
-    // ==============================
+    
     // 優惠券列表頁面
-    // ==============================
+    
     @GetMapping("/list")
-    public String getCouponsByBusinessMember(
-            @RequestParam(required = false) Integer testBusinessId, // 測試用參數
-            HttpSession session,
-            Model model) {
-
+    public String getCouponsByBusinessMember(HttpSession session, Model model){
+         
         // 嘗試從 Session 中取得當前商家
         BusinessMember presentBusinessMember = (BusinessMember) session.getAttribute("presentBusinessMember");
 
-        // 如果 Session 中沒有商家數據，嘗試使用測試參數
-        if (presentBusinessMember == null && testBusinessId != null) {
-            // 模擬商家對象（假設您有 BusinessService 查詢商家）
-            presentBusinessMember = businessService.findById(testBusinessId);
-            if (presentBusinessMember == null) {
-                throw new IllegalArgumentException("無效的商家 ID：" + testBusinessId);
-            }
-            session.setAttribute("presentBusinessMember", presentBusinessMember);
-        }
 
         // 如果仍然沒有商家，提示用戶需要登入
         if (presentBusinessMember == null) {
@@ -70,27 +58,17 @@ public class NewPrdCoupController {
 
 
 
-    // ==============================
+    
     // 新增優惠券頁面
-    // ==============================
+    
     @GetMapping("/add")
-    public String showAddCouponForm(
-            @RequestParam(required = false) Integer testBusinessId, // 測試用參數
-            HttpSession session,
-            Model model) {
-        // 從 Session 或測試參數中獲取當前商家
+    public String showAddCouponForm(HttpSession session,Model model) {
+        
         BusinessMember presentBusinessMember = (BusinessMember) session.getAttribute("presentBusinessMember");
-        if (presentBusinessMember == null && testBusinessId != null) {
-            presentBusinessMember = businessService.findById(testBusinessId);
-            if (presentBusinessMember == null) {
-                throw new IllegalArgumentException("無效的商家 ID：" + testBusinessId);
-            }
-            session.setAttribute("presentBusinessMember", presentBusinessMember);
-        }
+        
         if (presentBusinessMember == null) {
             throw new IllegalStateException("未登入且未提供測試商家 ID");
         }
-
         // 傳遞當前商家到模板
         model.addAttribute("presentBusinessMember", presentBusinessMember);
 
@@ -112,9 +90,9 @@ public class NewPrdCoupController {
         return "redirect:/coupons/list"; // 新增成功後重定向至列表頁面
     }
 
-    // ==============================
+    
     // 編輯優惠券頁面
-    // ==============================
+   
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Integer id, Model model, RedirectAttributes redirectAttributes) {
         try {
@@ -141,9 +119,9 @@ public class NewPrdCoupController {
         return "redirect:/coupons/list";
     }
 
-    // ==============================
+    
     // 刪除優惠券
-    // ==============================
+    
     @PostMapping("/delete/{id}")
     public String deletePrdCoup(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
         try {
@@ -155,8 +133,8 @@ public class NewPrdCoupController {
         return "redirect:/coupons/list";
     }
     
-    
-    
+     // 搜尋優惠券
+
     @GetMapping("/search")
     public String findCouponsByCriteria(
             @RequestParam(required = false) String name,
