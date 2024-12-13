@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+</head>
+<body>
+<div x-data="flatpickrConfig()" x-init="initFlatpickr">
+    <input type="text" id="datePicker" placeholder="Select a date">
+</div>
+
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('flatpickrConfig', () => ({
+            vneId: null,
+            startDate: null,
+            endDate: null,
+            disableDates: [],
+            initFlatpickr() {
+                // Extract vneId from the URL
+                const queryString = window.location.search; // 獲取 URL 中 '?' 及其後的部分
+                const urlParams = new URLSearchParams(queryString);
+
+                const vneId = urlParams.get('vneId'); // 獲取參數 'vneId'
+                // const vneId = window.location.pathname.split('/').pop();
+
+                // Fetch data from the backend
+                $.get(`/vne/order/dates/${vneId}`, function (data) {
+                    const disableDates = data.disableDates.map(date => date.toString());
+
+                    // Initialize Flatpickr
+                    flatpickr("#datePicker", {
+                        minDate: data.startDate,
+                        maxDate: data.endDate,
+                        disable: disableDates
+                    });
+                }).fail(function () {
+                    console.error("Failed to fetch Flatpickr data.");
+                });
+            }
+        }));
+    });
+</script>
+</body>
+</html>

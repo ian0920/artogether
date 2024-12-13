@@ -10,16 +10,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@RequestMapping("/venue/mem")
+@RequestMapping("/vneMem")
 public class VneMemController {
 
     @Autowired
     private VenueService venueService;
 
-    @GetMapping("detail")
+    @GetMapping("/detail")
     public String detail(@RequestParam("vneId")Integer vneId, Model model) {
         VneDetailDTO vneDetailDTO = venueService.getDetailVenue(vneId);
         model.addAttribute("vneDetail", vneDetailDTO);
-        return "/venue/member/html/detail";
+        return "/venue/member/detail";
+    }
+
+    @GetMapping("/order")
+    public String order(@RequestParam("vneId")Integer vneId) {
+        return "/venue/member/order";
     }
 }
