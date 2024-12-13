@@ -14,6 +14,10 @@
 	活動管理->'event'
 	商品管理->'product'
  -->
+ <!-- 
+	使用範例： 
+	<div th:replace="~{/components/navbar_business::navbar('event','event')}"></div>	
+-->
 <!-- 導航 -->
 <div class="bs-navbar" th:fragment="navbar(selectedItem,selectedSubItem)">
 	<div class="bs-navbar-main">
