@@ -100,12 +100,12 @@
 						<li clickable class="bs-navbar-subitem"
 						    th:classappend="${selectedSubItem == 'order' ? ' -focus' : ''}">
 						
-						<a href="#">訂單管理</a>
+						<a href="/business/event/orders">訂單管理</a>
 						</li>
 						<li clickable class="bs-navbar-subitem"
 						    th:classappend="${selectedSubItem == 'coupon' ? ' -focus' : ''}">
 						
-						<a href="/business_event/couponManagement">優惠券管理</a></li>
+						<a href="/business/event/coupons">優惠券管理</a></li>
 						<li clickable class="bs-navbar-subitem"
                             th:classappend="${selectedSubItem == 'event' ? ' -focus' : ''}">
 
@@ -119,12 +119,12 @@
 		<div class="bs-navbar-user-menu -hidden"
 			th:if="${#session.getAttribute('businessMembers').size()>1}">
 			<div clickable class="bs-navbar-user-item"
-				th:each="businessMember: ${#session.getAttribute('businessMembers')}">
+				th:each="businessMember, iterStat: ${#session.getAttribute('businessMembers')}">
 				<div class="bs-navbar-user-thumbnail">
 					<img th:src="@{/web_design/asset/images/bgimg.png}" alt="" />
 				</div>
 				<a class="bs-navbar-user-name"
-					th:href="@{/businessMemberSwitch(index=${#session.getAttribute('businessMembers').indexOf(businessMember)})}"
+					th:href="@{/businessMemberSwitch(index=${iterStat.index})}"
 					th:text="${businessMember.name}">商家名稱</a>
 			</div>
 		</div>

@@ -188,7 +188,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-<div class="bs-navbar" th:include="homepage_business::navbar"></div>
+<div th:replace="~{/components/navbar_business::navbar('event','order')}"></div>
 <main>
     <div class="container">
         <h3>訂單查詢</h3>
