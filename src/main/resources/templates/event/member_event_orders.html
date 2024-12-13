@@ -122,7 +122,7 @@
                     <div><strong>實際金額：</strong> <span th:text="${entry.value.totalPrice}"></span></div>
                     <div><strong>折扣金額：</strong> <span th:text="${entry.value.discount}"></span></div>
                     <div><strong>付款金額：</strong> <span th:text="${entry.value.paid}"></span></div>
-                    <div><strong>活動狀態：</strong> <button id="eventStatus"  th:text="${entry.key.status == 1 ? '報名中' : (entry.key.status == 2 ? '延期' : (entry.key.status == 3 ? '取消' : '結束'))}"></button></div>
+                    <div><strong>活動狀態：</strong> <button id="eventStatus" style="display: inline-block" th:text="${entry.key.status == 1 ? '正常舉行' : (entry.key.status == 2 ? '延期' : (entry.key.status == 3 ? '取消' : '結束'))}"></button></div>
                     <div th:if="${entry.value.refundApplyDate!= null}" ><strong>退款申請日期：</strong> <span th:text="${entry.value.refundApplyDate}"></span></div>
                     <div th:if="${entry.value.refundApplyDate!= null}" ><strong>退款完成日期：</strong> <span th:text="${entry.value.refundDate}"></span></div>
                     <div th:if="${entry.value.refundApplyDate!= null}"><strong>退款金額：</strong> <span th:text="${entry.value.refund}"></span></div>
