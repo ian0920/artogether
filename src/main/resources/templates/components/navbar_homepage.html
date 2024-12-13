@@ -2,8 +2,8 @@
 	<!-- 導航 -->
 	<header class="header navbar_homepage" th:fragment="navbar">
 		<div class="header_box">
-			<div class="logo">
-				<img th:src="@{/web_design/asset/images/ARTOGETHER.svg}" alt="" onclick="location.href = '/'" />
+			<div clickable class="logo" onclick="location.href='/'">
+				<img th:src="@{/web_design/asset/images/ARTOGETHER.svg}" alt="" />
 			</div>
 			<nav class="navbar">
 				<div clickable class="navbar-item">
@@ -78,7 +78,7 @@
 
 	<!-- 會員視窗 -->
 	<div class="user-menu-box" th:fragment="user-menu-box">
-		<div clickable class="user-info-box">
+		<div clickable class="user-info-box" onclick="location.href='/member'">
 			<div class="thumbnail">
 				<img th:src="@{/web_design/asset/images/bgimg.png}" alt="" />
 			</div>

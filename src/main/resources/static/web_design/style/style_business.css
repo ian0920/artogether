@@ -569,12 +569,6 @@
 }
 
 body {
-  font-family: "Noto Sans TC";
-  font-weight: 400;
-  font-size: 12pt;
-  line-height: 140%;
-  text-decoration: none;
-  letter-spacing: normal;
   color: var(--text-default-default-sds-light);
 }
 
@@ -896,9 +890,11 @@ div.row {
 
 #carouselContainer {
   position: relative;
-  width: 80%; /* 可調整，設定容器的寬度 */
+  width: 100%; /* 設定容器的寬度 */
   margin: auto;
   overflow: hidden; /* 隱藏超出部分 */
+  /* 使用 CSS 變數指定高度 */
+  height: var(--carousel-height, 400px); /* 默認高度為 400px */
 }
 #carouselContainer .carousel {
   display: flex;
@@ -907,7 +903,7 @@ div.row {
 }
 #carouselContainer .carousel .carousel-item {
   min-width: 100%; /* 每個圖片佔滿一個屏幕寬度 */
-  height: 400px; /* 可以根據需要調整圖片高度 */
+  height: 100%; /* 高度自適應父容器 */
   background-size: cover; /* 背景圖像覆蓋容器 */
   background-position: center; /* 圖片居中 */
   position: relative;
@@ -925,10 +921,10 @@ div.row {
   background-color: rgba(0, 0, 0, 0.5);
   color: white;
   border: none;
-  font-size: 30px; /* 設定較大字型 */
+  font-size: 24px; /* 設定較大字型 */
   padding: 10px;
   cursor: pointer;
-  z-index: 10;
+  z-index: 4;
 }
 #carouselContainer .carousel-control.prev {
   left: 10px; /* 左側按鈕 */
@@ -938,6 +934,32 @@ div.row {
 }
 #carouselContainer .carousel-control:hover {
   background-color: rgba(0, 0, 0, 0.8); /* 滑鼠懸停時變深 */
+}
+
+.info-card-outline {
+  padding: 16px;
+  border: 1px solid var(--border-default-default-sds-light);
+  border-radius: 8px;
+}
+.info-card-outline .info-card-horizontal {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+}
+.info-card-outline .info-card-horizontal .icon-box {
+  border-radius: 100%;
+  width: 48px;
+  height: 48px;
+  background-color: var(--brand-shop-tint);
+  color: var(--brand-shop);
+  padding: 4px;
+}
+.info-card-outline .info-card-horizontal .icon-box span {
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  vertical-align: auto;
 }
 
 * {

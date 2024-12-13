@@ -6,7 +6,7 @@
   @include font-setting;
 }
 body {
-  @include font-body-small;
+  // @include font-body-small;
   color: var(--text-default-default-sds-light);
 }
 h1,
@@ -42,6 +42,11 @@ h6 {
     background-color: var(--brand-product) !important;
   }
 }
+
+.clear-shadow {
+  box-shadow: none;
+}
+
 span.material-symbols-outlined {
   vertical-align: middle;
 }
@@ -227,6 +232,9 @@ button {
   &.button-big {
     padding: 8px 16px;
   }
+  &.button-big-icon {
+    padding: 8px;
+  }
 }
 
 div.pop-up-container {
@@ -277,7 +285,10 @@ div.pop-up-container {
 .flex-2 {
   flex: 2;
 }
-div.row {
+.flex-3 {
+  flex: 3;
+}
+.row {
   @include flexbox(row, 8px);
 }
 .margin-b-20 {
@@ -336,6 +347,29 @@ div.row {
 
     &:hover {
       background-color: rgba(0, 0, 0, 0.8); /* 滑鼠懸停時變深 */
+    }
+  }
+}
+
+// info-card
+.info-card-outline {
+  padding: 16px;
+  border: 1px solid var(--border-default-default-sds-light);
+  border-radius: 8px;
+  .info-card-horizontal {
+    @include flexbox(row, 16px);
+    @include flexbox-details(center, flex-start);
+    .icon-box {
+      border-radius: 100%;
+      width: 48px;
+      height: 48px;
+      background-color: var(--brand-shop-tint);
+      color: var(--brand-shop);
+      padding: 4px;
+      span {
+        position: relative;
+        @include align-middle;
+      }
     }
   }
 }

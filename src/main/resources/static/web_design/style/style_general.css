@@ -564,12 +564,6 @@
 }
 
 body {
-  font-family: "Noto Sans TC";
-  font-weight: 400;
-  font-size: 12pt;
-  line-height: 140%;
-  text-decoration: none;
-  letter-spacing: normal;
   color: var(--text-default-default-sds-light);
 }
 
@@ -605,6 +599,10 @@ h6 {
 }
 .bgcolor-product {
   background-color: var(--brand-product) !important;
+}
+
+.clear-shadow {
+  box-shadow: none;
 }
 
 span.material-symbols-outlined {
@@ -822,6 +820,9 @@ button.button-tertiary {
 button.button-big {
   padding: 8px 16px;
 }
+button.button-big-icon {
+  padding: 8px;
+}
 
 div.pop-up-container {
   position: absolute;
@@ -879,7 +880,11 @@ div.pop-up-container.-active {
   flex: 2;
 }
 
-div.row {
+.flex-3 {
+  flex: 3;
+}
+
+.row {
   display: flex;
   flex-direction: row;
   gap: 8px;
@@ -935,4 +940,31 @@ div.row {
 }
 #carouselContainer .carousel-control:hover {
   background-color: rgba(0, 0, 0, 0.8); /* 滑鼠懸停時變深 */
+}
+
+.info-card-outline {
+  padding: 16px;
+  border: 1px solid var(--border-default-default-sds-light);
+  border-radius: 8px;
+}
+.info-card-outline .info-card-horizontal {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  align-items: center;
+  justify-content: flex-start;
+}
+.info-card-outline .info-card-horizontal .icon-box {
+  border-radius: 100%;
+  width: 48px;
+  height: 48px;
+  background-color: var(--brand-shop-tint);
+  color: var(--brand-shop);
+  padding: 4px;
+}
+.info-card-outline .info-card-horizontal .icon-box span {
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }/*# sourceMappingURL=style_general.css.map */
