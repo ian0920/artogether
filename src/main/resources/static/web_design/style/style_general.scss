@@ -42,6 +42,11 @@ h6 {
     background-color: var(--brand-product) !important;
   }
 }
+
+.clear-shadow {
+  box-shadow: none;
+}
+
 span.material-symbols-outlined {
   vertical-align: middle;
 }

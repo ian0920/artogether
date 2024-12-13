@@ -8,6 +8,69 @@
 	  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
 	  rel="stylesheet"
 	/>
+    <style>
+     
+        /* Centering popup */
+        .popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .form-container {
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            width: 500px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .amounts {
+            margin-top: 15px;
+            text-align: left;
+        }
+
+        .amounts p {
+            margin: 5px 0;
+        }
+
+        .submitButton, .openFormButton{
+            color: white;
+            background-color: #2c95c6;
+        }
+
+        .submitButton:hover, .openFormButton:hover{
+            color: white;
+            background-color: #2982a8;
+        }
+
+        #to-login{
+            color: white;
+            background-color: #e8b677;
+        }
+
+        #to-login:hover{
+            color: white;
+            background-color: #c99e68;
+        }
+		
+		input,select{
+		width:100%
+		}
+
+
+
+    </style>
     <title>event details</title>
 </head>
 <body>
@@ -51,12 +114,71 @@
 		<p th:text="${evt.businessMember.addr}"></p>
 		<div class="row">
 <!-- 			<button class="button-big button-primary flex-auto">立即報名</button> -->
-<!-- 			<div th:replace="~{/event/eventTest::registerButton}"></div> -->
+			<!-- Open Form Button -->
+			<button th:if="${#session.getAttribute('member') != null}" id="openFormButton" class="btn btn-lg openFormButton button-big flex-auto" th:disabled="${match==true}" >報名活動</button>
+			<button th:unless="${#session.getAttribute('member') != null}" id="to-login" class="btn btn-lg button-big flex-auto" onclick="location.href='/login'">請先登入</button>
+
 			<button class="button-icon-big" id=btn_track><span class="material-symbols-outlined">bookmark</span></button>
 		</div>
 	</aside>
 </div>
+<!-- Popup Form -->
+<div th:if="${#session.getAttribute('member') != null}" id="popupForm" class="popup -hidden">
+    <div class="form-container">
+        <h2 class="text-center mb-4">報名表單</h2>
 
+        <!-- Form -->
+        <form id="paymentForm" method="post" th:action="@{/evt/enroll}">
+            <input type="hidden" name="eventId" th:value="${eventObject.id}"></input>
+            <div class="form-group text-start">
+                <label for="qty" class="label-input">選擇報名人數:</label>
+                <select id="qty" name="qty" class="solo">
+                    <option value="1">1 位</option>
+                    <option value="2">2 位</option>
+                    <option value="3">3 位</option>
+                    <option value="4">4 位</option>
+                    <option value="5">5 位</option>
+                </select>
+            </div>
+
+            <div class="form-group text-start mt-3">
+                <label for="paymentMethod" class="label-input">付款方式</label>
+                <select id="paymentMethod" name="paymentMethod" class="solo">
+                    <option value="0">信用卡</option>
+                    <option value="1">行動支付</option>
+                    <option value="2">轉帳付款</option>
+                </select>
+            </div>
+
+            <div class="form-group text-start mt-3">
+                <label for="couponSelect" class="label-input">優惠券代碼:</label>
+                <select  id="couponSelect" name="evtCoupId" class="solo">
+                    <option th:if="${myEvtCoups.size()>0}"
+                            th:each=" myEvtCoup :${myEvtCoups}"
+                            th:value="${myEvtCoup.getEvtCoup().getId()}"
+                            th:text="${myEvtCoup.getEvtCoup().getEvtCoupName()}"></option>
+                    <option th:unless="${myEvtCoups.size()>0}" value="" th:text="無優惠券可使用"></option>
+                </select>
+
+            </div>
+
+            <!-- Amounts Display -->
+            <div class="amounts">
+                <p>原價: <span id="totalAmount"></span></p>
+                <input type="hidden" name="totalPrice" id="totalAmountH">
+                <p>折扣: <span id="discountAmount">$0</span></p>
+                <input type="hidden" name="discount" id="discountH">
+                <p>付款金額: <span id="paidAmount" >$0</span></p>
+                <input type="hidden" name="paid" id="paidH">
+            </div>
+
+            <div class="row">
+                <input type="button" id="closeFormButton" class="btn btn-danger button-big button-secondary flex-1" style="margin-left: 10px;" value="取消"></input>
+                <button id="submitButton" class="btn submitButton button-primary button-big flex-2">送出報名</button>
+            </div>
+        </form>
+    </div>
+</div>
 </main>
 
 <script type="text/javascript" th:inline="javascript">
@@ -92,6 +214,80 @@
 	        alert("請求發送失敗，請稍後再試。");
 	    }
 	}
+</script>
+<!-- Bootstrap JS and Popper (optional, for modal functionality) -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" ></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script th:inline="javascript">
+    // Open the form when the "Open Form" button is clicked
+    document.getElementById('openFormButton').addEventListener('click', () => {
+        document.getElementById('popupForm').classList.remove('-hidden');
+    });
+
+    // Close the form when the "Close" button is clicked
+    document.getElementById('closeFormButton').addEventListener('click', () => {
+        document.getElementById('popupForm').classList.add('-hidden');
+    });
+
+    const eventPrice = [[${eventObject.price}]]; // Replace with your dynamic value from server
+
+    // Elements
+    const qtySelect = document.getElementById('qty');
+    const couponSelect = document.getElementById('couponSelect');
+    const totalAmountElem = document.getElementById('totalAmount');
+    const totalAmountElemH = document.getElementById('totalAmountH');
+    const discountAmountElem = document.getElementById('discountAmount');
+    const discountAmountElemH = document.getElementById('discountH');
+    const paidAmountElem = document.getElementById('paidAmount');
+    const paidAmountElemH = document.getElementById('paidH');
+
+    // Function to update the amounts
+    function updateAmounts() {
+        const qty = parseInt(qtySelect.value); // Get selected qty (number of attendees)
+        const selectedCouponId = couponSelect.value; // Get selected coupon ID
+
+        let totalAmount = eventPrice * qty; // Calculate total amount (price * qty)
+        let discountAmount = 0;
+
+        // Check if a coupon is selected and calculate discount accordingly
+        if (selectedCouponId !== "") {
+            // Find the coupon object based on the selected ID (this would be dynamic based on your server-side rendering)
+            const selectedCoupons = [[${evtCoupIdAndTypeMap}]];
+            const selectedCoupon = selectedCoupons[selectedCouponId]
+
+            if (selectedCoupon != null) {
+
+                if (selectedCoupon < 1) {
+                    // Percentage discount
+                    discountAmount = (totalAmount * selectedCoupon).toFixed(0);
+                } else if (selectedCoupon >= 1) {
+                    // Fixed amount discount
+                    discountAmount = selectedCoupon * qty;
+                }
+            }
+        } else{
+            discountAmount = 0;
+        }
+
+        // Calculate paid amount
+        const paidAmount = (totalAmount - discountAmount).toFixed(0);
+
+        // Update the UI
+        totalAmountElem.textContent = `$${totalAmount}`;
+        totalAmountElemH.value = `${totalAmount}`;
+        discountAmountElem.textContent = `$${discountAmount}`;
+        discountAmountElemH.value = `${discountAmount}`;
+        paidAmountElem.textContent = `$${paidAmount}`;
+        paidAmountElemH.value = `${paidAmount}`;
+    }
+
+    // Event listeners to update amounts when the quantity or coupon selection changes
+    qtySelect.addEventListener('change', updateAmounts);
+    couponSelect.addEventListener('change', updateAmounts);
+
+    // Initially update amounts on page load (in case of pre-selected values)
+    updateAmounts();
 </script>
 </body>
 </html>

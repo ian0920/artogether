@@ -5,9 +5,12 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletOutputStream;
@@ -39,8 +42,12 @@ import com.artogether.event.event.Event;
 import com.artogether.event.event.EventService;
 import com.artogether.event.evt_img.EvtImg;
 import com.artogether.event.evt_img.EvtImgService;
+import com.artogether.event.evt_order.EvtOrder;
+import com.artogether.event.evt_order.EvtOrderService;
 import com.artogether.event.evt_track.EvtTrack;
 import com.artogether.event.evt_track.EvtTrackService;
+import com.artogether.event.my_evt_coup.MyEvtCoup;
+import com.artogether.event.my_evt_coup.MyEvtCoupService;
 
 @Controller
 @RequestMapping("/event")
@@ -53,6 +60,11 @@ public class Wynn_EventController {
 	private EvtTrackService evtTrackService;
 	@Autowired
 	private BusinessService businessService;
+	@Autowired
+    MyEvtCoupService myEvtCoupService;
+	@Autowired
+    EvtOrderService evtOrderService;
+
 	
 	//===============轉換html的datatime-local為Timestamp=============
 	@InitBinder
@@ -74,11 +86,36 @@ public class Wynn_EventController {
 
 	//=========查看活動詳情================
 	@GetMapping("/details/{evtId}")
-	public String checkEvent(Model model, @PathVariable("evtId") Integer evtId) {
-		Event evt = eventService.findById(evtId);
-		List<EvtImg> evtImgList= evtImgService.findAllByEventId(evtId);
+	public String checkEvent(Model model, @PathVariable("evtId") Integer eventId, HttpSession session) {
+        Integer memberId = (Integer)session.getAttribute("member");
+		Event evt = eventService.findById(eventId);
+		List<EvtImg> evtImgList= evtImgService.findAllByEventId(eventId);
 		model.addAttribute("evt", evt);
 		model.addAttribute("evtImgList", evtImgList);
+		
+		//撈出報名中的訂單 (報名中則報名按鈕disable)
+        Map<Event, EvtOrder> map = evtOrderService.getEventsToMyOrders(memberId, true);
+        Predicate<Event> filter = p -> (Objects.equals(p.getId(), eventId));
+        boolean match = map.keySet().stream().anyMatch(filter);
+
+        if(match){
+            model.addAttribute("match", true);
+        } else {
+            model.addAttribute("match", false);
+        }
+
+        //找出此會員所擁有此活動的優惠券
+        List<MyEvtCoup> myEvtCoups = myEvtCoupService.getMyEvtCoupsByMemberIdAndEventId(memberId, eventId);
+
+        //確認取出的優惠券是未使用的 status = 0
+        List<MyEvtCoup> filteredMyEvtCoups = myEvtCoups.stream().filter(mec -> mec.getStatus() == 0).toList();
+        model.addAttribute("eventObject", evt);
+
+        Map<Integer, Double> evtCoupIdAndTypeMap = new HashMap<>();
+        filteredMyEvtCoups.forEach(m -> evtCoupIdAndTypeMap.put(m.getEvtCoup().getId(), m.getEvtCoup().getRatio()== null ? m.getEvtCoup().getDeduction() : m.getEvtCoup().getRatio()));
+
+        model.addAttribute("myEvtCoups", filteredMyEvtCoups);
+        model.addAttribute("evtCoupIdAndTypeMap", evtCoupIdAndTypeMap);
 		
 		return "event/event_details";
 	}

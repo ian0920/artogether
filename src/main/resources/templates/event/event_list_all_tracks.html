@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <link rel="stylesheet" th:href="@{/web_design/style/style_general.css}" />
-<link rel="stylesheet" th:href="@{/web_design/style/style_homepage.css}" />
+<link rel="stylesheet" th:href="@{/web_design/style/style_business.css}" />
 <link
   href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
   rel="stylesheet"
@@ -11,14 +11,21 @@
 <title>event_list_all_tracks</title>
 </head>
 <body>
+    <!-- 導航 -->
+	<div th:replace="~{/components/navbar_member::navbar('event','event')}"></div>
+
 <main>
+<h2>我追蹤的活動</h2>
+
 <ul style="list-style:none">
 <!-- 使用 th:each 遍歷 List -->
 	<li th:each="et : ${evtTrackList}">
 	     <div class="info-card-outline">
 	     	<div class="info-card-horizontal">
-	     	<div class="info-box">
-		         <h4 th:text="${et.event.name}"></h4>
+	     	<div class="info-box flex-auto">
+		         <h4>
+					<a th:href="@{/event/details/{id}(id=${et.event.id})}" th:text="${et.event.name}"></a>
+				</h4>
 <!-- 		         <p th:text="'Event ID: ' + ${et.event.id}"></p> -->
 		         <p th:text="${et.event.businessMember.name}"></p>
 	     	</div>
