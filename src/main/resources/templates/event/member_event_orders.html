@@ -88,7 +88,17 @@
             background-color: #c92435;
         }
 
-        #eventStatus{
+        .enroll-canceled{
+            background-color: gray;
+        }
+
+        .enroll-canceled:hover{
+            background-color: gray;
+        }
+
+
+
+        .eventStatus{
             color: white;
             background: #45a049;
             font-size: 0.8rem;
@@ -103,10 +113,12 @@
 <body>
 <div class="bs-navbar" th:include="member_page::member_navbar"></div>
 
+
+
 <main>
     <div class="container">
         <h2 class="table-title">活動訂單</h2>
-        <div th:if="${orders.size() != 0}" class="accordion">
+        <div th:if="${orders.size() != 0 }" class="accordion">
             <div th:each="entry : ${orders}" class="accordion-item">
                 <div class="accordion-header" onclick="toggleAccordion(this)">
                     <span th:text="${entry.value.event.name} +'  '+ ${#dates.format(entry.key.startDate, 'yyyy-MM-dd')}">
@@ -122,17 +134,20 @@
                     <div><strong>實際金額：</strong> <span th:text="${entry.value.totalPrice}"></span></div>
                     <div><strong>折扣金額：</strong> <span th:text="${entry.value.discount}"></span></div>
                     <div><strong>付款金額：</strong> <span th:text="${entry.value.paid}"></span></div>
-                    <div><strong>活動狀態：</strong> <button id="eventStatus" style="display: inline-block" th:text="${entry.key.status == 1 ? '正常舉行' : (entry.key.status == 2 ? '延期' : (entry.key.status == 3 ? '取消' : '結束'))}"></button></div>
-                    <div th:if="${entry.value.refundApplyDate!= null}" ><strong>退款申請日期：</strong> <span th:text="${entry.value.refundApplyDate}"></span></div>
-                    <div th:if="${entry.value.refundApplyDate!= null}" ><strong>退款完成日期：</strong> <span th:text="${entry.value.refundDate}"></span></div>
+                    <div><strong>活動狀態：</strong> <button class="eventStatus" style="display: inline-block" th:text="${entry.key.status}"></button></div>
+                    <div th:if="${entry.value.refundApplyDate!= null}" ><strong>退款申請日期：</strong> <span th:text="${#dates.format(entry.value.refundApplyDate, 'yyyy-MM-dd HH:mm')}"></span></div>
+                    <div th:if="${entry.value.refundApplyDate!= null}" ><strong>退款完成日期：</strong> <span th:text="${#dates.format(entry.value.refundDate, 'yyyy-MM-dd HH:mm')}"></span></div>
                     <div th:if="${entry.value.refundApplyDate!= null}"><strong>退款金額：</strong> <span th:text="${entry.value.refund}"></span></div>
                     <div th:if="${entry.value.refundApplyDate== null}"></div>
-                    <button style="margin-left: 300px" class="cancel-btn" th:attr="onclick='cancelEvent(\''+ ${entry.key.name} + '\' , \'' + ${entry.value.id} +'\' )'" th:text="${entry.value.status == 0 ? '取消報名' : '已取消報名'}" th:disabled="${entry.value.status == 1}"></button>
+                    <button style="margin-left: 300px" class="cancel-btn" th:attr="onclick='cancelEvent(\''+ ${entry.key.name} + '\' , \'' + ${entry.value.id} +'\' )'"
+                            th:text="${entry.value.status == 0 ? '取消報名' : '已取消報名'}"
+                            th:disabled="${entry.value.status == 1}" th:classappend="${entry.value.status == 1} ? 'enroll-canceled' : ''" ></button>
+                    </button>
                 </div>
             </div>
         </div>
     </div>
-    <div th:unless="${orders.size() != 0}" style="font-size: larger; color: red;">尚未有活動報名訂單</div>
+    <h3 th:unless="${orders.size() != 0}" style="font-size: larger; color: red;">尚未有活動報名訂單</h3>
 </main>
 
 <script>
@@ -193,6 +208,8 @@
 <!-- SweetAlert2 Library -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+
+    //手風琴開合
     function toggleAccordion(header) {
 
         const accordion = header.closest('.accordion');
@@ -210,11 +227,44 @@
         body.classList.toggle('visible');
     }
 
+    //狀態欄位文字替換
+    $(document).ready(function () {
+
+        $('.eventStatus').each(function () {
+            const $button = $(this); // The current button as a jQuery object
+            const statusText = $button.text().trim(); // Get and trim the text content
+
+            console.log('Original Status Text:', statusText); // Debugging log
+
+            // Replace the button's text based on its current value
+            switch (statusText) {
+                case '1':
+                    $button.text('正常舉行');
+                    break;
+                case '2':
+                    $button.text('延期');
+                    $button.css('background-color', '#ffc107');
+                    break;
+                case '3':
+                    $button.text('取消');
+                    $button.css('background-color', '#dc3545');
+                    break;
+                case '4':
+                    $button.text('結束');
+                    $button.css('background-color', '#f8f9fa');
+                    break;
+                default: break;
+            }
+        });
+    });
+
+
+    //取消報名活動
     function cancelEvent(eventName, orderId) {
 
         Swal.fire({
-            title: '確定取消報名嗎?',
-            text: `您將取消 "${eventName}" id=${orderId} 活動的報名?`,
+            title: '',
+            text: `您將取消 ${eventName} 活動的報名?`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#dc3546e8',
@@ -223,17 +273,59 @@
             confirmButtonText: '確定取消',
             reverseButtons: true,
         }).then((result) => {
-            if (result.isConfirmed) {
-                Swal.fire(
-                    '已取消!',
-                    `"${eventName}"的活動報名已取消`,
-                    'success'
-                );
 
-                window.location = "/event/order/cancel/" +orderId;
+            if (result.isConfirmed) {
+
+                const url = `/event/cancel?orderId=${orderId}`
+
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    contentType: 'application/json',
+                    success: function (response) {
+
+                        let massage = response.message;
+
+                        if(response.status === true){
+                            Swal.fire({
+                                title: '',
+                                text: `${eventName}${massage}`,
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        }
+
+                        if(response.status === false){
+
+                            Swal.fire({
+                                title: '',
+                                text: `${massage}`,
+                                icon: 'warning',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        }
+
+                    },
+                    error: function (response) {
+
+                        Swal.fire({
+                            title: '',
+                            text: `連線異常請稍後再試`,
+                            icon: 'warning',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.reload();
+                        });
+
+                    },
+                });
             }
         });
-    }
+    };
 </script>
 
 
