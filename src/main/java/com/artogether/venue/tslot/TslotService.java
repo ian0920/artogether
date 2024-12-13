@@ -3,9 +3,12 @@ package com.artogether.venue.tslot;
 import com.artogether.util.BinaryTools;
 import com.artogether.venue.venue.Venue;
 import com.artogether.venue.venue.VenueRepository;
+import com.artogether.venue.vnedto.AvailableDTO;
+import com.artogether.venue.vnedto.FlatpickrDTO;
 import com.artogether.venue.vnedto.TslotDTO;
 import com.artogether.venue.vneorder.VneOrder;
 import com.artogether.venue.vneorder.VneOrderRepository;
+import com.artogether.venue.vneprice.VnePriceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +32,8 @@ public class TslotService {
     private VneOrderRepository vneOrderRepository;
     @Autowired
     private VenueRepository venueRepository;
+    @Autowired
+    private VnePriceService vnePriceService;
 
 
     //只在第一次啟動時執行。
@@ -210,18 +215,66 @@ public class TslotService {
         return disableDates;
     }
 
-//    private void setHourStr(Timestamp timestamp) {
-//        // 設置分鐘、秒數為0
-//        Calendar calendar = Calendar.getInstance();
-//        calendar.set(Calendar.MINUTE, 0);
-//        calendar.set(Calendar.SECOND, 0);
-//        calendar.set(Calendar.MILLISECOND, 0);
-//
-//        Timestamp hourTimestamp = new Timestamp(calendar.getTimeInMillis());
-//        System.out.println("當前小時的 Timestamp: " + hourTimestamp);
-//
-//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH");
-//        String hourString = sdf.format(hourTimestamp);
-//        System.out.println("格式化到小時: " + hourString);
-//    }
+    //設定該場地可預約的日期
+    public FlatpickrDTO getFlatpickrDTO(Integer vneId, LocalDateTime submissionTime) {
+        Integer days = venueRepository.findById(vneId).get().getAvailableDays();
+        List<LocalDate> availableDates = venueRepository.getAvailableDates(days);
+        LocalDate first = availableDates.get(0);
+        LocalDate last = availableDates.get(availableDates.size()-1);
+        List<LocalDate> disableDates = getDisableDates(vneId, submissionTime);
+        FlatpickrDTO flatpickrDTO = FlatpickrDTO.builder()
+                .startDate(first)
+                .endDate(last)
+                .disableDates(disableDates)
+                .build();
+        return flatpickrDTO;
+    }
+
+    //獲取預約選取日期的尚可預約的時間
+    public BitSet getAvailableBitSet(Integer vneId, LocalDate bookingDate) {
+        Map<LocalDate, Integer> bookingTslot = getBookingTslot(vneId);
+        Integer weekDay = bookingDate.getDayOfWeek().getValue();
+
+        if (bookingTslot.containsKey(bookingDate)) {
+            Integer disableHours = bookingTslot.get(bookingDate);
+            weekDay ^= disableHours;
+            BitSet hoursBitSet = BinaryTools.toBitSet(weekDay,24);
+
+            return hoursBitSet;
+        }else {
+            BitSet hoursBitSet = BinaryTools.toBitSet(weekDay,24);
+            List<Integer> segment = new ArrayList<>();
+            return hoursBitSet;
+        }
+    }
+
+    //整理出連續的區段
+    public List<List<Integer>> getAvailableSegments(Integer vneId, LocalDate bookingDate){
+        List<List<Integer>> availableSegments = new ArrayList<>();
+        BitSet hoursBitSet = getAvailableBitSet(vneId, bookingDate);
+
+        int start = hoursBitSet.nextSetBit(0);
+        while (start != -1){
+            int end = hoursBitSet.nextClearBit(start);
+            List<Integer> segment = new ArrayList<>();
+
+            for (int i = start; i <= end; i++) {
+                segment.add(i);
+            }
+            availableSegments.add(segment);
+            //找下一個存在的
+            start = hoursBitSet.nextSetBit(start+1);
+        }
+        return availableSegments;
+    }
+
+    //單日可預約時間和價錢
+    public AvailableDTO getAvailableDTO(Integer vneId, LocalDate bookingDate){
+        AvailableDTO availableDTO = AvailableDTO.builder()
+                .availableSegments(getAvailableSegments(vneId,bookingDate))
+                .hourlyPrice(vnePriceService.getPriceMap(vneId,bookingDate))
+                .build();
+        return availableDTO;
+    }
+
 }
