@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <!--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">-->
+    <link rel="stylesheet" th:href="@{/web_design/style/style_business.css}" />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+            rel="stylesheet"
+    />
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        body {
+            display: flex;
+            margin: 0;
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+
+        .container {
+            margin: 20px;
+        }
+
+        .accordion {
+            width: 100%;
+        }
+
+        .accordion .accordion-item {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .accordion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px 15px;
+            background-color: #2c95c6;
+            color: #fff;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .accordion-body {
+            display: none;
+            font-size: 0.95rem;
+            color: #333;
+            padding: 15px;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .accordion-body.visible {
+            display: grid;
+        }
+
+        .content-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        .cancel-btn {
+            grid-column: span 1; /* Span across both columns */
+            background-color: #dc3546e8;
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 30%;
+        }
+
+        .cancel-btn:hover {
+            background-color: #c92435;
+        }
+
+        #eventStatus{
+            color: white;
+            background: #45a049;
+            font-size: 0.8rem;
+        }
+
+        .table-title{
+            margin-bottom: 20px;
+        }
+
+    </style>
+
+<body>
+<div th:replace="~{/components/navbar_business::navbar('info','inbox')}"></div>
+
+<main>
+    <div class="container">
+        <h2 class="table-title">商家收件匣</h2>
+        <div th:if="${businessMessage.size() != 0}" class="accordion">
+            <div th:each="message : ${businessMessage}" class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <span th:text="'平台訊息!!!'+ ${#dates.format(message.msgTime, 'HH:mm')}">
+                        Art Exhibition (2024-12-01)
+                    </span>
+                </div>
+                <div class="accordion-body">
+                    <input type="hidden"  th:value="${message.id}" />
+                    <div><strong>訊息內容：</strong> <span th:text="${message.message}"></span></div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+<!-- SweetAlert2 Library -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function toggleAccordion(header) {
+
+        const accordion = header.closest('.accordion');
+        const allBodies = accordion.querySelectorAll('.accordion-body');
+        const body = header.nextElementSibling;
+
+        // Close all accordion bodies except the clicked one
+        allBodies.forEach(item => {
+            if (item !== body) {
+                item.classList.remove('visible');
+            }
+        });
+
+        // Toggle the visibility of the clicked accordion body
+        body.classList.toggle('visible');
+    }
+
+<!--    function cancelEvent(eventName, orderId) {-->
+
+<!--        Swal.fire({-->
+<!--            title: '確定取消報名嗎?',-->
+<!--            text: `您將取消 "${eventName}" id=${orderId} 活動的報名?`,-->
+<!--            icon: 'warning',-->
+<!--            showCancelButton: true,-->
+<!--            confirmButtonColor: '#dc3546e8',-->
+<!--            cancelButtonColor: '#2c95c6',-->
+<!--            cancelButtonText: '保留',-->
+<!--            confirmButtonText: '確定取消',-->
+<!--            reverseButtons: true,-->
+<!--        }).then((result) => {-->
+<!--            if (result.isConfirmed) {-->
+<!--                Swal.fire(-->
+<!--                    '已取消!',-->
+<!--                    `"${eventName}"的活動報名已取消`,-->
+<!--                    'success'-->
+<!--                );-->
+
+<!--                window.location = "/event/order/cancel/" +orderId;-->
+<!--            }-->
+<!--        });-->
+<!--    }-->
+</script>
+
+
+
+</body>
+</html>
