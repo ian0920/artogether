@@ -2,20 +2,23 @@ package com.artogether.product.product;
 
 import com.artogether.common.business_member.BusinessMember;
 import com.artogether.common.business_member.BusinessMemberRepo;
+
+import com.artogether.product.cart.model.PrdCoupForCartDTO;
+import com.artogether.product.my_prd_coup.MyPrdCoup;
+
 import com.artogether.product.my_prd_coup.MyPrdCoupRepository;
 import com.artogether.product.prd_catalog.PrdCatalogRepository;
 import com.artogether.product.prd_img.PrdImg;
 import com.artogether.product.prd_img.PrdImgRepository;
+import com.artogether.product.prd_img.PrdImgService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,25 +45,54 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.save(product);
     }
 
+    @Transactional
     @Override
-    public Product updateProduct(Integer id, Product updatedProduct) {
+    public Product updateProduct(Integer id, Product updatedProduct, List<MultipartFile> images, HttpSession session) throws IOException {
+        // 獲取當前登錄的商家
+        BusinessMember businessMember = (BusinessMember) session.getAttribute("presentBusinessMember");
+        if (businessMember == null) {
+            throw new RuntimeException("未登入或商家信息無法獲取");
+        }
+
         // 根據 ID 查找商品
-        Optional<Product> existingProduct = productRepository.findById(id);
-        if (existingProduct.isPresent()) {
-            Product product = existingProduct.get();
-            product.setName(updatedProduct.getName());
-            product.setPrice(updatedProduct.getPrice());
-            product.setQty(updatedProduct.getQty());
-            product.setDescription(updatedProduct.getDescription());
-            product.setStatus(updatedProduct.getStatus());
-            product.setAllStars(updatedProduct.getAllStars());
-            product.setAllReviews(updatedProduct.getAllReviews());
-            product.setPrdCatalog(updatedProduct.getPrdCatalog());
-            product.setBusinessMember(updatedProduct.getBusinessMember());
-            return productRepository.save(product);
-        } else {
+        Optional<Product> existingProductOptional = productRepository.findById(id);
+        if (existingProductOptional.isEmpty()) {
             throw new RuntimeException("商品 ID: " + id + " 不存在");
         }
+
+        Product existingProduct = existingProductOptional.get();
+
+        // 更新商品基本信息
+        existingProduct.setName(updatedProduct.getName());
+        existingProduct.setPrice(updatedProduct.getPrice());
+        existingProduct.setQty(updatedProduct.getQty());
+        existingProduct.setDescription(updatedProduct.getDescription());
+        existingProduct.setStatus(updatedProduct.getStatus());
+        existingProduct.setPrdCatalog(updatedProduct.getPrdCatalog());
+        existingProduct.setBusinessMember(businessMember);
+
+        // 處理圖片邏輯
+        List<PrdImg> existingImages = prdImgRepository.getPrdImgByProductId(existingProduct.getId());
+        if (images!= null && !images.isEmpty()) {
+            // 刪除舊圖片
+            for (PrdImg img : existingImages) {
+                prdImgRepository.deleteAllByProductId(img.getId());
+            }
+            prdImgRepository.deleteAll(existingImages);
+
+            // 保存新圖片
+            List<PrdImg> newPrdImgs = new ArrayList<>();
+            for (MultipartFile image : images) {
+                PrdImg prdImg = new PrdImg();
+                prdImg.setProduct(existingProduct);
+                prdImg.setImageFile(image.getBytes());
+                newPrdImgs.add(prdImg);
+            }
+            prdImgRepository.saveAll(newPrdImgs);
+        }
+
+        // 保存商品
+        return productRepository.save(existingProduct);
     }
 
     @Override
@@ -93,6 +125,11 @@ public class ProductServiceImpl implements ProductService {
     public void deleteProduct(Integer id) {
         // 刪除商品
         if (productRepository.existsById(id)) {
+            // 刪除與商品相關的圖片
+            List<PrdImg> images = prdImgRepository.getPrdImgByProductId(id);
+            if (images != null && !images.isEmpty()) {
+                prdImgRepository.deleteAll(images);
+            }
             productRepository.deleteById(id);
         } else {
             throw new RuntimeException("商品 ID: " + id + " 不存在，無法刪除");
@@ -134,6 +171,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> getProductsByBusinessMemberId(Integer businessMemberId) {
         List<Product> products = productRepository.findProductListByBusinessId(businessMemberId);
+        setProductsImg(products);
+        return products;
+    }
+
+    public void setProductsImg(List<Product> products) {
         for (Product product : products) {
             // 獲取圖片列表並處理可能為空的情況
             List<PrdImg> prdImgs = prdImgRepository.getPrdImgByProductId(product.getId());
@@ -146,9 +188,7 @@ public class ProductServiceImpl implements ProductService {
                 }
             }
         }
-        return products;
     }
-
 
 
     public Product addProduct(Product product, List<MultipartFile> images, HttpSession session) throws IOException {
@@ -178,6 +218,32 @@ public class ProductServiceImpl implements ProductService {
 
     public List<PrdImg> getPrdImgsByProductId(Integer productId) {
         return prdImgRepository.getPrdImgByProductId(productId);
+    }
+
+    public Map<Integer, List<PrdCoupForCartDTO>> findAllBusinessMember(List<Integer> productIdInCart, Integer memberId) {
+
+        Set<BusinessMember> businessMembers = new HashSet<>();
+
+        //從購物車的所有商品ID找出所有商家
+        productIdInCart.stream().map(id -> productRepository.findById(id).get().getBusinessMember())
+                .forEach(businessMembers::add);
+
+
+        //找出此會員的所有優惠券
+        myPrdCoupRepository.findAllByMember_Id(memberId);
+        List<MyPrdCoup> allMyPrdCoups = myPrdCoupRepository.findAllByMember_Id(memberId);
+
+
+        //Map<BusinessId, PrdCoupDTO> 該會員對於該商家所擁有的優惠券
+        Map<Integer, List<PrdCoupForCartDTO>> map = new HashMap<>();
+
+        businessMembers.forEach(businessMember -> {
+            map.put(businessMember.getId(), allMyPrdCoups.stream().filter(coup -> coup.getPrdCoup().getBusinessMember().getId() == businessMember.getId())
+                    .map(coup -> PrdCoupForCartDTO.prdCoupForCartDTOTransformer(coup.getPrdCoup(), coup)).toList());
+        });
+
+
+        return map;
     }
 
 

@@ -2,12 +2,46 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>購物車</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" th:href="@{/web_design/style/style_general.css}" />
+    <link rel="stylesheet" th:href="@{/web_design/style/style_homepage.css}" />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+            rel="stylesheet"
+    />
+    <style>
+        /* 確保 HTML 和 body 撐滿整個視窗 */
+        html, body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 主內容區域需要撐開剩餘空間 */
+        main {
+            margin-left: 50px;
+            margin-right: 50px;
+            flex: 1; /* 自動填滿可用空間 */
+        }
+
+        /* Footer 置底 */
+        footer {
+            text-align: center;
+            padding: 10px 20px;
+            border-top: 1px solid #ddd;
+        }
+    </style>
     <style>
         table {
+            border: 3px solid #f4f4f4;;
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
+            overflow: hidden;
+
         }
         table, th, td {
             border: 1px solid #ddd;
@@ -33,7 +67,7 @@
             font-size: 16px;
         }
         button {
-            background-color: #007BFF;
+            background-color: #2c95c6;
             color: white;
             border: none;
             border-radius: 5px;
@@ -43,27 +77,38 @@
         }
 
         button:hover {
-            background-color: #0056b3;
+            background-color: #2c95c6;
         }
 
-        button[type="submit"] {
-            background-color: #28a745;
+        button#update[type="submit"] {
+            background-color: #8a8c8a;
+            font-size: 14px;
+            padding: 5px 10px;
+        }
+        button#delete[type="submit"] {
+            background-color: #ea5656;
             font-size: 14px;
             padding: 5px 10px;
         }
 
         button[type="submit"]:hover {
-            background-color: #218838;
+            background-color: #626362;
         }
     </style>
 </head>
+
 <body>
+<div th:replace="~{/components/navbar_homepage::navbar}"></div>
+<main>
+
 <div class="center">
 <h1>購物車</h1>
 </div>
 <table>
     <thead>
     <tr>
+        <th>商家</th>
+        <th>圖片</th>
         <th>商品名稱</th>
         <th>價格</th>
         <th>數量</th>
@@ -74,20 +119,28 @@
     </thead>
     <tbody>
     <tr th:each="item : ${cartItems}" data-product-id="${item.product.id}">
+
+        <td th:text="${item.product.businessMember.getName()}">商家</td>
+        <td>
+            <input type="hidden" name="productId" th:value="${item.product.id}" />
+            <img th:src="${item.product.getImg()}" alt="商品圖片" style="width:100px;height:100px;" />
+        </td>
         <td th:text="${item.product.name}">商品名稱</td>
+
         <td th:text="${item.product.price}">價格</td>
         <td>
             <form method="post" action="/cart/updateQty">
                 <input type="hidden" name="productId" th:value="${item.product.id}" />
-                <input type="number" name="qty" th:value="${item.qty}" min="1" style="width: 50px;" />
-                <button type="submit">更新</button>
+                <input type="hidden" class="qtyStock" name="qtyStock" th:value="${item.product.qty}" />
+                <input type="number" class="qty" name="qty" th:value="${item.qty}" min="1" style="width: 50px;" />
+                <button type="submit" id="update">更新</button>
             </form>
         </td>
         <td class="subtotal" th:text="${item.product.price * item.qty}">小計</td>
         <td>
             <form method="post" action="/cart/remove">
                 <input type="hidden" name="productId" th:value="${item.product.id}" />
-                <button type="submit">刪除</button>
+                <button type="submit" id="delete">刪除</button>
             </form>
         </td>
     </tr>
@@ -96,10 +149,21 @@
 <div class="center">
 <h3>總金額: <span th:text="${totalPrice}">0</span></h3>
 
-    <button id="checkout-button">結帳去</button>
+    <form method="post" action="/cart/cartCheck">
+
+        <input th:each="item : ${cartItems}" type="hidden" name="productsIdInCart" th:value="${item.product.id}">
+
+        <button id="checkout-button">結帳去</button>
+    </form>
+
 
 <button onclick="location.href='/'">繼續購物</button>
 </div>
+</main>
+
+<!--<div class="nav-menu-box" th:include="homepage::nav-menu-box"></div>-->
+<!--<div class="user-menu-box" th:include="homepage::user-menu-box"></div>-->
+<!--<footer th:include="homepage::footer"></footer>-->
 
 <script>
     function updateCartRow(input) {
@@ -171,10 +235,69 @@
         const cartItems = document.querySelectorAll('tbody tr');
         if(cartItems.length === 0) {
             alert('購物車是空的，無法結帳！');
-        }else {
-            location.href = '/cart/cartCheck';
-        }
-    };
+    }};
 </script>
+
+<script th:src="@{/web_design/components/web_components/navbar_hompage.js}"></script>
+<script>
+    var el_nav_item_discover = document.querySelector("div.navbar-item");
+    var el_div_nav_menu_box = document.querySelector("div.nav-menu-box");
+    var el_div_nav_user_box = document.querySelector("div.user_div");
+    var el_div_nav_menu = document.querySelector("div.nav-menu");
+    var el_eiv_user_menu = document.querySelector("div.user-menu-box");
+
+    //=====================觸發視窗========================
+    // 1. 探索
+    el_nav_item_discover.addEventListener("mouseenter", function () {
+        if (!el_div_nav_menu_box.classList.contains("open"))
+            el_div_nav_menu_box.classList.add("open");
+    });
+    console.log(el_div_nav_menu);
+    el_div_nav_menu.addEventListener("mouseleave", function () {
+        if (el_div_nav_menu_box.classList.contains("open"))
+            el_div_nav_menu_box.classList.remove("open");
+    });
+
+    // 2. 會員
+    el_div_nav_user_box.addEventListener("mouseenter", function () {
+        if (!el_eiv_user_menu.classList.contains("open"))
+            el_eiv_user_menu.classList.add("open");
+    });
+    el_eiv_user_menu.addEventListener("mouseleave", function () {
+        if (el_eiv_user_menu.classList.contains("open"))
+            el_eiv_user_menu.classList.remove("open");
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Disable link clicks for disabled pagination controls
+        document.querySelectorAll(".page-link.disabled").forEach(function (link) {
+            link.addEventListener("click", function (e) {
+                e.preventDefault(); // Prevent navigation
+            });
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const qtyInputs = document.querySelectorAll(".qty");
+        qtyInputs.forEach(function (qtyInput) {
+            const row = qtyInput.closest("tr");
+            const qtyStock = row.querySelector(".qtyStock").value;
+
+            // 設定輸入框的最大值
+            qtyInput.setAttribute("max", qtyStock);
+
+            // 添加事件監聽器來驗證輸入的值是否超過最大庫存
+            qtyInput.addEventListener("input", function () {
+                const currentValue = parseInt(qtyInput.value);
+                if (currentValue > qtyStock) {
+                    alert(`數量超過最大上限`);
+                    qtyInput.value = qtyStock;
+                }
+            });
+        });
+    });
+</script>
+
 </body>
 </html>

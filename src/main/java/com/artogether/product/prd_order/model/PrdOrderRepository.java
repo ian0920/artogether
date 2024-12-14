@@ -3,6 +3,7 @@ package com.artogether.product.prd_order.model;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Repository
@@ -17,4 +18,6 @@ public interface PrdOrderRepository extends JpaRepository<PrdOrder, Integer> {
 //    List<PrdOrder> findByOrderDate(String start, String end);
 
     List<PrdOrder> findByPaymentMethod (String paymentMethod);
+
+    List<PrdOrder> findByMemberIdAndOrderDate(Integer memberId, Timestamp orderDate);
 }
