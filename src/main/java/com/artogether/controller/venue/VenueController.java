@@ -1,7 +1,6 @@
 package com.artogether.controller.venue;
 
 import com.artogether.common.business_member.BusinessMember;
-import com.artogether.util.BinaryTools;
 import com.artogether.venue.venue.Venue;
 import com.artogether.venue.venue.VenueService;
 import com.artogether.venue.vnedto.*;
@@ -10,14 +9,11 @@ import com.artogether.venue.vneimg.VneImgService;
 import com.artogether.venue.vneprice.VnePriceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
-import java.time.DayOfWeek;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Controller
 @RequestMapping("/vneBiz")
@@ -36,12 +32,12 @@ public class VenueController {
     @GetMapping("/vneList")
     public String vneList() {
         //交給Ajax->/vneBiz/vneList
-        return "venue/business/html/vneList";
+        return "venue/business/vneList";
     }
     //新增場地頁面
     @GetMapping("/addVenue")
     public String addVenue() {
-        return "/venue/business/html/addVenue";
+        return "/venue/business/addVenue";
     }
     //創建新場地
     @PostMapping("/createVenue")
@@ -54,7 +50,7 @@ public class VenueController {
     //調整場地的頁面
     @GetMapping("/manageVenue/{vneId}")
     public String getVenueAndImg () {
-        return "venue/business/html/manageVenue";
+        return "venue/business/manageVenue";
     }
     //修改場地內容
     @PostMapping("/updateVenue/{vneId}")
@@ -87,7 +83,7 @@ public class VenueController {
     //營業時間設置頁面
     @GetMapping("/manageTslot/{vneId}")
     public String nearestTslot() {
-        return "/venue/business/html/manageTslot";
+        return "/venue/business/manageTslot";
     }
     //調整營業時間
     @PostMapping("/updateTslot/{vneId}")
@@ -102,7 +98,7 @@ public class VenueController {
     //價錢設置頁面
     @GetMapping("/managePrice/{vneId}")
     public String managePrice() {
-        return "/venue/business/html/managePrice";
+        return "/venue/business/managePrice";
     }
     //調整價錢
     @PostMapping("/updatePrice/{vneId}")
@@ -116,7 +112,7 @@ public class VenueController {
     //場地總覽，確認後可以上下架
     @GetMapping("/checkVenue/{vneId}")
     public String checkVenue() {
-        return "/venue/business/html/checkVenue";
+        return "/venue/business/checkVenue";
     }
     //調整上下架
     @PostMapping("/vneStatus")

@@ -9,10 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class VnePriceService {
@@ -21,17 +20,11 @@ public class VnePriceService {
     private VenueRepository venueRepository;
     @Autowired
     private VnePriceRepository vnePriceRepository;
-    @Autowired
-    private TslotService tslotService;
 
-    //修改時顯示
+    //獲取上一次的紀錄
     public VnePriceDTO getNearestVnePrice(Integer vneId, LocalDateTime submissionTime) {
         Optional<VnePrice> vnePriceOptional = vnePriceRepository.getNearestPastRecord(vneId, submissionTime);
         VnePriceDTO vnePriceDTO = new VnePriceDTO();
-//        venueRepository.findById(vneId).ifPresent(venue -> {
-//            String name = venue.getName();
-//            vnePriceDTO.setVneName(name);
-//        });
         vnePriceOptional.ifPresent(vnePrice -> {
             vnePriceDTO.setDefaultPrice(vnePrice.getDefaultPrice());
             Integer price = vnePrice.getPrice();
@@ -47,6 +40,7 @@ public class VnePriceService {
         });
         return vnePriceDTO;
     }
+
     // 創建或更新價錢
     @Transactional
     public void updateVnePrice(LocalDateTime submissionTime, VnePriceDTO vnePriceDTO) {
@@ -73,6 +67,7 @@ public class VnePriceService {
         vnePriceRepository.save(vnePrice);
     }
 
+    //處理前端回來的特殊價錢需間
     public List<Integer> getPriceTslotList(Integer startTime, Integer endTime) {
         List<Integer> slotList = new ArrayList<>();
         for (int i = startTime; i < endTime; i++) {
@@ -80,4 +75,6 @@ public class VnePriceService {
         }
         return slotList;
     }
+
+
 }

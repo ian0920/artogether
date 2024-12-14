@@ -328,7 +328,7 @@
             <script>
                 for (let hour = 0; hour < 24; hour++) {
                     document.write(`<div class="control" data-hour="${hour}">${hour}:00</div>`);
-                    for (let day = 1; day <= 7; day++) {
+                    for (let day = 0; day < 7; day++) {
                         document.write(`<div class="cell" data-day="${day}" data-hour="${hour}"></div>`);
                     }
                 }
@@ -393,7 +393,7 @@
                         const hour = parseInt(cell.dataset.hour);
                         const dayKeys = ['hourOfMon', 'hourOfTue', 'hourOfWed', 'hourOfThu', 'hourOfFri', 'hourOfSat', 'hourOfSun'];
 
-                        if (this.days[dayKeys[day - 1]].includes(hour)) {
+                        if (this.days[dayKeys[day]].includes(hour)) {
                             cell.classList.add('selected');
                         } else {
                             cell.classList.remove('selected');
@@ -404,7 +404,7 @@
                 // 切換一天的全選或全取消
                 toggleDay(day) {
                     const dayKeys = ['hourOfMon', 'hourOfTue', 'hourOfWed', 'hourOfThu', 'hourOfFri', 'hourOfSat', 'hourOfSun'];
-                    const key = dayKeys[day - 1];
+                    const key = dayKeys[day];
                     const allSelected = this.days[key].length === 24;
 
                     if (allSelected) {
@@ -498,11 +498,11 @@
                 const hour = parseInt(cell.dataset.hour);
                 const dayKeys = ['hourOfMon', 'hourOfTue', 'hourOfWed', 'hourOfThu', 'hourOfFri', 'hourOfSat', 'hourOfSun'];
 
-                if (currentAction === 'select' && !calendarData.days[dayKeys[day - 1]].includes(hour)) {
-                    calendarData.days[dayKeys[day - 1]].push(hour);
+                if (currentAction === 'select' && !calendarData.days[dayKeys[day]].includes(hour)) {
+                    calendarData.days[dayKeys[day]].push(hour);
                     cell.classList.add('selected');
                 } else if (currentAction === 'deselect') {
-                    calendarData.days[dayKeys[day - 1]] = calendarData.days[dayKeys[day - 1]].filter(h => h !== hour);
+                    calendarData.days[dayKeys[day]] = calendarData.days[dayKeys[day]].filter(h => h !== hour);
                     cell.classList.remove('selected');
                 }
             }
