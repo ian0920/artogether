@@ -44,6 +44,14 @@ public class TslotService {
         tslotViewService.createTslotScheduleView();
     }
 
+    //處理轉型
+    public List<LocalDate> getAvailableDates(Integer availableDays) {
+        List<java.sql.Date> sqlDates = tslotRepository.getAvailableDates(availableDays);
+        return sqlDates.stream()
+                .map(java.sql.Date::toLocalDate)
+                .toList();
+    }
+
     public TslotDTO nearestTslot(Integer vneId, LocalDateTime now) {
         List<Integer> weeklyInteger = getWeeklyTslots(vneId, now);
         TslotDTO tslotDTO = TslotDTO.builder()
@@ -184,13 +192,7 @@ public class TslotService {
         }
         return nonBizDays;
     }
-    //處理轉型
-    public List<LocalDate> getAvailableDates(Integer availableDays) {
-        List<java.sql.Date> sqlDates = tslotRepository.getAvailableDates(availableDays);
-        return sqlDates.stream()
-                .map(java.sql.Date::toLocalDate)
-                .toList();
-    }
+
     //找出表訂不能預約的天數(尚須排除已預約
     public List<LocalDate> getNonBizDays(Integer vneId){
         Venue venue = venueRepository.findById(vneId).get();
@@ -230,79 +232,73 @@ public class TslotService {
         LocalDate last = availableDates.get(availableDates.size()-1);
         List<LocalDate> disableDates = getDisableDates(vneId, submissionTime);
         FlatpickrDTO flatpickrDTO = FlatpickrDTO.builder()
-                .startDate(first)
-                .endDate(last)
+                .minDate(first)
+                .maxDate(last)
                 .disableDates(disableDates)
                 .build();
         return flatpickrDTO;
     }
 
     //獲取預約選取日期的尚可預約的時間
-    public BitSet getAvailableBitSet(Integer vneId, LocalDate bookingDate) {
+    public BitSet getAvailableBitSet(Integer vneId, LocalDate bookingDate, LocalDateTime submissionTime) {
         Map<LocalDate, Integer> bookingTslot = getBookingTslot(vneId);
-        Integer weekDay = bookingDate.getDayOfWeek().getValue();
+        Integer weekDay = bookingDate.getDayOfWeek().getValue()-1;
+        List<Integer> weeklyTslots = getWeeklyTslots(vneId, submissionTime);
+        Integer businessHours =weeklyTslots.get(weekDay);
 
         if (bookingTslot.containsKey(bookingDate)) {
             Integer disableHours = bookingTslot.get(bookingDate);
-            weekDay ^= disableHours;
-            BitSet hoursBitSet = BinaryTools.toBitSet(weekDay,24);
+            businessHours ^= disableHours;
+            BitSet hoursBitSet = BinaryTools.toBitSet(businessHours,24);
 
             return hoursBitSet;
         }else {
-            BitSet hoursBitSet = BinaryTools.toBitSet(weekDay,24);
-            List<Integer> segment = new ArrayList<>();
+            BitSet hoursBitSet = BinaryTools.toBitSet(businessHours,24);
             return hoursBitSet;
         }
     }
 
     //整理出連續的區段
-    public List<List<Integer>> getAvailableSegments(Integer vneId, LocalDate bookingDate){
+    public List<List<Integer>> getAvailableSegments(Integer vneId, LocalDate bookingDate,  LocalDateTime submissionTime){
         List<List<Integer>> availableSegments = new ArrayList<>();
-        BitSet hoursBitSet = getAvailableBitSet(vneId, bookingDate);
+        BitSet hoursBitSet = getAvailableBitSet(vneId, bookingDate, submissionTime);
 
         int start = hoursBitSet.nextSetBit(0);
         while (start != -1){
             int end = hoursBitSet.nextClearBit(start);
             List<Integer> segment = new ArrayList<>();
 
-            for (int i = start; i <= end; i++) {
+            for (int i = start; i < end; i++) {
                 segment.add(i);
             }
             availableSegments.add(segment);
             //找下一個存在的
-            start = hoursBitSet.nextSetBit(start+1);
+            start = hoursBitSet.nextSetBit(end);
         }
         return availableSegments;
     }
 
     //單日可預約時間和價錢
-    public AvailableDTO getAvailableDTO(Integer vneId, LocalDate bookingDate){
+    public AvailableDTO getAvailableDTO(Integer vneId, LocalDate bookingDate,  LocalDateTime submissionTime){
         AvailableDTO availableDTO = AvailableDTO.builder()
-                .availableSegments(getAvailableSegments(vneId,bookingDate))
-                .hourlyPrice(getPriceMap(vneId,bookingDate))
+                .availableSegments(getAvailableSegments(vneId,bookingDate, submissionTime))
+                .hourlyPrice(getPriceMap(vneId,bookingDate, submissionTime))
                 .build();
         return availableDTO;
     }
 
     //製作可營業的時間價錢對照表
-    public Map<Integer, Integer> getPriceMap (Integer vneId, LocalDate bookingDate) {
+    public Map<Integer, Integer> getPriceMap (Integer vneId, LocalDate bookingDate,  LocalDateTime submissionTime) {
         Map<Integer, Integer> priceMap = new HashMap<>();
         VnePriceDTO vnePriceDTO = vnePriceService.getNearestVnePrice(vneId, LocalDateTime.now());
         List<Integer> dayOfWeek = vnePriceDTO.getDayOfWeek();
-        int value = bookingDate.getDayOfWeek().getValue();
+        int value = bookingDate.getDayOfWeek().getValue()-1;
         Integer defaultPrice = vnePriceDTO.getDefaultPrice();
         Integer price = vnePriceDTO.getPrice();
-        BitSet availableHours = getAvailableBitSet(vneId, bookingDate);
+        BitSet availableHours = getAvailableBitSet(vneId, bookingDate, submissionTime);
 
         if (dayOfWeek.contains(value)) {
             if (price != null) {
-                int start = availableHours.nextSetBit(0);
-                while (start != -1) {
-                    priceMap.put(start, defaultPrice);
-                    start = availableHours.nextSetBit(start + 1);
-                }
-                return priceMap;
-            }else {
                 Integer startTime = vnePriceDTO.getStartTime();
                 Integer endTime = vnePriceDTO.getEndTime();
                 BitSet specialPriceList = BinaryTools.toBitSet(vnePriceService.getPriceTslotList(startTime, endTime));
@@ -313,6 +309,13 @@ public class TslotService {
                     }else {
                         priceMap.put(start, defaultPrice);
                     }
+                    start = availableHours.nextSetBit(start + 1);
+                }
+                return priceMap;
+            }else {
+                int start = availableHours.nextSetBit(0);
+                while (start != -1) {
+                    priceMap.put(start, defaultPrice);
                     start = availableHours.nextSetBit(start + 1);
                 }
                 return priceMap;

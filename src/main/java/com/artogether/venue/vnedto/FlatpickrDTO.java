@@ -18,8 +18,8 @@ import java.util.List;
 public class FlatpickrDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private LocalDate minDate;
+    private LocalDate maxDate;
     private List<LocalDate> disableDates;
 
 }
