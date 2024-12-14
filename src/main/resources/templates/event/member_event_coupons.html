@@ -71,7 +71,7 @@
     </style>
 
 <body>
-<div class="bs-navbar" th:include="member_page::member_navbar"></div>
+<div th:replace="~{/components/navbar_member::navbar('event','coupon')}"></div>
 
 <main>
     <div class="container">
