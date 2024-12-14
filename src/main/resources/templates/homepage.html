@@ -25,116 +25,30 @@
   
   </section>
 
-  <!-- 商家概覽 -->
-  <section class="sec-showcase showcase-business normal-width">
-    <div class="showcase-info-box">
-      <div class="showcase-info">
-        <h2 class="business">精選商家</h2>
-      </div>
-      <div class="showcase-browse-all link-button">
-        <a href="#">查看更多</a>
-        <span class="material-symbols-outlined">chevron_right</span>
-      </div>
-    </div>
-    <div class="showcase-cards-box">
-      <div clickable class="showcase-card card business">
-        <img src="./asset/images/bgimg.png" alt="" />
-        <div class="card-content">
-          <div class="card-title">
-            <div class="tag business">商家</div>
-            <h3 class="card-title-text">
-              這是一家好奇怪好奇怪好奇怪好奇怪的店家
-            </h3>
-          </div>
-          <div class="card-info">
-            <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
-          </div>
-          <div class="tags-box">
-            <div class="tag hot">
-                  <span class="material-symbols-outlined">local_fire_department</span
-                  >哈燒精選
-            </div>
-            <div class="tag hot">
-                  <span class="material-symbols-outlined">local_fire_department</span
-                  >哈燒精選
-            </div>
-          </div>
-        </div>
-      </div>
-      <div clickable class="showcase-card card business">
-        <img src="./asset/images/bgimg.png" alt="" />
-        <div class="card-content">
-          <div class="card-title">
-            <div class="tag business">商家</div>
-            <h3 class="card-title-text">
-              這是一家好奇怪好奇怪好奇怪好奇怪的店家
-            </h3>
-          </div>
-          <div class="card-info">
-            <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
-          </div>
-          <div class="tags-box">
-            <div class="tag hot">
-                  <span class="material-symbols-outlined">local_fire_department</span
-                  >哈燒精選
-            </div>
-            <div class="tag hot">
-                  <span class="material-symbols-outlined">local_fire_department</span
-                  >哈燒精選
-            </div>
-          </div>
-        </div>
-      </div>
-      <div clickable class="showcase-card card business">
-        <img src="./asset/images/bgimg.png" alt="" />
-        <div class="card-content">
-          <div class="card-title">
-            <div class="tag business">商家</div>
-            <h3 class="card-title-text">
-              這是一家好奇怪好奇怪好奇怪好奇怪的店家
-            </h3>
-          </div>
-          <div class="card-info">
-            <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
-          </div>
-          <div class="tags-box">
-            <div class="tag hot">
-                  <span class="material-symbols-outlined">local_fire_department</span
-                  >哈燒精選
-            </div>
-            <div class="tag hot">
-                  <span class="material-symbols-outlined">local_fire_department</span
-                  >哈燒精選
-            </div>
-          </div>
-        </div>
-      </div>
-      <div clickable class="showcase-card card business">
-        <img src="./asset/images/bgimg.png" alt="" />
-        <div class="card-content">
-          <div class="card-title">
-            <div class="tag business">商家</div>
-            <h3 class="card-title-text">
-              這是一家好奇怪好奇怪好奇怪好奇怪的店家
-            </h3>
-          </div>
-          <div class="card-info">
-            <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
-          </div>
-          <div class="tags-box">
-            <div class="tag hot">
-                  <span class="material-symbols-outlined">local_fire_department</span
-                  >哈燒精選
-            </div>
-            <div class="tag hot">
-                  <span class="material-symbols-outlined">local_fire_department</span
-                  >哈燒精選
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+		<!-- 商家概覽 -->
+	<section class="sec-showcase showcase-business normal-width">
+		<div class="showcase-info-box">
+			<div class="showcase-info">
+				<h2 class="business">精選商家</h2>
+			</div>
+			<div class="showcase-browse-all link-button">
+				<a href="#">查看更多</a> <span class="material-symbols-outlined">chevron_right</span>
+			</div>
+		</div>
+		<div class="showcase-cards-box">
+			<div th:each="randomVendor:${vendors}"th:onclick="|location.href='/product/vendorproducts/' + ${randomVendor.id}|"
+				clickable class="showcase-card card business">
+				<img src="./asset/images/bgimg.png" alt="" />
+				<div class="card-content">
+					<div class="card-title">
+						<div class="tag business">商家</div>
+						<h3 class="card-title-text" th:text="${randomVendor.name}"></h3>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</section>
 
   <!-- 活動概覽 -->
   <section class="sec-showcase showcase-event normal-width">
