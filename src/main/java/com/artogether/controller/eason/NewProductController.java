@@ -45,11 +45,14 @@ public class NewProductController {
     }
 
 
-    @GetMapping("/product/vendorproducts")
-    public String showVendorProductPage(@RequestParam(value = "businessId", required = false) Integer businessId, Model model) {
+    
+    
+    @GetMapping("/vendorproducts/{businessId}")
+    public String showVendorProductPage(@PathVariable("businessId") Integer businessId, Model model) {
+	    
+	    
+	    List<Product> products = productService.getAllProducts();
 
-
-        List<Product> products = productService.getAllProducts();
 
 	    //過濾出只需要的商家商品
 	    if (businessId != null) {
@@ -237,6 +240,22 @@ public class NewProductController {
 
 
     }
+    
+    
+//    @GetMapping("/productDetails/{id}")
+//    public String viewProductDetails(@PathVariable("id") Integer id, Model model) {
+//        // 根據 ID 獲取產品詳細信息
+//    	 Optional<Product> product = productService.getProductById(id);
+//        
+//
+//        // 添加產品信息到模型
+//        model.addAttribute("product", product);
+//        return "productDetails"; // 返回到 productDetails.html 頁面
+//    }
+    
+    
+    
+    
 
         // 根據 ID 刪除商品
     @PostMapping("/deleteProduct/{id}")
@@ -264,10 +283,17 @@ public class NewProductController {
 //        List<Product> products = productService.getAllProducts();
 //        List<ProductDto> productDtos = productService.toProductDtoList(products);
 //        return ResponseEntity.ok(productDtos);
+
+//    }
+//
+//    // 根據 ID 刪除商品
+//    @DeleteMapping("/products/{id}")
+//    public ResponseEntity<Void> deleteProduct(@PathVariable Integer id) {
+//        productService.deleteProduct(id);
+//        return ResponseEntity.noContent().build();
 //    }
 //
 
-//
 //    // 查詢所有上架商品
 //    @GetMapping("/products/available")
 //    public ResponseEntity<List<ProductDto>> getAvailableProducts() {
