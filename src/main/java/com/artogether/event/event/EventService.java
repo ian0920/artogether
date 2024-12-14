@@ -169,6 +169,9 @@ public class EventService {
 	public void statusUpdate(Event event) {
 		Event e = findById(event.getId());
 		e.setStatus(event.getStatus());
+		if(event.getDelayDate()!=null) {			
+			e.setDelayDate(event.getDelayDate());
+		}
 		eventRepo.save(e);
 	}
 

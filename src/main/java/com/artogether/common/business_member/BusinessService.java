@@ -46,7 +46,7 @@ public class BusinessService {
 
 
     // 複合查詢+分頁
-    public Page<BusinessMember> searchEvents(Map<String, String> searchCriteria, Pageable pageable) {
+    public Page<BusinessMember> searchBMembs(Map<String, String> searchCriteria, Pageable pageable) {
         Specification<BusinessMember> spec = BMemberSpecification.dynamicQuery(searchCriteria);
         return businessMemberRepo.findAll(spec, pageable);
     }

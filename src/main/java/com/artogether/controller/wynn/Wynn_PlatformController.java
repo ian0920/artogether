@@ -106,7 +106,7 @@ public class Wynn_PlatformController {
 	    System.out.println(searchCriteria);
 
 	    // 呼叫服務層處理
-		Page p = businessService.searchEvents(searchCriteria,pageRequest);
+		Page p = businessService.searchBMembs(searchCriteria,pageRequest);
 		model.addAttribute("page", p);
 		return "platform/bMemberList";
 	}
