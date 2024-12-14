@@ -52,7 +52,7 @@ public class NewProductController {
 //    }
 
 
-    
+
     
     @GetMapping("/vendorproducts/{businessId}")
     public String showVendorProductPage(@PathVariable("businessId") Integer businessId, Model model) {
@@ -247,7 +247,7 @@ public class NewProductController {
 
 
     }
-    
+
  // 商品分頁
     @GetMapping("/productspage")
     public String getProducts(
@@ -293,16 +293,16 @@ public class NewProductController {
 //    public String viewProductDetails(@PathVariable("id") Integer id, Model model) {
 //        // 根據 ID 獲取產品詳細信息
 //    	 Optional<Product> product = productService.getProductById(id);
-//        
+//
 //
 //        // 添加產品信息到模型
 //        model.addAttribute("product", product);
 //        return "productDetails"; // 返回到 productDetails.html 頁面
 //    }
-    
-    
-    
-    
+
+
+
+
 
 
 
@@ -365,7 +365,6 @@ public class NewProductController {
 
 
 }
-
 
 
 
