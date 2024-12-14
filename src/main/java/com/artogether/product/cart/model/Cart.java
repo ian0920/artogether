@@ -40,9 +40,8 @@ public class Cart {
 
         private Integer product;
         private Integer member;
-		public CartId() {
-			
-		}
+		public CartId() {}
+
 		public CartId(Integer productId, Integer memberId) {
 			super();
 			this.product = productId;

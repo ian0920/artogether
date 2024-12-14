@@ -9,11 +9,13 @@ import com.artogether.product.product.ProductDto;
 import com.artogether.product.product.ProductService;
 import com.artogether.product.product.ProductServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
@@ -42,6 +44,7 @@ public class NewProductController {
         return "product/products";
     }
 
+
     
     
     @GetMapping("/vendorproducts/{businessId}")
@@ -49,6 +52,7 @@ public class NewProductController {
 	    
 	    
 	    List<Product> products = productService.getAllProducts();
+
 
 	    //過濾出只需要的商家商品
 	    if (businessId != null) {
@@ -68,8 +72,6 @@ public class NewProductController {
 	    
 	    return "product/vendorproducts";
 	}
-
-
 
 
     @GetMapping("/businessProducts")
@@ -129,12 +131,80 @@ public class NewProductController {
             productService.addProduct(product, images, session);
 
             return ResponseEntity.ok("商品已成功新增");
-//            return "product/addProduct";
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body("新增商品失敗: " + e.getMessage());
         }
     }
+
+    @GetMapping("/editProduct/{id}")
+    public String getEditPage(@PathVariable Integer id, HttpSession session,Model model) {
+        System.out.println("getEdisPage: " + id);
+        Optional<Product> product = productService.getProductById(id);
+        BusinessMember businessMemberId = (BusinessMember) session.getAttribute("presentBusinessMember");
+
+        if(businessMemberId == null){
+            return "redirect:/login";
+        }
+
+        if (product.isPresent()) {
+            List<PrdCatalog> catalogs = prdCatalogRepository.findAll();
+            model.addAttribute("catalogs", catalogs);
+            model.addAttribute("product", product.get());
+            return "product/editProduct";
+        } else {
+            // 添加默认值，避免 Thymeleaf 模板渲染时出现空指针
+            model.addAttribute("product", null); // 或者一个空的 Product 对象
+            model.addAttribute("errorMessage", "Product not found for ID: " + id);
+            return "homepage_business";
+        }
+
+    }
+
+    @PostMapping("/editProduct/{id}")
+    public ResponseEntity<String> updateProduct(
+            @PathVariable Integer id,
+            @RequestParam("name") String name,
+            @RequestParam("price") Integer price,
+            @RequestParam("qty") Integer qty,
+            @RequestParam("description") String description,
+            @RequestParam(value = "catalogId", required = false) Integer catalogId,
+            @RequestParam("status") Integer status,
+            @RequestParam(value = "images", required = false) List<MultipartFile> images,
+            HttpSession session) {
+        try {
+            // 創建更新商品對象
+            Product updatedProduct = new Product();
+            updatedProduct.setName(name);
+            updatedProduct.setPrice(price);
+            updatedProduct.setQty(qty);
+            updatedProduct.setDescription(description);
+            updatedProduct.setStatus(status);
+
+            if (catalogId != null) {
+                PrdCatalog catalog = new PrdCatalog();
+                catalog.setId(catalogId);
+                updatedProduct.setPrdCatalog(catalog);
+            }
+
+            if (images != null) {
+                for (MultipartFile image : images) {
+                    System.out.println("接收到的文件名稱: " + image.getOriginalFilename());
+                    System.out.println("文件大小: " + image.getSize());
+                }
+            } else {
+                System.out.println("未接收到文件");
+            }
+
+            // 調用 Service 方法更新商品
+            productService.updateProduct(id, updatedProduct, images, session);
+
+            return ResponseEntity.ok("商品已成功更新！");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("更新失敗：" + e.getMessage());
+        }
+    }
+
 
 
     //    // 新增商品
@@ -187,7 +257,25 @@ public class NewProductController {
     
     
 
+        // 根據 ID 刪除商品
+    @PostMapping("/deleteProduct/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Integer id, HttpSession session) {
+        BusinessMember businessMember = (BusinessMember) session.getAttribute("presentBusinessMember");
+        if(businessMember == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        try {
+            productService.deleteProduct(id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // 返回 404 狀態
+        }
+    }
 }
+
+
+
+
 //
 //		  // 查詢所有商品
 //    @GetMapping("/products")
@@ -195,6 +283,7 @@ public class NewProductController {
 //        List<Product> products = productService.getAllProducts();
 //        List<ProductDto> productDtos = productService.toProductDtoList(products);
 //        return ResponseEntity.ok(productDtos);
+
 //    }
 //
 //    // 根據 ID 刪除商品
@@ -204,6 +293,7 @@ public class NewProductController {
 //        return ResponseEntity.noContent().build();
 //    }
 //
+
 //    // 查詢所有上架商品
 //    @GetMapping("/products/available")
 //    public ResponseEntity<List<ProductDto>> getAvailableProducts() {

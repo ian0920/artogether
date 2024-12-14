@@ -9,7 +9,6 @@
             href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
             rel="stylesheet"
     />
-
     <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css" />
     <!-- 自訂樣式 -->
@@ -97,7 +96,7 @@
             border-bottom: 1px solid #eeeeee;
         }
 
-        img {
+        .img {
             width: 50px;
             height: 50px;
             border-radius: 6px;
@@ -153,7 +152,7 @@
         }
 
          #add-product-btn {
-             background-color: #4CAF50;
+             background-color: #2c95c6;
              color: white;
              border: none;
              border-radius: 4px;
@@ -164,7 +163,7 @@
          }
 
         #add-product-btn:hover {
-            background-color: #45a049;
+            background-color: #217aa3;
         }
 
 
@@ -177,8 +176,8 @@
     <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
 </head>
 <body>
-<div class="bs-navbar" th:include="homepage_business::navbar"></div>
-
+<!-- 導航 -->
+<div th:replace="~{/components/navbar_business::navbar('product','product')}"></div>
 <main>
 
     <div class="content">
@@ -208,14 +207,14 @@
 <!--                <td th:text="${product.id}"></td>-->
                 <td th:text="${product.name}"></td>
                 <td>
-                    <img th:src="${product.img}" alt="商品圖片" style="width:100px;height:100px;" />
+                    <img class="img" th:src="${product.img}" alt="商品圖片" style="width:100px;height:100px;" />
                 </td>
                 <td th:text="${product.price}"></td>
                 <td th:text="${product.description}"></td>
                 <td th:text="${product.status == 1 ? '上架中' : '下架中'}"></td>
                 <td th:text="${product.PrdCatalog.name}"></td>
-                <td><button onclick="editProduct('${product.id}')">修改</button></td>
-                <td><button onclick="deleteProduct('${product.id}')">刪除</button></td>
+                <td><button th:onclick="'editProduct(' + ${product.id} + ')'">修改</button></td>
+                <td><button th:onclick="'deleteProduct(' + ${product.id} + ')'">刪除</button></td>
             </tr>
             </tbody>
         </table>
@@ -292,12 +291,31 @@
     });
 
     function editProduct(productId) {
-        window.location.href = '/product/edit/' + productId;
+        window.location.href = "/product/editProduct/" + productId;
     }
 
     function deleteProduct(productId) {
         if (confirm('確定要刪除商品嗎？')) {
-            window.location.href = '/product/delete/' + productId;
+            fetch(`/product/deleteProduct/${productId}`, {
+                method: 'POST', // 或 'DELETE'，根據後端配置選擇
+                credentials: 'include', // 確保包含 session 信息
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('商品刪除成功');
+                        window.location.reload(); // 刷新頁面
+                    } else if (response.status === 401) {
+                        alert('請先登錄');
+                        window.location.href = '/login';
+                    } else if (response.status === 404) {
+                        alert('商品不存在或已刪除');
+                    } else {
+                        alert('刪除過程中發生錯誤');
+                    }
+                })
+                .catch(error => {
+                    alert('請求失敗：' + error.message);
+                });
         }
     }
 </script>

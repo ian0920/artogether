@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.artogether.common.business_member.BusinessMember;
 import com.artogether.common.business_member.BusinessService;
-import com.artogether.common.system_mamager.SystemManager;
+import com.artogether.common.system_manager.SystemManager;
 import com.artogether.event.event.EventService;
 
 

@@ -16,7 +16,6 @@ public interface CartRepository extends JpaRepository<Cart, Cart.CartId> {
     List<Cart> findByMember(Member member);
 
     Cart findByProductAndMember(Product product, Member member);
-
     void deleteByMember(Member member);
 
     // 查詢購物車中數量大於某數量的商品數

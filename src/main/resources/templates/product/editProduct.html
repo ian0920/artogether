@@ -1,10 +1,295 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="UTF-8" />
+    <title>修改商��資訊</title>
+    <link rel="stylesheet" th:href="@{/web_design/style/style_business.css}" />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+            rel="stylesheet"
+    />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f9f9f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .content {
+            width: 75%;
+            height: 720px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        h1 {
+            text-align: center;
+            color: #000000;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #2c95c6;
+            box-shadow: 0 0 5px rgb(15, 112, 156);
+        }
+
+        button {
+            padding: 10px 15px;
+            background: linear-gradient(90deg, #58b4dd, #2c95c6);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: linear-gradient(90deg, #58b4dd, #2c95c6);
+        }
+
+        img#newImagePreview {
+            width: 100%;
+            height: 300px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: none;
+            object-fit: contain;
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .form-group-inline {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-group-inline .form-group {
+            flex: 1;
+        }
+
+        button.add {
+            position: relative;
+            margin-top: 20px;
+            z-index: 2;
+            width: auto;
+            align-self: center;
+        }
+        #oldImg{
+            width: 100%;
+            height: 300px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin-top: 10px;
+            object-fit: contain;
+            position: relative;
+            z-index: 1;
+        }
+        .image-preview-container {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        #oldImg, #newImagePreview {
+            width: 100%;
+            height: 300px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            object-fit: contain;
+            position: relative;
+            z-index: 1;
+        }
+        .image-preview-container {
+            display: flex;
+            justify-content: center; /* 讓兩張圖片水平置中 */
+            align-items: flex-start; /* 圖片和文字頂端對齊 */
+            gap: 15px; /* 圖片間距 */
+            text-align: center;
+        }
+
+        .image-preview-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* 讓文字與圖片垂直置中 */
+            gap: 10px;
+        }
+
+        #oldImg, #newImagePreview {
+            width: 300px;
+            height: 300px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            object-fit: contain;
+            display: block;
+        }
+
+        .image-label {
+            font-weight: bold;
+            font-size: 16px;
+            color: #333;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 15px;
+            background:#58b4dd;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .button:hover {
+            background: #2c95c6;
+        }
+        .top-left-button {
+            position: absolute; /* 让按钮相对于父容器定位 */
+            top: 20px; /* 距离顶部的距离 */
+            left: 20px; /* 距离左侧的距离 */
+        }
+
+
+    </style>
 </head>
 <body>
+<div th:replace="~{/components/navbar_business::navbar('product','product')}"></div>
 
+<div class="content">
+    <div class="top-left-button">
+        <a class="button" th:href="@{/product/businessProducts}">返回商品列表</a>
+    </div>
+    <h1>修改商品資訊</h1>
+
+    <form th:action="@{/product/editProduct/{id}(id=${product.id})}" th:object="${product}" method="post" enctype="multipart/form-data">
+        <input type="hidden" th:field="*{id}" />
+
+        <div class="form-group">
+            <label for="name">商品名稱：</label>
+            <input type="text" id="name" th:field="*{name}" placeholder="商品名稱" required />
+        </div>
+
+        <div class="form-group-inline">
+            <div class="form-group">
+                <label for="price">價格：</label>
+                <input type="number" id="price" th:field="*{price}" placeholder="商品價格" required />
+            </div>
+
+            <div class="form-group">
+                <label for="qty">庫存數量：</label>
+                <input type="number" id="qty" th:field="*{qty}" placeholder="商品數量" required>
+            </div>
+        </div>
+
+        <div class="form-group-inline">
+        <div class="form-group">
+            <label for="catalogId">分類:</label>
+            <select id="catalogId" name="catalogId" required>
+                <option value="" disabled>選擇分類</option>
+                <option th:each="catalog : ${catalogs}"
+                        th:value="${catalog.id}"
+                        th:text="${catalog.name}"
+                        th:selected="${catalog.id == product.prdCatalog}">
+                </option>
+            </select>
+
+        </div>
+
+        <div class="form-group">
+            <label for="status">狀態:</label>
+            <select id="status" name="status" required>
+                <option value="1" th:selected="${product.status == 1}">上架</option>
+                <option value="0" th:selected="${product.status == 0}">下架</option>
+            </select>
+        </div>
+        </div>
+
+        <div class="form-group">
+            <label for="description">描述：</label>
+            <textarea id="description" th:field="*{description}" placeholder="商品描述"></textarea>
+        </div>
+
+            <div class="form-group">
+                <label for="images">上傳新圖片：</label>
+                <input type="file" id="images" name="images" accept="images/*" />
+            </div>
+
+        <div class="form-group">
+            <div class="image-preview-container">
+                <!-- 目前商品圖片 -->
+                <div class="image-preview-wrapper">
+                    <div class="image-label">目前商品圖片</div>
+                    <img id="oldImg" th:src="@{${product.img}}" alt="商品圖片" />
+                </div>
+                <!-- 預覽新圖片 -->
+                <div class="image-preview-wrapper">
+                    <div class="image-label">預覽新圖片</div>
+                    <img id="newImagePreview" src="#" alt="新圖片預覽" style="display: none;" />
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="form-group">
+            <button type="submit">保存修改</button>
+        </div>
+    </form>
+</div>
+
+
+<script>
+    document.getElementById('images').addEventListener("change", function (event){
+        const file = event.target.files[0];
+        if (file){
+            const reader = new FileReader();
+
+            reader.onload = function(e){
+                const newImagePreview = document.getElementById('newImagePreview');
+                newImagePreview.src = e.target.result;
+                newImagePreview.style.display = "block";
+            }
+            reader.readAsDataURL(file);
+        }
+    })
+</script>
 </body>
 </html>
