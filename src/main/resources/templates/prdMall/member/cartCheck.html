@@ -137,7 +137,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="item : ${cartItems}">
+                    <tr th:each="item : ${#session.getAttribute('cartItems')}">
                         <input type="hidden" th:value="${item.product.businessMember.id}">
                         <td th:text="${item.product.businessMember.getName()}">商家名稱</td>
                         <td th:text="${item.product.name}">商品名稱</td>
@@ -147,33 +147,23 @@
                     </tr>
                     </tbody>
                 </table>
-                <!-- 優惠券選擇區 -->
-<!--                <div th:each="entry : ${businessMembersInCart}">-->
-<!--                    <label th:text="'商家 ID: ' + ${entry.key}"></label>-->
-<!--                    <select name="coupon_${entry.key}">-->
-<!--                        <option value="none">無</option>-->
-<!--                        <option th:each="coupon : ${entry.value}"-->
-<!--                                th:value="${coupon.prdCoupId}"-->
-<!--                                th:text="${coupon.prdCoupName}">-->
-<!--                        </option>-->
-<!--                    </select>-->
-<!--                </div>-->
+
 
 
                 <div>
                     <label for="couponSelect">選擇優惠券</label>
                     <select name="coupon" id="couponSelect">
                         <option value="">無</option>
-                        <!-- Outer loop over the lists -->
-                        <div th:each="list : ${businessMembersInCart.values()}">
-                            <!-- Inner loop over the coupons -->
-                            <option th:each="coupon : ${list}"
+                        <!-- Loop through businessMembersInCart -->
+                        <th:block th:each="entry : ${businessMembersInCart}">
+                            <option th:each="coupon : ${entry.value}"
                                     th:value="${coupon.prdCoupId}"
                                     th:text="${coupon.prdCoupName}">
                             </option>
-                        </div>
+                        </th:block>
                     </select>
                 </div>
+
 
                 <div class="coupon-detail">
 
@@ -273,74 +263,218 @@
 </script>
 <!--優惠券選擇並動態調整價格-->
 <script th:inline="javascript">
+    document.addEventListener("DOMContentLoaded", () => {
+        const couponSelect = document.getElementById("couponSelect");
+        const totalAmountSpan = document.getElementById("totalAmount");
+        const discountAmountSpan = document.getElementById("discountAmount");
+        const paidAmountSpan = document.getElementById("paidAmount");
+
+        const totalAmountHidden = document.getElementById("totalAmountH");
+        const discountHidden = document.getElementById("discountH");
+        const paidHidden = document.getElementById("paidH");
+
+        // Fetch the businessMembersInCart data from the model
+        const businessMembersInCart = [[${businessMembersInCart}]];
 
 
+        function calculateAmounts() {
+            let totalAmount = 0;
+            let totalDiscount = 0;
 
-    // Elements
-    const couponSelect = $('#couponSelect');
-    const totalAmountElem = $('#totalAmount');
-    const totalAmountElemH = $('#totalAmountH');
-    const discountAmountElem = $('#discountAmount');
-    const discountAmountElemH = $('#discountH');
-    const paidAmountElem = $('#paidAmount');
-    const paidAmountElemH = $('#paidH');
+            document.querySelectorAll("tbody tr").forEach(row => {
+                const businessMemberId = row.querySelector("input[type='hidden']").value;
+                const subtotalCell = row.querySelector("td:nth-child(6)");
+                const subtotal = parseFloat(subtotalCell.textContent);
 
-    const everyRow = document.querySelectorAll('tr');
+                totalAmount += subtotal;
 
-    // Render Thymeleaf map as JSON
-    const map = /*[[${businessMembersInCart}]]*/ {}; // Rendered as plain JavaScript object
+                if (businessMembersInCart[businessMemberId]) {
+                    const coupons = businessMembersInCart[businessMemberId];
+                    const selectedCouponId = parseInt(couponSelect.value, 10);
 
-    // Function to update the amounts
-    function updateAmounts() {
-        const selectedCouponId = couponSelect.val(); // Get selected coupon ID
-        let totalAmount = parseInt(totalAmountElem.val());
-        console.log(totalAmount);
-        let discountAmount = 0;
 
-        if (selectedCouponId !== "") {
-            everyRow.forEach(row => {
-                const $row = $(row); // Convert row to jQuery object
-                const businessId = $row.find('input').val(); // Get business ID from input
-                const selectedCoupons = map[businessId]; // Access coupons for the business
-                totalAmount = totalAmount + parseInt($row.find('td').eq(4).text());
-                console.log(totalAmount);
+                    const selectedCoupon = coupons.find(coupon => coupon.prdCoupId == selectedCouponId);
 
-                if (selectedCoupons) {
-                    selectedCoupons.forEach(coupon => {
-                        if (coupon.prdCoupId === selectedCouponId) {
-                            if (coupon.type === 0) {
-                                // Percentage discount
-                                discountAmount = ($row.find('td').eq(4).text() * coupon.ratio).toFixed(0);
-                                console.log(discountAmount);
-                            } else if (coupon.type === 1) {
-                                // Fixed amount discount
-                                discountAmount = $row.find('td').eq(3).text() * coupon.deduction;
-                                console.log(discountAmount);
-                            }
+
+                    if (selectedCoupon) {
+                        if (selectedCoupon.type === 0) {
+                            const discount = subtotal * (1 - selectedCoupon.ratio);
+                            totalDiscount += discount;
+                        } else if (selectedCoupon.type === 1) {
+                            const discount = Math.min(subtotal, selectedCoupon.deduction);
+                            totalDiscount += discount;
                         }
-                    });
+                    }
+
+
                 }
             });
+
+            const paidAmount = totalAmount - Math.round(totalDiscount);
+
+            totalAmountSpan.textContent = `$${totalAmount.toFixed(0)}`;
+            totalAmountHidden.value = totalAmount;
+
+            discountAmountSpan.textContent = `$${totalDiscount.toFixed(0)}`;
+            discountHidden.value = Math.round(totalDiscount);
+
+            paidAmountSpan.textContent = `$${paidAmount.toFixed(0)}`;
+            paidHidden.value = paidAmount;
         }
 
-        // Calculate paid amount
-        const paidAmount = (totalAmount - discountAmount).toFixed(0);
-        console.log(paidAmount);
+        couponSelect.addEventListener("change", calculateAmounts);
 
-        // Update the UI
-        totalAmountElem.text(`$${totalAmount}`);
-        totalAmountElemH.val(`${totalAmount}`);
-        discountAmountElem.text(`$${discountAmount}`);
-        discountAmountElemH.val(`${discountAmount}`);
-        paidAmountElem.text(`$${paidAmount}`);
-        paidAmountElemH.val(`${paidAmount}`);
-    }
+        calculateAmounts();
+    });
 
-    // Event listeners to update amounts when the quantity or coupon selection changes
-    couponSelect.on('change', updateAmounts);
-
-    // Initially update amounts on page load (in case of pre-selected values)
-    updateAmounts();
 </script>
+
+
+<!--<script th:inline="javascript">-->
+<!--    document.addEventListener("DOMContentLoaded", () => {-->
+<!--        const couponSelect = document.getElementById("couponSelect");-->
+<!--        const selectedCouponId = couponSelect.value;-->
+<!--        console.log("Selected Coupon ID:", selectedCouponId);-->
+<!--        const totalAmountSpan = document.getElementById("totalAmount");-->
+<!--        const discountAmountSpan = document.getElementById("discountAmount");-->
+<!--        const paidAmountSpan = document.getElementById("paidAmount");-->
+
+<!--        const totalAmountHidden = document.getElementById("totalAmountH");-->
+<!--        const discountHidden = document.getElementById("discountH");-->
+<!--        const paidHidden = document.getElementById("paidH");-->
+
+<!--        // Fetch the businessMembersInCart data from the model (mocked here as an example)-->
+<!--        const businessMembersInCart =  [[${businessMembersInCart}]] ;-->
+
+<!--        function calculateAmounts() {-->
+<!--            let totalAmount = 0;-->
+<!--            let totalDiscount = 0;-->
+
+<!--            // Iterate through each row in the table-->
+<!--            document.querySelectorAll("tbody tr").forEach(row => {-->
+<!--                const businessMemberId = row.querySelector("input[type='hidden']").value;-->
+<!--                const subtotalCell = row.querySelector("td:nth-child(6)");-->
+
+
+
+<!--                const subtotal = parseFloat(subtotalCell.textContent);-->
+<!--                totalAmount += subtotal;-->
+
+<!--                if (businessMembersInCart[businessMemberId]) {-->
+
+<!--                    const coupons = businessMembersInCart[businessMemberId];-->
+<!--                    const selectedCouponId = couponSelect.value;-->
+<!--                    const selectedCoupon = coupons.find(coupon => coupon.id == selectedCouponId);-->
+
+
+<!--                    console.log("Selected Coupon:", selectedCoupon);-->
+<!--                    if (selectedCoupon) {-->
+<!--                        console.log("Coupon Type:", selectedCoupon.type);-->
+<!--                        console.log("Ratio/Deduction:", selectedCoupon.ratio || selectedCoupon.deduction);-->
+
+<!--                        if (selectedCoupon.type === 0) {-->
+<!--                            // Ratio discount-->
+<!--                            const discount = subtotal * (1 - selectedCoupon.ratio);-->
+<!--                            totalDiscount += discount;-->
+<!--                        } else if (selectedCoupon.type === 1) {-->
+<!--                            // Amount discount-->
+<!--                            const discount = Math.min(subtotal, selectedCoupon.deduction);-->
+<!--                            totalDiscount += discount;-->
+<!--                        }-->
+<!--                    }-->
+<!--                }-->
+<!--            });-->
+
+<!--            const paidAmount = totalAmount - totalDiscount;-->
+
+<!--            // Update the amounts in the DOM-->
+<!--            totalAmountSpan.textContent = `$${totalAmount.toFixed(2)}`;-->
+<!--            totalAmountHidden.value = totalAmount;-->
+
+<!--            discountAmountSpan.textContent = `$${totalDiscount.toFixed(2)}`;-->
+<!--            discountHidden.value = totalDiscount;-->
+
+<!--            paidAmountSpan.textContent = `$${paidAmount.toFixed(2)}`;-->
+<!--            paidHidden.value = paidAmount;-->
+<!--        }-->
+
+<!--        // Attach event listener to coupon select-->
+<!--        couponSelect.addEventListener("change", calculateAmounts);-->
+
+<!--        // Initial calculation-->
+<!--        calculateAmounts();-->
+<!--    });-->
+
+<!--</script>-->
+<!--<script th:inline="javascript">-->
+
+
+
+<!--    // Elements-->
+<!--    const couponSelect = $('#couponSelect');-->
+<!--    const totalAmountElem = $('#totalAmount');-->
+<!--    const totalAmountElemH = $('#totalAmountH');-->
+<!--    const discountAmountElem = $('#discountAmount');-->
+<!--    const discountAmountElemH = $('#discountH');-->
+<!--    const paidAmountElem = $('#paidAmount');-->
+<!--    const paidAmountElemH = $('#paidH');-->
+
+<!--    const everyRow = document.querySelectorAll('tr');-->
+
+<!--    // Render Thymeleaf map as JSON-->
+<!--    const map = /*[[${businessMembersInCart}]]*/ {}; // Rendered as plain JavaScript object-->
+
+<!--    // Function to update the amounts-->
+<!--    function updateAmounts() {-->
+<!--        const selectedCouponId = couponSelect.val(); // Get selected coupon ID-->
+<!--        let totalAmount = parseInt(totalAmountElem.val());-->
+<!--        console.log(totalAmount);-->
+<!--        let discountAmount = 0;-->
+
+<!--        if (selectedCouponId !== "") {-->
+<!--            everyRow.forEach(row => {-->
+<!--                const $row = $(row); // Convert row to jQuery object-->
+<!--                const businessId = $row.find('input').val(); // Get business ID from input-->
+<!--                const selectedCoupons = map[businessId]; // Access coupons for the business-->
+<!--                totalAmount = totalAmount + parseInt($row.find('td').eq(4).text());-->
+<!--                console.log(totalAmount);-->
+
+<!--                if (selectedCoupons) {-->
+<!--                    selectedCoupons.forEach(coupon => {-->
+<!--                        if (coupon.prdCoupId === selectedCouponId) {-->
+<!--                            if (coupon.type === 0) {-->
+<!--                                // Percentage discount-->
+<!--                                discountAmount = ($row.find('td').eq(4).text() * coupon.ratio).toFixed(0);-->
+<!--                                console.log(discountAmount);-->
+<!--                            } else if (coupon.type === 1) {-->
+<!--                                // Fixed amount discount-->
+<!--                                discountAmount = $row.find('td').eq(3).text() * coupon.deduction;-->
+<!--                                console.log(discountAmount);-->
+<!--                            }-->
+<!--                        }-->
+<!--                    });-->
+<!--                }-->
+<!--            });-->
+<!--        }-->
+
+<!--        // Calculate paid amount-->
+<!--        const paidAmount = (totalAmount - discountAmount).toFixed(0);-->
+<!--        console.log(paidAmount);-->
+
+<!--        // Update the UI-->
+<!--        totalAmountElem.text(`$${totalAmount}`);-->
+<!--        totalAmountElemH.val(`${totalAmount}`);-->
+<!--        discountAmountElem.text(`$${discountAmount}`);-->
+<!--        discountAmountElemH.val(`${discountAmount}`);-->
+<!--        paidAmountElem.text(`$${paidAmount}`);-->
+<!--        paidAmountElemH.val(`${paidAmount}`);-->
+<!--    }-->
+
+<!--    // Event listeners to update amounts when the quantity or coupon selection changes-->
+<!--    couponSelect.on('change', updateAmounts);-->
+
+<!--    // Initially update amounts on page load (in case of pre-selected values)-->
+<!--    updateAmounts();-->
+<!--</script>-->
 </body>
 </html>

@@ -21,7 +21,7 @@ public class PrdCoupForCartDTO {
     private Integer status;
     private Integer type;
     private Integer deduction;
-    private Double ration;
+    private Double ratio;
     private Timestamp startDate;
     private Timestamp endDate;
     private Integer duration;
@@ -43,7 +43,7 @@ public class PrdCoupForCartDTO {
                 .deduction(prdCoup.getDeduction());
 
                 if (prdCoup.getRatio() != null)
-                    builder.ration(prdCoup.getRatio().doubleValue());
+                    builder.ratio(prdCoup.getRatio().doubleValue());
 
                 builder
                 .startDate(prdCoup.getStartDate())
