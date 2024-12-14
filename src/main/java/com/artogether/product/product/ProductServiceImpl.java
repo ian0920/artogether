@@ -2,6 +2,7 @@ package com.artogether.product.product;
 
 import com.artogether.common.business_member.BusinessMember;
 import com.artogether.common.business_member.BusinessMemberRepo;
+import com.artogether.product.my_prd_coup.MyPrdCoupRepository;
 import com.artogether.product.prd_catalog.PrdCatalogRepository;
 import com.artogether.product.prd_img.PrdImg;
 import com.artogether.product.prd_img.PrdImgRepository;
@@ -31,6 +32,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     public BusinessMemberRepo businessMemberRepository;
+
+    @Autowired
+    private MyPrdCoupRepository myPrdCoupRepository;
 
     @Override
     public Product createProduct(Product product) {
@@ -175,7 +179,6 @@ public class ProductServiceImpl implements ProductService {
     public List<PrdImg> getPrdImgsByProductId(Integer productId) {
         return prdImgRepository.getPrdImgByProductId(productId);
     }
-
 
 
 }

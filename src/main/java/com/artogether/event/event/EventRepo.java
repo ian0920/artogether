@@ -10,4 +10,6 @@ import java.util.List;
 public interface EventRepo extends JpaRepository<Event, Integer>, JpaSpecificationExecutor<Event> {
 
     List<Event> findByBusinessMember_Id(Integer businessId);
+
+    List<Event> findAllByStatusIsIn(List<Byte> status);
 }

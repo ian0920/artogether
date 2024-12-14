@@ -178,8 +178,6 @@ public class RestEventBusinessController {
                 evtOrderService.findEvtOrders(businessId, searchCriteria.getEventId(), formattedStartDate, formattedEndDate, searchCriteria.getStatus(), page, size);
 
 
-        System.out.println(searchResult.getTotalElements());
-
         PaginationMetadata metadata = new PaginationMetadata(searchResult);
 
         return ResponseEntity.ok(new ApiResponse<>(true, "搜尋成功", searchResult, metadata));

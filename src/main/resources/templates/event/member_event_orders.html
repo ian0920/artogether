@@ -111,7 +111,7 @@
     </style>
 
 <body>
-<div class="bs-navbar" th:include="member_page::member_navbar"></div>
+<div th:replace="~{/components/navbar_member::navbar('event','order')}"></div>
 
 
 
@@ -134,12 +134,13 @@
                     <div><strong>實際金額：</strong> <span th:text="${entry.value.totalPrice}"></span></div>
                     <div><strong>折扣金額：</strong> <span th:text="${entry.value.discount}"></span></div>
                     <div><strong>付款金額：</strong> <span th:text="${entry.value.paid}"></span></div>
+                    <div><strong>付款方式：</strong><span th:text="${entry.value.paymentMethod}"></span></div>
                     <div><strong>活動狀態：</strong> <button class="eventStatus" style="display: inline-block" th:text="${entry.key.status}"></button></div>
                     <div th:if="${entry.value.refundApplyDate!= null}" ><strong>退款申請日期：</strong> <span th:text="${#dates.format(entry.value.refundApplyDate, 'yyyy-MM-dd HH:mm')}"></span></div>
                     <div th:if="${entry.value.refundApplyDate!= null}" ><strong>退款完成日期：</strong> <span th:text="${#dates.format(entry.value.refundDate, 'yyyy-MM-dd HH:mm')}"></span></div>
                     <div th:if="${entry.value.refundApplyDate!= null}"><strong>退款金額：</strong> <span th:text="${entry.value.refund}"></span></div>
-                    <div th:if="${entry.value.refundApplyDate== null}"></div>
-                    <button style="margin-left: 300px" class="cancel-btn" th:attr="onclick='cancelEvent(\''+ ${entry.key.name} + '\' , \'' + ${entry.value.id} +'\' )'"
+                    <div th:if="${entry.value.refundApplyDate!= null}"></div>
+                    <button style="margin-left: 50%" class="cancel-btn" th:attr="onclick='cancelEvent(\''+ ${entry.key.name} + '\' , \'' + ${entry.value.id} +'\' )'"
                             th:text="${entry.value.status == 0 ? '取消報名' : '已取消報名'}"
                             th:disabled="${entry.value.status == 1}" th:classappend="${entry.value.status == 1} ? 'enroll-canceled' : ''" ></button>
                     </button>
