@@ -266,12 +266,7 @@ public class NewProductController {
 //        return ResponseEntity.ok(productDtos);
 //    }
 //
-//    // 根據 ID 刪除商品
-//    @DeleteMapping("/products/{id}")
-//    public ResponseEntity<Void> deleteProduct(@PathVariable Integer id) {
-//        productService.deleteProduct(id);
-//        return ResponseEntity.noContent().build();
-//    }
+
 //
 //    // 查詢所有上架商品
 //    @GetMapping("/products/available")
