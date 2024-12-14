@@ -230,7 +230,6 @@
                         th:selected="${catalog.id == product.prdCatalog}">
                 </option>
             </select>
-
         </div>
 
         <div class="form-group">
@@ -242,6 +241,21 @@
         </div>
         </div>
 
+<script>
+    document.getElementById('images').addEventListener("change", function (event){
+        const file = event.target.files[0];
+        if (file){
+            const reader = new FileReader();
+
+            reader.onload = function(e){
+                const newImagePreview = document.getElementById('newImagePreview');
+                newImagePreview.src = e.target.result;
+                newImagePreview.style.display = "block";
+            }
+            reader.readAsDataURL(file);
+        }
+    })
+</script>
         <div class="form-group">
             <label for="description">描述：</label>
             <textarea id="description" th:field="*{description}" placeholder="商品描述"></textarea>
@@ -273,7 +287,6 @@
             <button type="submit">保存修改</button>
         </div>
     </form>
-</div>
 
 
 <script>
