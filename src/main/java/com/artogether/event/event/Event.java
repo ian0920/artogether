@@ -52,7 +52,7 @@ public class Event {
     private String catalog;
     private Integer price;
     private String description;
-    //0→下架(預設) 1→上架 2→延期 3→取消 4→審核被拒 5→結束
+    //0→下架(預設) 1→上架(報名中) 2→延期 3→取消 4→審核被拒 5->結束報名
     private Byte status;
     private Integer maximum;
     private Integer minimum;

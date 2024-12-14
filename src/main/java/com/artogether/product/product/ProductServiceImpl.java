@@ -29,7 +29,13 @@ public class ProductServiceImpl implements ProductService {
     public PrdImgRepository prdImgRepository;
 
     @Autowired
-    public MyPrdCoupRepository myPrdCoupRepository;
+    public PrdCatalogRepository prdCatalogRepository;
+
+    @Autowired
+    public BusinessMemberRepo businessMemberRepository;
+
+    @Autowired
+    private MyPrdCoupRepository myPrdCoupRepository;
 
     @Override
     public Product createProduct(Product product) {
@@ -237,7 +243,6 @@ public class ProductServiceImpl implements ProductService {
 
         return map;
     }
-
 
 
 

@@ -170,13 +170,22 @@ public class EvtOrderService {
         Timestamp today = new Timestamp(System.currentTimeMillis());
 
 
-        // 確認是否已經取消且在活動開始前三天
-        if(o.getStatus() == 0 && (today.getTime() + 86400000) <= event.getStartDate().getTime()) {
-            o.setStatus((byte)1);
-            repo.save(o);
-            success = true;
-        }
+        // 確認訂單狀態為未取消
+        if(o.getStatus() == 0 ) {
 
+            //活動正常舉行 且取消時間在活動開始三天前
+            if (event.getStatus() == 1 && (today.getTime() + 86400000) <= event.getStartDate().getTime()){
+                o.setStatus((byte) 1);
+                repo.save(o);
+                success = true;
+            }
+
+            if(event.getStatus() == 2 && (today.getTime() + 86400000) <= event.getDelayDate().getTime()){
+                o.setStatus((byte) 1);
+                repo.save(o);
+                success = true;
+            }
+        }
 
 
         return success;
