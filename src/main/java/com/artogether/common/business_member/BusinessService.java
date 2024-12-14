@@ -51,6 +51,10 @@ public class BusinessService {
         return businessMemberRepo.findAll(spec, pageable);
     }
     
+    // 首頁隨機顯示商家
+    public List<BusinessMember> getRandomBusinessMembers() {
+        return businessMemberRepo.findRandomBusinessMembers(3);
+    }
 
 
 }

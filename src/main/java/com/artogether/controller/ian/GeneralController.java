@@ -1,6 +1,7 @@
 package com.artogether.controller.ian;
 
 import com.artogether.common.business_member.BusinessMember;
+import com.artogether.common.business_member.BusinessService;
 import com.artogether.common.business_perm.BusinessPerm;
 import com.artogether.common.business_perm.BusinessPermService;
 import com.artogether.common.member.Member;
@@ -33,6 +34,8 @@ public class GeneralController {
     @Autowired
     private EventService eventService;
 
+    @Autowired
+	BusinessService businessService;
 
     //拜訪首頁
     @GetMapping("/")
@@ -41,7 +44,10 @@ public class GeneralController {
         //精選活動呈現
         List<Event> topThreeEvent = eventService.findAllEvents("enrolledR").subList(0,3);
         model.addAttribute("topThreeEvents", topThreeEvent);
-
+        
+        //隨機商家呈現
+        List<BusinessMember> randomVendors = businessService.getRandomBusinessMembers(); 
+	    model.addAttribute("vendors", randomVendors);
 
 
         return "homepage";

@@ -51,23 +51,24 @@ public class NewProductController {
 
         List<Product> products = productService.getAllProducts();
 
-        //過濾出只需要的商家商品
-        if (businessId != null) {
-            products = products.stream()
-                    .filter(product -> product.getBusinessMember() != null &&
-                            product.getBusinessMember().getId().equals(businessId))
-                    .collect(Collectors.toList());
-        }
+	    //過濾出只需要的商家商品
+	    if (businessId != null) {
+	        products = products.stream()
+	                           .filter(product -> product.getBusinessMember() != null &&
+	                                              product.getBusinessMember().getId().equals(businessId))
+	                           .collect(Collectors.toList());
+	    }
 
-        List<ProductDto> productDtos = productService.toProductDtoList(products);
-
-        System.out.println("商家商品:" + productDtos);
-
-        model.addAttribute("vendorproducts", productDtos);
-
-
-        return "product/vendorproducts";
-    }
+	    List<ProductDto> productDtos = productService.toProductDtoList(products);	
+	    
+	    System.out.println("商家商品:"+ productDtos);
+	    
+	    model.addAttribute("vendorproducts", productDtos);
+	    
+	   
+	    
+	    return "product/vendorproducts";
+	}
 
 
     @GetMapping("/businessProducts")
@@ -220,7 +221,7 @@ public class NewProductController {
 //    }
 //
     // 根據 ID 查詢商品
-    @GetMapping("/{id}")
+    @GetMapping("/productDetails/{id}")
     public String getProductById(@PathVariable Integer id, Model model) {
         System.out.println("getProductsById");
         Optional<Product> product = productService.getProductById(id);
@@ -257,22 +258,27 @@ public class NewProductController {
 
 
 //
-////    // 查詢所有商品
-////    @GetMapping("/products")
-////    public ResponseEntity<List<ProductDto>> getAllProducts() {
-////        List<Product> products = productService.getAllProducts();
-////        List<ProductDto> productDtos = productService.toProductDtoList(products);
-////        return ResponseEntity.ok(productDtos);
-////    }
+//		  // 查詢所有商品
+//    @GetMapping("/products")
+//    public ResponseEntity<List<ProductDto>> getAllProducts() {
+//        List<Product> products = productService.getAllProducts();
+//        List<ProductDto> productDtos = productService.toProductDtoList(products);
+//        return ResponseEntity.ok(productDtos);
+//    }
 //
-
+//    // 根據 ID 刪除商品
+//    @DeleteMapping("/products/{id}")
+//    public ResponseEntity<Void> deleteProduct(@PathVariable Integer id) {
+//        productService.deleteProduct(id);
+//        return ResponseEntity.noContent().build();
+//    }
 //
-////    // 查詢所有上架商品
-////    @GetMapping("/products/available")
-////    public ResponseEntity<List<ProductDto>> getAvailableProducts() {
-////        List<Product> availableProducts = productService.findAvailableProducts();
-////        List<ProductDto> productDtos = productService.toProductDtoList(availableProducts);
-////        return ResponseEntity.ok(productDtos);
-////    }
+//    // 查詢所有上架商品
+//    @GetMapping("/products/available")
+//    public ResponseEntity<List<ProductDto>> getAvailableProducts() {
+//        List<Product> availableProducts = productService.findAvailableProducts();
+//        List<ProductDto> productDtos = productService.toProductDtoList(availableProducts);
+//        return ResponseEntity.ok(productDtos);
+//    }
 //}
 
