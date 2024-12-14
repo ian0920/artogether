@@ -1,8 +1,9 @@
 package com.artogether.controller.ian;
 
 import com.artogether.common.member.MemberService;
-import com.artogether.common.system_mamager.SystemManager;
-import com.artogether.common.system_mamager.SystemManagerService;
+import com.artogether.common.permission.PermissionService;
+import com.artogether.common.system_manager.SystemManager;
+import com.artogether.common.system_manager.SystemManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +24,9 @@ public class PlatformController {
 
     @Autowired
     private SystemManagerService systemManagerService;
+
+    @Autowired
+    private PermissionService permissionService;
 
     @GetMapping("home")
     public String index() {
@@ -60,8 +64,13 @@ public class PlatformController {
 
         session.setAttribute("managerId", find.getId());
 
+        List<Integer> p = permissionService.findByDescId(find) ; // 回傳List<Interger>代表這個人擁有的權限
 
-
+        if (p.isEmpty()){
+            errors.add("沒有管理員權限，無法進入頁面");
+            model.addAttribute("errors", errors);
+            return "platform/login"; // 沒有權限 回到登入頁面
+        }
         return "platform/index";
     }
 

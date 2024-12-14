@@ -2,7 +2,7 @@ package com.artogether.aop;
 
 import com.artogether.common.permission.PermissionAnn;
 import com.artogether.common.permission.PermissionService;
-import com.artogether.common.system_mamager.SystemManager;
+import com.artogether.common.system_manager.SystemManager;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -28,6 +28,7 @@ public class PermissionAop {
     @Autowired
     private PermissionService permissionService;
 
+
 //    @Before("@annotation(permissionAnn)")  // 攔截所有方法
 //    public void permBefore(PermissionAnn permissionAnn) {
 //        HttpSession session = request.getSession();
@@ -46,16 +47,27 @@ public class PermissionAop {
         HttpSession session = request.getSession();// Get the current session
         Integer managerId = (Integer) session.getAttribute("managerId");
 
-        SystemManager manager = new SystemManager();
-            manager.setId(1);
-            manager.setAccount("aaa");
-            manager.setPassword("aaa");
-            manager.setPhone("000");
+          // 放資料測試
+//        SystemManager manager = new SystemManager();
+//            manager.setId(1);
+//            manager.setAccount("aaa");
+//            manager.setPassword("aaa");
+//            manager.setPhone("000");
 
+        SystemManager manager = permissionService.findManagerById(managerId); // 假設你有這個方法
+        // 因為這個人不存在permission這張table 所以這個人也不會有任何權限
         if (manager == null) {
-            throw new IllegalStateException("User not logged in");
+            // 資料庫中沒有該用戶，跳轉到登錄錯誤頁面
+            request.setAttribute("errorMessage", "User not found in the database.");
+            request.getRequestDispatcher("/error/login").forward(request, response);
+            return null;  // 阻止繼續執行後面的代碼
         }
 
+//        if (manager == null) {
+//            throw new IllegalStateException("User not logged in");
+//        }
+
+        // permission可能是1,2,3,4,5,6 要先把字串裝入List
         Integer requiredPerm = Integer.parseInt(permissionAnn.value());
         System.out.println("需要權限 " + requiredPerm);
 

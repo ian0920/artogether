@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<button>123</button>
+
+<script>
+
+    const a = "http://localhost:8080"
+
+
+    const click = async () => {
+        const response = await fetch( a +"/test", {
+            method: "GET",
+            headers: {},
+            // post請求要得參數在body裡面 通常傳json
+            // body: {},
+        });
+
+        if (response.ok){
+            const data = await response.json();
+            console.log(data);
+        }
+    }
+
+    window.onload = function (){
+        click();
+    }
+
+</script>
+
+</body>
+</html>
