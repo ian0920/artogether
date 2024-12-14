@@ -16,10 +16,10 @@ public class VneMemController {
     @Autowired
     private VenueService venueService;
 
-    @GetMapping("/detail")
-    public String detail(@RequestParam("vneId")Integer vneId, Model model) {
-        VneDetailDTO vneDetailDTO = venueService.getDetailVenue(vneId);
-        model.addAttribute("vneDetail", vneDetailDTO);
+    @GetMapping("/details/{vneId}")
+    public String detail(Integer vneId, Model model) {
+//        VneDetailDTO vneDetailDTO = venueService.getDetailVenue(vneId);
+//        model.addAttribute("vneDetail", vneDetailDTO);
         return "/venue/member/detail";
     }
 

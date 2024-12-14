@@ -297,8 +297,8 @@ public class TslotService {
         Integer price = vnePriceDTO.getPrice();
         BitSet availableHours = getAvailableBitSet(vneId, bookingDate, submissionTime);
 
-        if (dayOfWeek.contains(value)) {
-            if (price != null) {
+        if (price != null) {
+            if (dayOfWeek.contains(value)) {
                 Integer startTime = vnePriceDTO.getStartTime();
                 Integer endTime = vnePriceDTO.getEndTime();
                 BitSet specialPriceList = BinaryTools.toBitSet(vnePriceService.getPriceTslotList(startTime, endTime));
