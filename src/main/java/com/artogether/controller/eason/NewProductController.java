@@ -44,8 +44,8 @@ public class NewProductController {
 
     
     
-    @GetMapping("/product/vendorproducts")
-	public String showVendorProductPage(@RequestParam(value = "businessId", required = false) Integer businessId, Model model) {
+    @GetMapping("/vendorproducts/{businessId}")
+    public String showVendorProductPage(@PathVariable("businessId") Integer businessId, Model model) {
 	    
 	    
 	    List<Product> products = productService.getAllProducts();
@@ -154,7 +154,7 @@ public class NewProductController {
 //    }
 //
     // 根據 ID 查詢商品
-    @GetMapping("/{id}")
+    @GetMapping("/productDetails/{id}")
     public String getProductById(@PathVariable Integer id, Model model) {
         System.out.println("getProductsById");
         Optional<Product> product = productService.getProductById(id);
@@ -170,16 +170,32 @@ public class NewProductController {
 
 
     }
+    
+    
+//    @GetMapping("/productDetails/{id}")
+//    public String viewProductDetails(@PathVariable("id") Integer id, Model model) {
+//        // 根據 ID 獲取產品詳細信息
+//    	 Optional<Product> product = productService.getProductById(id);
+//        
+//
+//        // 添加產品信息到模型
+//        model.addAttribute("product", product);
+//        return "productDetails"; // 返回到 productDetails.html 頁面
+//    }
+    
+    
+    
+    
 
 }
 //
-////    // 查詢所有商品
-////    @GetMapping("/products")
-////    public ResponseEntity<List<ProductDto>> getAllProducts() {
-////        List<Product> products = productService.getAllProducts();
-////        List<ProductDto> productDtos = productService.toProductDtoList(products);
-////        return ResponseEntity.ok(productDtos);
-////    }
+//		  // 查詢所有商品
+//    @GetMapping("/products")
+//    public ResponseEntity<List<ProductDto>> getAllProducts() {
+//        List<Product> products = productService.getAllProducts();
+//        List<ProductDto> productDtos = productService.toProductDtoList(products);
+//        return ResponseEntity.ok(productDtos);
+//    }
 //
 //    // 根據 ID 刪除商品
 //    @DeleteMapping("/products/{id}")
@@ -188,12 +204,12 @@ public class NewProductController {
 //        return ResponseEntity.noContent().build();
 //    }
 //
-////    // 查詢所有上架商品
-////    @GetMapping("/products/available")
-////    public ResponseEntity<List<ProductDto>> getAvailableProducts() {
-////        List<Product> availableProducts = productService.findAvailableProducts();
-////        List<ProductDto> productDtos = productService.toProductDtoList(availableProducts);
-////        return ResponseEntity.ok(productDtos);
-////    }
+//    // 查詢所有上架商品
+//    @GetMapping("/products/available")
+//    public ResponseEntity<List<ProductDto>> getAvailableProducts() {
+//        List<Product> availableProducts = productService.findAvailableProducts();
+//        List<ProductDto> productDtos = productService.toProductDtoList(availableProducts);
+//        return ResponseEntity.ok(productDtos);
+//    }
 //}
 
