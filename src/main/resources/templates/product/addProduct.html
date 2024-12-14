@@ -3,67 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <title>新增商品</title>
+    <link rel="stylesheet" th:href="@{/web_design/style/style_business.css}" />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+            rel="stylesheet"
+    />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f9f9f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .content {
+            width: 75%;
+            height: 720px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            overflow-x: hidden;
+            position: relative;
+
+        }
+
+        h1 {
+            text-align: center;
+            color: #000000;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #2c95c6;
+            box-shadow: 0 0 5px rgb(15, 112, 156);
+        }
+
+        button {
+            padding: 10px 15px;
+            background: linear-gradient(90deg, #58b4dd, #2c95c6);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: linear-gradient(90deg, #58b4dd, #2c95c6);
+        }
+
+        img#newImagePreview {
+            width: 100%;
+            height: 300px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: none;
+            object-fit: contain;
+            position: relative; /* 確保圖片位置正確 */
+            z-index: 1; /* 讓圖片顯示在按鈕之下 */
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+
+        }
+
+        .form-group-inline {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-group-inline .form-group {
+            flex: 1;
+        }
+        button.add {
+            position: relative; /* 從絕對定位改為相對定位 */
+            margin-top: 20px;
+            z-index: 2; /* 讓按鈕顯示在圖片之上 */
+            width: auto;
+            align-self: center; /* 垂直居中 */
+        }
+
+    </style>
 </head>
 <body>
-<h1>新增商品</h1>
+<div th:replace="~{/components/navbar_business::navbar('product','product')}"></div>
 
-<form th:action="@{/product/addProduct}" method="post" enctype="multipart/form-data">
-    <!-- 商品名稱 -->
-    <div>
-        <label for="name">商品名稱:</label>
-        <input type="text" id="name" name="name" required>
-    </div>
+<div class="content">
+    <h1>新增商品</h1>
 
-    <!-- 商品價格 -->
-    <div>
-        <label for="price">價格:</label>
-        <input type="number" id="price" name="price" required>
-    </div>
+    <form th:action="@{/product/addProduct}" method="post" enctype="multipart/form-data">
+        <!-- 商品名稱 -->
+        <div class="form-group">
+            <label for="name">商品名稱:</label>
+            <input type="text" id="name" name="name" placeholder="輸入商品名稱" required>
+        </div>
 
-    <!-- 商品數量 -->
-    <div>
-        <label for="qty">數量:</label>
-        <input type="number" id="qty" name="qty" required>
-    </div>
+        <!-- 商品價格 -->
+        <div class="form-group-inline">
+        <div class="form-group">
+            <label for="price">價格:</label>
+            <input type="number" id="price" name="price" placeholder="輸入價格" required>
+        </div>
 
-    <!-- 商品描述 -->
-    <div>
-        <label for="description">描述:</label>
-        <textarea id="description" name="description" rows="4" cols="50" required></textarea>
-    </div>
+        <!-- 商品數量 -->
+        <div class="form-group">
+            <label for="qty">數量:</label>
+            <input type="number" id="qty" name="qty" placeholder="輸入數量" required>
+        </div>
+        </div>
 
-    <!-- 商品分類 -->
-    <div>
-        <label for="catalogId">分類:</label>
-        <select id="catalogId" name="catalogId" required>
-            <option value="" disabled selected>選擇分類</option>
-            <!-- 從後端動態填充分類列表 -->
-            <option th:each="catalog : ${catalogs}"
-                    th:value="${catalog.id}"
-                    th:text="${catalog.name}">
-            </option>
-        </select>
-    </div>
 
-    <!-- 狀態 -->
-    <div>
-        <label for="status">狀態:</label>
-        <select id="status" name="status" required>
-            <option value="1">上架</option>
-            <option value="0">下架</option>
-        </select>
-    </div>
+        <!-- 商品分類和狀態 -->
+        <div class="form-group-inline">
+            <div class="form-group">
+                <label for="catalogId">分類:</label>
+                <select id="catalogId" name="catalogId" required>
+                    <option value="" disabled selected>選擇分類</option>
+                    <option th:each="catalog : ${catalogs}" th:value="${catalog.id}" th:text="${catalog.name}">
+                    </option>
+                </select>
+            </div>
 
-    <!-- 上傳圖片 -->
-    <div>
-        <label for="images">圖片:</label>
-        <input type="file" id="images" name="images" multiple required>
-    </div>
+            <div class="form-group">
+                <label for="status">狀態:</label>
+                <select id="status" name="status" required>
+                    <option value="1">上架</option>
+                    <option value="0">下架</option>
+                </select>
+            </div>
+        </div>
 
-    <!-- 提交按鈕 -->
-    <div>
-        <button type="submit">新增商品</button>
-    </div>
-</form>
+        <!-- 商品描述 -->
+        <div class="form-group">
+            <label for="description">介紹:</label>
+            <textarea id="description" name="description" rows="4" placeholder="輸入商品描述" required></textarea>
+        </div>
+
+        <!-- 上傳圖片 -->
+        <div class="form-group">
+            <label for="images">圖片:</label>
+            <input type="file" id="images" name="images" multiple required>
+            <img id="newImagePreview" src="#" alt="新圖片預覽">
+        </div>
+
+        <!-- 提交按鈕 -->
+        <button class="add" type="submit">新增商品</button>
+    </form>
+</div>
+
+<script>
+    // 圖片預覽功能
+    document.getElementById('images').addEventListener("change", function (event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const preview = document.getElementById('newImagePreview');
+                preview.src = e.target.result;
+                preview.style.display = "block";
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
 </body>
 </html>

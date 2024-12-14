@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>結帳</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,6 +12,15 @@
         .container {
             width: 80%;
             margin: 20px auto;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-buttons {
+            display: flex;
+            gap: 10px;
         }
         .section {
             margin-bottom: 20px;
@@ -66,13 +76,13 @@
             box-sizing: border-box;
         }
         button {
-            background-color: #28a745;
+            background-color: #2c95c6;
             color: white;
             border: none;
             cursor: pointer;
         }
         button:hover {
-            background-color: #218838;
+            background-color: #2c95c6;
         }
         /* 將 radio 按鈕並排 */
         .radio-group {
@@ -95,12 +105,22 @@
         .radio-label input[type="radio"] {
             margin: 0; /* 移除多餘的外邊距 */
         }
+        .paid {
+            text-align: right;
+            line-height: 0.8;
+        }
     </style>
 </head>
 <body>
 <form id="checkoutForm" th:action="@{/cart/confirmOrder}" method="post">
     <div class="container">
+        <div class="header">
         <h1>結帳</h1>
+            <div class="header-buttons">
+            <button type="button" onclick="location.href='/cart/page'" style="width: auto; padding: 10px 20px;">返回購物車</button>
+            <button type="button" onclick="location.href='/'" style="width: auto; padding: 10px 20px;">返回首頁</button>
+            </div>
+        </div>
 
         <!-- 訂單詳情區 -->
         <div class="section" id="order-details">
@@ -109,6 +129,7 @@
                 <table>
                     <thead>
                     <tr>
+                        <th>商家</th>
                         <th>商品名稱</th>
                         <th>價格</th>
                         <th>數量</th>
@@ -117,6 +138,8 @@
                     </thead>
                     <tbody>
                     <tr th:each="item : ${cartItems}">
+                        <input type="hidden" th:value="${item.product.businessMember.id}">
+                        <td th:text="${item.product.businessMember.getName()}">商家名稱</td>
                         <td th:text="${item.product.name}">商品名稱</td>
                         <td th:text="${item.product.price}">價格</td>
                         <td th:text="${item.qty}">數量</td>
@@ -124,7 +147,46 @@
                     </tr>
                     </tbody>
                 </table>
-                <h3>總金額: <span th:text="${totalPrice}">0</span></h3>
+                <!-- 優惠券選擇區 -->
+<!--                <div th:each="entry : ${businessMembersInCart}">-->
+<!--                    <label th:text="'商家 ID: ' + ${entry.key}"></label>-->
+<!--                    <select name="coupon_${entry.key}">-->
+<!--                        <option value="none">無</option>-->
+<!--                        <option th:each="coupon : ${entry.value}"-->
+<!--                                th:value="${coupon.prdCoupId}"-->
+<!--                                th:text="${coupon.prdCoupName}">-->
+<!--                        </option>-->
+<!--                    </select>-->
+<!--                </div>-->
+
+
+                <div>
+                    <label for="couponSelect">選擇優惠券</label>
+                    <select name="coupon" id="couponSelect">
+                        <option value="">無</option>
+                        <!-- Outer loop over the lists -->
+                        <div th:each="list : ${businessMembersInCart.values()}">
+                            <!-- Inner loop over the coupons -->
+                            <option th:each="coupon : ${list}"
+                                    th:value="${coupon.prdCoupId}"
+                                    th:text="${coupon.prdCoupName}">
+                            </option>
+                        </div>
+                    </select>
+                </div>
+
+                <div class="coupon-detail">
+
+                </div>
+
+                <div class="amounts">
+                    <p>原價: <span id="totalAmount"></span></p>
+                    <input type="hidden" name="totalPrice" id="totalAmountH">
+                    <p>折扣: <span id="discountAmount">$0</span></p>
+                    <input type="hidden" name="discount" id="discountH">
+                    <p>付款金額: <span id="paidAmount" >$0</span></p>
+                    <input type="hidden" name="paid" id="paidH">
+                </div>
             </div>
         </div>
 
@@ -208,6 +270,77 @@
             bankTransferDetails.style.display = 'block';
         }
     }
+</script>
+<!--優惠券選擇並動態調整價格-->
+<script th:inline="javascript">
+
+
+
+    // Elements
+    const couponSelect = $('#couponSelect');
+    const totalAmountElem = $('#totalAmount');
+    const totalAmountElemH = $('#totalAmountH');
+    const discountAmountElem = $('#discountAmount');
+    const discountAmountElemH = $('#discountH');
+    const paidAmountElem = $('#paidAmount');
+    const paidAmountElemH = $('#paidH');
+
+    const everyRow = document.querySelectorAll('tr');
+
+    // Render Thymeleaf map as JSON
+    const map = /*[[${businessMembersInCart}]]*/ {}; // Rendered as plain JavaScript object
+
+    // Function to update the amounts
+    function updateAmounts() {
+        const selectedCouponId = couponSelect.val(); // Get selected coupon ID
+        let totalAmount = parseInt(totalAmountElem.val());
+        console.log(totalAmount);
+        let discountAmount = 0;
+
+        if (selectedCouponId !== "") {
+            everyRow.forEach(row => {
+                const $row = $(row); // Convert row to jQuery object
+                const businessId = $row.find('input').val(); // Get business ID from input
+                const selectedCoupons = map[businessId]; // Access coupons for the business
+                totalAmount = totalAmount + parseInt($row.find('td').eq(4).text());
+                console.log(totalAmount);
+
+                if (selectedCoupons) {
+                    selectedCoupons.forEach(coupon => {
+                        if (coupon.prdCoupId === selectedCouponId) {
+                            if (coupon.type === 0) {
+                                // Percentage discount
+                                discountAmount = ($row.find('td').eq(4).text() * coupon.ratio).toFixed(0);
+                                console.log(discountAmount);
+                            } else if (coupon.type === 1) {
+                                // Fixed amount discount
+                                discountAmount = $row.find('td').eq(3).text() * coupon.deduction;
+                                console.log(discountAmount);
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        // Calculate paid amount
+        const paidAmount = (totalAmount - discountAmount).toFixed(0);
+        console.log(paidAmount);
+
+        // Update the UI
+        totalAmountElem.text(`$${totalAmount}`);
+        totalAmountElemH.val(`${totalAmount}`);
+        discountAmountElem.text(`$${discountAmount}`);
+        discountAmountElemH.val(`${discountAmount}`);
+        paidAmountElem.text(`$${paidAmount}`);
+        paidAmountElemH.val(`${paidAmount}`);
+    }
+
+    // Event listeners to update amounts when the quantity or coupon selection changes
+    couponSelect.on('change', updateAmounts);
+
+    // Initially update amounts on page load (in case of pre-selected values)
+    updateAmounts();
 </script>
 </body>
 </html>

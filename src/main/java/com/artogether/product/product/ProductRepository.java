@@ -3,6 +3,7 @@ package com.artogether.product.product;
 
 import java.util.List;
 
+import com.artogether.product.my_prd_coup.MyPrdCoup;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -18,6 +19,8 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     @Query("SELECT p FROM Product p WHERE p.businessMember.id = ?1")
     List<Product> findProductListByBusinessId(Integer businessId);
+
+
 
 
 }
