@@ -1,16 +1,13 @@
 package com.artogether.product.cart.controller;
 
 import com.artogether.common.member.Member;
-import com.artogether.event.evt_order.EvtOrderService;
 import com.artogether.product.cart.model.Cart;
 import com.artogether.product.cart.model.CartService;
 import com.artogether.product.cart.model.PrdCoupForCartDTO;
 import com.artogether.product.prd_coup.PrdCoup;
 import com.artogether.product.prd_img.PrdImg;
 import com.artogether.product.prd_img.PrdImgRepository;
-import com.artogether.product.prd_order.model.PrdOrder;
 import com.artogether.product.prd_order.model.PrdOrderService;
-import com.artogether.product.prd_order_detail.PrdOrderDetail;
 import com.artogether.product.prd_order_detail.PrdOrderDetailRepository;
 import com.artogether.product.product.Product;
 import com.artogether.product.product.ProductServiceImpl;
@@ -20,9 +17,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/cart")
@@ -231,7 +229,7 @@ public class CartController {
         businessMembersInCart.keySet().forEach(id -> System.out.println(id));
 
 
-        model.addAttribute("cartItems", cartItems);
+        session.setAttribute("cartItems", cartItems);
         model.addAttribute("totalPrice", totalPrice);
         model.addAttribute("businessMembersInCart", businessMembersInCart);
 
@@ -248,66 +246,82 @@ public class CartController {
             @RequestParam String orderPhone,
             @RequestParam String orderAddress,
             @RequestParam String paymentMethod,
+            @RequestParam Integer totalPrice,
+            @RequestParam Integer discount,
+            @RequestParam Integer paid,
 
             HttpSession session, Model model) {
 
-        Integer memberId = (Integer) session.getAttribute("member"); // 從 HttpSession 獲取 memberId
-        if (memberId == null) {
-            return "redirect:/login"; // 如果未登入，重定向到登入頁面
-        }
-        Member member = new Member();
-        member.setId(memberId);
+        System.out.println("orderName: " + orderName);
+        System.out.println("orderPhone: " + orderPhone);
+        System.out.println("orderAddress: " + orderAddress);
+        System.out.println("paymentMethod: " + paymentMethod);
+        System.out.println("totalPrice: " + totalPrice);
+        System.out.println("discount: " + discount);
+        System.out.println("paid: " + paid);
 
-        PrdOrder order = new PrdOrder();
-        order.setMember(member);
-        order.setOrderName(orderName);
-        order.setOrderPhone(orderPhone);
-        order.setOrderAddress(orderAddress);
-        order.setPaymentMethod(paymentMethod);
-        order.setOrderDate(Timestamp.valueOf(LocalDateTime.now()));
-        order.setStatus("未付款");
+        //從session取出購物車清單 後續方便存入購物明細
+        List<Cart> cartItems = (List<Cart>) session.getAttribute("cartItems");
 
+//        Integer memberId = (Integer) session.getAttribute("member"); // 從 HttpSession 獲取 memberId
+//        if (memberId == null) {
+//            return "redirect:/login"; // 如果未登入，重定向到登入頁面
+//        }
+//        Member member = new Member();
+//        member.setId(memberId);
+//
+//        PrdOrder order = new PrdOrder();
+//        order.setMember(member);
+//        order.setOrderName(orderName);
+//        order.setOrderPhone(orderPhone);
+//        order.setOrderAddress(orderAddress);
+//        order.setPaymentMethod(paymentMethod);
+//        order.setOrderDate(Timestamp.valueOf(LocalDateTime.now()));
+//        order.setStatus("未付款");
+//
+//
+//
+//
+//        List<Cart> cartItems = cartService.getCartByMember(member);
+//        int totalPrice = cartItems.stream()
+//                .mapToInt(cart -> cart.getProduct().getPrice() * cart.getQty())
+//                .sum();
+//
+////        order.setTotalPrice(totalPrice);
+////        order.setDiscount();
+////        order.setPaid();
+//
+//
+//
+//
+//        try {
+//            // 保存訂單
+//            PrdOrder newOrder = prdOrderService.savePrdOrder(order);
+//
+//            cartItems.forEach(cart -> {
+//                PrdOrderDetail orderDetail = new PrdOrderDetail();
+//                orderDetail.setPrdOrder(newOrder);
+//                orderDetail.setProduct(cart.getProduct());
+//                orderDetail.setQty(cart.getQty());
+//                orderDetail.setPrice(cart.getProduct().getPrice());
+//
+//                prdOrderDetailRepository.save(orderDetail);
+//            });
+//
+//
+//
+//            // 清空購物車
+//            cartService.clearCart(member);
+//
+//            // 傳遞訂單信息到頁面
+//            model.addAttribute("order", order);
+//            return "/prdMall/member/orderSuccess";
+//        } catch (Exception e) {
+//            model.addAttribute("error", "訂單提交失敗，請稍後再試");
+//            return "/prdMall/member/cartCheck";
+//        }
 
-
-
-        List<Cart> cartItems = cartService.getCartByMember(member);
-        int totalPrice = cartItems.stream()
-                .mapToInt(cart -> cart.getProduct().getPrice() * cart.getQty())
-                .sum();
-
-//        order.setTotalPrice(totalPrice);
-//        order.setDiscount();
-//        order.setPaid();
-
-
-
-
-        try {
-            // 保存訂單
-            PrdOrder newOrder = prdOrderService.savePrdOrder(order);
-
-            cartItems.forEach(cart -> {
-                PrdOrderDetail orderDetail = new PrdOrderDetail();
-                orderDetail.setPrdOrder(newOrder);
-                orderDetail.setProduct(cart.getProduct());
-                orderDetail.setQty(cart.getQty());
-                orderDetail.setPrice(cart.getProduct().getPrice());
-
-                prdOrderDetailRepository.save(orderDetail);
-            });
-
-
-
-            // 清空購物車
-            cartService.clearCart(member);
-
-            // 傳遞訂單信息到頁面
-            model.addAttribute("order", order);
-            return "/prdMall/member/orderSuccess";
-        } catch (Exception e) {
-            model.addAttribute("error", "訂單提交失敗，請稍後再試");
-            return "/prdMall/member/cartCheck";
-        }
+        return "Test_success";
     }
 
 }
