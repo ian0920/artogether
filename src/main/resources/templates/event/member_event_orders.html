@@ -140,9 +140,13 @@
                     <div th:if="${entry.value.refundApplyDate!= null}" ><strong>退款完成日期：</strong> <span th:text="${#dates.format(entry.value.refundDate, 'yyyy-MM-dd HH:mm')}"></span></div>
                     <div th:if="${entry.value.refundApplyDate!= null}"><strong>退款金額：</strong> <span th:text="${entry.value.refund}"></span></div>
                     <div th:if="${entry.value.refundApplyDate!= null}"></div>
-                    <button style="margin-left: 50%" class="cancel-btn" th:attr="onclick='cancelEvent(\''+ ${entry.key.name} + '\' , \'' + ${entry.value.id} +'\' )'"
+                    <button th:if="${(entry.key.status == 4 || entry.key.status == 5) && entry.value.status != 1}" th:text="活動已結束" style="margin-left: 50%" class="cancel-btn enroll-canceled" disabled></button>
+                    <button style="margin-left: 50%" class="cancel-btn"
+                            th:unless="${(entry.key.status == 4 || entry.key.status == 5) && entry.value.status != 1}"
+                            th:attr="onclick='cancelEvent(\''+ ${entry.key.name} + '\' , \'' + ${entry.value.id} +'\' )'"
                             th:text="${entry.value.status == 0 ? '取消報名' : '已取消報名'}"
-                            th:disabled="${entry.value.status == 1}" th:classappend="${entry.value.status == 1} ? 'enroll-canceled' : ''" ></button>
+                            th:disabled="${entry.value.status == 1}"
+                            th:classappend="${entry.value.status == 1} ? 'enroll-canceled' : ''" ></button>
                     </button>
                 </div>
             </div>
@@ -251,8 +255,12 @@
                     $button.css('background-color', '#dc3545');
                     break;
                 case '4':
-                    $button.text('結束');
-                    $button.css('background-color', '#f8f9fa');
+                    $button.text('審核被拒');
+                    $button.css('background-color', '#c99e68');
+                    break;
+                case '5':
+                    $button.text('活動結束');
+                    $button.css('background-color', '#808080FF');
                     break;
                 default: break;
             }
