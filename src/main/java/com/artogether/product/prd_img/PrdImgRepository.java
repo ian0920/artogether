@@ -14,4 +14,6 @@ public interface PrdImgRepository extends JpaRepository<PrdImg, Integer> {
     @Query("SELECT p FROM PrdImg p WHERE p.product.id = ?1")
     List<PrdImg> getPrdImgByProductId(Integer id);
 
+    
+   
 }

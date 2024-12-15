@@ -16,5 +16,6 @@ public class ProductDto {
     private Integer status;
     private String businessMemberName; 
     private Integer businessMemberId;
+    
 }
 

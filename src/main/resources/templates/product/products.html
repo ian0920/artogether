@@ -1,66 +1,223 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>商品清單</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>All products</title>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link rel="stylesheet" th:href="@{/web_design/style/style_general.css}" />
+  <link rel="stylesheet" th:href="@{/web_design/style/style_homepage.css}" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+  <style>
+    .event-card-container {
+      width: 85%;
+      align-content: center;
+    }
+    .showcase-cards-box {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .showcases-card {
+      margin: 25px;
+      width: 300px;
+    }
+    .event-card-search {
+      align-self: flex-start;
+      margin-left: 120px;
+      margin-top: 25px;
+    }
+    .custom-pagination {
+      display: flex;
+      justify-content: center;
+      list-style-type: none;
+      padding: 0;
+      margin: 10px;
+    }
+    .custom-pagination li {
+      margin: 0 5px;
+    }
+    .custom-pagination .page-link {
+      display: inline-block;
+      padding: 8px 16px;
+      text-decoration: none;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: #f8f9fa;
+      color: #333;
+      transition: all 0.3s;
+    }
+    .custom-pagination .page-link:hover {
+      background-color: #2c95c6;
+      color: white;
+      border-color: #2c95c6;
+    }
+    .custom-pagination .page-link.active {
+      background-color: #2c95c6;
+      color: white;
+      border-color: #2c95c6;
+      pointer-events: none;
+    }
+    .custom-pagination .page-link.disabled {
+      background-color: #e9ecef;
+      color: #6c757d;
+      border-color: #ddd;
+      pointer-events: none;
+    }
+    .event-card-search-form {
+      margin-bottom: 20px;
+    }
+    .event-card-search-form label {
+      font-weight: bold;
+      color: #333;
+      margin-right: 10px;
+      margin-left: 10px;
+    }
+    .event-card-search-form select {
+      padding: 8px 10px;
+      font-size: 14px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: white;
+      transition: all 0.3s;
+    }
+    .event-card-search-form select:hover {
+      border-color: #2c95c6;
+    }
+    .event-card-search-form .btn {
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: bold;
+      color: white;
+      background-color: #2c95c6;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .event-card-search-form .btn:hover {
+      background-color: #2c95c6;
+    }
+    .event-card-search-form .btn:active {
+      background-color: #003d80;
+    }
+    .product-images {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .product-image {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>商品清單</h1>
-    </header>
+<div th:replace="~{/components/navbar_homepage::navbar}"></div>
 
-    <main>
-        <!-- 商品清單區 -->
-        <section>
-            <h2>所有商品</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>商品名稱</th>
-                        <th>價格</th>
-                        <th>數量</th>
-                        <th>描述</th>
-                        <th>狀態</th>
-                        <th>商家名稱</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- 使用 Thymeleaf 渲染商品資料 -->
-                    <tr th:each="product : ${products}">
-                        <td th:text="${product.name}">商品名稱</td>
-                        <td th:text="${product.price}">價格</td>
-                        <td th:text="${product.qty}">數量</td>
-                        <td th:text="${product.description}">描述</td>
-                        <td th:text="${product.status == 1 ? '上架' : '下架'}">狀態</td>
-                        <td th:text="${product.businessMemberName != null ? product.businessMemberName : '無'}">商家名稱</td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
-    </main>
+<main>
+  <!-- 商品清單區 -->
+  <section>
+    <h2>所有商品</h2>
+    <div class="product-list">
+      <!-- 使用 Thymeleaf 渲染商品資料 -->
+      <div class="product-card" th:each="prd : ${products ?: {}}">
+        <div class="product-info">
+          <h3 class="product-title" th:text="${prd.name}">商品名稱</h3>
+          <p class="product-description" th:text="${prd.description}">商品描述</p>
+          <p class="product-price" th:text="'$' + ${prd.price}">價格</p>
+          <p class="product-status" th:text="${prd.status == 1 ? '上架中' : '已下架'}">狀態</p>
+		
+			
+			
+          
 
-    <footer>
-        <p>&copy; 2024 我的商店</p>
-    </footer>
+          <a href="#" class="btn">搶購</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 分頁 -->
+  <div class="pagination-wrapper">
+    <nav aria-label="Page navigation">
+      <ul class="custom-pagination">
+        <!-- 上一頁 -->
+        <li th:classappend="${currentPage == 0} ? 'disabled'">
+          <a class="page-link"
+             th:href="@{/product/productspage(page=${currentPage > 0 ? currentPage - 1 : 0}, size=${size ?: 5}, sortBy=${sortBy ?: 'id'})}">
+            上一頁
+          </a>
+        </li>
+
+        <!-- 頁碼 -->
+        <li th:each="pageNum : ${#numbers.sequence(0, (totalPages ?: 1) - 1)}"
+            th:classappend="${pageNum == currentPage} ? 'active'">
+          <a class="page-link"
+             th:href="@{/product/productspage(page=${pageNum}, size=${size ?: 5}, sortBy=${sortBy ?: 'id'})}"
+             th:text="${pageNum + 1}">
+          </a>
+        </li>
+
+        <!-- 下一頁 -->
+        <li th:classappend="${currentPage == ((totalPages ?: 1) - 1)} ? 'disabled'">
+          <a class="page-link"
+             th:href="@{/product/productspage(page=${currentPage != null && currentPage < ((totalPages != null ? totalPages : 1) - 1) ? currentPage + 1 : (totalPages != null ? totalPages - 1 : 0)}, size=${size ?: 5}, sortBy=${sortBy ?: 'id'})}">
+            下一頁
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</main>
+
+<footer th:include="homepage::footer"></footer>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Disable link clicks for disabled pagination controls
+    document.querySelectorAll(".page-link.disabled").forEach(function (link) {
+      link.addEventListener("click", function (e) {
+        e.preventDefault(); // Prevent navigation
+      });
+    });
+
+    // Navbar logic
+    var elNavItemDiscover = document.querySelector("div.navbar-item");
+    var elDivNavMenuBox = document.querySelector("div.nav-menu-box");
+    var elDivNavUserBox = document.querySelector("div.user_div");
+    var elDivNavMenu = document.querySelector("div.nav-menu");
+    var elDivUserMenu = document.querySelector("div.user-menu-box");
+
+    if (elNavItemDiscover && elDivNavMenuBox) {
+      elNavItemDiscover.addEventListener("mouseenter", function () {
+        if (!elDivNavMenuBox.classList.contains("open")) {
+          elDivNavMenuBox.classList.add("open");
+        }
+      });
+      elDivNavMenu.addEventListener("mouseleave", function () {
+        if (elDivNavMenuBox.classList.contains("open")) {
+          elDivNavMenuBox.classList.remove("open");
+        }
+      });
+    }
+
+    if (elDivNavUserBox && elDivUserMenu) {
+      elDivNavUserBox.addEventListener("mouseenter", function () {
+        if (!elDivUserMenu.classList.contains("open")) {
+          elDivUserMenu.classList.add("open");
+        }
+      });
+      elDivUserMenu.addEventListener("mouseleave", function () {
+        if (elDivUserMenu.classList.contains("open")) {
+          elDivUserMenu.classList.remove("open");
+        }
+      });
+    }
+  });
+</script>
 </body>
 </html>

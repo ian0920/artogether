@@ -1,6 +1,9 @@
 package com.artogether.product.product;
 
 import com.artogether.common.business_member.BusinessMember;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
@@ -37,6 +40,9 @@ public interface ProductService {
 
     Product addProduct(Product product, List<MultipartFile> images, HttpSession session) throws IOException;
 
+    List<Product> getTopRatedProducts(int count);
+    
+    Page<Product> getPaginatedProducts(int page, int size, String sortBy);
 
 }
 
