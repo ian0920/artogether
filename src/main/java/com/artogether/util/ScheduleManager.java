@@ -28,7 +28,7 @@ public class ScheduleManager {
              會員 -> 取消報名功能變更 (延期的狀況考慮)
      */
 
-    //每天 00:00執行 延遲10秒開始
+    //每天 00:00執行
     @Scheduled(cron =" 0 0 0 * * *", zone ="Asia/Taipei")
     public void eventStatusUpdate(){
         //撈出狀態為1 報名中 2 延期 的活動
@@ -60,14 +60,6 @@ public class ScheduleManager {
 
 
      */
-
-
-    /*
-
-        商品 -> 商家 -> 優惠券 -> 我的優惠券
-
-     */
-
 
 
 

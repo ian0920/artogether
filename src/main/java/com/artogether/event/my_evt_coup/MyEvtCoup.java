@@ -28,7 +28,7 @@ public class MyEvtCoup {
     @JoinColumn(name = "evt_coup_id", referencedColumnName = "id")
     private EvtCoup evtCoup;
 
-    //0→未使用(預設) 1→已使用
+    //0→未使用(預設) 1→已使用 2->已過期
     private Byte status;
 
     @Column(name = "receive_date")
@@ -56,7 +56,7 @@ public class MyEvtCoup {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    static class Composite implements Serializable {
+    public static class Composite implements Serializable {
         private static final long serialVersionUID = 1L;
 
 

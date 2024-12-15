@@ -204,7 +204,8 @@
         </div>
         <div class="card-info">
           <p th:text="${event.description.substring(0,35)}+ ' ...'" ></p>
-          <div style="font-size: 12px;font-style: italic; display: inline-block">報名進度：</div>
+
+          <div style="font-size: 12px;font-style: italic; display: inline-block" th:text="'報名進度：' + ${#numbers.formatDecimal((event.getEnrolled()*100/event.getMaximum()) , 2, 1)}  + '%'">報名進度：</div>
           <div class="progress">
             <div
                     class="progress-bar bgcolor-event"

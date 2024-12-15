@@ -8,6 +8,8 @@
 	  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
 	  rel="stylesheet"
 	/>
+
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
      
         /* Centering popup */
@@ -53,6 +55,7 @@
 
         .submitButton:hover, .openFormButton:hover{
             color: white;
+			cursor: pointer;
             background-color: #2982a8;
         }
 
@@ -67,6 +70,11 @@
 			color: white;
 			background-color: #b03535;
 
+		}
+
+		.enroll-finished{
+			color: white;
+			background-color: #706161;
 		}
 
         #to-login{
@@ -84,10 +92,14 @@
 		}
 
 		button[disabled]{
-			background-color: var(--background-default-tertiary-sds-light)
+			color: white;
+			cursor: default;
+			background-color: #2c95c6;
 		}
 		button[disabled]:hover{
-			background-color: var(--background-default-tertiary-sds-light)
+			color: white;
+			cursor: default;
+			background-color: #2c95c6;
 		}
 
 
@@ -104,7 +116,7 @@
 	
 	<section class="flex-3 info-card-outline" style="margin-right:20px">
 		<p>活動詳情 <span class="material-symbols-outlined">chevron_forward</span> <span th:text="${evt.id}"></span></p>
-		<h2 th:text="${evt.name}"></h2>
+		<h2 id="eventName" th:text="${evt.name}"></h2>
 		
 		<div class="info-card-outline row" style="margin:20px 0">
 			<div class="info-card-horizontal flex-1" style="color:#e03f3f">
@@ -145,14 +157,21 @@
 	<aside class="info-card-outline flex-1" style="height:min-content;">
 		<h3 th:text="${evt.businessMember.name}"></h3>
 		<p th:text="${evt.businessMember.addr}"></p>
-		<div class="row">
-<!-- 			<button class="button-big button-primary flex-auto">立即報名</button> -->
-			<!-- Open Form Button -->
-			<button th:if="${#session.getAttribute('member') != null}" id="openFormButton" class="btn btn-lg openFormButton button-big flex-auto" th:disabled="${match==true}" th:text="${match==true}?'已成功報名':'報名活動'">報名活動</button>
+
+		<div class="row" th:if="${evt.status == 1 || evt.status == 2}">
+
+			<button th:if="${#session.getAttribute('member') != null}" id="openFormButton" class="btn btn-lg openFormButton button-big flex-auto" th:disabled="${match==true}" th:text="${match==true}?'已成功報名':'立即報名'">立即報名</button>
 			<button th:unless="${#session.getAttribute('member') != null}" id="to-login" class="btn btn-lg button-big flex-auto" onclick="location.href='/login'">請先登入</button>
 
 			<button class="button-icon-big" id=btn_track><span class="material-symbols-outlined">bookmark</span></button>
 		</div>
+
+		<div class="row" th:unless="${evt.status == 1 || evt.status == 2}">
+
+			<button class="button-big enroll-finished flex-auto" >報名結束</button>
+			<button class="button-icon-big" id=btn_track><span class="material-symbols-outlined">bookmark</span></button>
+		</div>
+
 	</aside>
 </div>
 <!-- Popup Form -->
@@ -161,8 +180,8 @@
         <h2 class="text-center mb-4">報名表單</h2>
 
         <!-- Form -->
-        <form id="paymentForm" method="post" th:action="@{/event/enroll}">
-            <input type="hidden" name="eventId" th:value="${eventObject.id}"></input>
+        <form id="paymentForm">
+            <input type="hidden" id="eventId" name="eventId" th:value="${eventObject.id}"></input>
             <div class="form-group text-start">
                 <label for="qty" class="label-input">選擇報名人數:</label>
                 <select id="qty" name="qty" class="solo">
@@ -207,13 +226,13 @@
 
             <div class="row">
                 <button type="button" id="closeFormButton" class="closeFormButton flex-1">取消</button>
-                <button id="submitButton" class="btn submitButton button-primary button-big flex-2">送出報名</button>
+                <button type="submit" id="submitButton" class="btn submitButton button-primary button-big flex-2">送出報名</button>
             </div>
         </form>
     </div>
 </div>
 </main>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script type="text/javascript" th:inline="javascript">
 	var el_btn_track=document.querySelector("#btn_track")
 	el_btn_track.addEventListener("click", function(){
@@ -248,14 +267,11 @@
 	    }
 	}
 </script>
-<!-- Bootstrap JS and Popper (optional, for modal functionality) -->
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" ></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
+<!--動態更改套用優惠券的折扣及價格-->
 <script th:inline="javascript">
     // Open the form when the "Open Form" button is clicked
     document.getElementById('openFormButton').addEventListener('click', () => {
-    	console.log("靠夭喔")
         document.getElementById('popupForm').classList.remove('-hidden');
     });
 
@@ -322,6 +338,76 @@
 
     // Initially update amounts on page load (in case of pre-selected values)
     updateAmounts();
+</script>
+
+<!--活動報名-->
+<script th:inline="javascript">
+	$('#submitButton').on('click', function(e) {
+		e.preventDefault();
+
+		const eventId = $('#eventId').val();
+		const memberId = [[${session.member}]];
+		const qty = $('#qty').val();
+		const paymentMethod = $('#paymentMethod').val();
+		const evtCoupId = $('#couponSelect').val();
+		const totalPrice = $('#totalAmountH').val();
+		const discount = $('#discountH').val();
+		const paid = $('#paidH').val();
+
+		const eventName = $('#eventName').text();
+
+		const data = {
+			eventId: parseInt(eventId),
+			memberId: parseInt(memberId),
+			qty: parseInt(qty),
+			paymentMethod: parseInt(paymentMethod),
+			evtCoupId: parseInt(evtCoupId),
+			totalPrice: parseInt(totalPrice),
+			discount: parseInt(discount),
+			paid: parseInt(paid),
+		}
+
+
+		$.ajax({
+			url: '/event/enroll-up',
+			type: 'POST',
+			contentType: 'application/json',
+			data: JSON.stringify(data),
+			dataType: 'json',
+			success: function (response) {
+
+				const message = response.message;
+
+				if(response.status === true){
+					Swal.fire({
+						title: '',
+						text: `${eventName}${massage}`,
+						icon: 'success',
+						confirmButtonText: 'OK'
+					}).then(() => {
+						window.location.reload();
+					});
+				}
+
+				if(response.status === false){
+
+
+					Swal.fire({
+						title: '',
+						text: `${massage}`,
+						icon: 'warning',
+						confirmButtonText: 'OK'
+					}).then(() => {
+						window.location.reload();
+					});
+				}
+
+			}
+		});
+
+
+	})
+
 </script>
 </body>
 </html>
