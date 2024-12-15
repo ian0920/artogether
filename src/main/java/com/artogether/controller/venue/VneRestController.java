@@ -79,15 +79,38 @@ public class VneRestController {
         return flatpickrDTO;
     }
     //取出該場地的可預約的時間細節
-    @GetMapping("/order/available/{vneId}")
+    @GetMapping("/order/availability/{vneId}")
     public AvailableDTO getAvailableDTO(@PathVariable("vneId") Integer vneId,
                                         @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date){
-        return tslotService.getAvailableDTO(vneId, date);
+        LocalDateTime now = LocalDateTime.now();
+        return tslotService.getAvailableDTO(vneId, date, now);
     }
-    @PostMapping("/test1")
-    public List<VneCardDTO> testApi1() {
-        int businessId = 1;
-        List<VneCardDTO> vneCardDTOs = venueService.bizVneList(businessId);
-        return vneCardDTOs;
+
+    @PostMapping("/order/submit/{vneId}")
+    public ResponseEntity<VneOrderDTO> submitOrder(@RequestBody VneOrderDTO vneOrderDTO) {
+        // 模擬後端業務處理
+        Integer totalPrice = calculateTotalPrice(vneOrderDTO.getStartTime(), vneOrderDTO.getEndTime());
+        Integer shouldPaid = totalPrice; // 模擬計算應支付金額
+        vneOrderDTO.setTotalPrice(totalPrice);
+        vneOrderDTO.setShouldPaid(shouldPaid);
+
+        // 返回包含確認數據的 DTO
+        return ResponseEntity.ok(vneOrderDTO);
+    }
+
+    // 最終保存階段：確認保存訂單
+    @PostMapping("/order/confirm/{vneId}")
+    public ResponseEntity<String> confirmOrder(@RequestBody VneOrderDTO vneOrderDTO) {
+        // 模擬訂單保存邏輯
+        if (vneOrderDTO.getPaid() != null && vneOrderDTO.getPaid() >= vneOrderDTO.getShouldPaid()) {
+            return ResponseEntity.ok("Order successfully confirmed!");
+        }
+        return ResponseEntity.badRequest().body("Insufficient payment!");
+    }
+
+    // 模擬計算價格的邏輯
+    private Integer calculateTotalPrice(Integer startTime, Integer endTime) {
+        int hourlyPrice = 100; // 每小時價格
+        return (endTime - startTime) * hourlyPrice;
     }
 }
