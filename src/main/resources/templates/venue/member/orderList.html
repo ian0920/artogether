@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>場地訂單手風琴列表</title>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .accordion-container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            background-color: #2c95c6;
+            color: #fff;
+            padding: 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+            font-size: 16px;
+        }
+
+        .accordion-header:hover {
+            background-color: #297a9b;
+        }
+
+        .accordion-header .material-symbols-outlined {
+            font-size: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-header.open .material-symbols-outlined {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            display: none;
+            padding: 15px;
+            border-top: 1px solid #ddd;
+        }
+
+        .accordion-content p {
+            margin: 0;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .accordion-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .accordion-content th, .accordion-content td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .accordion-content th {
+            background-color: #f2f2f2;
+        }
+
+        .btn-container {
+            text-align: right;
+            margin-top: 10px;
+        }
+
+        .btn-action {
+            padding: 8px 15px;
+            background-color: #2c95c6;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-action:hover {
+            background-color: #297a9b;
+        }
+    </style>
+</head>
+<body>
+
+<div class="accordion-container">
+    <div class="accordion-header">
+        <span>場地名稱：會議室 A</span>
+        <span class="material-symbols-outlined">expand_more</span>
+    </div>
+    <div class="accordion-content">
+        <p>訂單資訊：</p>
+        <table>
+            <thead>
+            <tr>
+                <th>訂單編號</th>
+                <th>租借日期</th>
+                <th>租借時段</th>
+                <th>總金額</th>
+                <th>狀態</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>#001</td>
+                <td>2024/12/16</td>
+                <td>10:00 - 14:00</td>
+                <td>$2000</td>
+                <td>已付款</td>
+            </tr>
+            <tr>
+                <td>#002</td>
+                <td>2024/12/17</td>
+                <td>14:00 - 18:00</td>
+                <td>$2500</td>
+                <td>已取消</td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="btn-container">
+            <button class="btn-action">檢視詳細</button>
+        </div>
+    </div>
+</div>
+
+<div class="accordion-container">
+    <div class="accordion-header">
+        <span>場地名稱：多功能廳</span>
+        <span class="material-symbols-outlined">expand_more</span>
+    </div>
+    <div class="accordion-content">
+        <p>訂單資訊：</p>
+        <table>
+            <thead>
+            <tr>
+                <th>訂單編號</th>
+                <th>租借日期</th>
+                <th>租借時段</th>
+                <th>總金額</th>
+                <th>狀態</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>#101</td>
+                <td>2024/12/18</td>
+                <td>08:00 - 12:00</td>
+                <td>$3000</td>
+                <td>已付款</td>
+            </tr>
+            <tr>
+                <td>#102</td>
+                <td>2024/12/19</td>
+                <td>12:00 - 16:00</td>
+                <td>$3500</td>
+                <td>未付款</td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="btn-container">
+            <button class="btn-action">檢視詳細</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 手風琴展開/收合邏輯
+    document.querySelectorAll('.accordion-header').forEach(header => {
+        header.addEventListener('click', () => {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.material-symbols-outlined');
+
+            if (content.style.display === 'block') {
+                content.style.display = 'none';
+                icon.classList.remove('open');
+            } else {
+                content.style.display = 'block';
+                icon.classList.add('open');
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
