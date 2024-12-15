@@ -29,7 +29,7 @@ public class VneImgService {
         List<String> imageUrls = vneImgUrlRepository.findImageUrlsByVneId(vneId);
         if (imageUrls == null || imageUrls.isEmpty()) {
             imageUrls = new ArrayList<>(); // 初始化清單
-            imageUrls.add("public/venue/images/0_0.jpg"); // 添加佔位圖片
+            imageUrls.add("/venue/images/0_0.jpg"); // 添加佔位圖片
         }
         return imageUrls;
     }
@@ -40,7 +40,7 @@ public class VneImgService {
         byte[] imageBytes = vneImgBytesDTO.getImageFile();
 
         // 檔案儲存路徑
-        String uploadDir = "src/main/resources/public/uploads/venue/";//Dir=Directory（目錄）
+        String uploadDir = "src/main/resources/public/venue/images/";//Dir=Directory（目錄）
         String fileName = getFileName(vneId, position);
         String filePath = uploadDir + fileName;
 
@@ -74,6 +74,6 @@ public class VneImgService {
         return  vneId + "_" + position + ".jpg"; // 自定義檔案名稱，我想確保不需要多存
     }
     public String getAssetPath(Integer vneId, Integer position){
-        return "public/uploads/venue/"+getFileName(vneId, position);
+        return "public/venue/images/"+getFileName(vneId, position);
     }
 }

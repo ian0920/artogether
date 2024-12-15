@@ -3,13 +3,18 @@ package com.artogether.venue.venue;
 import com.artogether.common.business_member.BusinessMember;
 import com.artogether.common.business_member.BusinessMemberRepo;
 import com.artogether.common.business_member.BusinessService;
+import com.artogether.venue.tslot.TslotService;
+import com.artogether.venue.vnedto.TslotDTO;
 import com.artogether.venue.vnedto.VneCardDTO;
 import com.artogether.venue.vnedto.VneDetailDTO;
+import com.artogether.venue.vnedto.VnePriceDTO;
 import com.artogether.venue.vneimg.*;
+import com.artogether.venue.vneprice.VnePriceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -25,8 +30,19 @@ public class VenueService {
     @Autowired
     private VneImgService vneImgService;
     @Autowired
-    private VneImgUrlRepository vneImgUrlRepository;
+    private TslotService tslotService;
+    @Autowired
+    private VnePriceService vnePriceService;
 
+    //檢查是否上架
+    public Boolean isVneStatusOne(Integer vneId) {
+
+        return venueRepository.existsByIdAndStatus(vneId,VenueStatusEnum.ONLINE);
+    }
+
+    public void publishVenue(Integer vneId){
+
+    }
     //創建場地
     public Integer createVenue(VneDetailDTO vneDetailDTO, BusinessMember businessMember) {
         String name = vneDetailDTO.getVneName();
@@ -83,13 +99,20 @@ public class VenueService {
     //場地詳情
     public VneDetailDTO getDetailVenue(Integer vneId) {
         Venue venue = venueRepository.findById(vneId).get();
+        LocalDateTime now = LocalDateTime.now();
+        TslotDTO tslotDTO = tslotService.nearestTslot(vneId, now);
+        VnePriceDTO vnePriceDTO = vnePriceService.getNearestVnePrice(vneId, now);
+        BusinessMember businessMember = businessMemberRepo.findById(venue.getBusinessMember().getId()).get();
         VneDetailDTO vneDetailDTO = VneDetailDTO.builder()
                 .vneId(vneId)
                 .vneName(venue.getName())
-                .vneAddress(businessMemberRepo.findById(venue.getBusinessMember().getId()).get().getAddr())
+                .bizName(businessMember.getName())
+                .vneAddress(businessMember.getAddr())
                 .type(venue.getType())
                 .availableDays(venue.getAvailableDays())
                 .imgUrls(vneImgService.getAllImgs(vneId))
+                .tslot(tslotDTO)
+                .price(vnePriceDTO)
                 .allStars(venue.getAllStars())
                 .allReviews(venue.getAllReviews())
                 .build();

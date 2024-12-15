@@ -72,6 +72,7 @@ public class VneOrder implements Serializable {
     private Integer stars;
 
     // 訂單狀態
+    @Convert(converter = OrderStatusEnumConverter.class)
     private OrderStatusEnum status;
 
     // 申請日期

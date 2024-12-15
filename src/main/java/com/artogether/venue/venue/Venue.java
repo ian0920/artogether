@@ -61,7 +61,9 @@ public class Venue implements Serializable {
     private String type;
     //場地描述
     private String description;
+
     //場地狀態(上架/下架/停權)
+    @Convert(converter = VenueStatusEnumConverter.class)
     private VenueStatusEnum status;
 
     //可容許預約天數

@@ -54,6 +54,13 @@ public class TslotService {
 
     public TslotDTO nearestTslot(Integer vneId, LocalDateTime now) {
         List<Integer> weeklyInteger = getWeeklyTslots(vneId, now);
+        Integer bizTime = 0;
+        for (Integer dailyHours : weeklyInteger) {
+            bizTime |= dailyHours;
+        }
+        List<Integer> dailyList = BinaryTools.toList(bizTime, 24);
+        Integer startHour = dailyList.get(0);
+        Integer endHour = dailyList.get(dailyList.size() - 1);
         TslotDTO tslotDTO = TslotDTO.builder()
                 .vneId(vneId)
                 .vneName(venueRepository.findById(vneId).get().getName())
@@ -64,6 +71,8 @@ public class TslotService {
                 .hourOfFri(BinaryTools.toList(weeklyInteger.get(4), 24))
                 .hourOfSat(BinaryTools.toList(weeklyInteger.get(5), 24))
                 .hourOfSun(BinaryTools.toList(weeklyInteger.get(6), 24))
+                .startHour(startHour)
+                .endHour(endHour)
                 .build();
         return tslotDTO;
     }
