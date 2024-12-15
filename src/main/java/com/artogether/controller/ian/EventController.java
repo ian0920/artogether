@@ -41,12 +41,13 @@ public class EventController {
                             @RequestParam(defaultValue = "enrolledR")String sortBy,
                             @RequestParam(defaultValue = "")String location,
                             @RequestParam(defaultValue = "")String catalog,
+                            @RequestParam(defaultValue = "")String status,
                             @RequestParam(defaultValue = "0") int page,
                             @RequestParam(defaultValue = "9") int size) {
 
 
 
-        Page<Event> paginatedEventList = eventService.findAllEventsAndPagination(sortBy,page, size, location, catalog);
+        Page<Event> paginatedEventList = eventService.findAllEventsAndPagination(sortBy,page, size, location, catalog, status);
         model.addAttribute("events", paginatedEventList);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", paginatedEventList.getTotalPages());
