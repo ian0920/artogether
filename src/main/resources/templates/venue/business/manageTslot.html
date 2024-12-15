@@ -56,7 +56,7 @@
 
         /* 當前頁面的樣式 */
         .active-tab {
-            background-color: #007bff; /* 藍色背景 */
+            background-color: #2c95c6; /* 亮藍色 */
             color: white;
             pointer-events: none; /* 禁用連結行為 */
             cursor: default;
@@ -64,16 +64,31 @@
 
         /* 非當前頁面的樣式 */
         .inactive-tab {
-            background-color: #f0f0f0; /* 淺灰背景 */
-            color: #333;
-            border: 1px solid #ccc;
+            background-color: #f0f0f0; /* 淺灰色 */
+            color: #333; /* 中灰文字 */
+            border: 1px solid #ccc; /* 邊框為淺灰色 */
         }
 
         .inactive-tab:hover {
-            background-color: #007bff;
+            background-color: #2c95c6; /* 亮藍色背景 */
             color: white;
         }
 
+        /* 綠色標籤 */
+        green-tab {
+            background-color: #709b29; /* 保持綠色背景 */
+            color: white; /* 保持白色文字 */
+        }
+        .inactivegreen-tab {
+            background-color: #f0f0f0; /* 淺灰色 */
+            color: #333; /* 中灰文字 */
+            border: 1px solid #ccc; /* 邊框為淺灰色 */
+        }
+        /* 滑鼠懸停時的樣式 */
+        .inactivegreen-tab:hover {
+            background-color: #709b29; /* 保持綠色背景 */
+            color: white; /* 保持白色文字 */
+        }
         .calendar {
             display: grid;
             grid-template-columns: 50px repeat(7, 1fr);
@@ -125,7 +140,7 @@
             font-size: 16px;
             font-weight: bold;
             color: #ffffff;
-            background-color: #2b8a3e;
+            background-color: #709b29;
             border: none;
             border-radius: 5px;
             cursor: pointer;
@@ -133,7 +148,7 @@
             float: right; /* 新增這行 */
         }
         button#confirm-selection:hover {
-            background-color: #246d2d;
+            background-color: #536e27;
         }
         .control[data-hour="0"],
         .control[data-hour="1"],
@@ -165,6 +180,13 @@
     <main>
         <!--分頁-->
         <div x-data="tabsController()" x-init="initialize()" class="tabs">
+            <!-- 主分頁：場地檢查管理 -->
+            <a
+                    :href="currentPage !== 'checkVenue' ? `/vneBiz/checkVenue/${Detail.vneId}` : '#'"
+                    :class="currentPage === 'checkVenue' ? ' green-tab' : 'inactivegreen-tab'"
+                    x-text="`${Detail.vneName}場地檢查管理`">
+            </a>
+
             <!-- 主分頁：場地管理 -->
             <a
                     :href="currentPage !== 'venue' ? `/vneBiz/manageVenue/${Detail.vneId}` : '#'"
@@ -433,6 +455,8 @@
                         this.currentPage = 'venue';
                     } else if (path.includes('manageTslot')) {
                         this.currentPage = 'timeslot';
+                    } else if (path.includes('checkVenue')) {
+                        this.currentPage = 'checkVenue';
                     }
                 },
 
