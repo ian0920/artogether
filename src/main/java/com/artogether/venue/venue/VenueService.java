@@ -29,7 +29,7 @@ public class VenueService {
 
     //創建場地
     public Integer createVenue(VneDetailDTO vneDetailDTO, BusinessMember businessMember) {
-        String name = vneDetailDTO.getName();
+        String name = vneDetailDTO.getVneName();
         String type = vneDetailDTO.getType();
         String description = vneDetailDTO.getDescription();
         Integer availableDays = vneDetailDTO.getAvailableDays();
@@ -54,7 +54,7 @@ public class VenueService {
 //        venueRepository.save(venue);
         Optional<Venue> venueOptional = venueRepository.findById(vneId);
         venueOptional.ifPresent(venue -> {
-        String name = vneDetailDTO.getName();
+        String name = vneDetailDTO.getVneName();
             System.out.println(name);
         String type = vneDetailDTO.getType();
             System.out.println(type);
@@ -85,7 +85,7 @@ public class VenueService {
         Venue venue = venueRepository.findById(vneId).get();
         VneDetailDTO vneDetailDTO = VneDetailDTO.builder()
                 .vneId(vneId)
-                .name(venue.getName())
+                .vneName(venue.getName())
                 .vneAddress(businessMemberRepo.findById(venue.getBusinessMember().getId()).get().getAddr())
                 .type(venue.getType())
                 .availableDays(venue.getAvailableDays())
@@ -119,35 +119,16 @@ public class VenueService {
         //Comparator<Venue> comparator = Comparator.comparing(Venue::getId);
         //可以直接寫成這樣!!!!!
         //venues.sort(Comparator.comparing(Venue::getName));
-        Optional<BusinessMember> businessMemberOptional = businessMemberRepo.findById(businessId);
-        BusinessMember businessMember = businessMemberOptional.get();
-        String addr = businessMember.getAddr();
         List<VneCardDTO> vneCardDTOs = new ArrayList<>();
         for (Venue venue : venues) {
-            VneCardDTO vneCardDTO = new VneCardDTO();
-            vneCardDTO.setVneId(venue.getId());
-            vneCardDTO.setVneName(venue.getName());
-            vneCardDTO.setVneAddress(addr);
-            String description = venue.getDescription();
-            if (description != null) {
-                vneCardDTO.setDescription(description);
-            }
-            Optional<VneImgUrl> vneImgUrlOptional = vneImgUrlRepository.findByVenue_IdAndPosition(venue.getId(),1);
-            vneImgUrlOptional.ifPresent(vneImgUrl -> {
-                String imgUrl = vneImgUrl.getImageUrl();
-                    if (imgUrl != null) {
-                        vneCardDTO.setVneImgUrl(imgUrl);
-                    } else {
-                        vneCardDTO.setVneImgUrl("public/venue/images/0_0.jpg");
-                    }
-                }
-            );
+            VneCardDTO vneCardDTO = getVenue(venue.getId());
+            // 添加到結果清單
             vneCardDTOs.add(vneCardDTO);
         }
         return vneCardDTOs;
     }
 
-    //首頁卡片
+    //場地基本資料
     public VneCardDTO getVenue(Integer vneId) {
         VneCardDTO vneCardDTO = new VneCardDTO();
         Optional<Venue> venueOptional = venueRepository.findById(vneId);
@@ -159,17 +140,7 @@ public class VenueService {
             if (description != null) {
                 vneCardDTO.setDescription(description);
             }
-            Optional<VneImgUrl> vneImgOptional = vneImgUrlRepository.findByVenue_IdAndPosition(vneId, 1);
-            vneImgOptional.ifPresent(
-                    vneImgUrl -> {
-                        String imgUrl = vneImgUrl.getImageUrl();
-                        if (imgUrl != null) {
-                            vneCardDTO.setVneImgUrl(imgUrl);
-                        } else {
-                            vneCardDTO.setVneImgUrl("public/venue/images/0_0.jpg");
-                        }
-                    }
-            );
+            vneCardDTO.setImgUrls(vneImgService.getAllImgs(vneId));
         });
     return vneCardDTO;
     }

@@ -26,22 +26,12 @@ public class VneImgService {
 
     //使用url讓<img src>需要再請求
     public List<String> getAllImgs(Integer vneId) {
-        List<VneImgUrl> imageData = vneImgUrlRepository.findImageUrlsByVneId(vneId);
-        List<String> imageUrls = new ArrayList<>();
-        // 檢查返回的圖片列表是否為 null 或空集合
-        if (imageData != null && !imageData.isEmpty()) {
-            for (VneImgUrl vneImg : imageData) {
-                if(vneImg.getPosition() == imageUrls.size()+1) {
-                    imageUrls.add(vneImg.getImageUrl());
-                }else {
-                    imageUrls.add("public/venue/images/0_0.jpg");
-                    }
-            }
-            return imageUrls;
+        List<String> imageUrls = vneImgUrlRepository.findImageUrlsByVneId(vneId);
+        if (imageUrls == null || imageUrls.isEmpty()) {
+            imageUrls = new ArrayList<>(); // 初始化清單
+            imageUrls.add("public/venue/images/0_0.jpg"); // 添加佔位圖片
         }
-        //Collections.nCopies(int i,T o)快速生成一個集合(但不可變動，可以用ArrayList包裝來調整)
-        List<String> defaultUrls = new ArrayList<>(Collections.nCopies(3, "public/venue/images/0_0.jpg"));
-        return defaultUrls;
+        return imageUrls;
     }
 
     public void updateVneImg(VneImgBytesDTO vneImgBytesDTO){
