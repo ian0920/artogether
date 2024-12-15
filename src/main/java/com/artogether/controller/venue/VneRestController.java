@@ -8,12 +8,14 @@ import com.artogether.venue.vneimg.VneImgService;
 import com.artogether.venue.vneprice.VnePriceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/vne")
@@ -38,10 +40,17 @@ public class VneRestController {
     }
 
     //取出該場地的細節
-    @GetMapping("/Detail/{vneId}")
-    public VneDetailDTO vneDetail(@PathVariable("vneId") Integer vneId) {
-        VneDetailDTO vneDetailDTO = venueService.getDetailVenue(vneId);
-        return vneDetailDTO;
+    @PostMapping("/details")
+    public VneDetailDTO vneDetail(@RequestBody Map<String, Integer> request) {
+        Integer vneId = request.get("vneId"); // 從請求主體中提取 vneId
+        VneDetailDTO vneDetailDTO = venueService.getDetailVenue(vneId); // 根據 vneId 獲取場地詳情
+        return vneDetailDTO; // 返回場地詳情 DTO
+    }
+
+    @GetMapping("/card/{vneId}")
+    public VneCardDTO vneDetail(@PathVariable("vneId") Integer vneId) {
+        VneCardDTO vneCardDTO = venueService.getVenue(vneId);
+        return vneCardDTO;
     }
 
     //取出該場地的時間細節

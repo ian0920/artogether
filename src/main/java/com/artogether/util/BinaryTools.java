@@ -78,16 +78,11 @@ public class BinaryTools {
     public static String toBinaryString(List<Integer> tslot, int length) {
         StringBuilder stringBuilder = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
-            if (tslot.get(i) > i) {
-                for (int j = i; j < tslot.get(i); j++) {
-                    stringBuilder.append('0');
-                }
-            } else {
-                stringBuilder.append('1');
-            }
+            stringBuilder.append(tslot.contains(i) ? '1' : '0');
         }
-        return stringBuilder.reverse().toString();
+        return stringBuilder.toString();
     }
+
 
     //BitSet轉List
     public static List<Integer> toList(BitSet tslot) {
@@ -116,9 +111,9 @@ public class BinaryTools {
     public static List<Integer> toList(String tslot) {
         List<Integer> positions = new ArrayList<>();
         int length = tslot.length();
-        for (int i = 0,j = 1; i < length; i++,j++) {
+        for (int i = 0; i < length; i++) {
             if (tslot.charAt(i) == '1') {
-                positions.add(j);
+                positions.add(i);
             }
         }
         return positions;
