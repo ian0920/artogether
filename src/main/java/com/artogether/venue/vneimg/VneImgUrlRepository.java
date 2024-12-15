@@ -9,8 +9,8 @@ import java.util.Optional;
 
 @Repository
 public interface VneImgUrlRepository extends JpaRepository<VneImgUrl, Integer> {
-    @Query(value = "SELECT * FROM vne_img WHERE vne_id = ?1 ORDER BY position ", nativeQuery = true)
-    List<VneImgUrl> findImageUrlsByVneId(Integer vneId);
+    @Query(value = "SELECT image_url FROM vne_img WHERE vne_id = ?1 ORDER BY position ", nativeQuery = true)
+    List<String> findImageUrlsByVneId(Integer vneId);
     List<VneImgUrl> findAllByVenueId(Integer vneId);
 //    @Query(value = "SELECT image_url FROM vne_img WHERE vne_id = ?1 and position = ?2", nativeQuery = true)
     Optional<VneImgUrl> findByVenue_IdAndPosition(Integer vneId, Integer position);
