@@ -102,7 +102,14 @@ public class GeneralController {
 
     //一般會員登入頁面拜訪
     @GetMapping("login")
-    public String login(Model model) {
+    public String login(Model model, HttpSession session) {
+
+
+        //排除重複登入
+        if(session.getAttribute("islogin") != null) {
+
+            return "redirect:/";
+        }
 
         Map<String, String> errors = new HashMap<>();
         model.addAttribute("errors", errors);
