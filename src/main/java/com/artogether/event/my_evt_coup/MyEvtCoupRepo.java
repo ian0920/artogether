@@ -13,4 +13,6 @@ public interface MyEvtCoupRepo extends JpaRepository<MyEvtCoup, MyEvtCoup.Compos
     List<MyEvtCoup> getMyEvtCoupsByMemberIdAndEventId(Integer memberId, Integer eventId);
 
     List<MyEvtCoup> findAllByMember_Id(Integer memberId);
+
+    List<MyEvtCoup> findAllByStatus(Byte status);
 }
