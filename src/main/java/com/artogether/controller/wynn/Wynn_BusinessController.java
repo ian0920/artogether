@@ -60,6 +60,7 @@ public class Wynn_BusinessController {
 	@PostMapping("/applyForBusiness")
 	public String applyForBusiness(@ModelAttribute BusinessMember bMember,HttpSession session) {
 		//TODO: 做資料驗證(地址那些)
+		bMember.setStatus(Byte.valueOf((byte)0));
 		BusinessMember dataBMember = businessService.save(bMember);
 		Member member = memberService.findById((Integer)session.getAttribute("member"));
 		businessPermService.register(member,dataBMember);

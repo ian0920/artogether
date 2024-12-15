@@ -40,6 +40,9 @@ public class BusinessService {
 
         BusinessMember bm = findById(businessMember.getId());
         bm.setStatus(businessMember.getStatus());
+        if(businessMember.getApproveDate()!=null) {
+        	bm.setApproveDate(businessMember.getApproveDate());
+        }
         businessMemberRepo.save(bm);
 
     }

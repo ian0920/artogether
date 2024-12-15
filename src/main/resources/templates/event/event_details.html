@@ -87,9 +87,22 @@
 	<div th:replace="~{/components/carousel::carousel(${evtImgList},'400', false)}"></div>
 <div class="normal-width row" style="margin:40px 0">
 	
-	<section class="flex-3 info-card-outline">
+	<section class="flex-3 info-card-outline" style="margin-right:20px">
 		<p>活動詳情 <span class="material-symbols-outlined">chevron_forward</span> <span th:text="${evt.id}"></span></p>
 		<h2 th:text="${evt.name}"></h2>
+		
+		<div class="info-card-outline row" style="margin:20px 0">
+			<div class="info-card-horizontal flex-1" style="color:#e03f3f">
+				<div class="icon-box" style="color:#e03f3f;background-color:#fadcdc">
+					<span class="material-symbols-outlined">warning</span>
+				</div>
+				<div class="info-box">
+					<h6 class="info-name">延期日期</h6>
+					<p th:if="${evt.delayDate}" th:text="${#dates.format(evt.delayDate, 'yyyy-MM-dd HH:mm')}"></p>
+				</div>
+			</div>
+		</div>
+		
 		<div class="info-card-outline row" style="margin:20px 0">
 			<div class="info-card-horizontal flex-1">
 				<div class="icon-box">
@@ -112,7 +125,6 @@
 			</div>
 		</div>
 		
-		<p th:if="${evt.delayDate}" th:text="${#dates.format(evt.delayDate, 'yyyy-MM-dd HH:mm')}"></p>
 		<p th:text="${evt.description}"></p>
 	</section>
 	<aside class="info-card-outline flex-1" style="height:min-content;">

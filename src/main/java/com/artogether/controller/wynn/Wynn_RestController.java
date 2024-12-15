@@ -169,6 +169,10 @@ public class Wynn_RestController {
 		Integer bMembId = (Integer) payload.get("bMembId");
 		Byte status = ((Integer)payload.get("status")).byteValue();
 		BusinessMember b = BusinessMember.builder().id(bMembId).status(status).build();
+		// 如果是第一次啟用則要修改approveDate
+		if(businessService.findById(bMembId).getApproveDate()==null) {
+			b.setApproveDate(new Timestamp(System.currentTimeMillis()));
+		}
 		businessService.statusUpdate(b);
 		Map<String, String> response = new HashMap<>();
 		response.put("message", "成功更新狀態");
