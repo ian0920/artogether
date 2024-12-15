@@ -34,6 +34,15 @@ public class VenueService {
     @Autowired
     private VnePriceService vnePriceService;
 
+    //檢查是否上架
+    public Boolean isVneStatusOne(Integer vneId) {
+
+        return venueRepository.existsByIdAndStatus(vneId,VenueStatusEnum.ONLINE);
+    }
+
+    public void publishVenue(Integer vneId){
+
+    }
     //創建場地
     public Integer createVenue(VneDetailDTO vneDetailDTO, BusinessMember businessMember) {
         String name = vneDetailDTO.getVneName();
