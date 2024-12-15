@@ -250,14 +250,14 @@
         <a
                 :href="currentPage !== 'venue' ? `/vneBiz/manageVenue/${Detail.vneId}` : '#'"
                 :class="currentPage === 'venue' ? 'active-tab' : 'inactive-tab'"
-                x-text="`${Detail.name}場地管理`">
+                x-text="`${Detail.vneName}場地管理`">
         </a>
 
         <!-- 主分頁：營業時間管理 -->
         <a
                 :href="currentPage !== 'timeslot' ? `/vneBiz/manageTslot/${Detail.vneId}` : '#'"
                 :class="currentPage === 'timeslot' ? 'active-tab' : 'inactive-tab'"
-                x-text="`${Detail.name}營業時間管理`">
+                x-text="`${Detail.vneName}營業時間管理`">
         </a>
 
         <!-- 子分頁（僅在 timeslot 分頁下顯示） -->
@@ -266,14 +266,14 @@
             <a
                     :href="currentSubPage !== 'timeslotMain' ? `/vneBiz/manageTslot/${Detail.vneId}` : '#'"
                     :class="currentSubPage === 'timeslotMain' ? 'active-tab' : 'inactive-tab'"
-                    x-text="`${Detail.name}營業時間管理`">
+                    x-text="`${Detail.vneName}營業時間管理`">
             </a>
 
             <!-- 子分頁：價錢管理 -->
             <a
                     :href="currentSubPage !== 'pricing' ? `/vneBiz/managePrice/${Detail.vneId}` : '#'"
                     :class="currentSubPage === 'pricing' ? 'active-tab' : 'inactive-tab'"
-                    x-text="`${Detail.name}價錢管理`">
+                    x-text="`${Detail.vneName}價錢管理`">
             </a>
         </div>
     </div>
@@ -404,7 +404,7 @@
                         const hour = parseInt(cell.dataset.hour);
                         const dayKeys = ['hourOfMon', 'hourOfTue', 'hourOfWed', 'hourOfThu', 'hourOfFri', 'hourOfSat', 'hourOfSun'];
 
-                        if (this.days[dayKeys[day - 1]]?.includes(hour)) {
+                        if (this.days[dayKeys[day]]?.includes(hour)) {
                             cell.classList.add('selected');
                         } else {
                             cell.classList.remove('selected');
@@ -576,7 +576,7 @@
                     if (this.enableTimeSpecificPricing && this.formData.startTime !== null && this.formData.endTime !== null) {
                         this.formData.dayOfWeek.forEach(day => {
                             for (let hour = this.formData.startTime; hour <= this.formData.endTime; hour++) {
-                                const cell = document.querySelector(`.cell[data-day="${parseInt(day) + 1}"][data-hour="${hour}"]`);
+                                const cell = document.querySelector(`.cell[data-day="${parseInt(day)}"][data-hour="${hour}"]`);
                                 if (cell && cell.classList.contains('selected')) {
                                     cell.classList.add('special');
                                 }
@@ -629,7 +629,7 @@
 
                     // 模擬 AJAX 請求獲取場地詳細數據
                     $.ajax({
-                        url: `/vne/details/${vneId}`,
+                        url: `/vne/card/${vneId}`,
                         method: "GET",
                         dataType: "json",
                         success: (data) => {

@@ -157,7 +157,7 @@
                 const pathArray = window.location.pathname.split('/');
                 const vneId = pathArray[pathArray.length - 1]; // 獲取 URL 中的 vneId
                 $.ajax({
-                    url: `/vne/details/${vneId}`,
+                    url: `/vne/card/${vneId}`,
                     method: "GET",
                     dataType: "json",
                     success: (data) => {
@@ -233,14 +233,14 @@
             <a
                     :href="currentPage !== 'venue' ? `/vneBiz/manageVenue/${Detail.vneId}` : '#'"
                     :class="currentPage === 'venue' ? 'active-tab' : 'inactive-tab'"
-                    x-text="`${Detail.name}場地管理`">
+                    x-text="`${Detail.vneName}場地管理`">
             </a>
 
             <!-- 主分頁：營業時間管理 -->
             <a
                     :href="currentPage !== 'timeslot' ? `/vneBiz/manageTslot/${Detail.vneId}` : '#'"
                     :class="currentPage === 'timeslot' ? 'active-tab' : 'inactive-tab'"
-                    x-text="`${Detail.name}營業時間管理`">
+                    x-text="`${Detail.vneName}營業時間管理`">
             </a>
 
             <!-- 子分頁（僅在 timeslot 分頁下顯示） -->
@@ -249,23 +249,23 @@
                 <a
                         :href="currentSubPage !== 'timeslotMain' ? `/vneBiz/manageTslot/${Detail.vneId}` : '#'"
                         :class="currentSubPage === 'timeslotMain' ? 'active-tab' : 'inactive-tab'"
-                        x-text="`${Detail.name}營業時間管理`">
+                        x-text="`${Detail.vneName}營業時間管理`">
                 </a>
 
                 <!-- 子分頁：價錢管理 -->
                 <a
                         :href="currentSubPage !== 'pricing' ? `/vneBiz/managePrice/${Detail.vneId}` : '#'"
                         :class="currentSubPage === 'pricing' ? 'active-tab' : 'inactive-tab'"
-                        x-text="`${Detail.name}價錢管理`">
+                        x-text="`${Detail.vneName}價錢管理`">
                 </a>
             </div>
         </div>
     <form method="post">
         <!-- 場地名稱 -->
         <div>
-            <label for="name">場地名稱:</label>
-            <input type="text" id="name" name="name" maxlength="100"
-                   x-model="Detail.name" required :value="Detail.name || ''">
+            <label for="vneName">場地名稱:</label>
+            <input type="text" id="vneName" name="vneName" maxlength="100"
+                   x-model="Detail.vneName" required :value="Detail.vneName || ''">
         </div>
 
         <!-- 場地類別描述 -->
@@ -356,7 +356,7 @@
 
                 // 模擬 AJAX 請求獲取場地詳細數據
                 $.ajax({
-                    url: `/vne/details/${vneId}`,
+                    url: `/vne/card/${vneId}`,
                     method: "GET",
                     dataType: "json",
                     success: (data) => {
