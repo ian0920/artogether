@@ -1,5 +1,8 @@
 package com.artogether.controller.wynn;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.artogether.common.business_member.BusinessMember;
 import com.artogether.common.business_member.BusinessService;
 import com.artogether.common.business_perm.BusinessPerm;
+import com.artogether.common.business_perm.BusinessPerm.BusinessPermComposite;
 import com.artogether.common.business_perm.BusinessPermService;
 import com.artogether.common.member.Member;
 import com.artogether.common.member.MemberService;
@@ -85,7 +89,20 @@ public class Wynn_RestController {
 	public ResponseEntity<Map> updateStatus(@RequestBody Map<String, Object> payload){
 		Integer evtId = (Integer) payload.get("eventId");
         Byte status = ((Integer)payload.get("status")).byteValue();
-        Event e=  Event.builder().id(evtId).status(status).build();
+        Timestamp delayDate = null;
+        // 確認 payload 中是否有延期日期
+        if (payload.get("delayDate") != null) {
+            String delayDateString = (String) payload.get("delayDate");
+            try {
+                // 使用 ISO_DATE_TIME 解析日期時間字串
+                LocalDateTime localDateTime = LocalDateTime.parse(delayDateString, DateTimeFormatter.ISO_DATE_TIME);
+                delayDate = Timestamp.valueOf(localDateTime);
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().body(Map.of("message", "無效的日期格式"));
+            }
+        }
+
+        Event e=  Event.builder().id(evtId).status(status).delayDate(delayDate).build();
 		eventService.statusUpdate(e);
 		Map<String, String> response = new HashMap<>();
         response.put("message", "成功更新狀態");
@@ -118,6 +135,8 @@ public class Wynn_RestController {
 	        bp.setPrdPerm(perms.getOrDefault("prdPerm", false));
 	        bp.setVnePerm(perms.getOrDefault("vnePerm", false));
 	        bp.setEvtPerm(perms.getOrDefault("evtPerm", false));
+	        bp.setAdminPerm(false);
+	        bp.setStatus(Byte.valueOf((byte) 0));
 	        bPerms.add(bp);
 			}
 		}
@@ -150,6 +169,10 @@ public class Wynn_RestController {
 		Integer bMembId = (Integer) payload.get("bMembId");
 		Byte status = ((Integer)payload.get("status")).byteValue();
 		BusinessMember b = BusinessMember.builder().id(bMembId).status(status).build();
+		// 如果是第一次啟用則要修改approveDate
+		if(businessService.findById(bMembId).getApproveDate()==null) {
+			b.setApproveDate(new Timestamp(System.currentTimeMillis()));
+		}
 		businessService.statusUpdate(b);
 		Map<String, String> response = new HashMap<>();
 		response.put("message", "成功更新狀態");

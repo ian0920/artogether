@@ -68,6 +68,12 @@
 		width:100%
 		}
 
+		button[disabled]{
+			background-color: var(--background-default-tertiary-sds-light)
+		}
+		button[disabled]:hover{
+			background-color: var(--background-default-tertiary-sds-light)
+		}
 
 
     </style>
@@ -81,17 +87,30 @@
 	<div th:replace="~{/components/carousel::carousel(${evtImgList},'400', false)}"></div>
 <div class="normal-width row" style="margin:40px 0">
 	
-	<section class="flex-3 info-card-outline">
+	<section class="flex-3 info-card-outline" style="margin-right:20px">
 		<p>活動詳情 <span class="material-symbols-outlined">chevron_forward</span> <span th:text="${evt.id}"></span></p>
 		<h2 th:text="${evt.name}"></h2>
-		<div class="info-card-outline row">
+		
+		<div class="info-card-outline row" style="margin:20px 0">
+			<div class="info-card-horizontal flex-1" style="color:#e03f3f">
+				<div class="icon-box" style="color:#e03f3f;background-color:#fadcdc">
+					<span class="material-symbols-outlined">warning</span>
+				</div>
+				<div class="info-box">
+					<h6 class="info-name">延期日期</h6>
+					<p th:if="${evt.delayDate}" th:text="${#dates.format(evt.delayDate, 'yyyy-MM-dd HH:mm')}"></p>
+				</div>
+			</div>
+		</div>
+		
+		<div class="info-card-outline row" style="margin:20px 0">
 			<div class="info-card-horizontal flex-1">
 				<div class="icon-box">
 					<span class="material-symbols-outlined">schedule</span>
 				</div>
 				<div class="info-box">
 					<h6 class="info-name" th:text="${evt.endDate != null} ? '起始時間' : '活動日期'">起始時間</h6>
-			    	<p class="info-text" th:text="${evt.startDate}">20xx-xx-xx</p>
+			    	<p class="info-text" th:text="${#dates.format(evt.startDate, 'yyyy-MM-dd HH:mm')}">20xx-xx-xx</p>
 				</div>
 			</div>
 			
@@ -101,12 +120,11 @@
 				</div>
 				<div class="info-box">
 					<h6 class="info-name">結束時間</h6>
-			    	<p class="info-text" th:text="${evt.endDate}">xxxx-xx-xx</p>
+			    	<p class="info-text" th:text="${#dates.format(evt.endDate, 'yyyy-MM-dd HH:mm')}">xxxx-xx-xx</p>
 				</div>
 			</div>
 		</div>
 		
-		<p th:if="${evt.delayDate}" th:text="${evt.delayDate?}"></p>
 		<p th:text="${evt.description}"></p>
 	</section>
 	<aside class="info-card-outline flex-1" style="height:min-content;">
@@ -115,7 +133,7 @@
 		<div class="row">
 <!-- 			<button class="button-big button-primary flex-auto">立即報名</button> -->
 			<!-- Open Form Button -->
-			<button th:if="${#session.getAttribute('member') != null}" id="openFormButton" class="btn btn-lg openFormButton button-big flex-auto" th:disabled="${match==true}" >報名活動</button>
+			<button th:if="${#session.getAttribute('member') != null}" id="openFormButton" class="btn btn-lg openFormButton button-big flex-auto" th:disabled="${match==true}" th:text="${match==true}?'已成功報名':'報名活動'">報名活動</button>
 			<button th:unless="${#session.getAttribute('member') != null}" id="to-login" class="btn btn-lg button-big flex-auto" onclick="location.href='/login'">請先登入</button>
 
 			<button class="button-icon-big" id=btn_track><span class="material-symbols-outlined">bookmark</span></button>
@@ -222,6 +240,7 @@
 <script th:inline="javascript">
     // Open the form when the "Open Form" button is clicked
     document.getElementById('openFormButton').addEventListener('click', () => {
+    	console.log("靠夭喔")
         document.getElementById('popupForm').classList.remove('-hidden');
     });
 

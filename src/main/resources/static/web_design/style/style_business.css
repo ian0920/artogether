@@ -606,6 +606,10 @@ h6 {
   background-color: var(--brand-product) !important;
 }
 
+.clear-shadow {
+  box-shadow: none;
+}
+
 span.material-symbols-outlined {
   vertical-align: middle;
 }
@@ -821,6 +825,9 @@ button.button-tertiary {
 button.button-big {
   padding: 8px 16px;
 }
+button.button-big-icon {
+  padding: 8px;
+}
 
 div.pop-up-container {
   position: absolute;
@@ -878,7 +885,11 @@ div.pop-up-container.-active {
   flex: 2;
 }
 
-div.row {
+.flex-3 {
+  flex: 3;
+}
+
+.row {
   display: flex;
   flex-direction: row;
   gap: 8px;
@@ -945,6 +956,8 @@ div.row {
   display: flex;
   flex-direction: row;
   gap: 16px;
+  align-items: center;
+  justify-content: flex-start;
 }
 .info-card-outline .info-card-horizontal .icon-box {
   border-radius: 100%;
@@ -959,7 +972,36 @@ div.row {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  vertical-align: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  border-radius: 4px;
+  outline: 1px solid var(--brand-shop-tint);
+}
+table thead {
+  font-family: "Noto Sans TC";
+  font-weight: 400;
+  font-size: 12pt;
+  line-height: 140%;
+  text-decoration: none;
+  letter-spacing: normal;
+  background-color: var(--brand-shop-tint);
+}
+table tbody {
+  background-color: var(--background-default-secondary-sds-light);
+}
+table tbody tr {
+  border-bottom: 1px solid var(--brand-shop-tint);
+}
+table tbody tr:last-child {
+  border: none;
+}
+table th,
+table td {
+  padding: 8px;
 }
 
 * {
@@ -1194,34 +1236,4 @@ main {
   overflow-x: hidden;
   padding: 24px;
   height: 100vh;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-  border-radius: 4px;
-  outline: 1px solid var(--brand-shop-tint);
-}
-table thead {
-  font-family: "Noto Sans TC";
-  font-weight: 400;
-  font-size: 12pt;
-  line-height: 140%;
-  text-decoration: none;
-  letter-spacing: normal;
-  background-color: var(--brand-shop-tint);
-}
-table tbody {
-  background-color: var(--background-default-secondary-sds-light);
-}
-table tbody tr {
-  border-bottom: 1px solid var(--brand-shop-tint);
-}
-table tbody tr:last-child {
-  border: none;
-}
-table th,
-table td {
-  padding: 8px;
 }/*# sourceMappingURL=style_business.css.map */

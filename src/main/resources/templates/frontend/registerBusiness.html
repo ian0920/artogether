@@ -14,7 +14,7 @@
 	<div th:replace="~{/components/navbar_homepage::navbar}"></div>
 
 	<main>
-		<form th:action="@{/applyForBusiness}" method="post" th:object=${businessMember} class="narrow-width">
+		<form th:action="@{/business/applyForBusiness}" method="post" th:object=${businessMember} class="narrow-width">
 	<h2>註冊商家表單</h2>
 			<fieldset>
 				<label class="label-input">商家名稱

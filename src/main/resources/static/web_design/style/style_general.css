@@ -967,4 +967,34 @@ div.pop-up-container.-active {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  border-radius: 4px;
+  outline: 1px solid var(--brand-shop-tint);
+}
+table thead {
+  font-family: "Noto Sans TC";
+  font-weight: 400;
+  font-size: 12pt;
+  line-height: 140%;
+  text-decoration: none;
+  letter-spacing: normal;
+  background-color: var(--brand-shop-tint);
+}
+table tbody {
+  background-color: var(--background-default-secondary-sds-light);
+}
+table tbody tr {
+  border-bottom: 1px solid var(--brand-shop-tint);
+}
+table tbody tr:last-child {
+  border: none;
+}
+table th,
+table td {
+  padding: 8px;
 }/*# sourceMappingURL=style_general.css.map */
