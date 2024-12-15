@@ -242,16 +242,19 @@ public class EvtOrderService {
 
 
         /*
-         * 確認活動狀態 1->報名中 2->延期v
-         * 確認活動報名人數是否額滿(service)v
-         * 報名訂單成立(service)v
-         * 活動報名人數調整(service)v
-         * 優惠券狀態變更(service)v
+         * 確認活動狀態 1->報名中 2->延期 V
+         * 確認活動報名人數是否額滿(service) V
+         * 報名訂單成立(service) V
+         * 活動報名人數調整(service) V
+         * 優惠券狀態變更(service) V
          */
 
 
-        Event event = eventRepo.findById(evtOrderDTO.getEventId()).get();
-        Member member = memberRepo.findById(evtOrderDTO.getMemberId()).get();
+        Event event = eventRepo.findById(evtOrderDTO.getEventId())
+                .orElseThrow(()-> new RuntimeException("沒有此活動"));
+
+        Member member = memberRepo.findById(evtOrderDTO.getMemberId())
+                .orElseThrow(()-> new RuntimeException("找不到此會員資料"));
 
         /* 確認活動狀態(可報名) */
 

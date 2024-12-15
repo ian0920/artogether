@@ -5,6 +5,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -40,6 +41,20 @@ public class ExceptionHandle {
         return viewName != null ? "frontend" + viewName : "error";
 
 
+    }
+
+
+    @ExceptionHandler(RuntimeException.class)
+    public ModelAndView handleException(Exception ex,  ModelAndView mv) {
+
+        Map<String, String> error = new HashMap<>();
+        error.put("no", ex.getMessage());
+
+        mv.addObject("message", error);
+        mv.setViewName("transient_page/status_page");
+
+
+        return mv;
     }
 
 
