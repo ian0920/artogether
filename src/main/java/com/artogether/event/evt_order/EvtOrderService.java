@@ -13,14 +13,16 @@ import com.artogether.event.evt_coup.EvtCoupService;
 import com.artogether.event.my_evt_coup.MyEvtCoup;
 import com.artogether.event.my_evt_coup.MyEvtCoupRepo;
 import com.artogether.util.ApiResponse;
+import com.artogether.util.EnrollmentCompletedEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -49,6 +51,12 @@ public class EvtOrderService {
     private EventRepo eventRepo;
     @Autowired
     private MyEvtCoupRepo myEvtCoupRepo;
+
+    private final ApplicationEventPublisher eventPublisher;
+
+    public EvtOrderService(ApplicationEventPublisher eventPublisher) {
+        this.eventPublisher = eventPublisher;
+    }
 
     //null handling not be done
     public EvtOrder findById(int id) {
@@ -229,7 +237,7 @@ public class EvtOrderService {
         return new PageImpl<>(DTOresult, pageable, totalCount);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public ApiResponse<EvtOrder> eventEnroll(EvtOrderDTO evtOrderDTO) {
 
 
@@ -299,6 +307,7 @@ public class EvtOrderService {
 
                 }
 
+                eventPublisher.publishEvent(new EnrollmentCompletedEvent(this, event.getId()));
 
                 return new ApiResponse<>(true, "報名成功", orderSaved, null);
 

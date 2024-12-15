@@ -6,7 +6,6 @@ import com.artogether.event.evt_coup.EvtCoup;
 import com.artogether.event.evt_coup.EvtCoupRepo;
 import com.artogether.event.my_evt_coup.MyEvtCoup;
 import com.artogether.event.my_evt_coup.MyEvtCoupRepo;
-import com.artogether.product.product.ProductServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -22,8 +21,6 @@ public class ScheduleManager {
 
     @Autowired
     EventRepo eventRepo;
-    @Autowired
-    private ProductServiceImpl productServiceImpl;
     @Autowired
     private EvtCoupRepo evtCoupRepo;
     @Autowired
