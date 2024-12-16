@@ -11,4 +11,6 @@ public interface EvtCoupRepo extends JpaRepository<EvtCoup, Integer> {
 
 
     List<EvtCoup> findEvtCoupsByEvent_BusinessMember_Id(Integer businessId);
+
+    List<EvtCoup> findAllByStatus(Byte status);
 }

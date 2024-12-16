@@ -22,7 +22,7 @@ public class EventService {
 		return eventRepo.findById(id).orElse(null);
 	}
 
-	public Page<Event> findAllEventsAndPagination(String sortBy, int page, int size, String location, String catalog) {
+	public Page<Event> findAllEventsAndPagination(String sortBy, int page, int size, String location, String catalog, String status) {
 
 		Comparator<Event> finalComparator = null;
 
@@ -89,9 +89,13 @@ public class EventService {
 			rawEventList = rawEventList.stream().filter(e -> e.getCatalog().contains(catalog)).toList();
 		}
 
-		//判斷活動狀態 1->上架 2->延期、傳入comparator
-		List<Event> sortedEventList = rawEventList.stream().filter(e -> (e.getStatus() == (byte) 1 || e.getStatus() == (byte) 2))
-				.sorted(finalComparator).toList();
+		//活動狀態篩選 1->上架 2->延期 3->取消 5->結束報名
+		if(!"".equals(status)) {
+			rawEventList = rawEventList.stream().filter(e -> e.getStatus() == Byte.valueOf(status)).toList();
+		}
+
+		//篩選掉活動狀態為4 審核被拒、傳入comparator
+		List<Event> sortedEventList = rawEventList.stream().filter(e-> e.getStatus() != (byte) 4 ).sorted(finalComparator).toList();
 
 		int start = page * size;
 		int end = Math.min(start + size, sortedEventList.size());
@@ -101,6 +105,7 @@ public class EventService {
 		return new PageImpl<>(paginatedEventList, pageable, sortedEventList.size());
 	}
 
+	//For 首頁精選活動
 	public List<Event> findAllEvents (String sortBy) {
 
 		Comparator<Event> finalComparator = null;

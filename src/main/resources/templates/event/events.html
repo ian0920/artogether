@@ -37,7 +37,7 @@
 
     .event-card-search{
       align-self: flex-start;
-      margin-left: 120px;
+      margin-left: 5%;
       margin-top: 25px;
     }
 
@@ -190,7 +190,8 @@
       </span>
     </form>
   </div>
-  <div class="event-card-container">
+  <h3 th:unless="${events.getTotalElements() > 0}" style="color: darkred">無相關搜尋結果</h3>
+  <div th:if="${events.getTotalElements() > 0}" class="event-card-container">
   <div class="showcase-cards-box">
     <div th:each="event:${events}" th:onclick="|location.href='/event/details/' + ${event.id}|" clickable class="showcases-card card event">
       <img src="./asset/images/bgimg.png" alt="" />
@@ -203,6 +204,8 @@
         </div>
         <div class="card-info">
           <p th:text="${event.description.substring(0,35)}+ ' ...'" ></p>
+
+          <div style="font-size: 12px;font-style: italic; display: inline-block" th:text="'報名進度：' + ${#numbers.formatDecimal((event.getEnrolled()*100/event.getMaximum()) , 2, 1)}  + '%'">報名進度：</div>
           <div class="progress">
             <div
                     class="progress-bar bgcolor-event"
