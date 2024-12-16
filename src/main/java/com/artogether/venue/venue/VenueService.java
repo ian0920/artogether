@@ -3,12 +3,18 @@ package com.artogether.venue.venue;
 import com.artogether.common.business_member.BusinessMember;
 import com.artogether.common.business_member.BusinessMemberRepo;
 import com.artogether.common.business_member.BusinessService;
+import com.artogether.venue.PublishErrorResponse;
+import com.artogether.venue.VenueExceptions;
+import com.artogether.venue.tslot.Tslot;
+import com.artogether.venue.tslot.TslotRepository;
 import com.artogether.venue.tslot.TslotService;
 import com.artogether.venue.vnedto.TslotDTO;
 import com.artogether.venue.vnedto.VneCardDTO;
 import com.artogether.venue.vnedto.VneDetailDTO;
 import com.artogether.venue.vnedto.VnePriceDTO;
 import com.artogether.venue.vneimg.*;
+import com.artogether.venue.vneprice.VnePrice;
+import com.artogether.venue.vneprice.VnePriceRepository;
 import com.artogether.venue.vneprice.VnePriceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,9 +36,15 @@ public class VenueService {
     @Autowired
     private VneImgService vneImgService;
     @Autowired
+    private VneImgUrlRepository vneImgUrlRepository;
+    @Autowired
     private TslotService tslotService;
     @Autowired
+    private TslotRepository tslotRepository;
+    @Autowired
     private VnePriceService vnePriceService;
+    @Autowired
+    private VnePriceRepository priceRepository;
 
     //檢查是否上架
     public Boolean isVneStatusOne(Integer vneId) {
@@ -40,9 +52,91 @@ public class VenueService {
         return venueRepository.existsByIdAndStatus(vneId,VenueStatusEnum.ONLINE);
     }
 
-    public void publishVenue(Integer vneId){
+    //上架
+    public void publishVenue(Integer vneId, LocalDateTime submissionTime) {
+        //基本上應該都存在才會進這個方法吧?!
+        Venue venue = venueRepository.findById(vneId).orElseThrow(() ->
+                new VenueExceptions.InvalidListingException("場地不存在"));
+        //名字是ChatGPT建議的，也太長了吧...
+        List<PublishErrorResponse.MissingRequirement> missingRequirements = new ArrayList<>();
 
+        //大前提，不是被停權
+        if (venue.getStatus() != VenueStatusEnum.SUSPENDED) {
+            // 條件 1: 場地名稱
+            if (venue.getName() == null) {
+                missingRequirements.add(new PublishErrorResponse.MissingRequirement(
+                        "需取名方可上架",
+                        "請為場地命名，例如：'夢想舞台' 或 '星空咖啡廳'"
+                ));
+            }
+
+            // 條件 2: 可預約天數
+            if (venue.getAvailableDays() == null) {
+                missingRequirements.add(new PublishErrorResponse.MissingRequirement(
+                        "需設定可預約的天數方可上架",
+                        "請拉一下下拉選單，挑個喜歡的數字"
+                ));
+            }
+
+            // 條件 3: 圖片
+            List<String> imageUrls = vneImgUrlRepository.findImageUrlsByVneId(vneId);
+            if (imageUrls == null || imageUrls.isEmpty()) {
+                missingRequirements.add(new PublishErrorResponse.MissingRequirement(
+                        "至少需設定一張照片方可上架",
+                        "請上傳至少一張場地的圖片，例如外觀或內部裝修"
+                ));
+            }
+
+            // 條件 4: 營業時間
+            Optional<Tslot> tslotOptional = tslotRepository.getNearestPastRecord(vneId, submissionTime);
+            if (tslotOptional.isEmpty()) {
+                missingRequirements.add(new PublishErrorResponse.MissingRequirement(
+                        "須設定營業時間方可上架",
+                        "請設定場地的營業時間，例如上午 9:00 至晚上 6:00"
+                ));
+            }
+
+            // 條件 5: 常態價位
+            Optional<VnePrice> vnePriceOptional = priceRepository.getNearestPastRecord(vneId, submissionTime);
+            if (vnePriceOptional.isEmpty()) {
+                missingRequirements.add(new PublishErrorResponse.MissingRequirement(
+                        "須設定常態價位方可上架",
+                        "請設定場地的基本租用費用，例如每小時 500 元"
+                ));
+            }
+        }else {
+            missingRequirements.add(new PublishErrorResponse.MissingRequirement(
+                    "停權中",
+                    "停權中"
+            ));
+        }
+
+
+        // 如果有任何條件未滿足，拋出異常
+        if (!missingRequirements.isEmpty()) {
+
+            PublishErrorResponse errorResponse = new PublishErrorResponse(
+                    "場地上架失敗，請補充必要資訊",
+                    missingRequirements
+            );
+            throw new VenueExceptions.InvalidListingException(errorResponse);
+        }
+
+        // 上架操作
+        venue.setStatus(VenueStatusEnum.ONLINE);
+        venueRepository.save(venue);
     }
+
+    //下架
+    public void archiveVenue (Integer vneId) {
+        Venue venue = venueRepository.findById(vneId).orElseThrow(() ->
+                new VenueExceptions.InvalidListingException("場地不存在"));
+        if (venue.getStatus() == VenueStatusEnum.ONLINE) {
+            venue.setStatus(VenueStatusEnum.ONLINE);
+            venueRepository.save(venue);
+        }
+    }
+
     //創建場地
     public Integer createVenue(VneDetailDTO vneDetailDTO, BusinessMember businessMember) {
         String name = vneDetailDTO.getVneName();
