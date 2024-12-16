@@ -248,7 +248,7 @@
             <!-- 主分頁：場地檢查管理 -->
             <a
                     :href="currentPage !== 'checkVenue' ? `/vneBiz/checkVenue/${Detail.vneId}` : '#'"
-                    :class="currentPage === 'checkVenue' ? ' green-tab' : 'inactivegreen-tab'"
+                    :class="currentPage === 'checkVenue' ? 'active-tab green-tab' : 'inactivegreen-tab'"
                     x-text="`${Detail.vneName}場地檢查管理`">
             </a>
 

@@ -138,16 +138,20 @@ public class VenueService {
     }
 
     //創建場地
-    public Integer createVenue(VneDetailDTO vneDetailDTO, BusinessMember businessMember) {
-        String name = vneDetailDTO.getVneName();
-        String type = vneDetailDTO.getType();
-        String description = vneDetailDTO.getDescription();
-        Integer availableDays = vneDetailDTO.getAvailableDays();
-
+    public Integer createVenue(VneCardDTO vneCardDTO, BusinessMember businessMember) {
+        String name = vneCardDTO.getVneName();
+        System.out.println(name);
+        String type = vneCardDTO.getType();
+        System.out.println(type);
+        String description = vneCardDTO.getDescription();
+        System.out.println(description);
+        Integer availableDays = vneCardDTO.getAvailableDays();
+        System.out.println(availableDays);
         Venue venue = Venue.builder()
                       .name(name)
-                .businessMember(businessMember)
+                      .businessMember(businessMember)
                       .type(type)
+                      .status(VenueStatusEnum.OFFLINE)
                       .availableDays(availableDays)
                       .build();
         if (description != null) {
@@ -203,6 +207,7 @@ public class VenueService {
                 .bizName(businessMember.getName())
                 .vneAddress(businessMember.getAddr())
                 .type(venue.getType())
+                .status(venue.getStatus().getDescription())
                 .availableDays(venue.getAvailableDays())
                 .imgUrls(vneImgService.getAllImgs(vneId))
                 .tslot(tslotDTO)

@@ -1,6 +1,8 @@
 package com.artogether.venue.tslot;
 
 import com.artogether.util.BinaryTools;
+import com.artogether.venue.PublishErrorResponse;
+import com.artogether.venue.VenueExceptions;
 import com.artogether.venue.venue.Venue;
 import com.artogether.venue.venue.VenueRepository;
 import com.artogether.venue.vnedto.AvailableDTO;
@@ -53,28 +55,36 @@ public class TslotService {
     }
 
     public TslotDTO nearestTslot(Integer vneId, LocalDateTime now) {
-        List<Integer> weeklyInteger = getWeeklyTslots(vneId, now);
-        Integer bizTime = 0;
-        for (Integer dailyHours : weeklyInteger) {
-            bizTime |= dailyHours;
-        }
-        List<Integer> dailyList = BinaryTools.toList(bizTime, 24);
-        Integer startHour = dailyList.get(0);
-        Integer endHour = dailyList.get(dailyList.size() - 1);
-        TslotDTO tslotDTO = TslotDTO.builder()
-                .vneId(vneId)
-                .vneName(venueRepository.findById(vneId).get().getName())
-                .hourOfMon(BinaryTools.toList(weeklyInteger.get(0), 24))
-                .hourOfTue(BinaryTools.toList(weeklyInteger.get(1), 24))
-                .hourOfWed(BinaryTools.toList(weeklyInteger.get(2), 24))
-                .hourOfThu(BinaryTools.toList(weeklyInteger.get(3), 24))
-                .hourOfFri(BinaryTools.toList(weeklyInteger.get(4), 24))
-                .hourOfSat(BinaryTools.toList(weeklyInteger.get(5), 24))
-                .hourOfSun(BinaryTools.toList(weeklyInteger.get(6), 24))
-                .startHour(startHour)
-                .endHour(endHour)
-                .build();
-        return tslotDTO;
+        // 確認是否有營業時間設定
+        Tslot tslot = tslotRepository.getNearestPastRecord(vneId, now).orElseGet(() -> {
+            return null; // 如果不存在，回傳 null
+        });
+        //不為空才運算
+        if (tslot != null) {
+            List<Integer> weeklyInteger = getWeeklyTslots(vneId, now);
+            Integer bizTime = 0;
+            for (Integer dailyHours : weeklyInteger) {
+                bizTime |= dailyHours;
+            }
+            List<Integer> dailyList = BinaryTools.toList(bizTime, 24);
+            Integer startHour = dailyList.get(0);
+            Integer endHour = dailyList.get(dailyList.size() - 1);
+            TslotDTO tslotDTO = TslotDTO.builder()
+                    .vneId(vneId)
+                    .vneName(venueRepository.findById(vneId).get().getName())
+                    .hourOfMon(BinaryTools.toList(weeklyInteger.get(0), 24))
+                    .hourOfTue(BinaryTools.toList(weeklyInteger.get(1), 24))
+                    .hourOfWed(BinaryTools.toList(weeklyInteger.get(2), 24))
+                    .hourOfThu(BinaryTools.toList(weeklyInteger.get(3), 24))
+                    .hourOfFri(BinaryTools.toList(weeklyInteger.get(4), 24))
+                    .hourOfSat(BinaryTools.toList(weeklyInteger.get(5), 24))
+                    .hourOfSun(BinaryTools.toList(weeklyInteger.get(6), 24))
+                    .startHour(startHour)
+                    .endHour(endHour)
+                    .build();
+            return tslotDTO;
+            //若為空，回裝空的
+        }else {return TslotDTO.builder().build();}
     }
 
         //找不到是給初始設定用的
@@ -83,8 +93,9 @@ public class TslotService {
         if (tslotOptional.isEmpty()) {
             //如果沒找到提供一個全部開啟的預設表單
             //24小時全開(用二進位)
-            Integer AllDayOpening = 16777215;
-            List<Integer> AllWeekOpening = new ArrayList<>(Collections.nCopies(5, AllDayOpening));
+//            Integer AllDayOpening = 16777215;
+            Integer AllDayClose = 0;
+            List<Integer> AllWeekOpening = new ArrayList<>(Collections.nCopies(5, AllDayClose));
             return AllWeekOpening;
         }else {
             Tslot tslot= tslotOptional.get();
