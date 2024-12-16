@@ -52,7 +52,7 @@
         }
         /* 當前頁面的樣式 */
         .active-tab {
-            background-color: #007bff; /* 藍色背景 */
+            background-color: #2c95c6; /* 藍色背景 */
             color: white;
             pointer-events: none; /* 禁用連結行為 */
             cursor: default;
@@ -64,7 +64,7 @@
             border: 1px solid #ccc;
         }
         .inactive-tab:hover {
-            background-color: #007bff;
+            background-color: #2c95c6;
             color: white;
         }
         .calendar {
@@ -123,12 +123,12 @@
             transition: background-color 0.3s, color 0.3s;
         }
         .checkbox-group input[type="checkbox"]:checked + label {
-            background-color: #007bff;
+            background-color: #2c95c6;
             color: white;
-            border-color: #007bff;
+            border-color: #297a9b;
         }
         .checkbox-group input[type="checkbox"]:focus + label {
-            outline: 2px solid #007bff;
+            outline: 2px solid #297a9b;
         }
         .control[data-hour="0"],
         .control[data-hour="1"],
@@ -201,13 +201,13 @@
             user-select: none;
         }
         .form-container .checkbox-group input:checked + label {
-            background: #007bff;
+            background: #2c95c6;
             color: white;
         }
         .form-container button {
             width: 100%;
             padding: 10px;
-            background: #007bff;
+            background: #2c95c6;
             border: none;
             border-radius: 5px;
             color: white;
@@ -216,7 +216,7 @@
             transition: background-color 0.3s;
         }
         .form-container button:hover {
-            background: #0056b3;
+            background: #297a9b;
         }
         .form-container .error {
             color: red;
@@ -236,6 +236,21 @@
         .calendar-container {
             flex: 2; /* 設置行事曆視圖占用的比例 */
         }
+        /* 綠色標籤 */
+        green-tab {
+            background-color: #709b29; /* 保持綠色背景 */
+            color: white; /* 保持白色文字 */
+        }
+        .inactivegreen-tab {
+            background-color: #f0f0f0; /* 淺灰色 */
+            color: #333; /* 中灰文字 */
+            border: 1px solid #ccc; /* 邊框為淺灰色 */
+        }
+        /* 滑鼠懸停時的樣式 */
+        .inactivegreen-tab:hover {
+            background-color: #709b29; /* 保持綠色背景 */
+            color: white; /* 保持白色文字 */
+        }
     </style>
 </head>
 <body>
@@ -246,6 +261,13 @@
 <main x-data="calendarData()" x-init="initialize()">
     <!--分頁-->
     <div x-data="tabsController()" x-init="initialize()" class="tabs">
+        <!-- 主分頁：場地檢查管理 -->
+        <a
+                :href="currentPage !== 'checkVenue' ? `/vneBiz/checkVenue/${Detail.vneId}` : '#'"
+                :class="currentPage === 'checkVenue' ? ' green-tab' : 'inactivegreen-tab'"
+                x-text="`${Detail.vneName}場地檢查管理`">
+        </a>
+
         <!-- 主分頁：場地管理 -->
         <a
                 :href="currentPage !== 'venue' ? `/vneBiz/manageVenue/${Detail.vneId}` : '#'"
@@ -609,6 +631,8 @@
                         this.currentPage = 'venue';
                     } else if (path.includes('manageTslot')) {
                         this.currentPage = 'timeslot';
+                    } else if (path.includes('checkVenue')) {
+                        this.currentPage = 'checkVenue';
                     }
                 },
 

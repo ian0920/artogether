@@ -17,14 +17,8 @@ public class VneMemController {
     private VenueService venueService;
 
     @GetMapping("/details/{vneId}")
-    public String detail(Integer vneId, Model model) {
-//        VneDetailDTO vneDetailDTO = venueService.getDetailVenue(vneId);
-//        model.addAttribute("vneDetail", vneDetailDTO);
-        return "/venue/member/detail";
-    }
+    public String detail() {return "venue/member/detail";}
 
-    @GetMapping("/order")
-    public String order(@RequestParam("vneId")Integer vneId) {
-        return "/venue/member/order";
-    }
+    @GetMapping("/booking/{vneId}")
+    public String order() {return "/venue/member/order";}
 }

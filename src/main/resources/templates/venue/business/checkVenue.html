@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/web_design/style/style_general.css}" />
+    <link rel="stylesheet" th:href="@{/web_design/style/style_homepage.css}" />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+            rel="stylesheet"
+    />
+    <style>
+
+        /* Centering popup */
+        .popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .form-container {
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            width: 500px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .amounts {
+            margin-top: 15px;
+            text-align: left;
+        }
+
+        .amounts p {
+            margin: 5px 0;
+        }
+
+        .submitButton, .openFormButton{
+            color: white;
+            background-color: #2c95c6;
+        }
+
+        .submitButton:hover, .openFormButton:hover{
+            color: white;
+            background-color: #2982a8;
+        }
+
+        #to-login{
+            color: white;
+            background-color: #e8b677;
+        }
+
+        #to-login:hover{
+            color: white;
+            background-color: #c99e68;
+        }
+
+        input,select{
+            width:100%
+        }
+
+        .calendar-container {
+            display: grid;
+            grid-template-columns: 50px repeat(7, 1fr); /* 時間列 + 星期列 */
+            gap: 5px;
+            border: 1px solid #cccccc;
+            background-color: #ffffff;
+        }
+
+        .calendar-container div {
+            border: 1px solid #e0e0e0;
+            text-align: center;
+        }
+
+        .day-header {
+            font-weight: bold;
+            background-color: #dbe7f3;
+            color: #2b3a4a;
+            text-align: center;
+        }
+
+        .control {
+            background-color: #f0f4fa;
+            text-align: right;
+            padding-right: 10px;
+            color: #2b3a4a;
+            font-weight: bold;
+        }
+
+        .cell {
+            height: 35px;
+            background-color: #ffffff;
+        }
+
+        .cell.selected {
+            background-color: #b6e3bc; /* 綠色背景表示選中 */
+            border-color: #88c88e;
+        }
+
+        .cell.special {
+            background-color: #6bbf70; /* 深綠色表示特殊價格 */
+            border-color: #4e9b57; /* 深色邊框 */
+        }
+
+        /* 調整時間槽和單元格的行高 */
+        .control[data-hour="0"],
+        .control[data-hour="1"],
+        .control[data-hour="2"],
+        .control[data-hour="3"],
+        .control[data-hour="4"],
+        .control[data-hour="5"],
+        .control[data-hour="6"],
+        .control[data-hour="7"],
+        .control[data-hour="8"],
+        .cell[data-hour="0"],
+        .cell[data-hour="1"],
+        .cell[data-hour="2"],
+        .cell[data-hour="3"],
+        .cell[data-hour="4"],
+        .cell[data-hour="5"],
+        .cell[data-hour="6"],
+        .cell[data-hour="7"],
+        .cell[data-hour="8"] {
+            height: 20px; /* 縮減的行高 */
+        }
+
+    </style>
+    <title>event details</title>
+    <!-- Bootstrap JS and Popper (optional, for modal functionality) -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" ></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+            crossorigin="anonymous"></script>
+</head>
+<body>
+<!-- 導航 -->
+<div th:replace="~{/components/navbar_business::navbar('venue','venue')}"></div>
+
+<main x-data="venuePage()" x-init="init()">
+    <!-- 圖片輪播 -->
+    <div class="image-carousel" x-show="venue.imgUrls && venue.imgUrls.length > 0">
+        <template x-for="img in venue.imgUrls" :key="img">
+            <img :src="img" alt="場地圖片" style="width: 80%; height: auto;">
+        </template>
+    </div>
+    <!-- 場地資訊 -->
+    <section class="flex-3 info-card-outline">
+        <p>場地詳情 <span class="material-symbols-outlined">chevron_forward</span> <span x-text="venue.vneId"></span></p>
+        <h2 x-text="venue.vneName"></h2>
+        <p><strong>場地方：</strong><span x-text="venue.bizName"></span></p>
+        <p><strong>地址：</strong><span x-text="venue.vneAddress"></span></p>
+        <p><strong>類別：</strong><span x-text="venue.type"></span></p>
+        <p><strong>描述：</strong><span x-text="venue.description"></span></p>
+        <p><strong>狀態：</strong><span x-text="venue.status"></span></p>
+        <!-- 行事曆 -->
+        <div class="calendar-container">
+            <!-- 行事曆 Header -->
+            <div class="control">Time</div>
+            <div class="day-header">Mon</div>
+            <div class="day-header">Tue</div>
+            <div class="day-header">Wed</div>
+            <div class="day-header">Thu</div>
+            <div class="day-header">Fri</div>
+            <div class="day-header">Sat</div>
+            <div class="day-header">Sun</div>
+
+            <!-- 行事曆內容 (使用 JS 動態生成) -->
+            <script>
+                function renderCalendar(startHour, endHour) {
+                    const calendarContainer = document.querySelector('.calendar-container');
+                    calendarContainer.innerHTML = ''; // 清空原本的內容
+
+                    // 添加時間列和每一天的頭部
+                    calendarContainer.innerHTML += `<div class="control">Time</div>`;
+                    ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].forEach(day => {
+                        calendarContainer.innerHTML += `<div class="day-header">${day}</div>`;
+                    });
+
+                    // 根據 startHour 和 endHour 動態生成行事曆
+                    for (let hour = startHour; hour <= endHour; hour++) {
+                        calendarContainer.innerHTML += `<div class="control">${hour}:00</div>`;
+                        for (let day = 0; day < 7; day++) {
+                            calendarContainer.innerHTML += `<div class="cell" data-day="${day}" data-hour="${hour}"></div>`;
+                        }
+                    }
+                }
+            </script>
+        </div>
+    </section>
+
+</main>
+<!-- 場地詳情 -->
+<script>
+    function venuePage() {
+        return {
+            venue: {
+                vneId: null,           // 場地 ID
+                vneName: '',           // 場地名稱
+                bizName: '',           // 場地方名稱
+                vneAddress: '',        // 場地地址
+                type: '',              // 場地類別描述
+                description: '',       // 場地描述
+                status: '',            // 場地狀態
+                availableDays: 0,      // 可容許預約天數
+                imgUrls: [],           // 圖片列表
+                tslot: {               // 時間槽資訊
+                    hourOfMon: [],     // 星期一可用時段
+                    hourOfTue: [],     // 星期二可用時段
+                    hourOfWed: [],     // 星期三可用時段
+                    hourOfThu: [],     // 星期四可用時段
+                    hourOfFri: [],     // 星期五可用時段
+                    hourOfSat: [],     // 星期六可用時段
+                    hourOfSun: [],      // 星期日可用時段
+                    startHour: '',
+                    endHour: ''
+                },
+                price: {               // 價格資訊
+                    defaultPrice: 0,   // 預設價格
+                    price: 0,          // 特定時段價格
+                    startTime: 0,      // 特定時段開始時間
+                    endTime: 0,        // 特定時段結束時間
+                    dayOfWeek: []      // 適用的星期
+                },
+                allStars: 0,           // 總星級
+                allReviews: 0          // 總評論數
+            },
+            isMember: false,          // 是否登入
+
+            // 初始化方法
+            init() {
+                const vneId = window.location.pathname.split('/').pop(); // 從 URL 提取 vneId
+                if (vneId) {
+                    window.vneId = vneId;
+                    console.log(`提取 vneId: ${vneId}`);
+
+                    // 加載場地數據
+                    this.fetchVenueData(vneId);
+                    // 檢查會員登入狀態
+                    // this.checkMemberStatus();
+                } else {
+                    console.error('未能提取 vneId');
+                }
+            },
+
+            // 從伺服端獲取場地數據
+            fetchVenueData(vneId) {
+                $.ajax({
+                    url: '/vne/details', // URL 不需要再附加 vneId
+                    method: 'POST', // 使用 POST 方法
+                    contentType: 'application/json', // 設定主體為 JSON 格式
+                    data: JSON.stringify({ vneId: vneId }), // 將 vneId 傳遞到請求主體
+                    success: (data) => {
+                        this.venue = {
+                            vneId: data.vneId || null,           // 場地 ID
+                            vneName: data.vneName || '',         // 場地名稱
+                            bizName: data.bizName || '',         // 場地方名稱
+                            vneAddress: data.vneAddress || '',   // 場地地址
+                            type: data.type || '',               // 場地類別描述
+                            description: data.description || '', // 場地描述
+                            status: data.status || '',           // 場地狀態
+                            availableDays: data.availableDays || 0, // 可容許預約天數
+                            imgUrls: data.imgUrls || [],         // 圖片列表
+
+                            // 時間槽資訊
+                            tslot: {
+                                hourOfMon: data.tslot?.hourOfMon || [], // 星期一可用時段
+                                hourOfTue: data.tslot?.hourOfTue || [], // 星期二可用時段
+                                hourOfWed: data.tslot?.hourOfWed || [], // 星期三可用時段
+                                hourOfThu: data.tslot?.hourOfThu || [], // 星期四可用時段
+                                hourOfFri: data.tslot?.hourOfFri || [], // 星期五可用時段
+                                hourOfSat: data.tslot?.hourOfSat || [], // 星期六可用時段
+                                hourOfSun: data.tslot?.hourOfSun || [],  // 星期日可用時段
+                                startHour: data.tslot?.startHour || '',
+                                endHour: data.tslot?.endHour || ''
+                            },
+
+                            // 價格資訊
+                            price: {
+                                defaultPrice: data.price?.defaultPrice || 0, // 預設價格
+                                price: data.price?.price || 0,              // 特定時段價格
+                                startTime: data.price?.startTime || 0,      // 特定時段開始時間
+                                endTime: data.price?.endTime || 0,          // 特定時段結束時間
+                                dayOfWeek: data.price?.dayOfWeek || []      // 適用的星期
+                            },
+
+                            allStars: data.allStars || 0,       // 總星級
+                            allReviews: data.allReviews || 0    // 總評論數
+                        };
+
+                        console.log('場地數據獲取成功:', this.venue); // 確認數據更新成功
+                        // 根據 startHour 和 endHour 更新行事曆
+                        renderCalendar(this.venue.tslot.startHour, this.venue.tslot.endHour);
+                        // 更新行事曆
+                        this.updateCells();
+                        this.applySpecialTags();
+                    },
+                    error: (xhr, status, error) => {
+                        console.error('獲取場地數據失敗:', error);
+                    }
+                });
+            },
+            // 更新行事曆選中狀態
+            updateCells() {
+                const tslot = this.venue.tslot;
+                const dayKeys = ['hourOfMon', 'hourOfTue', 'hourOfWed', 'hourOfThu', 'hourOfFri', 'hourOfSat', 'hourOfSun'];
+
+                document.querySelectorAll('.cell').forEach(cell => {
+                    const day = parseInt(cell.dataset.day);
+                    const hour = parseInt(cell.dataset.hour);
+
+                    if (tslot[dayKeys[day]]?.includes(hour)) {
+                        cell.classList.add('selected');
+                    } else {
+                        cell.classList.remove('selected');
+                    }
+                });
+            },
+
+            // 標記特殊時段
+            applySpecialTags() {
+                const {startTime, endTime, dayOfWeek} = this.venue.price;
+                const tslot = this.venue.tslot;
+
+                document.querySelectorAll('.cell.special').forEach(cell => {
+                    cell.classList.remove('special');
+                });
+
+                if (startTime !== null && endTime !== null && dayOfWeek.length > 0) {
+                    dayOfWeek.forEach(day => {
+                        for (let hour = startTime; hour <= endTime; hour++) {
+                            const cell = document.querySelector(`.cell[data-day="${day}"][data-hour="${hour}"]`);
+                            if (cell && tslot[`hourOf${['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][day]}`]?.includes(hour)) {
+                                cell.classList.add('special');
+                            }
+                        }
+                    });
+                }
+            },
+        };
+    }
+</script>
+
+</body>
+</html>

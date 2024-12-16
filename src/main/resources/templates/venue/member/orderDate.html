@@ -1,105 +1,261 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>日期與時間選擇</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <style>
-    </style>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 </head>
 <body>
-<label for="datePicker">選擇日期:</label>
-<input type="text" id="datePicker" placeholder="請選擇日期">
+<script>
+    // // 提取 URL 中的 vneId
+    // const urlParams = new URLSearchParams(window.location.search); // 取得問號後的部分
+    // const vneId = urlParams.get("vneId"); // 獲取名為 'vneId' 的參數
+    const vneId = window.location.pathname.split('/').pop();
+    // 將 vneId 設為全局變量
+    window.vneId = vneId;
 
-<div class="time-slots" id="timeSlots">
-    <p>請選擇日期以顯示可預約時間。</p>
+    console.log(window.vneId); // 測試是否成功設置，打印出 vneId 的值
+</script>
+<div x-data="timeReservation()" x-init="fetchDates()">
+    <!-- 日期選擇器 -->
+    <label for="datePicker">Select a Date:</label>
+    <input type="text" id="datePicker" placeholder="Choose a date" @change="fetchAvailability(); updateTotalPrice()">
+
+    <!-- 開始時間選單 -->
+    <label for="startTime">Start Time:</label>
+    <select id="startTime" x-model="order.startTime" @change="updateEndTimeOptions()">
+        <option value="" disabled selected>Select Start Time</option>
+        <template x-for="hour in availableStartTimes" :key="hour">
+            <option :value="hour" x-text="hour"></option>
+        </template>
+    </select>
+
+    <!-- 結束時間選單 -->
+    <label for="endTime">End Time:</label>
+    <select id="endTime" x-model="order.endTime" @change="updateTotalPrice()">
+        <option value="" disabled selected>Select End Time</option>
+        <template x-for="hour in availableEndTimes" :key="hour">
+            <option :value="hour" x-text="hour"></option>
+        </template>
+    </select>
+    <p>Total Price: <span x-text="order.totalPrice !== null ? `$${order.totalPrice}` : 'N/A'"></span></p>
+
+    <!-- 提示信息 -->
+    <div style="color: red; margin-bottom: 10px;">
+        <p x-show="!order.startDate">請選擇日期</p>
+        <p x-show="!order.startTime">請選擇開始時間</p>
+        <p x-show="!order.endTime">請選擇結束時間</p>
+    </div>
+    <!-- 提交按鈕 -->
+    <button @click="submitReservation()" :disabled="!order.startTime || !order.endTime || !order.startDate">Submit</button>
+
+    <!-- 確認彈窗 -->
+    <div x-show="showConfirmation" style="margin-top: 20px; background-color: #f4f4f4; padding: 20px; border-radius: 10px;">
+        <h3>Confirm Reservation</h3>
+        <p>Start Date: <span x-text="order.startDate"></span></p>
+        <p>Start Time: <span x-text="order.startTime"></span></p>
+        <p>End Time: <span x-text="order.endTime"></span></p>
+        <p>Total Price: <span x-text="order.totalPrice"></span></p>
+        <p>Should Paid: <span x-text="order.shouldPaid"></span></p>
+
+        <!-- 確認送出 -->
+        <button @click="confirmReservation()">Confirm</button>
+    </div>
 </div>
 
-<button id="confirmBooking" style="margin-top: 20px; display: none;">確認預約</button>
-
 <script>
-    const timeSlotsDiv = document.getElementById("timeSlots");
-    const confirmButton = document.getElementById("confirmBooking");
-    let selectedTime = null;
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('timeReservation', () => ({
+            minDate: null,
+            maxDate: null,
+            disableDates: [],
+            availableSegments: [],
+            hourlyPrice: {},
+            availableStartTimes: [],
+            availableEndTimes: [],
+            order: {
+                startDate: null,
+                startTime: null,
+                endTime: null,
+                totalPrice: null,
+                shouldPaid: null,
+                paid: 0, // 模擬初始已支付金額
+                vneCoupId: null
+            },
+            showConfirmation: false,
 
-    // 初始化 Flatpickr
-    flatpickr("#datePicker", {
-        dateFormat: "Y-m-d", // 日期格式
-        onChange: async function(selectedDates, dateStr) {
-            if (!dateStr) return;
+            // 獲取日期範圍（使用 jQuery 發送請求）
+            fetchDates() {
+                $.ajax({
+                    url: `/vne/order/dates/${vneId}`,
+                    type: 'GET',
+                    success: (data) => {
+                        this.minDate = data.minDate;
+                        this.maxDate = data.maxDate;
+                        this.disableDates = data.disableDates;
 
-            // 向後端請求該日期的可預約時間
-            try {
-                const response = await fetch(`/api/available-times?date=${dateStr}`);
-                if (response.ok) {
-                    const availableTimes = await response.json(); // 假設後端返回時間陣列
-                    renderTimeSlots(availableTimes);
-                } else {
-                    timeSlotsDiv.innerHTML = "<p>無法取得該日期的可預約時間。</p>";
+                        // 初始化 Flatpickr
+                        flatpickr("#datePicker", {
+                            minDate: this.minDate,
+                            maxDate: this.maxDate,
+                            disable: this.disableDates,
+                            onChange: (selectedDates, dateStr) => {
+                                this.order.startDate = dateStr;
+                            }
+                        });
+                    },
+                    error: (xhr, status, error) => {
+                        console.error('Failed to fetch dates:', error);
+                    }
+                });
+            },
+
+            // 獲取可用時間段與價格（使用 jQuery 發送請求）
+            fetchAvailability() {
+                if (!this.order.startDate) return;
+
+                $.ajax({
+                    url: `/vne/order/availability/${vneId}`,
+                    type: 'GET',
+                    data: { date: this.order.startDate },
+                    success: (data) => {
+                        this.availableSegments = data.availableSegments;
+                        this.hourlyPrice = data.hourlyPrice;
+
+                        // 提取所有可用的開始時間
+                        this.availableStartTimes = this.availableSegments.flat();
+
+                        // 自動設置第一個開始時間
+                        if (this.availableStartTimes.length > 0) {
+                            this.order.startTime = this.availableStartTimes[0];
+                            this.updateEndTimeOptions(); // 更新結束時間選項
+                            this.updateTotalPrice()
+                        }
+                    },
+                    error: (xhr, status, error) => {
+                        console.error('Failed to fetch availability:', error);
+                    }
+                });
+            },
+
+            // 更新結束時間選項
+            updateEndTimeOptions() {
+                if (!this.order.startTime) {
+                    this.availableEndTimes = [];
+                    this.order.endTime = null;
+                    return;
                 }
-            } catch (error) {
-                console.error("Error fetching time slots:", error);
-                timeSlotsDiv.innerHTML = "<p>載入時發生錯誤。</p>";
+
+                const segment = this.availableSegments.find(seg => seg.includes(Number(this.order.startTime)));
+
+                if (segment) {
+                    const startIndex = segment.indexOf(Number(this.order.startTime));
+
+                    // 生成結束時間選項
+                    if (segment.length === 1) {
+                        this.availableEndTimes = [segment[0] + 1];
+                    } else {
+                        this.availableEndTimes = [...segment.slice(startIndex + 1), segment[segment.length - 1] + 1];
+                    }
+
+                    // 自動設置第一個結束時間
+                    this.order.endTime = this.availableEndTimes[0] || null;
+                    this.updateTotalPrice()
+                } else {
+                    this.availableEndTimes = [];
+                    this.order.endTime = null;
+                }
+            },
+
+            //於前端動態計算總價以便於呈現
+            updateTotalPrice() {
+                if (!this.order.startTime || !this.order.endTime) {
+                    this.order.totalPrice = null;
+                    return;
+                }
+
+                const start = Number(this.order.startTime);
+                const end = Number(this.order.endTime);
+
+                let total = 0;
+
+                // 迭代時間段並加總對應價格
+                for (let hour = start; hour < end; hour++) {
+                    if (this.hourlyPrice[hour]) { // 確保該時段有對應的價格
+                        total += this.hourlyPrice[hour];
+                    }
+                }
+
+                this.order.totalPrice = total;
+            },
+
+            // 提交預約（使用 jQuery 發送 POST 請求）
+            submitReservation() {
+                if (!this.order.startDate || !this.order.startTime || !this.order.endTime) return;
+
+                const postData = {
+                    startDate: this.order.startDate,
+                    startTime: this.order.startTime,
+                    endDate: this.order.startDate, // 單日訂單，結束日期與開始日期一致
+                    endTime: this.order.endTime
+                };
+
+                $.ajax({
+                    url: `/vne/order/submit/${vneId}`,
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(postData),
+                    success: (data) => {
+                        // 更新 DTO 數據
+                        this.order.totalPrice = data.totalPrice;
+                        this.order.shouldPaid = data.shouldPaid;
+                        this.showConfirmation = true;
+                    },
+                    error: (xhr, status, error) => {
+                        console.error('Failed to submit reservation:', error);
+                    }
+                });
+            },
+
+            // 確認送出（使用 jQuery 發送 POST 請求）
+            confirmReservation() {
+                $.ajax({
+                    url: `/vne/order/confirm/${vneId}`,
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(this.order),
+                    success: (message) => {
+                        alert(message); // 彈窗顯示成功消息
+                        this.resetForm(); // 重置表單
+                    },
+                    error: (xhr, status, error) => {
+                        console.error('Failed to confirm reservation:', error);
+                    }
+                });
+            },
+
+            // 重置表單
+            resetForm() {
+                this.order = {
+                    startDate: null,
+                    startTime: null,
+                    endTime: null,
+                    totalPrice: null,
+                    shouldPaid: null,
+                    paid: 0,
+                    vneCoupId: null
+                };
+                this.showConfirmation = false;
+                this.availableEndTimes = [];
             }
-        }
+        }));
     });
 
-    // 渲染時間選擇
-    function renderTimeSlots(times) {
-        if (!times || times.length === 0) {
-            timeSlotsDiv.innerHTML = "<p>該日期無可預約時間。</p>";
-            confirmButton.style.display = "none";
-            return;
-        }
-
-        timeSlotsDiv.innerHTML = "";
-        times.forEach(time => {
-            const timeSlot = document.createElement("div");
-            timeSlot.className = "time-slot";
-            timeSlot.textContent = time;
-            timeSlot.addEventListener("click", () => {
-                document.querySelectorAll(".time-slot").forEach(slot => slot.classList.remove("selected"));
-                timeSlot.classList.add("selected");
-                selectedTime = time; // 設定選中的時間
-                confirmButton.style.display = "block"; // 顯示確認按鈕
-            });
-            timeSlotsDiv.appendChild(timeSlot);
-        });
-    }
-
-    // 確認預約
-    confirmButton.addEventListener("click", () => {
-        if (!selectedTime) return alert("請選擇時間！");
-        alert(`已選擇日期和時間: ${document.getElementById("datePicker").value} ${selectedTime}`);
-        // 這裡可以向後端發送最終預約請求
-    });
 </script>
+
 </body>
 </html>
-
-<!--<!DOCTYPE html>-->
-<!--<html lang="en">-->
-<!--<head>-->
-<!--    <meta charset="UTF-8">-->
-<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
-<!--    <title>Flatpickr 搭配 type="text"</title>-->
-<!--    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">-->
-<!--    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>-->
-<!--</head>-->
-<!--<body>-->
-<!--<label for="datePicker">選擇日期:</label>-->
-<!--<input type="text" id="datePicker" placeholder="請選擇日期">-->
-
-<!--<script>-->
-    flatpickr("#datePicker", {
-        dateFormat: "Y-m-d", // 日期格式
-        minDate: "2024-12-01", // 設定最小可選日期
-        maxDate: "2025-2-31", // 設定最大可選日期
-        disable: ["2024-12-25", "2025-01-01"], // 禁用日期
-        locale: "zh" // 中文
-<!--    });-->
-<!--</script>-->
-<!--</body>-->
-<!--</html>-->

@@ -10,11 +10,13 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 </head>
 <body>
+<!--&lt;!&ndash; 導航 &ndash;&gt;-->
+<div th:replace="~{/components/navbar_homepage::navbar}"></div>
 <script>
-    // 提取 URL 中的 vneId
-    const urlParams = new URLSearchParams(window.location.search); // 取得問號後的部分
-    const vneId = urlParams.get("vneId"); // 獲取名為 'vneId' 的參數
-
+    // // 提取 URL 中的 vneId
+    // const urlParams = new URLSearchParams(window.location.search); // 取得問號後的部分
+    // const vneId = urlParams.get("vneId"); // 獲取名為 'vneId' 的參數
+    const vneId = window.location.pathname.split('/').pop();
     // 將 vneId 設為全局變量
     window.vneId = vneId;
 
@@ -23,7 +25,7 @@
 <div x-data="timeReservation()" x-init="fetchDates()">
     <!-- 日期選擇器 -->
     <label for="datePicker">Select a Date:</label>
-    <input type="text" id="datePicker" placeholder="Choose a date" @change="fetchAvailability()">
+    <input type="text" id="datePicker" placeholder="Choose a date" @change="fetchAvailability(); updateTotalPrice()">
 
     <!-- 開始時間選單 -->
     <label for="startTime">Start Time:</label>
@@ -36,12 +38,13 @@
 
     <!-- 結束時間選單 -->
     <label for="endTime">End Time:</label>
-    <select id="endTime" x-model="order.endTime">
+    <select id="endTime" x-model="order.endTime" @change="updateTotalPrice()">
         <option value="" disabled selected>Select End Time</option>
         <template x-for="hour in availableEndTimes" :key="hour">
             <option :value="hour" x-text="hour"></option>
         </template>
     </select>
+    <p>Total Price: <span x-text="order.totalPrice !== null ? `$${order.totalPrice}` : 'N/A'"></span></p>
 
     <!-- 提示信息 -->
     <div style="color: red; margin-bottom: 10px;">
@@ -132,6 +135,7 @@
                         if (this.availableStartTimes.length > 0) {
                             this.order.startTime = this.availableStartTimes[0];
                             this.updateEndTimeOptions(); // 更新結束時間選項
+                            this.updateTotalPrice()
                         }
                     },
                     error: (xhr, status, error) => {
@@ -162,10 +166,33 @@
 
                     // 自動設置第一個結束時間
                     this.order.endTime = this.availableEndTimes[0] || null;
+                    this.updateTotalPrice()
                 } else {
                     this.availableEndTimes = [];
                     this.order.endTime = null;
                 }
+            },
+
+            //於前端動態計算總價以便於呈現
+            updateTotalPrice() {
+                if (!this.order.startTime || !this.order.endTime) {
+                    this.order.totalPrice = null;
+                    return;
+                }
+
+                const start = Number(this.order.startTime);
+                const end = Number(this.order.endTime);
+
+                let total = 0;
+
+                // 迭代時間段並加總對應價格
+                for (let hour = start; hour < end; hour++) {
+                    if (this.hourlyPrice[hour]) { // 確保該時段有對應的價格
+                        total += this.hourlyPrice[hour];
+                    }
+                }
+
+                this.order.totalPrice = total;
             },
 
             // 提交預約（使用 jQuery 發送 POST 請求）

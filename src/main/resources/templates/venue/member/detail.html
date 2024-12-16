@@ -152,7 +152,7 @@
     <!-- 圖片輪播 -->
     <div class="image-carousel" x-show="venue.imgUrls && venue.imgUrls.length > 0">
         <template x-for="img in venue.imgUrls" :key="img">
-            <img :src="img" alt="場地圖片" style="width: 100%; height: auto;">
+            <img :src="img" alt="場地圖片" style="width: 80%; height: auto;">
         </template>
     </div>
     <!-- 場地資訊 -->
@@ -202,9 +202,16 @@
     <!-- 按鈕操作區 -->
     <aside class="info-card-outline flex-1" style="height:min-content;">
         <div class="row">
-            <!-- 預訂按鈕 -->
-            <button x-show="isMember" id="openFormButton" class="btn btn-lg openFormButton button-big flex-auto" @click="openBookingForm">預訂場地</button>
-            <button x-show="!isMember" id="to-login" class="btn btn-lg button-big flex-auto" @click="goToLogin">請先登入</button>
+            <h3 x-text="venue.vneName"></h3>
+            <span></span>
+            <p x-text="venue.vneAddress"></p>
+            <!-- 預約按鈕 -->
+            <button th:if="${#session.getAttribute('member') != null}"
+                    id="openFormButton"
+                    class="btn btn-lg openFormButton button-big flex-auto"
+                    onclick="location.href=`/vneMem/booking/${venue.vneId}`">預約場地
+            </button>
+            <button th:unless="${#session.getAttribute('member') != null}" id="to-login" class="btn btn-secondary" onclick="location.href='/login'">請先登入</button>
 
             <!-- 收藏按鈕 -->
             <button class="button-icon-big" id="btn_track" @click="trackVenue">
@@ -213,6 +220,7 @@
         </div>
     </aside>
 </main>
+<!-- 場地詳情 -->
 <script>
     function venuePage() {
         return {
@@ -402,7 +410,6 @@
         };
     }
 </script>
-
 
 </body>
 </html>
