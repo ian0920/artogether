@@ -23,9 +23,12 @@ public class VnePriceService {
 
     //獲取上一次的紀錄
     public VnePriceDTO getNearestVnePrice(Integer vneId, LocalDateTime submissionTime) {
-        Optional<VnePrice> vnePriceOptional = vnePriceRepository.getNearestPastRecord(vneId, submissionTime);
+        // 確認是否有設定價錢
+        VnePrice vnePrice = vnePriceRepository.getNearestPastRecord(vneId, submissionTime).orElseGet(()->{
+            return null; // 如果不存在，回傳 null
+            });
         VnePriceDTO vnePriceDTO = new VnePriceDTO();
-        vnePriceOptional.ifPresent(vnePrice -> {
+        if (vnePrice != null) {
             vnePriceDTO.setDefaultPrice(vnePrice.getDefaultPrice());
             Integer price = vnePrice.getPrice();
             if (price != null) {
@@ -34,11 +37,13 @@ public class VnePriceService {
                 List<Integer> weekdays = BinaryTools.toList(dayOfWeek);
                 vnePriceDTO.setDayOfWeek(weekdays);
                 String priceTslot = vnePrice.getPriceTslot();
+                if (priceTslot != null) {
                 vnePriceDTO.setStartTime(BinaryTools.first(priceTslot));
                 vnePriceDTO.setEndTime(BinaryTools.last(priceTslot));
+                }
             }
-        });
         return vnePriceDTO;
+        }else {return vnePriceDTO;}
     }
 
     // 創建或更新價錢
@@ -60,7 +65,7 @@ public class VnePriceService {
         Integer price = vnePriceDTO.getPrice();
         if (price != null) {
              builder.price(vnePriceDTO.getPrice())
-            .priceTslot(BinaryTools.toBinaryString(BinaryTools.toBitSet(getPriceTslotList(startTime, endTime)),24))
+            .priceTslot(BinaryTools.toBinaryString(BinaryTools.toBitSet(getTslotList(startTime, endTime)),24))
             .dayOfWeek(BinaryTools.toBinaryString(BinaryTools.toBitSet(vnePriceDTO.getDayOfWeek()),7));
         }
         VnePrice vnePrice = builder.build();
@@ -68,7 +73,7 @@ public class VnePriceService {
     }
 
     //處理前端回來的特殊價錢需間
-    public List<Integer> getPriceTslotList(Integer startTime, Integer endTime) {
+    public List<Integer> getTslotList(Integer startTime, Integer endTime) {
         List<Integer> slotList = new ArrayList<>();
         for (int i = startTime; i < endTime; i++) {
             slotList.add(i);
