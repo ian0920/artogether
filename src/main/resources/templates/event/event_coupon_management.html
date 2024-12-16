@@ -750,6 +750,15 @@
                 // Change button back to "Modify"
                 row.find('.btn-save').text('修改').removeClass('btn-save').addClass('btn-revise');
                 row.find('.btn-cancel').remove();
+
+                let message = response.message;
+                if(response.status === true){
+                    pupOutAlter(message, 'success');
+                } else {
+                    pupOutAlter(message, 'warning');
+                }
+
+
             },
             error: function () {
                 pupOutAlter('更新失敗，請稍後再試','warning');
