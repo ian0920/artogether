@@ -12,7 +12,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class VneOrderDTO implements Serializable {
     private static final long serialVersionUID = 1L;
-
+    private Integer vneId;
+    private Integer memId;
+    private String memName;
+    private String memPhone;
+    private Integer orderId;
     // 總價格
     private Integer totalPrice;
 
@@ -36,7 +40,4 @@ public class VneOrderDTO implements Serializable {
 
     //結束時間
     private Integer endTime;
-
-    // 支付方式
-    private Integer paymentMethod;
 }
