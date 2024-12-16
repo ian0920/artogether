@@ -7,18 +7,11 @@
             font-family: 'Roboto', Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, #a8edea, #fed6e3);
+            background: linear-gradient(135deg, #2193b0, #6dd5ed); /* 藍色漸層背景 */
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-        }
-
-        h1 {
-            text-align: center;
-            color: #444;
-            font-size: 24px;
-            margin-bottom: 20px;
         }
 
         form {
@@ -35,6 +28,13 @@
             box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
         }
 
+        h1 {
+            text-align: center;
+            color: #444;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
         label {
             display: block;
             margin-bottom: 8px;
@@ -43,8 +43,7 @@
             font-weight: bold;
         }
 
-        input,
-        select {
+        input, select {
             width: calc(100% - 20px);
             padding: 10px;
             margin-bottom: 15px;
@@ -54,8 +53,7 @@
             transition: border-color 0.3s, box-shadow 0.3s;
         }
 
-        input:focus,
-        select:focus {
+        input:focus, select:focus {
             border-color: #007bff;
             box-shadow: 0 0 6px rgba(0, 123, 255, 0.3);
             outline: none;
@@ -68,7 +66,7 @@
             font-size: 16px;
             font-weight: bold;
             background-color: #007bff;
-            color: #fff;
+            color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
@@ -88,60 +86,76 @@
             line-height: 1.5;
         }
 
-        @media (max-width: 480px) {
-            form {
-                width: 90%;
-                padding: 20px;
-            }
-
-            h1 {
-                font-size: 20px;
-            }
-
-            button {
-                font-size: 14px;
-            }
+        input[disabled] {
+            background-color: #e9ecef;
+            cursor: not-allowed;
         }
     </style>
+    <script>
+        function updateFields() {
+            const discountType = document.querySelector('select[name="type"]').value;
+            const deductionField = document.querySelector('input[name="deduction"]');
+            const ratioField = document.querySelector('input[name="ratio"]');
+
+            if (discountType === "0") { // 比例折扣
+                deductionField.disabled = true;
+                deductionField.value = ""; // 清空數值
+                ratioField.disabled = false;
+            } else if (discountType === "1") { // 金額折扣
+                ratioField.disabled = true;
+                ratioField.value = ""; // 清空數值
+                deductionField.disabled = false;
+            }
+        }
+
+        window.onload = function () {
+            updateFields();
+        };
+    </script>
 </head>
 <body>
     <form th:action="@{/coupons/add}" th:object="${prdCoup}" method="post">
         <h1>新增優惠券</h1>
         <label>名稱：</label>
         <input type="text" th:field="*{name}" required />
-        
-        <label>商家：</label>
-		<select th:field="*{businessMember.id}" required>
-    	<option th:value="${presentBusinessMember.id}" th:text="${presentBusinessMember.name}"></option>
-		</select>
 
-        
+        <label>商家：</label>
+        <select th:field="*{businessMember.id}" required>
+            <option th:value="${presentBusinessMember.id}" th:text="${presentBusinessMember.name}"></option>
+        </select>
+
         <label>折扣類型：</label>
-        <select th:field="*{type}" required>
+        <select th:field="*{type}" required onchange="updateFields()">
             <option value="-1" th:selected="*{type == -1}">請選擇折扣類型</option>
             <option value="1" th:selected="*{type == 1}">金額折扣</option>
             <option value="0" th:selected="*{type == 0}">比例折扣</option>
         </select>
-        
+
+        <label>折扣金額：</label>
+        <input type="number" name="deduction" th:value="${prdCoup.deduction}" required />
+
+        <label>折扣比例：</label>
+        <input type="number" name="ratio" th:value="${prdCoup.ratio}" required />
+
         <label>狀態：</label>
         <select th:field="*{status}" required>
             <option value="-1" th:selected="*{status == -1}">請選擇狀態</option>
-            <option value="1" th:selected="*{status == 1}">上架</option>
-            <option value="0" th:selected="*{status == 0}">下架</option>
+            <option value="0" th:selected="*{status == 0}">上架</option>
+            <option value="1" th:selected="*{status == 1}">下架</option>
         </select>
-        
+
         <label>門檻：</label>
         <input type="number" th:field="*{threshold}" />
-        
+
         <label>效期：</label>
         <input type="number" th:field="*{duration}" />
-        
+
         <label>開始日期：</label>
         <input type="text" th:field="*{startDate}" placeholder="YYYY-MM-DD HH:MM:SS" />
-        
+
         <label>結束日期：</label>
         <input type="text" th:field="*{endDate}" placeholder="YYYY-MM-DD HH:MM:SS" />
-        
+
         <button type="submit">保存優惠券</button>
         <div class="description">請填寫完整資料後，點擊「保存優惠券」按鈕。</div>
     </form>

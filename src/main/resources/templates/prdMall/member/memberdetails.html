@@ -1,103 +1,114 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>商家會員</title>
+    <title>會員資料</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: #ecf0f1; /* 背景灰色 */
             color: #333;
-            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
+
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: left;
+        }
+
         h1 {
-            color: #4CAF50;
+            text-align: center;
+            color: #3498db; /* 藍色標題 */
+            margin-bottom: 20px;
+            font-size: 24px;
         }
-        a {
-            text-decoration: none;
-            color: #007BFF;
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
+            font-size: 14px;
         }
-        a:hover {
-            color: #0056b3;
+
+        .form-field {
+            background-color: #f9f9f9;
+            color: #333;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 14px;
         }
+
+        .form-field:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 6px rgba(52, 152, 219, 0.3);
+        }
+
         .button-group {
             display: flex;
-            justify-content: left;
-            width: 80%;
-            margin: 10px auto 20px auto; /* 與表格對齊 */
-            gap: 10px; /* 按鈕之間的間距 */
+            justify-content: space-between;
+            gap: 10px;
         }
-        .button-group a {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 4px;
-            display: inline-block;
-            text-align: center;
-        }
-        .button-group a:hover {
-            background-color: #45a049;
-        }
-        table {
-            margin: 0 auto;
-            border-collapse: collapse;
-            width: 80%;
-            background-color: #fff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        th, td {
-            border: 1px solid #ddd;
+
+        button, a.edit-button {
+            flex: 1;
             padding: 10px;
             text-align: center;
-        }
-        th {
-            background-color: #4CAF50;
-            color: white;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-        button {
-            background-color: #ff4d4d;
-            color: white;
+            background-color: #3498db; /* 藍色按鈕 */
+            color: #ffffff;
             border: none;
-            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s, transform 0.2s;
         }
-        button:hover {
-            background-color: #cc0000;
+
+        button:hover, a.edit-button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
         }
     </style>
 </head>
 <body>
-    <h1>會員資料</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>商家名稱</th>
-                <th>Email</th>
-                <th>地址</th>             
-                <th>統編</th>
-                <th>狀態</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td th:text="${member.id}"></td>
-                <td th:text="${member.name}"></td>
-                <td th:text="${member.email}"></td>
-                <td th:text="${member.addr}"></td>
-                <td th:text="${member.taxId}"></td>
-                <td th:text="${member.status}"></td>
-                <td>
-                    <a th:href="@{/prdMall/member/businessmemberedit(id=${member.id})}">編輯</a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="container">
+        <h1>會員資料</h1>
+        <div>
+            <label for="name">名稱：</label>
+            <div class="form-field" th:text="${member.name}"></div>
+
+            <label for="email">Email：</label>
+            <div class="form-field" th:text="${member.email}"></div>
+
+            <label for="address">地址：</label>
+            <div class="form-field" th:text="${member.addr}"></div>
+
+            <label for="taxId">統編：</label>
+            <div class="form-field" th:text="${member.taxId}"></div>
+
+            <label for="status">狀態：</label>
+            <div class="form-field" 
+                 th:text="${member.status == 0 ? '申請中' : (member.status == 1 ? '通過' : '停權')}">
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button onclick="window.history.back()">返回</button>
+            <a th:href="@{/prdMall/member/businessmemberedit(id=${member.id})}" class="edit-button">編輯</a>
+        </div>
+    </div>
 </body>
 </html>

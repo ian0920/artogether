@@ -1,60 +1,151 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>編輯退換貨</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #2193b0, #6dd5ed); /* 藍色漸層背景 */
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        form {
+            width: 400px;
+            padding: 30px;
+            background-color: #ffffff;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        form:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            text-align: center;
+            color: #444;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #666;
+            font-weight: bold;
+        }
+
+        input, select, textarea {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 6px rgba(0, 123, 255, 0.3);
+            outline: none;
+        }
+
+        textarea {
+            resize: none;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            background-color: #e9ecef;
+            color: #aaa;
+            cursor: not-allowed;
+        }
+
+        /* Flex row for checkbox */
+        .flex-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .flex-row label {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .flex-row input[type="checkbox"] {
+            margin: 0;
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h1 class="mb-4">編輯退換貨</h1>
-        <form th:action="@{'/product/edit/' + ${prdReturn.id}}" method="post">
-            <table class="table table-bordered">
-                <tbody>
-                    <tr>
-                        <th>退換貨編號</th>
-                        <td th:text="${prdReturn.id}"></td>
-                    </tr>
-                    <tr>
-                        <th>訂單編號</th>
-                         <td th:text="${prdReturn.orderId}"></td>
-                    </tr>
-                    <tr>
-                        <th>商品名稱</th>
-                        <td>
-                            <input type="text" class="form-control" name="prdName" th:value="${prdReturn.prdName}" readonly>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>退換貨原因</th>
-                        <td>
-                            <textarea class="form-control" name="reason" rows="3" th:text="${prdReturn.reason}" required></textarea>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>狀態</th>
-                        <td>
-                            <select class="form-select" name="status" required>
-                                <option value="0" th:selected="${prdReturn.status == 0}">待處理</option>     
-                                <option value="1" th:selected="${prdReturn.status == 1}">已完成</option>
-                            </select>
-                        </td>
-                    </tr>
-                    
-                    <tr>
-                        <th>退款金額</th>
-                        <td>
-                            <input type="number" class="form-control" name="refund" th:value="${prdReturn.refund}" required>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="text-center mt-4">
-                <button type="submit" class="btn btn-primary">保存</button>
-                <a th:href="@{/product/list}" class="btn btn-secondary">取消</a>
-            </div>
-        </form>
-    </div>
+    <form th:action="@{'/product/edit/' + ${prdReturn.id}}" method="post">
+        <h1>編輯退換貨</h1>
+        
+        <label>退換貨編號：</label>
+        <input type="text" name="id" th:value="${prdReturn.id}" readonly />
+        
+        <label>訂單編號：</label>
+        <input type="text" name="orderId" th:value="${prdReturn.orderId}" readonly />
+        
+        <label>商品名稱：</label>
+        <input type="text" name="prdName" th:value="${prdReturn.prdName}" readonly />
+        
+        <label>退換貨原因：</label>
+        <textarea name="reason" rows="3" th:text="${prdReturn.reason}" readonly></textarea>
+        
+        <label>狀態：</label>
+        <select name="status" required>
+            <option value="0" th:selected="${prdReturn.status == 0}">待處理</option>
+            <option value="1" th:selected="${prdReturn.status == 1}">已完成</option>
+        </select>
+        
+        <label>退款金額：</label>
+        <input type="number" name="refund" th:value="${prdReturn.refund}" required />
+        
+        <!-- Updated Section -->
+        <div class="flex-row">
+            <label>更新退換貨時間：</label>
+            <input type="checkbox" name="updateReturnDate" value="true" />
+        </div>
+
+        <div class="button-group">
+            <button type="button" onclick="window.history.back()">返回</button>
+            <button type="submit">保存</button>
+        </div>
+    </form>
 </body>
 </html>

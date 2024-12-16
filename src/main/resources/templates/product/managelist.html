@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>商品管理列表</title>
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            text-align: center;
+        }
+        h1 {
+            color: #3498db; /* 統一標題藍色 */
+        }
+        a {
+            text-decoration: none;
+            color: #007BFF;
+        }
+        a:hover {
+            color: #0056b3;
+        }
+        .button-group {
+            display: flex;
+            justify-content: flex-start; /* 調整樣式 */
+            align-items: center;
+            width: 80%;
+            margin: 10px auto 20px auto;
+        }
+        select {
+            padding: 5px 10px;
+            font-size: 16px;
+        }
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 90%;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left; /* 左對齊文字 */
+            font-size: 14px;
+        }
+        th {
+            background-color: #3498db; /* 統一藍色背景 */
+            color: white;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        tr {
+            transition: background-color 0.3s;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        td {
+            border-bottom: 1px solid #ddd;
+        }
+        td:last-child {
+            display: flex;
+            justify-content: flex-start;
+            gap: 10px;
+        }
+        td a, td button {
+            text-decoration: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+        }
+        td a {
+            background-color: #3498db; /* 統一編輯按鈕藍色 */
+        }
+        td a:hover {
+            background-color: #2980b9;
+        }
+        td button {
+            background-color: #FF4D4D; /* 紅色按鈕 */
+        }
+        td button:hover {
+            background-color: #CC0000;
+        }
+    </style>
+</head>
+<body>
+    <h1>商品管理列表</h1>
+    <div class="button-group">
+        <label for="statusFilter">狀態：</label>
+        <select id="statusFilter" onchange="filterTable()">
+            <option value="all">全部</option>
+            <option value="上架">上架</option>
+            <option value="下架">下架</option>
+        </select>
+    </div>
+    
+    <table id="productTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>商家名稱</th>
+                <th>名稱</th>
+                <th>價格</th>
+                <th>數量</th>
+                <th>描述</th>
+                <th>狀態</th>
+                <th>更新狀態</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="product : ${products}">
+                <td th:text="${product.id}"></td>
+                <td th:text="${product.businessMemberName}"></td>
+                <td th:text="${product.name}"></td>
+                <td th:text="${product.price}"></td>
+                <td th:text="${product.qty}"></td>
+                <td th:text="${product.description}"></td>
+                <td th:text="${product.status == 0 ? '下架' : '上架'}"></td>
+                <td>
+                    <form th:action="@{/product/update-status}" method="post" style="display: inline;">
+                        <input type="hidden" th:name="id" th:value="${product.id}" />
+                        <input type="hidden" th:name="businessMemberId" th:value="${product.businessMemberId}" />
+                        <input type="hidden" th:name="status" th:value="${product.status == 0 ? 1 : 0}" />
+                        <button type="submit" th:text="${product.status == 0 ? '上架' : '下架'}"></button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        function filterTable() {
+            const statusFilter = document.getElementById("statusFilter").value;
+            const table = document.getElementById("productTable");
+            const rows = table.querySelectorAll("tbody tr");
+
+            rows.forEach(row => {
+                const statusCell = row.cells[6].innerText.trim();
+                const matchesStatus = (statusFilter === "all" || statusCell === statusFilter);
+
+                if (matchesStatus) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        }
+    </script>
+</body>
+</html>

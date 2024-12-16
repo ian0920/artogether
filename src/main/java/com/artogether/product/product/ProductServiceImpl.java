@@ -261,6 +261,24 @@ public class ProductServiceImpl implements ProductService {
 
         return map;
     }
+    
+
+    //更新商品
+    public ProductDto updatePrdStatus(ProductDto productDto) {
+        // 查找產品
+        Product product = productRepository.findById(productDto.getId())
+                .orElseThrow(() -> new RuntimeException("Product not found with ID: " +  productDto.getId()));
+
+        // 更新狀態
+        product.setStatus(productDto.getStatus());
+
+        // 保存更新後的產品
+        Product updatedProduct = productRepository.save(product);
+
+        // 返回更新後的 DTO
+        return toProductDto(updatedProduct);
+    }
+
 
 
 }
