@@ -40,7 +40,7 @@
         // FindALLDTO 創建集合取出所有
         public List<PermissionDTO> findAllDTO() {
             List<Permission> permissions = permissionRepo.findAll();
-            System.out.println(permissions);
+//            System.out.println(permissions);
             List<PermissionDTO> permissionDTOs = new ArrayList<>();
             for (Permission permission : permissions) {
                 PermissionDTO permissionDTO = PermissionDTO.builder()
@@ -50,7 +50,7 @@
                         .build();
                 permissionDTOs.add(permissionDTO);
             }
-            System.out.println(permissionDTOs);
+//            System.out.println(permissionDTOs);
             return permissionDTOs;
         }
 
@@ -78,4 +78,5 @@
             return memberHasPermission;
         }
 
+        // 不能重複給權限
     }

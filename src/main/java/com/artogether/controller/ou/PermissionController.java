@@ -1,7 +1,5 @@
 package com.artogether.controller.ou;
 
-import com.artogether.common.perm_desc.PermDesc;
-import com.artogether.common.perm_desc.PermDescRepository;
 import com.artogether.common.permission.Permission;
 import com.artogether.common.permission.PermissionDTO;
 import com.artogether.common.permission.PermissionService;
@@ -18,8 +16,6 @@ public class PermissionController {
 
     @Autowired
     private PermissionService permissionService;
-    @Autowired
-    private PermDescRepository permDescRepository;
 
     // 查詢所有權限
     @GetMapping("/pm")
@@ -29,6 +25,7 @@ public class PermissionController {
         return "platform/permission";  // JSP/HTML file to display the list of permissions
     }
 
+    // 沒有DTO版本
 //        List<Permission> permissions = permissionService.findAll();
 //        model.addAttribute("permissions", permissions);
 //        return "platform/permission";  // JSP/HTML file to display the list of permissions
@@ -37,16 +34,27 @@ public class PermissionController {
     /*=======================
     顯示新增權限頁面與處理新增請求
      ========================*/
-    @GetMapping("/pmadd")
-    public String showAddPermissionForm(Model model) {
+
+//    @GetMapping("/pmadd")
+//    public String showAddPermissionForm(Model model) {
 //        Permission permission = new Permission();
 //        model.addAttribute("permission", new Permission());
 //        List<PermDesc> list = permDescRepository.findAll();
+//        List<PermissionDTO> permissionDTOS = permissionService.findAllDTO();
+//        model.addAttribute("permission", permissionDTOS);
+//        return "platform/pmadd"; // 返回 Thymeleaf 模板名稱
+//    }
+
+    @GetMapping("/pmadd")
+    public String showAddPermissionForm(Model model) {
+        PermissionDTO permissionDTO = new PermissionDTO(); // 創建一個空的 PermissionDTO 對象
+        model.addAttribute("permissionDTO", permissionDTO); // 將其放入模型中
         List<PermissionDTO> permissionDTOS = permissionService.findAllDTO();
-        model.addAttribute("permDescs", permissionDTOS);
+        model.addAttribute("permissionList", permissionDTOS); // 假如需要顯示所有權限，可以將列表放在 model 中
         return "platform/pmadd"; // 返回 Thymeleaf 模板名稱
     }
 
+    // DTO回傳
     @PostMapping("/pmadd")
     public String handleAddPermission(@ModelAttribute Permission permission, Model model) {
         permissionService.add(permission);
@@ -55,7 +63,7 @@ public class PermissionController {
         return "/platform/permission"; // 重新導向至權限列表
     }
 
-    //===============================
+    /* =================================================================================== */
 
     // 處理更新權限的請求
     @PostMapping("/update")

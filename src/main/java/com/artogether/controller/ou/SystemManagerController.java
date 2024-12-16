@@ -7,7 +7,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -21,9 +20,9 @@ public class SystemManagerController {
     @GetMapping("/manager")
     public String getAllSystemManagers(Model model) {
         List<SystemManager> systemManagers = systemManagerService.findAll();
-        systemManagers.forEach(systemManager -> {
-            System.out.println(systemManager);
-        });
+//        systemManagers.forEach(systemManager -> {
+//            System.out.println(systemManager);
+//        });
         model.addAttribute("systemManagers", systemManagers);
         return "platform/systemManager";
     }
@@ -54,7 +53,7 @@ public class SystemManagerController {
         return "/platform/systemManager";
     }
 
-    //===============================
+    /* =================================================================================== */
 
     // 顯示更新系統管理員的表單頁面
     @GetMapping("/update/{id}")
@@ -91,15 +90,4 @@ public class SystemManagerController {
         return "redirect:/systemManager/all";  // Redirect to the list of all system managers
     }
 
-    // 查詢系統管理員的詳細信息
-//    @GetMapping("/view/{id}")
-//    public String viewSystemManager(@PathVariable int id, Model model) {
-//        SystemManager systemManager = systemManagerService.findById(id);
-//        if (systemManager == null) {
-//            model.addAttribute("errorMessage", "系統管理員未找到！");
-//            return "redirect:/systemManager/all";  // Redirect if not found
-//        }
-//        model.addAttribute("systemManager", systemManager);
-//        return "system_manager/view";  // JSP/HTML file to display system manager details
-//    }
 }
