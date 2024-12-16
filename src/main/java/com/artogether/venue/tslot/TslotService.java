@@ -321,7 +321,7 @@ public class TslotService {
             if (dayOfWeek.contains(value)) {
                 Integer startTime = vnePriceDTO.getStartTime();
                 Integer endTime = vnePriceDTO.getEndTime();
-                BitSet specialPriceList = BinaryTools.toBitSet(vnePriceService.getPriceTslotList(startTime, endTime));
+                BitSet specialPriceList = BinaryTools.toBitSet(vnePriceService.getTslotList(startTime, endTime));
                 int start = availableHours.nextSetBit(0);
                 while (start != -1) {
                     if (specialPriceList.get(start)) {
