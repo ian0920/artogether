@@ -38,13 +38,13 @@ public class RestEventController {
 
     //會員報名
     @PostMapping("enroll-up")
-    public ResponseEntity<ApiResponse<EvtOrder>> eventEnroll(@RequestBody EvtOrderDTO evtOrderDTO, HttpSession session){
+    public ResponseEntity<ApiResponse<EvtOrderDTO>> eventEnroll(@RequestBody EvtOrderDTO evtOrderDTO, HttpSession session){
 
 
         /* 確認是否已有登入會員(前端已擋，後端再擋一次) */
 
         if (session.getAttribute("member") == null)
-            return ResponseEntity.ok(new ApiResponse<EvtOrder>(false, "請先登入會員", null, null));
+            return ResponseEntity.ok(new ApiResponse<EvtOrderDTO>(false, "請先登入會員", null, null));
 
 
         /* 確認是否重複報名(前端已擋，後端在再一次) */
@@ -54,7 +54,7 @@ public class RestEventController {
         boolean match = map.keySet().stream().anyMatch(filter);
 
         if(match)
-            return ResponseEntity.ok(new ApiResponse<EvtOrder>(false, "已報名過此活動", null, null));
+            return ResponseEntity.ok(new ApiResponse<EvtOrderDTO>(false, "已報名過此活動", null, null));
 
 
         /*   確認優惠券totalPrice > threshold   */
@@ -65,13 +65,13 @@ public class RestEventController {
 
             if( evtCoup.getThreshold() > evtOrderDTO.getTotalPrice()){
 
-                return ResponseEntity.ok(new ApiResponse<EvtOrder>(false, "未達優惠券使用門檻，門檻：" + evtCoup.getThreshold() + "元", null, null));
+                return ResponseEntity.ok(new ApiResponse<EvtOrderDTO>(false, "未達優惠券使用門檻，門檻：" + evtCoup.getThreshold() + "元", null, null));
             }
 
         }
 
         //報名邏輯寫在service層中
-        ApiResponse<EvtOrder> response = evtOrderService.eventEnroll(evtOrderDTO);
+        ApiResponse<EvtOrderDTO> response = evtOrderService.eventEnroll(evtOrderDTO);
 
 
         return ResponseEntity.ok(response);

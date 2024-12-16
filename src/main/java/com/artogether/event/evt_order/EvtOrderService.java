@@ -44,6 +44,7 @@ public class EvtOrderService {
     private EvtCoupService evtCoupService;
     @Autowired
     private EvtCoupRepo evtCoupRepo;
+    @Autowired
     private EvtOrderRepo evtOrderRepo;
     @Autowired
     private MemberRepo memberRepo;
@@ -271,7 +272,7 @@ public class EvtOrderService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public ApiResponse<EvtOrder> eventEnroll(EvtOrderDTO evtOrderDTO) {
+    public ApiResponse<EvtOrderDTO> eventEnroll(EvtOrderDTO evtOrderDTO) {
 
 
         /*
@@ -293,7 +294,7 @@ public class EvtOrderService {
 
         if (event.getStatus() != 1 && event.getStatus() != 2) {
 
-            return new ApiResponse<EvtOrder>(false, "活動無法報名", null, null);
+            return new ApiResponse<EvtOrderDTO>(false, "活動無法報名", null, null);
         }
 
 
@@ -345,7 +346,9 @@ public class EvtOrderService {
 
                 eventPublisher.publishEvent(new EnrollmentCompletedEvent(this, event.getId()));
 
-                return new ApiResponse<>(true, "報名成功", orderSaved, null);
+                EvtOrderDTO orderDTO = EvtOrderDTO.EvtOrderDTOTransformer(orderSaved);
+
+                return new ApiResponse<EvtOrderDTO>(true, "報名成功", orderDTO, null);
 
 
             }catch (Exception e){
@@ -356,7 +359,7 @@ public class EvtOrderService {
         } else {
             //報名人數超過超過活動人數上限
 
-            return new ApiResponse<EvtOrder>(false, "報名人數超過活動上限", null, null);
+            return new ApiResponse<EvtOrderDTO>(false, "報名人數超過活動上限", null, null);
         }
 
 
