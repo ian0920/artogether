@@ -4,32 +4,21 @@ import com.artogether.common.business_member.BusinessMember;
 import com.artogether.product.prd_catalog.PrdCatalog;
 import com.artogether.product.prd_catalog.PrdCatalogDaoImpl;
 import com.artogether.product.prd_catalog.PrdCatalogRepository;
-import com.artogether.product.prd_img.PrdImg;
-import com.artogether.product.prd_img.PrdImgDto;
-import com.artogether.product.prd_img.PrdImgService;
 import com.artogether.product.product.Product;
 import com.artogether.product.product.ProductDto;
 import com.artogether.product.product.ProductService;
 import com.artogether.product.product.ProductServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.data.domain.Page;
-
 import org.springframework.http.HttpStatus;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -46,8 +35,7 @@ public class NewProductController {
     private PrdCatalogRepository prdCatalogRepository;
     @Autowired
     private ProductServiceImpl productServiceImpl;
-    @Autowired
-    private PrdImgService prdImgService;
+
     
     @GetMapping("/products")
     public String showProductsPage(Model model) {
@@ -296,7 +284,7 @@ public class NewProductController {
 
 
 
-}
+
 //    @GetMapping("/productDetails/{id}")
 //    public String viewProductDetails(@PathVariable("id") Integer id, Model model) {
 //        // 根據 ID 獲取產品詳細信息
