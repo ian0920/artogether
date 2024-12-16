@@ -11,6 +11,12 @@
     <link href="/platform_backend/css/styles.css" rel="stylesheet"/>
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 
+    <style>
+        /* 使表格內容水平居中 */
+        .table td, .table th {
+            text-align: center; /* 讓所有表格的文字居中 */
+        }
+    </style>
 </head>
 <body class="sb-nav-fixed">
 <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -96,7 +102,7 @@
                     </div>
 
                     <div class="sb-sidenav-menu-heading">管理</div>
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="/profile/allMembers">
                         <div class="sb-nav-link-icon"><i class="fas fa-user"></i></div>
                         一般會員管理
                     </a>
@@ -134,61 +140,23 @@
     <div id="layoutSidenav_content">
         <main>
             <div class="container-fluid px-4">
-                <h1 class="mt-4">後台權限說明</h1>
-                <ol class="breadcrumb mb-4">
-                    <li class="breadcrumb-item active">管理平台</li>
-                </ol>
+                <h1 class="mt-4">後台管理員權限管理</h1>
+<!--                <ol class="breadcrumb mb-4">-->
+<!--                    <li class="breadcrumb-item active">管理平台</li>-->
+<!--                </ol>-->
 
                 <!-- 平台功能說明 -->
                 <section>
-                    <h2>平台功能說明</h2>
+                    <h2>管理員權限</h2>
 
-                    <!-- 查詢功能說明按鈕 -->
-                    <button type="button" class="btn btn-primary"
-                            id="btntest"
-                            onclick="showModalAndRedirect()">
-                        查詢功能說明
-                    </button>
-
+                    <!-- 新增管理員權限功能按鈕 -->
                     <a th:href="@{/permission/pmadd}">
                         <button type="button" class="btn btn-primary" id="BTNADD">
                             新增管理員權限
                         </button>
                     </a>
 
-
-                    <!-- 查詢功能說明的模態框 -->
-<!--                    <div class="modal fade" id="queryPermDescModal" tabindex="-1"-->
-<!--                         aria-labelledby="queryPermDescModalLabel" aria-hidden="true">-->
-<!--                        <div class="modal-dialog">-->
-<!--                            <div class="modal-content">-->
-<!--                                <div class="modal-header">-->
-<!--                                    <h5 class="modal-title" id="queryPermDescModalLabel">查詢功能說明</h5>-->
-<!--                                    <button type="button" class="btn-close" data-bs-dismiss="modal"-->
-<!--                                            aria-label="Close"></button>-->
-<!--                                </div>-->
-<!--                                <div class="modal-body">-->
-<!--                                    &lt;!&ndash; 顯示所有功能說明 &ndash;&gt;-->
-<!--                                    <table class="table">-->
-<!--                                        <thead>-->
-<!--                                        <tr>-->
-<!--                                            <th>ID</th>-->
-<!--                                            <th>權限</th>-->
-<!--                                        </tr>-->
-<!--                                        </thead>-->
-<!--                                        <tbody>-->
-<!--                                        &lt;!&ndash; 使用 Thymeleaf 顯示功能說明 &ndash;&gt;-->
-<!--                                        <tr th:each="permission : ${permissions}">-->
-<!--                                            <td th:text="${permission.permissionId.managerId}"></td> &lt;!&ndash; 顯示 Key1 &ndash;&gt;-->
-<!--                                            <td th:text="${permission.permissionId.description}"></td> &lt;!&ndash; 顯示描述 &ndash;&gt;-->
-<!--                                        </tr>-->
-<!--                                        </tbody>-->
-<!--                                    </table>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </div>-->
-
+                    <!-- 測試 -->
                     <div class="modal fade" id="testadd" tabindex="-1" aria-labelledby="testaddLabel"
                          aria-hidden="true">
                         <div class="modal-dialog">
@@ -201,20 +169,16 @@
                             </div>
                         </div>
                     </div>
-                    <!--                    systemManagers-->
+                    <!--systemManagers-->
                     <div class="modal-content">
-                        <!--                        <div class="modal-header">-->
-                        <!--                            <h5 class="modal-title" id="queryPermDescModalLabel">查詢功能說明</h5>-->
-                        <!--                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
-                        <!--                        </div>-->
                         <div class="modal-body">
                             <!-- 顯示所有功能說明 -->
                             <table class="table">
                                 <thead>
                                 <tr>
                                     <th>ID</th>
+<!--                                    <th>權限ID</th>-->
                                     <th>權限</th>
-                                    <th>權限名稱</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -222,7 +186,7 @@
                                 <tr th:each="permission : ${permissions}" id="content" contenteditable="false">
 
                                     <td th:text="${permission.managerId}"></td> <!-- 顯示 ID -->
-                                    <td th:text="${permission.descId}"></td> <!-- 顯示描述 -->
+<!--                                    <td th:text="${permission.descId}"></td> &lt;!&ndash; 顯示描述 &ndash;&gt;-->
                                     <td th:text="${permission.descName}"></td>
                                 </tr>
                                 </tbody>
