@@ -50,13 +50,13 @@ public class ScheduleManager {
         //將報名中的活動開始時間 > 現在時間的活動 更改狀態為結束報名
         eventList.stream()
                 .filter(e -> e.getStatus() == (byte) 1)
-                .filter(e -> e.getStartDate().after(new Timestamp(System.currentTimeMillis())))
+                .filter(e -> e.getStartDate().before(new Timestamp(System.currentTimeMillis())))
                 .forEach(e -> e.setStatus((byte) 5));
 
         //將延期的活動 延期的時間 > 現在的時間 更改活動狀態為結束報名
         eventList.stream()
                 .filter(e -> e.getStatus() == (byte) 2)
-                .filter(e -> e.getDelayDate().after(new Timestamp(System.currentTimeMillis())))
+                .filter(e -> e.getDelayDate().before(new Timestamp(System.currentTimeMillis())))
                 .forEach(e -> e.setStatus((byte) 5));
 
         eventRepo.saveAll(eventList);
@@ -68,14 +68,14 @@ public class ScheduleManager {
 
     /*      優惠券狀態變更     */
 
-    /*   商家 - end date < 現在日期 -> 狀態更改 (已過期)   */
+    /*   商家 - end date < 現在日期 -> 狀態更改 (失效)   */
     //每天 00:00:10執行
     @Scheduled(cron =" 10 0 0 * * *", zone ="Asia/Taipei")
     public void evtCoupStatusUpdate(){
         System.out.println("活動優惠券狀態更新排程器啟動");
 
         List<EvtCoup> allEvtCoup = evtCoupRepo.findAllByStatus((byte) 1);
-        allEvtCoup.stream().filter(e -> e.getEndDate().after(new Timestamp(System.currentTimeMillis())))
+        allEvtCoup.stream().filter(e -> e.getEndDate().before(new Timestamp(System.currentTimeMillis())))
                         .forEach(e -> e.setStatus((byte) 2));
 
         evtCoupRepo.saveAll(allEvtCoup);
@@ -83,7 +83,7 @@ public class ScheduleManager {
         System.out.println("活動優惠券狀態更新排程器完成");
     }
 
-    /*   會員 - 收到日期 + 效期 > 現在日期 -> 狀態更改 (已過期)   */
+    /*   會員 - 收到日期 + 效期 > 現在日期 -> 狀態更改 (失效)   */
     //每天 00:00:10執行
     @Scheduled(cron =" 10 0 0 * * *", zone ="Asia/Taipei")
     public void myEvtCoupStatusUpdate(){
@@ -100,7 +100,7 @@ public class ScheduleManager {
         System.out.println("我的活動優惠券狀態更新排程器完成");
     }
 
-    /*   會員 - 活動日期 > 現在日期 -> 狀態更改 (已過期)   */
+    /*   會員 - 活動日期 > 現在日期 -> 狀態更改 (失效)   */
     //每天 00:00:10執行
     @Scheduled(cron =" 10 0 0 * * *", zone ="Asia/Taipei")
     public void myEvtCoupStatusUpdate2(){
@@ -109,7 +109,7 @@ public class ScheduleManager {
         List<MyEvtCoup> allMyEvtCoup = myEvtCoupRepo.findAllByStatus((byte) 0);
 
         allMyEvtCoup.stream()
-                .filter(e -> e.getEvtCoup().getStartDate().after(new Timestamp(System.currentTimeMillis())))
+                .filter(e -> e.getEvtCoup().getStartDate().before(new Timestamp(System.currentTimeMillis())))
                 .forEach(e -> e.setStatus((byte) 2));
 
         myEvtCoupRepo.saveAll(allMyEvtCoup);

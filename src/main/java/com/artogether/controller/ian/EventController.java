@@ -126,7 +126,7 @@ public class EventController {
 
     }
 
-    //活動報名
+    //活動報名(Deprecate)
     @PostMapping("enroll")
     public String eventEnroll(EvtOrder evtOrder,Integer eventId, HttpSession session, Model model) {
 

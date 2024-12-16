@@ -26,13 +26,9 @@ public class RestEventController {
     @GetMapping("cancel")
     public ResponseEntity<ApiResponse<EvtOrder>> cancelOrder(@RequestParam Integer orderId){
 
-        boolean success = evtOrderService.cancelOrder(orderId);
+        ApiResponse<EvtOrder> response = evtOrderService.cancelOrder(orderId);
 
-        if(success){
-            return ResponseEntity.ok(new ApiResponse<EvtOrder>(true, "活動報名已取消", null, null));
-        }
-
-        return ResponseEntity.ok(new ApiResponse<EvtOrder>(false, "取消報名需在活動開始三天前", null, null));
+        return ResponseEntity.ok(response);
 
     }
 
