@@ -52,7 +52,7 @@
               <div clickable class="bs-navbar-header"
               	   th:classappend="${selectedItem == 'inbox' ? ' -open' : ''}">
                 <span class="material-symbols-outlined">inbox</span
-                ><a href="#">收件匣</a>
+                ><a th:href="@{/member/chatroom}">收件匣</a>
               </div>
             </li>
           </ul>

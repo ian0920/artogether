@@ -156,6 +156,7 @@
 	</section>
 	<aside class="info-card-outline flex-1" style="height:min-content;">
 		<h3 th:text="${evt.businessMember.name}"></h3>
+		<button class="button-icon-big" th:onclick="location.href='/member/sendMessage?bmId=[[${evt.businessMember.id}]]&mId=[[${session.member}]]'"><span class="material-symbols-outlined">chat</span></button>
 		<p th:text="${evt.businessMember.addr}"></p>
 
 		<div class="row" th:if="${evt.status == 1 || evt.status == 2}">

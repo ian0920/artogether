@@ -25,6 +25,8 @@ import com.artogether.common.business_perm.BusinessPerm.BusinessPermComposite;
 import com.artogether.common.business_perm.BusinessPermService;
 import com.artogether.common.member.Member;
 import com.artogether.common.member.MemberService;
+import com.artogether.common.message.Message;
+import com.artogether.common.message.MessageService;
 import com.artogether.event.event.Event;
 import com.artogether.event.event.EventService;
 import com.artogether.event.evt_img.EvtImgService;
@@ -54,6 +56,9 @@ public class Wynn_RestController {
 	
 	@Autowired
 	private MailManager mailManager;
+	
+	@Autowired
+	private MessageService messageService;
 
 	//==========================================================
 	//         				活動相關
@@ -179,4 +184,21 @@ public class Wynn_RestController {
 		return ResponseEntity.ok(response);
 		
 	}
+	
+	//=========================================================
+	//                        聊天室
+	//=========================================================
+	// 取得歷史訊息
+		@PostMapping("/chat/getHistory")
+		public ResponseEntity<Map> getChatHistory(@RequestBody Map<String, Object> payload){
+			Integer chatroomId = (Integer) payload.get("chatroomId");
+			System.out.println(chatroomId);
+			//TODO: 應該先取redis的資料?
+			List<Message> msgList = messageService.getChatHistory(chatroomId);
+			
+			Map<String, Object> response = new HashMap<>();
+			response.put("msgList", msgList);
+			response.put("message", msgList.isEmpty()?"查無歷史訊息":"成功取得歷史訊息");
+			return ResponseEntity.ok(response);			
+		}
 }
