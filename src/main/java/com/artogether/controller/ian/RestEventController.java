@@ -2,6 +2,8 @@ package com.artogether.controller.ian;
 
 import com.artogether.event.dto.EvtOrderDTO;
 import com.artogether.event.event.Event;
+import com.artogether.event.evt_coup.EvtCoup;
+import com.artogether.event.evt_coup.EvtCoupService;
 import com.artogether.event.evt_order.EvtOrder;
 import com.artogether.event.evt_order.EvtOrderService;
 import com.artogether.util.ApiResponse;
@@ -20,6 +22,8 @@ public class RestEventController {
 
     @Autowired
     EvtOrderService evtOrderService;
+    @Autowired
+    private EvtCoupService evtCoupService;
 
 
     //會員取消活動報名
@@ -52,6 +56,19 @@ public class RestEventController {
         if(match)
             return ResponseEntity.ok(new ApiResponse<EvtOrder>(false, "已報名過此活動", null, null));
 
+
+        /*   確認優惠券totalPrice > threshold   */
+
+        if (evtOrderDTO.getEvtCoupId() != null){
+
+            EvtCoup evtCoup = evtCoupService.findById(evtOrderDTO.getEvtCoupId());
+
+            if( evtCoup.getThreshold() > evtOrderDTO.getTotalPrice()){
+
+                return ResponseEntity.ok(new ApiResponse<EvtOrder>(false, "未達優惠券使用門檻，門檻：" + evtCoup.getThreshold() + "元", null, null));
+            }
+
+        }
 
         //報名邏輯寫在service層中
         ApiResponse<EvtOrder> response = evtOrderService.eventEnroll(evtOrderDTO);
