@@ -27,6 +27,8 @@ import com.artogether.common.business_member.BusinessMember;
 import com.artogether.common.business_member.BusinessService;
 import com.artogether.common.business_perm.BusinessPerm;
 import com.artogether.common.business_perm.BusinessPermService;
+import com.artogether.common.chatroom.Chatroom;
+import com.artogether.common.chatroom.ChatroomService;
 import com.artogether.common.member.Member;
 import com.artogether.common.member.MemberService;
 
@@ -43,6 +45,9 @@ public class Wynn_BusinessController {
 	
 	@Autowired
 	private MemberService memberService;
+	
+	@Autowired
+	private ChatroomService chatroomService;
 	
 	// 註冊成為商家
 	@GetMapping("/registerBusiness")
@@ -137,4 +142,16 @@ public class Wynn_BusinessController {
 	    return "redirect:/business/staff_management";
 	}
 	
+	
+	//================================================
+	//                   聊天室
+	//================================================
+	
+	@GetMapping("/chatroom")
+	public String goChatroom(Model model, HttpSession session) {
+		Integer bmembId = ((BusinessMember)session.getAttribute("presentBusinessMember")).getId();
+		List<Chatroom> chatrooms = chatroomService.getChatroomsByBMemberId(bmembId);
+		model.addAttribute("chatrooms", chatrooms);
+		return "business/chatroom_business";
+	}
 }

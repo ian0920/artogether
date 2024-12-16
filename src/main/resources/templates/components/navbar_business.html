@@ -1,7 +1,8 @@
 <!-- 
 使用時請填入兩個參數，分別對應預設選取的項目，與所選取的子項目
 1. 商家基本資訊->'info'
-	收件匣->'inbox'
+	通知->'inbox'
+	聊天訊息->'chat'
 	管理員權限管理->'staff'
 	--
 	場地管理->'venue'
@@ -39,11 +40,17 @@
 					</div>
 				</li>
 				<li clickable class="bs-navbar-item">
-				
 					<div clickable class="bs-navbar-header"
 	                th:classappend="${selectedItem == 'inbox' ? ' -open' : ''}">
-						<span class="material-symbols-outlined">inbox</span><a href="/platformMsg/businessMessage">收件匣</a>
+						<span class="material-symbols-outlined">inbox</span><a href="/platformMsg/businessMessage">通知</a>
 					</div>
+				</li>
+				<li clickable class="bs-navbar-item">
+					<div clickable class="bs-navbar-header"
+	                th:classappend="${selectedItem == 'chat' ? ' -open' : ''}">
+						<span class="material-symbols-outlined">chat</span><a href="/business/chatroom">聊天訊息</a>
+					</div>
+					
 				</li>
 				<li clickable class="bs-navbar-item">
 				
