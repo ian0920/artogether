@@ -227,6 +227,12 @@
             }
         }
 
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
 
 
     </style>
@@ -322,8 +328,8 @@
             <div>
                 <div><label for="newEventId">活動名稱</label></div>
                 <select id="newEventId" name="newEventId">
-                    <option value="-1" disabled selected hidden>請選擇活動</option>
-                    <option th:if="${eventMap.isEmpty()}" value="-1" disabled>尚未建立活動</option>
+                    <option value="-1" >請選擇活動</option>
+                    <option th:if="${eventMap.isEmpty()}" value="-1">尚未建立活動</option>
                     <option th:unless="${eventMap.isEmpty()}"
                             th:each="entry : ${eventMap}"
                             th:value="${entry.key}"
@@ -372,12 +378,12 @@
                 <div><label for="newCouponStatus">優惠券狀態</label></div>
                 <select id="newCouponStatus" name="couponStatus">
                     <option value="-1">選擇優惠券狀態</option>
-                    <option value="1">上架中</option>
-                    <option value="0">已下架</option>
+                    <option value="1">上架</option>
+                    <option value="0">下架</option>
                 </select>
             </div>
             <div><span class="warning-text" id="newDiscountWarning" style="display: none; font-size: 12px;">「比例」折扣值10為 10% off</span></div>
-            <div><span class="warning-text" id="newDateWarning" style="display: none; font-size: 12px;">結束日期不得早於開始日期。</span></div>
+            <div></div>
             <div class="button-addform-container">
                 <button type="submit" class="btn-addform-save" id="saveNewCoupon">新增</button>
                 <button type="button" class="btn-addform-cancel" id="cancelNewCoupon">取消</button>
@@ -415,13 +421,29 @@
                                 <td>${coupon.type}</td>
                                 <td>${coupon.discount > 1 ? coupon.discount +'元' : coupon.discount * 100+'%'}</td>
                                 <td>${coupon.duration === null ? '永久' : coupon.duration + '天'}</td>
-                                <td>${coupon.threshold === null ? '' : coupon.threshold +'元'}</td>
-                                <td>${coupon.status === 1 ? '上架' : '下架'}</td>
+                                <td>${coupon.threshold === null ? '無門檻' : coupon.threshold +'元'}</td>
+                                <td>${coupon.status === 0 ? '下架' : (coupon.status === 1 ? '上架' : '過期')}</td>
                                 <td>
-                                    <button id="btn-revise" class="btn-revise">修改</button>
+                                    <button id="btn-revise" class="btn-revise" >修改</button>
                                 </td>
                             </tr>
                         `);
+
+                            $("tr").each(function() {
+                                // Find the <td> that contains the status (adjust index as needed)
+                                const statusText = $(this).find("td:eq(7)").text().trim();
+
+                                // Find the button in the current row
+                                const $reviseButton = $(this).find(".btn-revise");
+
+                                // Check the condition and disable/enable the button
+                                if (statusText === "過期") {
+                                    $reviseButton.css('background-color', 'gray');
+                                    $reviseButton.prop("disabled", true);
+                                } else {
+                                    $reviseButton.prop("disabled", false);
+                                }
+                            });
                         });
                     } else {
                         const message = response.message;
@@ -479,11 +501,29 @@
                                 <td>${coupon.type}</td>
                                 <td>${coupon.discount > 1 ? coupon.discount +'元' : coupon.discount * 100+'%'}</td>
                                 <td>${coupon.duration === null ? '永久' : coupon.duration + '天'}</td>
-                                <td>${coupon.threshold === null ? '' : coupon.threshold +'元'}</td>
-                                <td>${coupon.status === 1 ? '上架' : '下架'}</td>
-                                <td><button id="btn-revise" class="btn-revise">修改</button></td>
+                                <td>${coupon.threshold === null ? '無門檻' : coupon.threshold +'元'}</td>
+                                <td>${coupon.status === 0 ? '下架' : (coupon.status === 1 ? '上架' : '過期')}</td>
+                                <td>
+                                    <button id="btn-revise" class="btn-revise" disabled="${coupon.status === 2}">修改</button>
+                                </td>
                             </tr>
                         `);
+
+                            $("tr").each(function() {
+                                // Find the <td> that contains the status (adjust index as needed)
+                                const statusText = $(this).find("td:eq(7)").text().trim();
+
+                                // Find the button in the current row
+                                const $reviseButton = $(this).find(".btn-revise");
+
+                                // Check the condition and disable/enable the button
+                                if (statusText === "過期") {
+                                    $reviseButton.css('background-color', 'gray');
+                                    $reviseButton.prop("disabled", true);
+                                } else {
+                                    $reviseButton.prop("disabled", false);
+                                }
+                            });
                         });
                     } else {
                         const message = response.message;
@@ -564,7 +604,7 @@
 
                 case 6: // 適用門檻 (threshold)
                     let threshold = $(this).text().replace(/[^\d.-]/g, ''); // Keep only numbers, periods, or minus signs
-                    threshold = threshold.trim() === '' ? '' : parseFloat(threshold); // Handle empty or invalid values gracefully
+                    threshold = threshold.trim() === '' ? '0' : parseFloat(threshold); // Handle empty or invalid values gracefully
                     $(this).html(`<input type="number" min="0" value="${threshold}" class="form-control">`);
                     break;
                 case 7: // 優惠券狀態 (status)
@@ -627,32 +667,65 @@
             ratio = null;
         }
 
+
+        const evtCoupName = row.find('td:nth-child(3) input').val();
+        const startDate = row.find('td:nth-child(4) input:nth-child(1)').val();
+        const endDate = row.find('td:nth-child(4) input:nth-child(2)').val();
+        const duration = parseInt(row.find('td:nth-child(7) input').val());
+        const threshold = parseInt(row.find('td:nth-child(8) input').val());
+        const status = parseInt(row.find('td:nth-child(9) select').val());
+
+
+
+
         // Validate and gather updated data
         const updatedCoupon = {
 
             id: id,
-            evtCoupName: row.find('td:nth-child(3) input').val(),
-            startDate: row.find('td:nth-child(4) input:nth-child(1)').val(),
-            endDate: row.find('td:nth-child(4) input:nth-child(2)').val(),
-            type: parseInt(row.find('td:nth-child(5) select').val()),
+            evtCoupName: evtCoupName,
+            startDate: startDate,
+            endDate: endDate,
+            type: type,
             ratio: ratio,
             deduction: deduction,
-            duration: parseInt(row.find('td:nth-child(7) input').val()),
-            threshold: parseInt(row.find('td:nth-child(8) input').val()) || null,
-            status: parseInt(row.find('td:nth-child(9) select').val()),
+            duration: duration,
+            threshold: threshold,
+            status: status
 
         };
 
+
+        if(evtCoupName ===''){
+            pupOutAlter('優惠券名稱不可空白', 'warning');
+            return;
+        }
+
         // Validation checks
-        if (new Date(updatedCoupon.startDate) > new Date(updatedCoupon.endDate)) {
+        if (new Date(startDate) > new Date(endDate) ) {
             pupOutAlter('開始日期不能晚於結束日期', 'warning');
             return;
         }
 
-        if (updatedCoupon.type === 0 && updatedCoupon.ratio >= 1) {
+        if (type === 0 && ratio >= 1) {
             pupOutAlter('折扣類型為比例時，折扣值需小於100', 'warning');
             return;
         }
+
+        if (duration < 0 ){
+            pupOutAlter('效期不可為負值', 'warning');
+            return;
+        }
+
+        if(threshold < 0 || ''){
+            pupOutAlter('門檻不可為負值', 'warning');
+            return;
+        }
+
+        if(deduction < 0){
+            pupOutAlter('折扣不可為負值', 'warning');
+            return;
+        }
+
 
         // Send the updated data to the backend
         $.ajax({
@@ -671,11 +744,12 @@
                         : updatedCoupon.deduction + '元'
                 );
                 row.find('td:nth-child(7)').text(updatedCoupon.duration + '天');
-                row.find('td:nth-child(8)').text(updatedCoupon.threshold ? updatedCoupon.threshold + '元' : '');
+                row.find('td:nth-child(8)').text(updatedCoupon.threshold ? updatedCoupon.threshold + '元' : '0元');
                 row.find('td:nth-child(9)').text(updatedCoupon.status === 1 ? '上架' : '下架');
 
                 // Change button back to "Modify"
                 row.find('.btn-save').text('修改').removeClass('btn-save').addClass('btn-revise');
+                row.find('.btn-cancel').remove();
             },
             error: function () {
                 pupOutAlter('更新失敗，請稍後再試','warning');
@@ -728,29 +802,86 @@
         $('#newStartDate, #newEndDate').on('change', function () {
             const startDate = new Date($('#newStartDate').val());
             const endDate = new Date($('#newEndDate').val());
-            const warning = $('#newDateWarning');
 
             if (startDate && endDate && endDate < startDate) {
-                warning.show();
-            } else {
-                warning.hide();
+                pupOutAlter('結束日期不得早於開始日期','warning');
             }
         });
 
-        const eventId = parseInt($('#newEventId').val());
+
 
 
         // Handle form submission
         $('#addCouponForm').on('submit', function (e) {
             e.preventDefault(); // Prevent default form submission
-            const eventId = parseInt($('#newEventId').val());
+            const eventId = $('#newEventId').val();
             const type = $('#newDiscountType').val();
             const discount = $('#newDiscount').val();
+            const evtCoupName = $('#newCouponName').val();
+            const duration = $('#newDuration').val();
+            const threshold = $('#newThreshold').val();
+            const startDate = $('#newStartDate').val();
+            const endDate = $('#newEndDate').val();
+            const status = $('#newCouponStatus').val();
 
-            if (eventId===-1) {
+
+            if (eventId === '-1') {
                 pupOutAlter('請選擇要新增優惠券的活動', 'warning');
                 return;
             }
+
+            if(evtCoupName ===''){
+                pupOutAlter('優惠券名稱不可空白', 'warning');
+                return;
+            }
+
+            if(type === '-1'){
+                pupOutAlter('請選擇折扣類型', 'warning');
+                return;
+            }
+
+            if(discount === ''){
+                pupOutAlter('折扣欄位不可留白', 'warning');
+                return;
+            }
+
+            if (duration === ''){
+                pupOutAlter('效期不可空白', 'warning');
+                return;
+            }
+
+            if (duration < 0 ){
+                pupOutAlter('效期不可為負值', 'warning');
+                return;
+            }
+
+            if(threshold < 0 ){
+                pupOutAlter('門檻不可為負值', 'warning');
+                return;
+            }
+
+            if(threshold === '' ){
+                pupOutAlter('門檻不可空白', 'warning');
+                return;
+            }
+
+
+            if (new Date(startDate) > new Date(endDate) ) {
+                pupOutAlter('開始日期不能晚於結束日期', 'warning');
+                return;
+            }
+
+            if(startDate ==='' || endDate ==='' ) {
+                pupOutAlter('請選擇優惠券適用日期', 'warning');
+                return;
+            }
+
+
+            if (status === '-1') {
+                pupOutAlter('請選擇優惠券狀態', 'warning');
+                return;
+            }
+
 
             let ratio;
             let deduction;
@@ -763,17 +894,23 @@
                 ratio = null;
             }
 
+            if (type === 0 && ratio >= 1) {
+                pupOutAlter('折扣類型為比例時，折扣值需小於100', 'warning');
+                return;
+            }
+
+
             // Collect form data
             const newCoupon = {
-                evtCoupName: $('#newCouponName').val(),
-                type: $('#newDiscountType').val(),
+                evtCoupName: evtCoupName,
+                type: type,
                 ratio: ratio,
                 deduction: deduction,
-                duration: $('#newDuration').val(),
-                threshold: $('#newThreshold').val(),
-                startDate: $('#newStartDate').val(),
-                endDate: $('#newEndDate').val(),
-                status: $('#newCouponStatus').val()
+                duration: duration,
+                threshold: threshold,
+                startDate: startDate,
+                endDate: endDate,
+                status: status
             };
 
 
@@ -795,7 +932,6 @@
             });
         });
     });
-
 
 
 
