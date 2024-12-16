@@ -3,6 +3,7 @@ package com.artogether.product.product;
 
 import java.util.List;
 
+import com.artogether.product.my_prd_coup.MyPrdCoup;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,6 +23,8 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     
     @Query(value = "SELECT * FROM product ORDER BY all_stars DESC LIMIT :count", nativeQuery = true)
     List<Product> findTopRatedProducts(@Param("count") int count);
+
+
 
 
 }

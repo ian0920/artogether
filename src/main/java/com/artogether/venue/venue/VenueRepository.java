@@ -10,7 +10,8 @@ import java.util.List;
 @Repository
 public interface VenueRepository extends JpaRepository<Venue, Integer> {
     List<Venue> findByBusinessMember_Id(int bizId);
-
+    Boolean existsByIdAndStatus(int vneId, VenueStatusEnum status);
+    List<Venue> findByStatus(VenueStatusEnum status);
 
 
 }

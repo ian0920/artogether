@@ -47,8 +47,8 @@ public class Wynn_BusinessController {
 	// 註冊成為商家
 	@GetMapping("/registerBusiness")
 	public String registerBusiness(HttpSession session, Model model) {
-		Object member = session.getAttribute("member");
-        if (member == null) { // 檢查 member 是否為 null
+		Integer memberId = (Integer)session.getAttribute("member");
+        if (memberId == null) { // 檢查 member 是否為 null
             // 導向登入會員
             return "redirect:/login";
         }
@@ -58,10 +58,12 @@ public class Wynn_BusinessController {
 	}
 	
 	@PostMapping("/applyForBusiness")
-	public String applyForBusiness(@ModelAttribute BusinessMember bMember) {
+	public String applyForBusiness(@ModelAttribute BusinessMember bMember,HttpSession session) {
 		//TODO: 做資料驗證(地址那些)
-		bMember.setStatus((byte) 1);
-		businessService.save(bMember);
+		bMember.setStatus(Byte.valueOf((byte)0));
+		BusinessMember dataBMember = businessService.save(bMember);
+		Member member = memberService.findById((Integer)session.getAttribute("member"));
+		businessPermService.register(member,dataBMember);
 		return "homepage";
 	}
 	
@@ -69,6 +71,11 @@ public class Wynn_BusinessController {
 	@GetMapping("/staff_management")
 	public String goManageStaff(HttpSession session, Model model) {
 		BusinessMember bm = (BusinessMember)session.getAttribute("presentBusinessMember");
+		Integer memberId = (Integer)session.getAttribute("member");
+		if(!businessPermService.findByPK(memberId, bm.getId()).isAdminPerm()) {
+			model.addAttribute("errors", "僅有具有管理員權限者方可查看");
+			return "/error";
+		};
 		List<BusinessPerm> bPerms = businessPermService.getAllByBusinessMember(bm.getId());
 		model.addAttribute("bPerms", bPerms);
 		return "business/staff_management";

@@ -66,14 +66,6 @@ public class EventController {
         return "event/member_event_orders";
     }
 
-    //刪除活動訂單
-//    @GetMapping("/order/cancel/{id}")
-//    public String cancelOrder (@PathVariable Integer id) {
-//
-//        evtOrderService.cancelOrder(id);
-//
-//        return "redirect:/event/orders";
-//    }
 
     //瀏覽會員活動優惠券
     @GetMapping("/coupons")

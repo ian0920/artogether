@@ -84,6 +84,7 @@ CREATE TABLE business_perm (
     venue_perm BOOLEAN DEFAULT FALSE,
     event_perm BOOLEAN DEFAULT FALSE,
     assign_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    admin_perm BOOLEAN DEFAULT FALSE,
     status TINYINT DEFAULT 0,
     PRIMARY KEY (business_id, member_id)
 );

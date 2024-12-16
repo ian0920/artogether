@@ -16,7 +16,7 @@
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
             <!-- Navbar Brand-->
             <a class="navbar-brand ps-3" th:href="@{/platform/home}"><img class="logo-img" src="/platform_backend/assets/img/ARTOGETHER_white.svg"></a>
-            
+
             <!-- Sidebar Toggle-->
             <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
             <!-- Navbar Search-->
@@ -92,11 +92,19 @@
                             </a>
 
                             <div class="sb-sidenav-menu-heading">後台</div>
-                            <a class="nav-link" href="#">
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePermDesc" aria-expanded="false" aria-controls="collapsePermDesc">
                                 <div class="sb-nav-link-icon"><i class="fas fa-address-book"></i></div>
-                                後台員工管理
+                                後台管理
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
-                            <a class="nav-link" href="#">
+                            <div class="collapse" id="collapsePermDesc" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" href="/systemManager/manager">後台員工管理</a>
+                                    <a class="nav-link" href="/permission/pm">後台員工權限</a>
+                                    <a class="nav-link" href="/permDesc/page">後台權限說明</a>
+                                </nav>
+                            </div>
+                            <a class="nav-link" href="/platformMsg/pfmessage">
                                 <div class="sb-nav-link-icon"><i class="fas fa-comments"></i></div>
                                 訊息功能
                             </a>
@@ -109,17 +117,17 @@
                 </nav>
             </div>
             <div id="layoutSidenav_content">
-                
-                
+
+
                 <!-- 主要功能請寫在MAIN區域內 -->
-                
+
                 <main>
                     <div class="container-fluid px-4">
                         <h1 class="mt-4">Artogether</h1>
                         <ol class="breadcrumb mb-4">
                             <li class="breadcrumb-item active">管理平台</li>
                         </ol>
-                    </div>    
+                    </div>
                 </main>
 
 

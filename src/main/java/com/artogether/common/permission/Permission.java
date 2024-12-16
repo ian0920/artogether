@@ -1,7 +1,7 @@
 package com.artogether.common.permission;
 
 import com.artogether.common.perm_desc.PermDesc;
-import com.artogether.common.system_mamager.SystemManager;
+import com.artogether.common.system_manager.SystemManager;
 
 import javax.persistence.*;
 import java.io.Serializable;

@@ -21,11 +21,11 @@ public class PlatformMsg {
 	@Column(name = "Id", updatable = false)
 	private Integer id;
 	
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id", referencedColumnName = "id")
 	private Member member;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "business_id", referencedColumnName = "id")
 	private BusinessMember businessMember;
 	
@@ -33,7 +33,7 @@ public class PlatformMsg {
 	private String message;
 	
 	@Column(name = "msg_time")
-	private Timestamp msg_time;
+	private Timestamp msgTime;
 	
 	@Column(name = "status")
 	private byte status;

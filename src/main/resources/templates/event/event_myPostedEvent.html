@@ -9,6 +9,31 @@
 	  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
 	  rel="stylesheet"
 	/>
+    <style>
+      .popup {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        z-index: 1000;
+      }
+
+      .overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+      }
+    </style>
   </head>
   <body>
     <!-- 導航 -->
@@ -20,12 +45,14 @@
           <span class="material-symbols-outlined">add</span>新增活動
         </button>
       </div>
-      <!-- 	<p>共有<span th:text=${evtList}></span>筆</p> -->
+      <!-- 共有筆數 -->
       <table>
         <thead>
           <tr>
             <th scope="col">ID</th>
             <th scope="col">名稱</th>
+            <th scope="col">開始日期</th>
+            <th scope="col">延期日期</th>
             <th scope="col">狀態</th>
             <th scope="col">編輯</th>
             <th scope="col">延期</th>
@@ -35,22 +62,26 @@
         <tbody>
           <tr th:each="e : ${page.content}">
             <th scope="row" th:text="${e.id}">ID</th>
-            <td th:text="${e.name}"></td>
+            <td>
+            	<a th:href="@{/event/details/{id}(id=${e.id})}" th:text="${e.name}"></a>
+            </td>
+			<td th:text="${#dates.format(e.startDate, 'yyyy-MM-dd HH:mm')}"></td>            
+			<td th:text="${#dates.format(e.delayDate, 'yyyy-MM-dd HH:mm')}"></td>            
             <td th:switch="${e.status}">
-            	<p th:case="0">待審核</p>	
-            	<p th:case="1">正常</p>	
-            	<p th:case="2">延期</p>	
-            	<p th:case="3">取消</p>	
-            	<p th:case="4">審核被拒</p>	
-            	<p th:case="5">結束</p>	
-           	</td>
+            	<p th:case="0">待審核</p> 
+            	<p th:case="1">正常</p> 
+            	<p th:case="2">延期</p> 
+            	<p th:case="3">取消</p> 
+            	<p th:case="4">審核被拒</p> 
+            	<p th:case="5">結束</p> 
+            </td>
             <td>
               <button clickable th:onclick="location.href='/event/edit/' + [[${e.id}]]">
                 編輯
               </button>
             </td>
             <td>
-              <button clickable th:if="${e.status != 2}" th:onclick="updateStatus(2, [[${e.id}]])">延期</button>
+              <button clickable th:onclick="delayEvent([[${e.id}]])">延期</button>
             </td>
             <td>
               <button clickable th:if="${e.status != 3}" th:onclick="updateStatus(3, [[${e.id}]])">取消</button>
@@ -60,11 +91,24 @@
       </table>
     </main>
 
+    <!-- 彈窗和背景遮罩 -->
+    <div class="overlay" id="overlay"></div>
+    <div class="popup" id="popup">
+      <h3>選擇延期日期</h3>
+      <input type="datetime-local" id="delayDate" class="solo"/>
+      <br /><br />
+      <div class="row">
+      <button id="cancelDelay" class="button-tertiary">取消</button>
+      <button id="confirmDelay" class="button-primary flex-auto">確認</button>
+      </div>
+    </div>
+
     <script type="text/javascript" th:inline="javascript">
-      var updateStatus = async function (status, eid) {
+      var updateStatus = async function (status, eid, delayDate) {
         const payload = {
           eventId: eid,
           status: status,
+          delayDate: delayDate || null, // 若為延期則附加日期
         };
         let response = await fetch("/api/event/updateStatus", {
           method: "POST",
@@ -77,6 +121,35 @@
           let data = await response.json(); // 解析 JSON 資料
           alert(data.message);
         }
+      };
+
+      var delayEvent = function (eventId) {
+    	  console.log("搞啥");
+        // 顯示彈窗
+        const popup = document.getElementById("popup");
+        const overlay = document.getElementById("overlay");
+        popup.style.display = "block";
+        overlay.style.display = "block";
+
+        // 處理確認與取消按鈕
+        const confirmButton = document.getElementById("confirmDelay");
+        const cancelButton = document.getElementById("cancelDelay");
+
+        confirmButton.onclick = function () {
+          const delayDate = document.getElementById("delayDate").value;
+          if (!delayDate) {
+            alert("請選擇日期！");
+            return;
+          }
+          updateStatus(2, eventId, delayDate); // 傳送請求
+          popup.style.display = "none";
+          overlay.style.display = "none";
+        };
+
+        cancelButton.onclick = function () {
+          popup.style.display = "none";
+          overlay.style.display = "none";
+        };
       };
     </script>
   </body>

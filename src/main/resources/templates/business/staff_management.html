@@ -12,7 +12,7 @@
 </head>
 <body>
 <!-- 導航 -->
-<div th:replace="~{/components/navbar_business::navbar('info','')}"></div>
+<div th:replace="~{/components/navbar_business::navbar('staff','')}"></div>
 
 <main>
 	<h2>商家-員工管理</h2>
@@ -80,6 +80,7 @@
 					<button th:case="0" th:onclick="updateStatus(1,[[${bp.member.id}]])">停權</button>
 					<button th:case="1" th:onclick="updateStatus(2,[[${bp.member.id}]])">啟用</button>
 				</td>
+				
 			</tr>
 		</tbody>
 	</table>
@@ -115,7 +116,7 @@
 	    };
 
 	    // 發送資料到後端
-	    fetch("/api/business/addStaff", { // 替換 123 為實際 businessId
+	    fetch("/api/business/addStaff", {
 	        method: "POST",
 	        headers: {
 	            "Content-Type": "application/json"

@@ -1,0 +1,35 @@
+  <div class="pagination-wrapper">
+    <nav aria-label="Page navigation">
+      <ul class="custom-pagination">
+        <!-- Previous Button -->
+        <li>
+          <a class="page-link"
+             th:href="@{/event/all(sortBy=${sortBy}, page=${currentPage - 1}, size=${size})}"
+             th:classappend="${currentPage == 0} ? 'disabled'">
+            上一頁
+          </a>
+        </li>
+
+        <!-- Page Numbers -->
+        <li th:if="${totalPages > 1}" th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}">
+          <a class="page-link"
+             th:href="@{/event/all(sortBy=${sortBy}, page=${pageNum}, size=${size})}"
+             th:classappend="${pageNum == currentPage} ? 'active'"
+             th:text="${pageNum + 1}">
+          </a>
+        </li>
+        <li th:if="${totalPages == 1}">
+          <span class="page-link active">1</span>
+        </li>
+
+        <!-- Next Button -->
+        <li>
+          <a class="page-link"
+             th:href="@{/event/all(sortBy=${sortBy}, page=${currentPage + 1}, size=${size})}"
+             th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+            下一頁
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>

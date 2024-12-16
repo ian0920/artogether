@@ -2,23 +2,140 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
+<link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+<link href="/platform_backend/css/styles.css" rel="stylesheet" />
+<script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+
+<link rel="stylesheet" th:href="@{/web_design/style/style_general.css}" />
+<link
+	href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+	rel="stylesheet" />
+	
+<style type="text/css">
+
+</style>
 <title>活動狀態管理-平台</title>
 </head>
-<body>
+<body class="sb-nav-fixed">
+<nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+            <!-- Navbar Brand-->
+            <a class="navbar-brand ps-3" th:href="@{/platform/home}"><img class="logo-img" src="/platform_backend/assets/img/ARTOGETHER_white.svg"></a>
+            
+            <!-- Sidebar Toggle-->
+            <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
+            <!-- Navbar Search-->
+            <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+                <div class="input-group">
+                    <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch" />
+                    <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
+                </div>
+            </form>
+            <!-- Navbar-->
+            <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><button class="dropdown-item btn btn-lg" onclick="location.href='/platform/logout'" style="text-align: center">登出</button></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+        <div id="layoutSidenav">
+            <div id="layoutSidenav_nav">
+                <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                    <div class="sb-sidenav-menu">
+                        <div class="nav">
+                            <div class="sb-sidenav-menu-heading">Core</div>
+                            <a class="nav-link" th:href="@{/platform/home}">
+                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                                主控台
+                            </a>
+                            <div class="sb-sidenav-menu-heading">平台項目</div>
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
+                                <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+                                活動
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" href="#">活動管理</a>
+                                    <a class="nav-link" href="">活動款項查核</a>
+                                </nav>
+                            </div>
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseProduct" aria-expanded="false" aria-controls="collapseProduct">
+                                <div class="sb-nav-link-icon"><i class="fas fa-shopping-bag"></i></div>
+                                商品
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseProduct" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" href="#">商品管理</a>
+                                    <a class="nav-link" href="#">商品款項查核</a>
+                                </nav>
+                            </div>
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseVenue" aria-expanded="false" aria-controls="collapseVenue">
+                                <div class="sb-nav-link-icon"><i class="fas fa-map-marker"></i></div>
+                                場地
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseVenue" aria-labelledby="headingThree" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" href="#">場地管理</a>
+                                    <a class="nav-link" href="#">場地款項查核</a>
+                                </nav>
+                            </div>
+
+                            <div class="sb-sidenav-menu-heading">管理</div>
+                            <a class="nav-link" href="#">
+                                <div class="sb-nav-link-icon"><i class="fas fa-user"></i></div>
+                                一般會員管理
+                            </a>
+                            <a class="nav-link" href="#">
+                                <div class="sb-nav-link-icon"><i class="fas fa-user-circle"></i></div>
+                                商家會員管理
+                            </a>
+
+                            <div class="sb-sidenav-menu-heading">後台</div>
+                            <a class="nav-link" href="#">
+                                <div class="sb-nav-link-icon"><i class="fas fa-address-book"></i></div>
+                                後台員工管理
+                            </a>
+                            <a class="nav-link" href="#">
+                                <div class="sb-nav-link-icon"><i class="fas fa-comments"></i></div>
+                                訊息功能
+                            </a>
+                        </div>
+                    </div>
+                    <div class="sb-sidenav-footer">
+                        <div class="small">Logged in as:</div>
+                        Start Bootstrap
+                    </div>
+                </nav>
+            </div>
+            <div id="layoutSidenav_content">
+<main>
 	<h4>搜尋欄</h4>
 	<form action="#" method="get">
-	
-		<label for="id">ID</label>
-		<input name="id">
-		<label for="name">名稱</label>
-		<input name="name">
-		<label for="location">地點</label>
-		<input name="location">
-		<label for="minPrice">價錢起</label>
-		<input name="minPrice">
-		<label for="maxPrice">價錢迄</label>
-		<input name="maxPrice">
-		<button type="submit">查詢囉</button>
+		<fieldset>
+		<label class="label-input">ID
+			<input name="id" class="solo">
+		</label>
+		<label class="label-input">名稱
+			<input name="name" class="solo">
+		</label>
+		<label class="label-input">地點
+			<input name="location" class="solo">
+		</label>
+		<div class="row">
+		<label class="label-input">價錢起
+			<input name="minPrice" class="solo">
+		</label>
+		<label class="label-input">價錢迄
+			<input name="maxPrice" class="solo">
+		</label>
+		</div>
+		<button type="submit" class="button-primary button-big">查詢囉</button>
+		</fieldset>
 	</form>
 	
 	<h4>搜尋結果：</h4>
@@ -51,7 +168,8 @@
 		</tbody>
 	</table>
 	
-	
+</main>	
+</div>
 	<script type="text/javascript" th:inline="javascript">
 		var updateStatus = async function(status, eid){
 			const payload = {

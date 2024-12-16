@@ -1,17 +1,19 @@
 package com.artogether.product.cart.model;
 
+import com.artogether.common.business_member.BusinessMember;
 import com.artogether.common.member.Member;
 import com.artogether.product.my_prd_coup.MyPrdCoup;
 import com.artogether.product.my_prd_coup.MyPrdCoupDaoImpl;
 import com.artogether.product.my_prd_coup.MyPrdCoupRepository;
 import com.artogether.product.prd_coup.PrdCoup;
 import com.artogether.product.product.Product;
+import com.artogether.product.product.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,12 +22,14 @@ public class CartService {
     private final CartRepository cartRepository;
     private final MyPrdCoupRepository myPrdCoupRepository;
     private final MyPrdCoupDaoImpl myPrdCoupDaoImpl;
+    private final ProductRepository productRepository;
 
     @Autowired
-    public CartService(CartRepository cartRepository, MyPrdCoupRepository myPrdCoupRepository, MyPrdCoupDaoImpl myPrdCoupDaoImpl) {
+    public CartService(CartRepository cartRepository, MyPrdCoupRepository myPrdCoupRepository, MyPrdCoupDaoImpl myPrdCoupDaoImpl, ProductRepository productRepository) {
         this.cartRepository = cartRepository;
         this.myPrdCoupRepository = myPrdCoupRepository;
         this.myPrdCoupDaoImpl = myPrdCoupDaoImpl;
+        this.productRepository = productRepository;
     }
 
     // 添加到購物車
@@ -129,6 +133,8 @@ public class CartService {
                 (prdCoup.getStartDate() == null || prdCoup.getStartDate().getTime() <= now.getTime()) &&
                 (prdCoup.getEndDate() == null || prdCoup.getEndDate().getTime() > now.getTime());
     }
+
+
 
 //    public int getTotalItemsInCart(Member member){
 //        return cartRepository.findByMemberAndQtyGreaterThan(member, 0).size();

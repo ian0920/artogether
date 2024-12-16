@@ -17,7 +17,7 @@ public interface ProductService {
     Product createProduct(Product product);
 
     // 更新商品
-    Product updateProduct(Integer id, Product updatedProduct);
+    Product updateProduct(Integer id, Product updatedProduct, List<MultipartFile> images, HttpSession session) throws IOException;
 
     // 根據ID查詢商品
     Optional<Product> getProductById(Integer id);
@@ -40,9 +40,12 @@ public interface ProductService {
 
     Product addProduct(Product product, List<MultipartFile> images, HttpSession session) throws IOException;
 
+
     List<Product> getTopRatedProducts(int count);
     
     Page<Product> getPaginatedProducts(int page, int size, String sortBy);
+
+
 
 }
 

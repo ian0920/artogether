@@ -8,7 +8,7 @@
     <link rel="stylesheet" th:href="@{/web_design/style/style_general.css}" />
     <link rel="stylesheet" th:href="@{/web_design/style/style_homepage.css}" />
     <link
-            href="https://fonts.googleapis.com/icon?family=Material+Icons"
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
             rel="stylesheet"
     />
     <style>
@@ -192,7 +192,7 @@
 
 </head>
 <body>
-<header class="header navbar_homepage" th:include="homepage::header"></header>
+<div th:replace="~{/components/navbar_homepage::navbar}"></div>
 
 <main>
 
@@ -261,9 +261,6 @@
 </main>
 
 
-<div class="nav-menu-box" th:include="homepage::nav-menu-box"></div>
-<div class="user-menu-box" th:include="homepage::user-menu-box"></div>
-<footer th:include="homepage::footer"></footer>
 
 <script th:src="@{/web_design/components/web_components/navbar_hompage.js}"></script>
 <script>

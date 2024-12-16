@@ -8,12 +8,14 @@ import com.artogether.venue.vneimg.VneImgService;
 import com.artogether.venue.vneprice.VnePriceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/vne")
@@ -38,10 +40,17 @@ public class VneRestController {
     }
 
     //取出該場地的細節
-    @GetMapping("/Detail/{vneId}")
-    public VneDetailDTO vneDetail(@PathVariable("vneId") Integer vneId) {
-        VneDetailDTO vneDetailDTO = venueService.getDetailVenue(vneId);
-        return vneDetailDTO;
+    @PostMapping("/details")
+    public VneDetailDTO vneDetail(@RequestBody Map<String, Integer> request) {
+        Integer vneId = request.get("vneId"); // 從請求主體中提取 vneId
+        VneDetailDTO vneDetailDTO = venueService.getDetailVenue(vneId); // 根據 vneId 獲取場地詳情
+        return vneDetailDTO; // 返回場地詳情 DTO
+    }
+
+    @GetMapping("/card/{vneId}")
+    public VneCardDTO vneDetail(@PathVariable("vneId") Integer vneId) {
+        VneCardDTO vneCardDTO = venueService.getVenue(vneId);
+        return vneCardDTO;
     }
 
     //取出該場地的時間細節
@@ -70,15 +79,38 @@ public class VneRestController {
         return flatpickrDTO;
     }
     //取出該場地的可預約的時間細節
-    @GetMapping("/order/available/{vneId}")
+    @GetMapping("/order/availability/{vneId}")
     public AvailableDTO getAvailableDTO(@PathVariable("vneId") Integer vneId,
                                         @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date){
-        return tslotService.getAvailableDTO(vneId, date);
+        LocalDateTime now = LocalDateTime.now();
+        return tslotService.getAvailableDTO(vneId, date, now);
     }
-    @PostMapping("/test1")
-    public List<VneCardDTO> testApi1() {
-        int businessId = 1;
-        List<VneCardDTO> vneCardDTOs = venueService.bizVneList(businessId);
-        return vneCardDTOs;
+
+    @PostMapping("/order/submit/{vneId}")
+    public ResponseEntity<VneOrderDTO> submitOrder(@RequestBody VneOrderDTO vneOrderDTO) {
+        // 模擬後端業務處理
+        Integer totalPrice = calculateTotalPrice(vneOrderDTO.getStartTime(), vneOrderDTO.getEndTime());
+        Integer shouldPaid = totalPrice; // 模擬計算應支付金額
+        vneOrderDTO.setTotalPrice(totalPrice);
+        vneOrderDTO.setShouldPaid(shouldPaid);
+
+        // 返回包含確認數據的 DTO
+        return ResponseEntity.ok(vneOrderDTO);
+    }
+
+    // 最終保存階段：確認保存訂單
+    @PostMapping("/order/confirm/{vneId}")
+    public ResponseEntity<String> confirmOrder(@RequestBody VneOrderDTO vneOrderDTO) {
+        // 模擬訂單保存邏輯
+        if (vneOrderDTO.getPaid() != null && vneOrderDTO.getPaid() >= vneOrderDTO.getShouldPaid()) {
+            return ResponseEntity.ok("Order successfully confirmed!");
+        }
+        return ResponseEntity.badRequest().body("Insufficient payment!");
+    }
+
+    // 模擬計算價格的邏輯
+    private Integer calculateTotalPrice(Integer startTime, Integer endTime) {
+        int hourlyPrice = 100; // 每小時價格
+        return (endTime - startTime) * hourlyPrice;
     }
 }

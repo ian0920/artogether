@@ -40,13 +40,16 @@ public class BusinessService {
 
         BusinessMember bm = findById(businessMember.getId());
         bm.setStatus(businessMember.getStatus());
+        if(businessMember.getApproveDate()!=null) {
+        	bm.setApproveDate(businessMember.getApproveDate());
+        }
         businessMemberRepo.save(bm);
 
     }
 
 
     // 複合查詢+分頁
-    public Page<BusinessMember> searchEvents(Map<String, String> searchCriteria, Pageable pageable) {
+    public Page<BusinessMember> searchBMembs(Map<String, String> searchCriteria, Pageable pageable) {
         Specification<BusinessMember> spec = BMemberSpecification.dynamicQuery(searchCriteria);
         return businessMemberRepo.findAll(spec, pageable);
     }

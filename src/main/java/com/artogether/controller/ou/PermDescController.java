@@ -1,71 +1,67 @@
 package com.artogether.controller.ou;
 
-import org.springframework.stereotype.Controller;
 import com.artogether.common.perm_desc.PermDesc;
 import com.artogether.common.perm_desc.PermDescService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Controller
-@RequestMapping("/perm-desc")
+@RequestMapping("/permDesc")
 public class PermDescController {
 
     @Autowired
     private PermDescService permDescService;
 
-    // 新增平台功能說明
-    @PostMapping
-    public ResponseEntity<Void> add(@RequestBody PermDesc permDesc) {
-        List<PermDesc> existingPermDescs = permDescService.findAll();
-        boolean exists = existingPermDescs.stream().anyMatch(p -> p.getDescription().equals(permDesc.getDescription()));
-
-        if (!exists) {
-            permDescService.add(permDesc);
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.status(409).build(); // 返回 409 衝突狀態碼
-        }
+    // 點擊後進入畫面並查詢全部功能說明並顯示在頁面
+    @GetMapping("/page") // 網址
+    public String getPermDescPage(Model model) {
+        List<PermDesc> allPermDesc = permDescService.findAll();
+        allPermDesc.forEach(permDesc -> System.out.println(permDesc.getDescription()));
+        model.addAttribute("permDescs", allPermDesc);
+        return "/platform/permDesc";  // 位置
     }
 
-    // 刪除
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable int id) {
-        PermDesc permDesc = permDescService.findById(id);
-        if (permDesc != null) {
-            permDescService.delete(permDesc);
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+
+    /*===================
+        新增功能說明頁面
+     ====================*/
+    @GetMapping("/pdfadd")
+    public String addViewPermDesc(Model model) {
+        model.addAttribute("permDesc", new PermDesc());
+//        System.out.println(((PermDesc) model.getAttribute("permDesc")).getDescription());
+        return "platform/pdfadd";
     }
 
-    // 更新
-    @PutMapping("/{id}")
-    public ResponseEntity<PermDesc> update(@PathVariable int id, @RequestBody PermDesc permDesc) {
-        permDesc.setId(id); // 確保更新的是正確的 PermDesc
+    @PostMapping("/pdfadd")
+    public String addPermDesc(@ModelAttribute PermDesc permDesc, Model model) {
+        // 調用 Service 或 Repository 進行儲存邏輯
+        permDescService.savePermDesc(permDesc); // 示例：調用 Service 方法
+        List<PermDesc> allPermDesc = permDescService.findAll();
+//        model.addAttribute("message", isSuccess ? "新增成功！" : "新增失敗！");
+        model.addAttribute("permDescs", allPermDesc);
+        return "/platform/permDesc"; // 成功後重定向至列表頁面
+    }
+
+    //====================
+
+    // 處理更新功能說明的請求
+    @PostMapping("/update")
+    public String updatePD(@ModelAttribute PermDesc permDesc) {
         permDescService.update(permDesc);
-        return ResponseEntity.ok(permDesc);
+        return "redirect:/permDesc/page";
     }
 
-    // 查詢全部
-    @GetMapping
-    public ResponseEntity<List<PermDesc>> findAll() {
-        List<PermDesc> permDescs = permDescService.findAll();
-        return ResponseEntity.ok(permDescs);
-    }
-
-    // 單一查詢
-    @GetMapping("/{id}")
-    public ResponseEntity<PermDesc> findById(@PathVariable int id) {
-        PermDesc permDesc = permDescService.findById(id);
-        if (permDesc != null) {
-            return ResponseEntity.ok(permDesc);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    // 刪除功能說明
+    @GetMapping("/delete/{id}")
+    public String removePD(@PathVariable Integer id) {
+        PermDesc permDesc = new PermDesc();
+        permDesc.setId(id);
+        permDescService.delete(permDesc);
+        return "redirect:/permDesc/page";
     }
 }
 

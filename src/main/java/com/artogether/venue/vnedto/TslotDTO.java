@@ -24,6 +24,8 @@ public class TslotDTO implements Serializable {
     private List<Integer> hourOfFri;
     private List<Integer> hourOfSat;
     private List<Integer> hourOfSun;
+    private Integer startHour;
+    private Integer endHour;
 
 
 }

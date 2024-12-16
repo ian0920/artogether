@@ -38,20 +38,20 @@ INSERT INTO business_member (name, email, addr, tax_id, start_date, approve_date
 ('彼得潘企業社', 'fitnessfirst@example.com', '880澎湖縣馬公市治平路32號', '67890123', '2023-10-01', '2023-10-20', 1);
 
 -- Insert fake data into the business_perm table
-INSERT INTO business_perm (business_id, member_id, prd_perm, venue_perm, event_perm, status) VALUES
-(1, 2, TRUE, FALSE, TRUE, 0),
-(2, 3, FALSE, TRUE, TRUE, 0),
-(3, 4, TRUE, TRUE, FALSE, 0),
-(4, 5, TRUE, FALSE, FALSE, 0),
-(5, 6, FALSE, TRUE, TRUE, 0),
-(6, 7, TRUE, TRUE, FALSE, 0),
-(7, 8, FALSE, FALSE, TRUE, 0),
-(8, 9, TRUE, FALSE, TRUE, 0),
-(9, 10, TRUE, TRUE, TRUE, 0),
-(10, 1, FALSE, TRUE, FALSE, 0),
-(9, 1, TRUE, TRUE, TRUE, 0),
-(8, 1, TRUE, TRUE, TRUE, 0),
-(7, 1, TRUE, TRUE, TRUE, 0);
+INSERT INTO business_perm (business_id, member_id, prd_perm, venue_perm, event_perm, status, admin_perm) VALUES
+(1, 2, TRUE, FALSE, TRUE, 0, TRUE),
+(2, 3, FALSE, TRUE, TRUE, 0, TRUE),
+(3, 4, TRUE, TRUE, FALSE, 0, TRUE),
+(4, 5, TRUE, FALSE, FALSE, 0, TRUE),
+(5, 6, FALSE, TRUE, TRUE, 0, TRUE),
+(6, 7, TRUE, TRUE, FALSE, 0, TRUE),
+(7, 8, FALSE, FALSE, TRUE, 0, TRUE),
+(8, 9, TRUE, FALSE, TRUE, 0, TRUE),
+(9, 10, TRUE, TRUE, TRUE, 0, TRUE),
+(10, 1, FALSE, TRUE, FALSE, 0, TRUE),
+(9, 1, TRUE, TRUE, TRUE, 0, FALSE),
+(8, 1, TRUE, TRUE, TRUE, 0, FALSE),
+(7, 1, TRUE, TRUE, TRUE, 0, FALSE);
 
 -- Insert fake data into the system_manager table
 INSERT INTO system_manager (account, password, register_date, phone, assign_date, status) VALUES

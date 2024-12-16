@@ -1,50 +1,85 @@
 package com.artogether.controller.ou;
 
-import com.artogether.common.permission.PermissionAnn;
+import com.artogether.common.perm_desc.PermDesc;
+import com.artogether.common.perm_desc.PermDescRepository;
+import com.artogether.common.permission.Permission;
+import com.artogether.common.permission.PermissionDTO;
 import com.artogether.common.permission.PermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List; // 導入List
-import com.artogether.common.permission.Permission; // 導入Permission
+import java.util.List;
 
-@RestController
-@RequestMapping("/permissions")
+@Controller
+@RequestMapping("/permission")
 public class PermissionController {
 
     @Autowired
     private PermissionService permissionService;
+    @Autowired
+    private PermDescRepository permDescRepository;
 
-    // 新增權限
-    @PostMapping("/add") public void addPermission(@RequestBody Permission permission) {
+    // 查詢所有權限
+    @GetMapping("/pm")
+    public String getAllPermissions(Model model) {
+        List<PermissionDTO> permissionDTOS = permissionService.findAllDTO();
+        model.addAttribute("permissions", permissionDTOS);
+        return "platform/permission";  // JSP/HTML file to display the list of permissions
+    }
+
+//        List<Permission> permissions = permissionService.findAll();
+//        model.addAttribute("permissions", permissions);
+//        return "platform/permission";  // JSP/HTML file to display the list of permissions
+//    }
+
+    /*=======================
+    顯示新增權限頁面與處理新增請求
+     ========================*/
+    @GetMapping("/pmadd")
+    public String showAddPermissionForm(Model model) {
+//        Permission permission = new Permission();
+//        model.addAttribute("permission", new Permission());
+//        List<PermDesc> list = permDescRepository.findAll();
+        List<PermissionDTO> permissionDTOS = permissionService.findAllDTO();
+        model.addAttribute("permDescs", permissionDTOS);
+        return "platform/pmadd"; // 返回 Thymeleaf 模板名稱
+    }
+
+    @PostMapping("/pmadd")
+    public String handleAddPermission(@ModelAttribute Permission permission, Model model) {
         permissionService.add(permission);
+        List<Permission> permissions = permissionService.findAll();
+        model.addAttribute("permissions", permissions);
+        return "/platform/permission"; // 重新導向至權限列表
     }
 
-    // 單一查詢
-    @GetMapping("/{id}") public Permission getPermission(@PathVariable int id) {
-        return permissionService.findById(id);
+    //===============================
+
+    // 處理更新權限的請求
+    @PostMapping("/update")
+    public String updatePermission(@ModelAttribute Permission permission, Model model) {
+        Permission updatedPermission = permissionService.update(permission);
+        if (updatedPermission == null) {
+            model.addAttribute("errorMessage", "權限更新失敗！");
+            return "redirect:/permission/all";
+        }
+        return "redirect:/permission/all";  // Redirect to the list of all permissions
     }
 
-    // 查詢全部
-    @GetMapping("/all")
-    public List<Permission> getAllPermissions() {
-        return permissionService.findAll();
+    // 刪除權限
+    @GetMapping("/delete/{id}")
+    public String deletePermission(@PathVariable Integer id, Model model) {
+        Permission permission = permissionService.findAll().stream()
+                .filter(p -> p.getPermissionId().getManagerId().equals(id))  // 假設您可以用 id 創建一個 PermissionId 實例
+                .findFirst()
+                .orElse(null);
+        if (permission != null) {
+            permissionService.delete(permission);
+        } else {
+            model.addAttribute("errorMessage", "權限未找到！");
+        }
+        return "redirect:/permission/all";  // Redirect to the list of all permissions
     }
-
-    // 更新狀態
-    @PutMapping("/update/{id}&{point}")
-    public Permission updatePermission(@PathVariable int id, @PathVariable String point) {
-        return null;
-
-    }
-
-    @GetMapping("/getTest")
-    @ResponseBody // 文字文本回傳
-    @PermissionAnn("1")
-    public String getTestPermission() {
-        System.out.println("getTestPermission...");
-        return "test";
-    }
-
-
 }
