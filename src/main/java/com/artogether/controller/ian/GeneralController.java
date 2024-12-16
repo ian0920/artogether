@@ -8,6 +8,9 @@ import com.artogether.common.member.Member;
 import com.artogether.common.member.MemberService;
 import com.artogether.event.event.Event;
 import com.artogether.event.event.EventService;
+import com.artogether.product.product.Product;
+import com.artogether.product.product.ProductService;
+
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -35,7 +38,10 @@ public class GeneralController {
     private EventService eventService;
 
     @Autowired
-	BusinessService businessService;
+	private BusinessService businessService;
+    
+    @Autowired
+    private ProductService productService;
 
     //拜訪首頁
     @GetMapping("/")
@@ -45,12 +51,17 @@ public class GeneralController {
         List<Event> topThreeEvent = eventService.findAllEvents("enrolledR").subList(0,3);
         model.addAttribute("topThreeEvents", topThreeEvent);
         
-        //隨機商家呈現
+        //精選商城呈現
         List<BusinessMember> randomVendors = businessService.getRandomBusinessMembers(); 
 	    model.addAttribute("vendors", randomVendors);
+	    
+	    //精選商品呈現
+	    
+	    List<Product> topProducts = productService.getTopRatedProducts(3);
 
+	    model.addAttribute("topProducts", topProducts);
 
-        return "homepage";
+	    return "homepage";
     }
 
     //帳號註冊頁面拜訪

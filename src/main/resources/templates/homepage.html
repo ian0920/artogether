@@ -36,13 +36,13 @@
 			</div>
 		</div>
 		<div class="showcase-cards-box">
-			<div th:each="randomVendor:${vendors}"th:onclick="|location.href='/product/vendorproducts/' + ${randomVendor.id}|"
+			<div th:each="topProduct:${topProducts}"th:onclick="|location.href='/product/productDetails/' + ${topProduct.id}|"
 				clickable class="showcase-card card business">
 				<img src="./asset/images/bgimg.png" alt="" />
 				<div class="card-content">
 					<div class="card-title">
-						<div class="tag business">商家</div>
-						<h3 class="card-title-text" th:text="${randomVendor.name}"></h3>
+						<div class="tag product">商品</div>
+						<h3 class="card-title-text" th:text="${topProduct.name}"></h3>
 					</div>
 				</div>
 			</div>
@@ -174,91 +174,29 @@
   </section>
 
   <!-- 商品概覽 -->
-  <section class="sec-showcase showcase-product normal-width">
-    <div class="showcase-info-box">
-      <div class="showcase-info">
-        <h2 class="product">超夯商品</h2>
-      </div>
-      <div class="showcase-browse-all link-button">
-        <a href="#">查看更多</a>
-        <span class="material-symbols-outlined">chevron_right</span>
-      </div>
-    </div>
-    <div class="showcase-cards-box">
-      <div clickable class="showcase-card card product">
-        <img src="./asset/images/bgimg.png" alt="" />
-        <div class="card-content">
-          <div class="card-title">
-            <div class="tag product">商品</div>
-            <h3 class="card-title-text">
-              好棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒的商品
-            </h3>
-          </div>
-          <div class="card-info">
-            <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
-          </div>
-          <div class="tags-box">
-            <strong>NT$ <span>3,600</span></strong>
-            <del>NT$ <span>4,800</span></del>
-          </div>
-        </div>
-      </div>
-      <div clickable class="showcase-card card product">
-        <img src="./asset/images/bgimg.png" alt="" />
-        <div class="card-content">
-          <div class="card-title">
-            <div class="tag product">商品</div>
-            <h3 class="card-title-text">
-              好棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒的商品
-            </h3>
-          </div>
-          <div class="card-info">
-            <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
-          </div>
-          <div class="tags-box">
-            <strong>NT$ <span>3,600</span></strong>
-            <del>NT$ <span>4,800</span></del>
-          </div>
-        </div>
-      </div>
-      <div clickable class="showcase-card card product">
-        <img src="./asset/images/bgimg.png" alt="" />
-        <div class="card-content">
-          <div class="card-title">
-            <div class="tag product">商品</div>
-            <h3 class="card-title-text">
-              好棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒的商品
-            </h3>
-          </div>
-          <div class="card-info">
-            <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
-          </div>
-          <div class="tags-box">
-            <strong>NT$ <span>3,600</span></strong>
-            <del>NT$ <span>4,800</span></del>
-          </div>
-        </div>
-      </div>
-      <div clickable class="showcase-card card product">
-        <img src="./asset/images/bgimg.png" alt="" />
-        <div class="card-content">
-          <div class="card-title">
-            <div class="tag product">商品</div>
-            <h3 class="card-title-text">
-              好棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒棒的商品
-            </h3>
-          </div>
-          <div class="card-info">
-            <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
-          </div>
-          <div class="tags-box">
-            <strong>NT$ <span>3,600</span></strong>
-            <del>NT$ <span>4,800</span></del>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+  <section class="sec-showcase showcase-business normal-width">
+		<div class="showcase-info-box">
+			<div class="showcase-info">
+				<h2 class="business">精選商品</h2>
+			</div>
+			<div class="showcase-browse-all link-button">
+				<a th:href="@{/product/productspage(page=0, size=5, sortBy='id')}">查看更多</a> <span class="material-symbols-outlined">chevron_right</span>
+			</div>
+		</div>
+		<div class="showcase-cards-box">
+			<div th:each="topProduct:${topProducts}"th:onclick="|location.href='/product/productDetail/' + ${topProduct.id}|"
+				clickable class="showcase-card card business">
+				<img src="./asset/images/bgimg.png" alt="" />
+				<div class="card-content">
+					<div class="card-title">
+						<div class="tag product">商品</div>
+						<h3 class="card-title-text" th:text="${topProduct.name}"></h3>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</section>
 </main>
 <footer th:fragment="footer">
   <div class="footer-box" >

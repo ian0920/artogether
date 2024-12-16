@@ -21,7 +21,7 @@ public class PrdImg {
 	@Column(name = "id", updatable = false)
 	private Integer id;
 
-
+	@Lob
 	@Column(name = "image_file")
 	private byte[] imageFile;
 	

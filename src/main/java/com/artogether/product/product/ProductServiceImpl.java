@@ -15,7 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.*;
@@ -156,6 +159,7 @@ public class ProductServiceImpl implements ProductService {
                 product.getStatus(),
                 product.getBusinessMember() != null ? product.getBusinessMember().getName() : null,
                 product.getBusinessMember() != null ? product.getBusinessMember().getId() : null
+                		
         );
     }
 
@@ -218,6 +222,21 @@ public class ProductServiceImpl implements ProductService {
 
     public List<PrdImg> getPrdImgsByProductId(Integer productId) {
         return prdImgRepository.getPrdImgByProductId(productId);
+    }
+    
+    @Override
+    public List<Product> getTopRatedProducts(int count) {
+        // 調用 Repository 方法獲取星數排名前幾名的商品
+        return productRepository.findTopRatedProducts(3);
+    }
+    
+    //商品分頁
+    public Page<Product> getPaginatedProducts(int page, int size, String sortBy) {
+        // 創建包含排序條件的 Pageable 物件
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+
+        // 使用 findAll(Pageable) 來獲取分頁和排序的資料
+        return productRepository.findAll(pageable);
     }
 
     public Map<Integer, List<PrdCoupForCartDTO>> findAllBusinessMember(List<Integer> productIdInCart, Integer memberId) {

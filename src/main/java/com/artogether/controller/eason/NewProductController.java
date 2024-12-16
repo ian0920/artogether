@@ -4,12 +4,19 @@ import com.artogether.common.business_member.BusinessMember;
 import com.artogether.product.prd_catalog.PrdCatalog;
 import com.artogether.product.prd_catalog.PrdCatalogDaoImpl;
 import com.artogether.product.prd_catalog.PrdCatalogRepository;
+import com.artogether.product.prd_img.PrdImg;
+import com.artogether.product.prd_img.PrdImgDto;
+import com.artogether.product.prd_img.PrdImgService;
 import com.artogether.product.product.Product;
 import com.artogether.product.product.ProductDto;
 import com.artogether.product.product.ProductService;
 import com.artogether.product.product.ProductServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.data.domain.Page;
+
 import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,7 +25,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -35,11 +46,15 @@ public class NewProductController {
     private PrdCatalogRepository prdCatalogRepository;
     @Autowired
     private ProductServiceImpl productServiceImpl;
-
+    @Autowired
+    private PrdImgService prdImgService;
+    
     @GetMapping("/products")
     public String showProductsPage(Model model) {
         List<Product> products = productService.getAllProducts();
         List<ProductDto> productDtos = productService.toProductDtoList(products);
+        
+        
         model.addAttribute("products", productDtos);
         return "product/products";
     }
@@ -241,7 +256,47 @@ public class NewProductController {
 
     }
     
-    
+ // 商品分頁
+    @GetMapping("/productspage")
+    public String getProducts(
+            @RequestParam(defaultValue = "0") int page, // 頁碼，默認為第 0 頁
+            @RequestParam(defaultValue = "5") int size, // 每頁商品數量，默認為 5
+            @RequestParam(defaultValue = "id") String sortBy, // 排序字段，默認為 id
+            Model model) {
+
+       
+
+        // 使用正確的分頁邏輯查詢商品
+        Page<Product> productPage = productService.getPaginatedProducts(page, size, sortBy);
+
+        // 確保總頁數至少為 1
+        int totalPages = (productPage != null && productPage.getTotalPages() > 0)
+                ? productPage.getTotalPages()
+                : 1;
+        
+        
+        
+        
+
+        // 設置模型數據供模板使用
+        model.addAttribute("products", productPage.getContent()); // 商品列表
+        model.addAttribute("currentPage", productPage != null ? productPage.getNumber() : 0); // 當前頁碼
+        model.addAttribute("totalPages", totalPages); // 總頁數
+        model.addAttribute("sortBy", sortBy); // 排序方式
+        model.addAttribute("size", size); // 每頁大小
+        
+        
+        
+        
+        
+
+        return "product/products"; // 返回模板
+    }
+
+
+
+
+}
 //    @GetMapping("/productDetails/{id}")
 //    public String viewProductDetails(@PathVariable("id") Integer id, Model model) {
 //        // 根據 ID 獲取產品詳細信息
@@ -256,6 +311,8 @@ public class NewProductController {
     
     
     
+
+
 
         // 根據 ID 刪除商品
     @PostMapping("/deleteProduct/{id}")
@@ -272,6 +329,7 @@ public class NewProductController {
         }
     }
 }
+
 
 
 
