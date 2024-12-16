@@ -1,13 +1,17 @@
 package com.artogether.controller.venue;
 
 import com.artogether.common.business_member.BusinessMember;
+import com.artogether.venue.VenueExceptions;
 import com.artogether.venue.tslot.TslotService;
 import com.artogether.venue.venue.VenueService;
 import com.artogether.venue.vnedto.*;
 import com.artogether.venue.vneimg.VneImgService;
+import com.artogether.venue.vneorder.VneBookingSystem;
+import com.artogether.venue.vneorder.VneOrderService;
 import com.artogether.venue.vneprice.VnePriceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +33,10 @@ public class VneRestController {
     private TslotService tslotService;
     @Autowired
     private VnePriceService vnePriceService;
+    @Autowired
+    private VneBookingSystem vneBookingSystem;
+    @Autowired
+    private VneOrderService vneOrderService;
 
     //取出該商家所有場地
     @GetMapping("/vneList")
@@ -83,34 +91,60 @@ public class VneRestController {
     public AvailableDTO getAvailableDTO(@PathVariable("vneId") Integer vneId,
                                         @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date){
         LocalDateTime now = LocalDateTime.now();
-        return tslotService.getAvailableDTO(vneId, date, now);
+        Boolean islockDate = vneBookingSystem.islockDate(vneId, date);
+        System.out.println("islockDate"+islockDate);
+        if (islockDate) {
+            throw new VenueExceptions.DateAlreadyLockedException("The date " + date + " is already locked for venue ID " + vneId);
+        }
+        boolean lockDate = vneBookingSystem.lockDate(vneId, date);
+        System.out.println("lockDate"+lockDate);
+        AvailableDTO availableDTO = tslotService.getAvailableDTO(vneId, date, now);
+        return availableDTO;
+    }
+    //解鎖
+    @PostMapping("/order/unlock/{vneId}")
+    public void unlockDate(@PathVariable("vneId") Integer vneId,
+                           @RequestBody UnlockRequest unlockRequest){
+        LocalDate date = unlockRequest.getDate();
+        System.out.println("controller");
+        vneBookingSystem.unlockDate(vneId, date);
+
     }
 
+    //送出預約
     @PostMapping("/order/submit/{vneId}")
-    public ResponseEntity<VneOrderDTO> submitOrder(@RequestBody VneOrderDTO vneOrderDTO) {
-        // 模擬後端業務處理
-        Integer totalPrice = calculateTotalPrice(vneOrderDTO.getStartTime(), vneOrderDTO.getEndTime());
-        Integer shouldPaid = totalPrice; // 模擬計算應支付金額
-        vneOrderDTO.setTotalPrice(totalPrice);
-        vneOrderDTO.setShouldPaid(shouldPaid);
+    public ResponseEntity<Object> submitOrder(@PathVariable("vneId") Integer vneId,
+                                              @RequestBody VneOrderDTO vneOrderDTO,
+                                              HttpSession session) {
+        try {
+            vneOrderDTO.setVneId(vneId);
+            Integer member = (Integer) session.getAttribute("member");
+            vneOrderDTO.setMemId(member);
+            LocalDateTime now = LocalDateTime.now();
 
-        // 返回包含確認數據的 DTO
-        return ResponseEntity.ok(vneOrderDTO);
+            VneOrderDTO orderDTO = vneOrderService.previewOrder(vneOrderDTO, now);
+
+            return ResponseEntity.ok(orderDTO);
+        } catch (VenueExceptions.DateAlreadyLockedException e) {
+            // 返回 409 錯誤，並附帶詳細錯誤訊息
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("error", e.getMessage()));
+        }
     }
+
 
     // 最終保存階段：確認保存訂單
-    @PostMapping("/order/confirm/{vneId}")
-    public ResponseEntity<String> confirmOrder(@RequestBody VneOrderDTO vneOrderDTO) {
-        // 模擬訂單保存邏輯
-        if (vneOrderDTO.getPaid() != null && vneOrderDTO.getPaid() >= vneOrderDTO.getShouldPaid()) {
-            return ResponseEntity.ok("Order successfully confirmed!");
-        }
+    @PostMapping("/order/payment/full/{vneId}")
+    public ResponseEntity<String> confirmOrder(@PathVariable("vneId") Integer vneId,
+                                               @RequestBody VneOrderDTO vneOrderDTO) {
+        LocalDateTime now = LocalDateTime.now();
+        vneOrderDTO.setVneId(vneId);
+        System.out.println(vneOrderDTO);
+        System.out.println("confirmOrder");
+        vneOrderService.CreateSingleDayVneOrder(vneOrderDTO, now);
         return ResponseEntity.badRequest().body("Insufficient payment!");
     }
 
-    // 模擬計算價格的邏輯
-    private Integer calculateTotalPrice(Integer startTime, Integer endTime) {
-        int hourlyPrice = 100; // 每小時價格
-        return (endTime - startTime) * hourlyPrice;
-    }
+//    //付訂金
+//    @PostMapping("/order/payment/deposit/{vneId}")
 }
