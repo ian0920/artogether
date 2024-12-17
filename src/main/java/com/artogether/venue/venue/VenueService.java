@@ -67,55 +67,65 @@ public class VenueService {
         //名字是ChatGPT建議的，也太長了吧...
         List<PublishErrorResponse.MissingRequirement> missingRequirements = new ArrayList<>();
 
-        //大前提，不是被停權
-        if (venue.getStatus() != VenueStatusEnum.SUSPENDED) {
-            // 條件 1: 場地名稱
-            if (venue.getName() == null) {
-                missingRequirements.add(new PublishErrorResponse.MissingRequirement(
-                        "需取名方可上架",
-                        "請為場地命名，例如：'夢想舞台' 或 '星空咖啡廳'"
-                ));
-            }
+        switch (venue.getStatus()){
+            case OFFLINE :
+                // 條件 1: 場地名稱
+                if (venue.getName() == null) {
+                    missingRequirements.add(new PublishErrorResponse.MissingRequirement(
+                            "需取名方可上架",
+                            "請為場地命名，例如：'夢想舞台' 或 '星空咖啡廳'"
+                    ));
+                }
 
-            // 條件 2: 可預約天數
-            if (venue.getAvailableDays() == null) {
-                missingRequirements.add(new PublishErrorResponse.MissingRequirement(
-                        "需設定可預約的天數方可上架",
-                        "請拉一下下拉選單，挑個喜歡的數字"
-                ));
-            }
+                // 條件 2: 可預約天數
+                if (venue.getAvailableDays() == null) {
+                    missingRequirements.add(new PublishErrorResponse.MissingRequirement(
+                            "需設定可預約的天數方可上架",
+                            "請拉一下下拉選單，挑個喜歡的數字"
+                    ));
+                }
 
-            // 條件 3: 圖片
-            List<String> imageUrls = vneImgUrlRepository.findImageUrlsByVneId(vneId);
-            if (imageUrls == null || imageUrls.isEmpty()) {
-                missingRequirements.add(new PublishErrorResponse.MissingRequirement(
-                        "至少需設定一張照片方可上架",
-                        "請上傳至少一張場地的圖片，例如外觀或內部裝修"
-                ));
-            }
+                // 條件 3: 圖片
+                List<String> imageUrls = vneImgUrlRepository.findImageUrlsByVneId(vneId);
+                if (imageUrls == null || imageUrls.isEmpty()) {
+                    missingRequirements.add(new PublishErrorResponse.MissingRequirement(
+                            "至少需設定一張照片方可上架",
+                            "請上傳至少一張場地的圖片，例如外觀或內部裝修"
+                    ));
+                }
 
-            // 條件 4: 營業時間
-            Optional<Tslot> tslotOptional = tslotRepository.getNearestPastRecord(vneId, submissionTime);
-            if (tslotOptional.isEmpty()) {
-                missingRequirements.add(new PublishErrorResponse.MissingRequirement(
-                        "須設定營業時間方可上架",
-                        "請設定場地的營業時間，例如上午 9:00 至晚上 6:00"
-                ));
-            }
+                // 條件 4: 營業時間
+                Optional<Tslot> tslotOptional = tslotRepository.getNearestPastRecord(vneId, submissionTime);
+                if (tslotOptional.isEmpty()) {
+                    missingRequirements.add(new PublishErrorResponse.MissingRequirement(
+                            "須設定營業時間方可上架",
+                            "請設定場地的營業時間，例如上午 9:00 至晚上 6:00"
+                    ));
+                }
 
-            // 條件 5: 常態價位
-            Optional<VnePrice> vnePriceOptional = priceRepository.getNearestPastRecord(vneId, submissionTime);
-            if (vnePriceOptional.isEmpty()) {
+                // 條件 5: 常態價位
+                Optional<VnePrice> vnePriceOptional = priceRepository.getNearestPastRecord(vneId, submissionTime);
+                if (vnePriceOptional.isEmpty()) {
+                    missingRequirements.add(new PublishErrorResponse.MissingRequirement(
+                            "須設定常態價位方可上架",
+                            "請設定場地的基本租用費用，例如每小時 500 元"
+                    ));
+                }
+                break;
+
+            case SUSPENDED:
                 missingRequirements.add(new PublishErrorResponse.MissingRequirement(
-                        "須設定常態價位方可上架",
-                        "請設定場地的基本租用費用，例如每小時 500 元"
+                        "停權中",
+                        "停權中"
                 ));
-            }
-        }else {
-            missingRequirements.add(new PublishErrorResponse.MissingRequirement(
-                    "停權中",
-                    "停權中"
-            ));
+                break;
+
+            case ONLINE:
+                missingRequirements.add(new PublishErrorResponse.MissingRequirement(
+                        "已經上架了",
+                        "已經上架了"
+                ));
+                break;
         }
 
 
@@ -138,9 +148,39 @@ public class VenueService {
     public void archiveVenue (Integer vneId) {
         Venue venue = venueRepository.findById(vneId).orElseThrow(() ->
                 new VenueExceptions.InvalidListingException("場地不存在"));
-        if (venue.getStatus() == VenueStatusEnum.ONLINE) {
-            venue.setStatus(VenueStatusEnum.ONLINE);
-            venueRepository.save(venue);
+        System.out.println("archiveVenue");
+        List<PublishErrorResponse.MissingRequirement> missingRequirements = new ArrayList<>();
+        // 檢查狀態並更新
+        switch (venue.getStatus()) {
+            case ONLINE:
+                venue.setStatus(VenueStatusEnum.OFFLINE);
+                venueRepository.save(venue);
+                System.out.println("場地已修正為下架");
+                break;
+            case OFFLINE:
+                missingRequirements.add(new PublishErrorResponse.MissingRequirement(
+                        "場地已下架",
+                        "請冷靜現在不會被預訂"
+                ));
+                System.out.println("場地已下架");
+                break;
+            case SUSPENDED:
+                missingRequirements.add(new PublishErrorResponse.MissingRequirement(
+                        "場地已停權",
+                        "暫時被停權請連繫平台"
+                ));
+                System.out.println("場地已停權");
+                break;
+            default:
+                throw new IllegalArgumentException("無效的場地狀態");
+        }
+        if (!missingRequirements.isEmpty()) {
+
+            PublishErrorResponse errorResponse = new PublishErrorResponse(
+                    "場地處於無需被下架的狀態",
+                    missingRequirements
+            );
+            throw new VenueExceptions.InvalidListingException(errorResponse);
         }
     }
 

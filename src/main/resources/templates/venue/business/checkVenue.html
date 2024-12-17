@@ -6,6 +6,7 @@
     <title>Document</title>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" th:href="@{/web_design/style/style_business.css}" />
     <link
             href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
@@ -153,6 +154,104 @@
         .calendar-container {
             flex: 2; /* 設置行事曆視圖占用的比例 */
         }
+        /* 按鈕容器：左右排列，並置中 */
+        .button-container {
+            display: flex;
+            justify-content: center; /* 水平居中 */
+            align-items: center; /* 垂直居中（如有高度） */
+            gap: 20px; /* 按鈕間距 */
+            margin-top: 20px; /* 與上方內容的間距 */
+        }
+
+        /* 通用按鈕樣式 */
+        .action-button {
+            padding: 10px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #ffffff; /* 白色文字 */
+            border: 2px solid #4a4a4a; /* 深灰色邊框 */
+            border-radius: 8px; /* 圓角 */
+            background-color: #4a4a4a; /* 深灰色背景 */
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        /* 上架按鈕樣式 */
+        .action-button.publish {
+            background-color: #5a67d8; /* 柔和藍色 */
+            border-color: #4c51bf; /* 深藍色邊框 */
+        }
+
+        .action-button.publish:hover {
+            background-color: #434190; /* 懸停時更深的藍色 */
+            border-color: #3730a3; /* 懸停時邊框變深 */
+            color: #e0e7ff; /* 淡藍色文字 */
+        }
+
+        /* 下架按鈕樣式 */
+        .action-button.archive {
+            background-color: #e53e3e; /* 柔和紅色 */
+            border-color: #c53030; /* 深紅色邊框 */
+        }
+
+        .action-button.archive:hover {
+            background-color: #9b2c2c; /* 懸停時更深的紅色 */
+            border-color: #822727; /* 懸停時邊框變深 */
+            color: #fef2f2; /* 淡紅色文字 */
+        }
+        /* 圖片容器樣式 */
+        .image-carousel {
+            display: flex;
+            justify-content: center; /* 水平置中 */
+            gap: 15px; /* 圖片間距 */
+            margin-top: 20px;
+            flex-wrap: wrap; /* 當圖片太多時自動換行 */
+        }
+
+        /* 單張圖片樣式 */
+        .image-container {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            overflow: hidden; /* 超出部分隱藏 */
+            border-radius: 12px; /* 圓角邊框 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加陰影效果 */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* 圖片樣式 */
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 保持圖片比例，填滿容器 */
+            transition: transform 0.3s ease;
+        }
+
+        /* 懸停效果 */
+        .image-container:hover {
+            transform: translateY(-5px); /* 輕微向上浮動 */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* 懸停時陰影加深 */
+        }
+
+        .image-container:hover img {
+            transform: scale(1.1); /* 圖片放大 1.1 倍 */
+        }
+
+        /* 圖片標籤（可選文字標籤） */
+        .image-label {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.6); /* 半透明背景 */
+            color: #fff;
+            font-size: 14px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5); /* 增加文字陰影，提高可讀性 */
+        }
+
     </style>
 </head>
 <body>
@@ -204,8 +303,9 @@
     <!-- 圖片輪播 -->
     <div class="image-carousel" x-show="venue.imgUrls && venue.imgUrls.length > 0">
         <template x-for="img in venue.imgUrls" :key="img">
-            <div style="width: 300px; height: 200px; overflow: hidden; border-radius: 8px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
-                <img :src="img" alt="場地圖片" style="width: 100%; height: 100%; object-fit: cover;">
+            <div class="image-container">
+                <img :src="img" alt="場地圖片" class="image-item">
+                <div class="image-label">場地圖片</div>
             </div>
         </template>
     </div>
@@ -251,6 +351,11 @@
             }
         </script>
     </div>
+    <!-- 上架按鈕 -->
+    <button id="publishBtn" class="action-button publish button-container" @click="publishVenue()">上架場地</button>
+
+    <!-- 下架按鈕 -->
+    <button id="archiveBtn" class="action-button archive button-container" @click="archiveVenue()">下架場地</button>
     <!-- 場地詳情 -->
     <script>
         function venuePage() {
@@ -398,6 +503,78 @@
                         });
                     }
                 },
+
+                // 上架方法
+                publishVenue() {
+                    fetch(`/vne/publish/${vneId}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                    })
+                        .then(response => {
+                            if (!response.ok) return response.json().then(err => Promise.reject(err));
+                            return response.text();
+                        })
+                        .then(data => {
+                            Swal.fire({
+                                title: '成功!',
+                                text: '場地已成功上架',
+                                icon: 'success',
+                                confirmButtonText: '確認'
+                            });
+                        })
+                        .catch(error => {
+                            console.error('錯誤回應:', error);
+                            Swal.fire({
+                                title: '上架失敗!',
+                                html: `
+                            <p>${error.message}</p>
+                            <ul>
+                                ${error.missingRequirements.map(req => `<li><b>${req.condition}</b>: ${req.suggestion}</li>`).join('')}
+                            </ul>
+                        `,
+                                icon: 'error',
+                                confirmButtonText: '確認'
+                            });
+                        });
+                },
+
+                // 下架方法
+                archiveVenue() {
+                    // 使用 jQuery 發送下架請求
+                    $.ajax({
+                        url: `/vne/archive/${vneId}`, // 後端路由
+                        type: 'POST',
+                        contentType: 'application/json',
+                        success: function (response) {
+                            // 成功回應，顯示 SweetAlert2
+                            Swal.fire({
+                                title: '成功!',
+                                text: response.message || '場地成功下架',
+                                icon: 'success',
+                                confirmButtonText: '確認'
+                            });
+                        },
+                        error: function (xhr) {
+                            // 錯誤回應，解析 JSON 錯誤訊息
+                            const error = xhr.responseJSON || { message: '發生未知錯誤' };
+                            const missingRequirements = error.missingRequirements || [];
+
+                            // 顯示錯誤內容
+                            Swal.fire({
+                                title: '下架失敗!',
+                                html: `
+                                <p>${error.message}</p>
+                                <ul>
+                                    ${missingRequirements.map(req => `<li><b>${req.condition}</b>: ${req.suggestion}</li>`).join('')}
+                                </ul>
+                            `,
+                                icon: 'error',
+                                confirmButtonText: '確認'
+                            });
+                        }
+                    });
+                }
+
             };
         }
     </script>
