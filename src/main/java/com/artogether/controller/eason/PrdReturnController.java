@@ -12,6 +12,7 @@ import com.artogether.product.prd_return.NewPrdReturnService;
 import com.artogether.product.prd_return.PrdReturn;
 import com.artogether.product.prd_return.PrdReturnDto;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -29,30 +30,22 @@ public class PrdReturnController {
     // 退換貨列表頁面
     // ==============================
     @GetMapping("/list")
-    public String getReturnsByBusinessMember(
-    		@RequestParam(required = false) Integer testBusinessId,
-            HttpSession session,  
-            Model model) {
-
+    public String getReturnsByBusinessMember(HttpSession session, Model model) {
         BusinessMember presentBusinessMember = (BusinessMember) session.getAttribute("presentBusinessMember");
 
-        if (presentBusinessMember == null && testBusinessId != null) {
-            presentBusinessMember = businessService.findById(testBusinessId);
-            if (presentBusinessMember == null) {
-                throw new IllegalArgumentException("無效的商家 ID：" + testBusinessId);
-            }
-            session.setAttribute("presentBusinessMember", presentBusinessMember);
-        }
-
         if (presentBusinessMember == null) {
-            throw new IllegalStateException("未登入且未提供測試商家 ID");
+            throw new IllegalStateException("未登入商家會員");
         }
 
-        List<PrdReturnDto> returns = newPrdReturnService.getAllReturns();
+        // 調用 service 方法，根據商家會員 ID 獲取退換貨列表
+        List<PrdReturnDto> returns = newPrdReturnService.getReturnsForBusiness(presentBusinessMember.getId());
         model.addAttribute("returns", returns);
 
         return "product/list";
     }
+
+    
+
 
     // ==============================
     // 新增退換貨頁面
@@ -83,8 +76,13 @@ public class PrdReturnController {
     @PostMapping("/add")
     public String addPrdReturn(@ModelAttribute PrdReturn prdReturn, RedirectAttributes redirectAttributes) {
         try {
+            // 設置當前時間為申請時間
+            if (prdReturn.getApplyDate() == null) {
+                prdReturn.setApplyDate(new Timestamp(System.currentTimeMillis()));
+            }
+
             PrdReturnDto result = newPrdReturnService.addPrdReturn(prdReturn);
-           redirectAttributes.addFlashAttribute("message", "新增成功！ID: " + result.getId());
+            redirectAttributes.addFlashAttribute("message", "新增成功！ID: " + result.getId());
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("message", "新增失敗！" + e.getMessage());
         }
@@ -108,8 +106,17 @@ public class PrdReturnController {
     }
 
     @PostMapping("/edit/{id}")
-    public String updatePrdReturn(@PathVariable Integer id, @ModelAttribute PrdReturn prdReturn, RedirectAttributes redirectAttributes) {
+    public String updatePrdReturn(
+            @PathVariable Integer id, 
+            @ModelAttribute PrdReturn prdReturn, 
+            @RequestParam(value = "updateReturnDate", required = false) String updateReturnDate,
+            RedirectAttributes redirectAttributes) {
         try {
+            // 根據勾選框決定是否覆蓋 applyDate
+            if ("true".equals(updateReturnDate)) {
+                prdReturn.setReturnDate(new Timestamp(System.currentTimeMillis()));
+            }
+
             PrdReturnDto result = newPrdReturnService.updatePrdReturn(id, prdReturn);
             redirectAttributes.addFlashAttribute("message", "更新成功！ID: " + result.getId());
         } catch (Exception e) {
@@ -117,6 +124,7 @@ public class PrdReturnController {
         }
         return "redirect:/product/list";
     }
+     
 
     // ==============================
     // 刪除退換貨

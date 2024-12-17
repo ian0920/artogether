@@ -35,7 +35,7 @@
             color: #555;
         }
 
-        input {
+        input, select {
             width: calc(100% - 20px);
             padding: 10px;
             margin-bottom: 15px;
@@ -44,7 +44,7 @@
             font-size: 14px;
         }
 
-        input:focus {
+        input:focus, select:focus {
             border-color: #007bff;
             outline: none;
             box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
@@ -65,25 +65,73 @@
         button:hover {
             background-color: #0056b3;
         }
+
+        input[disabled] {
+            background-color: #e9ecef;
+            cursor: not-allowed;
+        }
     </style>
+    <script>
+        function updateFields() {
+            const discountType = document.querySelector('select[name="type"]').value;
+            const deductionField = document.querySelector('input[name="deduction"]');
+            const ratioField = document.querySelector('input[name="ratio"]');
+
+            if (discountType === "0") { // 比例折扣
+                deductionField.disabled = true;
+                deductionField.value = ""; // 清空數值
+                ratioField.disabled = false;
+            } else if (discountType === "1") { // 金額折扣
+                ratioField.disabled = true;
+                ratioField.value = ""; // 清空數值
+                deductionField.disabled = false;
+            }
+        }
+
+        // 初始化表單字段
+        window.onload = function () {
+            updateFields();
+        };
+    </script>
 </head>
 <body>
-    <form th:action="@{/coupons/update/{id}(id=${prdCoup.id})}" method="post">
+    <form th:action="@{/coupons/edit/{id}(id=${prdCoup.id})}" method="post">
         <h1>編輯優惠券</h1>
+        <input type="hidden" name="id" th:value="${prdCoup.id}" />
+
         <label>名稱：</label>
         <input type="text" name="name" th:value="${prdCoup.name}" required />
-        <label>商家編號：</label>
-        <input type="text" name="name" th:value="${prdCoup.businessMember.id}" required />
+
         <label>折扣類型：</label>
-        <input type="number" name="type" th:value="${prdCoup.type}" required />
+        <select name="type" required onchange="updateFields()">
+            <option value="0" th:selected="${prdCoup.type == 0}">比例折扣</option>
+            <option value="1" th:selected="${prdCoup.type == 1}">金額折扣</option>
+        </select>
+
+        <label>折扣金額：</label>
+        <input type="number" name="deduction" th:value="${prdCoup.deduction}" required />
+
+        <label>折扣比例：</label>
+        <input type="number" name="ratio" th:value="${prdCoup.ratio}" required />
+
         <label>狀態：</label>
-        <input type="number" name="status" th:value="${prdCoup.status}" required />
+        <select name="status" required>
+            <option value="0" th:selected="${prdCoup.status == 0}">下架</option>
+            <option value="1" th:selected="${prdCoup.status == 1}">上架</option>
+        </select>
+
+        <label>效期：</label>
+        <input type="number" name="duration" th:value="${prdCoup.duration != null ? prdCoup.duration : 0}" />
+
         <label>門檻：</label>
-        <input type="number" name="threshold" th:value="${prdCoup.threshold}" />
+        <input type="number" name="threshold" th:value="${prdCoup.threshold != null ? prdCoup.threshold : 0}" />
+
         <label>開始日期：</label>
-        <input type="datetime-local" name="startDate" th:value="${#dates.format(prdCoup.startDate, 'yyyy-MM-dd HH:mm')}" />
+        <input type="text" name="startDate" th:value="${#dates.format(prdCoup.startDate, 'yyyy-MM-dd HH:mm:ss')}" placeholder="格式：yyyy-MM-dd HH:mm:ss" required />
+
         <label>結束日期：</label>
-        <input type="datetime-local" name="endDate" th:value="${#dates.format(prdCoup.endDate, 'yyyy-MM-dd HH:mm')}" />
+        <input type="text" name="endDate" th:value="${#dates.format(prdCoup.endDate, 'yyyy-MM-dd HH:mm:ss')}" placeholder="格式：yyyy-MM-dd HH:mm:ss" required />
+
         <button type="submit">更新</button>
     </form>
 </body>

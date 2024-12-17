@@ -3,40 +3,162 @@
 <head>
     <title>新增退換貨</title>
     <style>
-        /* Add your styles here */
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #2193b0, #6dd5ed); /* 藍色漸層背景 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        form {
+            width: 400px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        form:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #555;
+            font-weight: bold;
+        }
+
+        input, textarea, select {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .error {
+            color: red;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
-    <h1>申請退換貨</h1>
-    <form th:action="@{/product/add}" th:object="${prdReturn}" method="post">
+    <form id="returnForm" th:action="@{/product/add}" th:object="${prdReturn}" method="post">
+        <h1>申請退換貨</h1>
+
         <label for="orderId">訂單編號</label>
-        <input type="text" id="orderId" th:field="*{prdOrder.id}"  required>
+        <input type="text" id="orderId" th:field="*{prdOrder.id}" required>
+        <div id="orderIdError" class="error"></div>
 
         <label for="prdName">商品名稱</label>
         <input type="text" id="prdName" name="prdName" required>
+        <div id="prdNameError" class="error"></div>
 
         <label for="reason">退換貨原因</label>
         <textarea id="reason" name="reason"></textarea>
 
         <label>退換類型：</label>
-        <select th:field="*{type}" required>
-            <option value="-1" th:selected="*{type == -1}">請選擇折扣類型</option>
+        <select id="type" th:field="*{type}" required>
+            <option value="-1" th:selected="*{type == -1}">請選擇退換貨類型</option>
             <option value="1" th:selected="*{type == 1}">退貨</option>
             <option value="0" th:selected="*{type == 0}">換貨</option>
         </select>
-        
-        <label>狀態：</label>
-        <select th:field="*{status}" required>
-            <option value="-0" th:selected="*{type == -0}">未處理</option>
-           
-        </select>
-            
+        <div id="typeError" class="error"></div>
 
-        <label>開始日期：</label>
-        <input type="text" th:field="*{applyDate}" placeholder="YYYY-MM-DD HH:MM:SS" />
-      
+        <label>狀態：</label>
+        <select id="status" th:field="*{status}" required>
+            <option value="0" th:selected="*{status == 0}">未處理</option>
+        </select>
+
+        <label>申請時間：</label>
+        <input type="text" id="applyDate" th:field="*{applyDate}" readonly hidden>
 
         <button type="submit">新增</button>
     </form>
+
+    <script>
+        document.getElementById("returnForm").addEventListener("submit", function(event) {
+            let isValid = true;
+
+            // 清除所有錯誤訊息
+            document.querySelectorAll(".error").forEach(e => e.textContent = "");
+
+            // 訂單編號檢查
+            const orderId = document.getElementById("orderId");
+            if (orderId.value.trim() === "") {
+                document.getElementById("orderIdError").textContent = "訂單編號不可為空！";
+                isValid = false;
+            }
+
+            // 商品名稱檢查
+            const prdName = document.getElementById("prdName");
+            if (prdName.value.trim() === "") {
+                document.getElementById("prdNameError").textContent = "商品名稱不可為空！";
+                isValid = false;
+            }
+
+            // 退換類型檢查
+            const type = document.getElementById("type");
+            if (type.value === "-1") {
+                document.getElementById("typeError").textContent = "請選擇退換貨類型！";
+                isValid = false;
+            }
+
+            // 自動設置當前時間為 applyDate
+            const applyDateField = document.getElementById("applyDate");
+            const now = new Date();
+            const formattedDate = now.getFullYear() + "-" +
+                String(now.getMonth() + 1).padStart(2, "0") + "-" +
+                String(now.getDate()).padStart(2, "0") + " " +
+                String(now.getHours()).padStart(2, "0") + ":" +
+                String(now.getMinutes()).padStart(2, "0") + ":" +
+                String(now.getSeconds()).padStart(2, "0");
+            applyDateField.value = formattedDate;
+
+            if (!isValid) {
+                event.preventDefault(); // 停止表單提交
+            }
+        });
+    </script>
 </body>
 </html>

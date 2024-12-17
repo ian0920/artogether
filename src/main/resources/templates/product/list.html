@@ -3,16 +3,140 @@
 <head>
     <title>退換貨列表</title>
     <style>
-        /* Add your styles here */
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            text-align: center;
+        }
+        h1 {
+            color: #3498db; /* 統一標題藍色 */
+        }
+        a {
+            text-decoration: none;
+            color: #007BFF;
+        }
+        a:hover {
+            color: #0056b3;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px auto;
+            width: 90%;
+        }
+        .controls select, .controls button {
+            padding: 8px 10px;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 90%;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left; /* 左對齊文字 */
+            font-size: 14px;
+        }
+        th {
+            background-color: #3498db; /* 統一藍色背景 */
+            color: white;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        tr {
+            transition: background-color 0.3s;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        td {
+            border-bottom: 1px solid #ddd;
+        }
+        td:last-child {
+            display: flex;
+            justify-content: flex-start;
+            gap: 10px;
+        }
+        td a, td button {
+            text-decoration: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+        }
+        td a {
+            background-color: #3498db; /* 編輯按鈕藍色 */
+        }
+        td a:hover {
+            background-color: #2980b9;
+        }
+        td button {
+            background-color: #FF4D4D; /* 刪除按鈕紅色 */
+        }
+        td button:hover {
+            background-color: #CC0000;
+        }
+        /* 返回按鈕樣式 */
+        .return-button {
+            display: inline-block;
+            margin: 20px auto;
+            background-color: #95a5a6; /* 灰色背景 */
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .return-button:hover {
+            background-color: #7f8c8d;
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 <body>
     <h1>退換貨列表</h1>
-    <div class="button-group">
-        <a href="/product/add">新增退換貨</a>
-        <a href="/product/search">搜尋退換貨</a>
+
+    <!-- 篩選與排序控制區 -->
+    <div class="controls">
+        <div>
+            <label for="typeFilter">類型：</label>
+            <select id="typeFilter" onchange="filterTable()">
+                <option value="all">全部</option>
+                <option value="退貨">退貨</option>
+                <option value="換貨">換貨</option>
+            </select>
+
+            <label for="statusFilter">狀態：</label>
+            <select id="statusFilter" onchange="filterTable()">
+                <option value="all">全部</option>
+                <option value="處理中">處理中</option>
+                <option value="完成">完成</option>
+            </select>
+        </div>
+
+        <div>
+            <button onclick="sortTable(6, this)" data-order="asc">依申請時間排序</button>
+            <button onclick="sortTable(7, this)" data-order="asc">依退換時間排序</button>
+        </div>
     </div>
-    <table>
+
+    <table id="returnTable">
         <thead>
             <tr>
                 <th>ID</th>
@@ -47,5 +171,54 @@
             </tr>
         </tbody>
     </table>
+
+    <!-- 返回按鈕 -->
+    <a href="javascript:history.back()" class="return-button">返回上一頁</a>
+
+    <script>
+        // 篩選表格
+        function filterTable() {
+            const typeFilter = document.getElementById("typeFilter").value;
+            const statusFilter = document.getElementById("statusFilter").value;
+            const table = document.getElementById("returnTable");
+            const rows = table.querySelectorAll("tbody tr");
+
+            rows.forEach(row => {
+                const type = row.cells[4].innerText.trim();
+                const status = row.cells[5].innerText.trim();
+                const matchesType = (typeFilter === "all" || type === typeFilter);
+                const matchesStatus = (statusFilter === "all" || status === statusFilter);
+
+                if (matchesType && matchesStatus) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        }
+
+        // 表格排序，升冪和降冪切換
+        function sortTable(columnIndex, button) {
+            const table = document.getElementById("returnTable");
+            const rows = Array.from(table.querySelectorAll("tbody tr"));
+            const order = button.getAttribute("data-order");
+
+            rows.sort((a, b) => {
+                const cellA = a.cells[columnIndex].innerText.trim();
+                const cellB = b.cells[columnIndex].innerText.trim();
+
+                if (order === "asc") {
+                    return cellA.localeCompare(cellB); // 升冪排序
+                } else {
+                    return cellB.localeCompare(cellA); // 降冪排序
+                }
+            });
+
+            rows.forEach(row => table.querySelector("tbody").appendChild(row));
+
+            // 切換排序順序
+            button.setAttribute("data-order", order === "asc" ? "desc" : "asc");
+        }
+    </script>
 </body>
 </html>

@@ -35,7 +35,7 @@
 					<div clickable class="bs-navbar-header"
 	                th:classappend="${selectedItem == 'info' ? ' -open' : ''}">
 						<span class="material-symbols-outlined">storefront</span><a
-							href="#">商家基本資訊</a>
+							href="prdMall/member/memberdetails">商家基本資訊</a>
 					</div>
 				</li>
 				<li clickable class="bs-navbar-item">
@@ -75,7 +75,7 @@
 						<li clickable class="bs-navbar-subitem"
 						    th:classappend="${selectedSubItem == 'coupon' ? ' -focus' : ''}">
 						
-						<a href="#">優惠券管理</a>
+						<a href="coupons/list">優惠券管理</a>
 						</li>
 						<li clickable class="bs-navbar-subitem"
 						    th:classappend="${selectedSubItem == 'product' ? ' -focus' : ''}">
