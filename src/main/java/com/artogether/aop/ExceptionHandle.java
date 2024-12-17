@@ -45,10 +45,13 @@ public class ExceptionHandle {
 
 
     @ExceptionHandler(RuntimeException.class)
-    public ModelAndView handleException(Exception ex,  ModelAndView mv) {
+    public ModelAndView handleException(RuntimeException ex) {
+
+        ModelAndView mv = new ModelAndView();
 
         Map<String, String> error = new HashMap<>();
         error.put("no", ex.getMessage());
+
 
         mv.addObject("message", error);
         mv.setViewName("transient_page/status_page");

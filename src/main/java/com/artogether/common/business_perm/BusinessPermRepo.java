@@ -11,4 +11,6 @@ public interface BusinessPermRepo extends JpaRepository<BusinessPerm, BusinessPe
     List<BusinessPerm> findBusinessPermsByMember_Id(Integer memberId);
 
     List<BusinessPerm> findBusinessPermsByBusinessMember_Id(Integer businessMemberId);
+
+    BusinessPerm findByBusinessMember_IdAndMember_Id(Integer businessId, Integer memberId);
 }

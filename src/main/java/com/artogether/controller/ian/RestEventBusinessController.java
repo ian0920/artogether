@@ -1,6 +1,7 @@
 package com.artogether.controller.ian;
 
 import com.artogether.common.business_member.BusinessMember;
+import com.artogether.common.business_perm.BusinessPermAnn;
 import com.artogether.event.dto.EvtCoupDTO;
 import com.artogether.event.dto.EvtOrderDTO;
 import com.artogether.event.dto.EvtOrderSearchCriteria;
@@ -130,6 +131,7 @@ public class RestEventBusinessController {
 
 
     //活動訂單頁面呈現
+    @BusinessPermAnn("EVENT")
     @GetMapping("orders")
     public ModelAndView order (ModelAndView mv, HttpSession session) {
 
