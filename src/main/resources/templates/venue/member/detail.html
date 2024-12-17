@@ -132,6 +132,24 @@
         .cell[data-hour="8"] {
             height: 20px; /* 縮減的行高 */
         }
+        /* 統一外部容器寬度 */
+        .container {
+            max-width: 1200px; /* 或根據需求調整 */
+            margin: 0 auto; /* 水平置中 */
+        }
+
+        /* 圖片輪播樣式 */
+        .image-carousel {
+            width: 100%; /* 讓輪播區塊填滿父容器 */
+            margin-bottom: 20px; /* 與下方資訊區域分隔 */
+            text-align: center; /* 圖片置中 */
+        }
+
+        .image-carousel img {
+            width: 100%; /* 確保圖片填滿容器寬度 */
+            height: auto; /* 保持圖片比例 */
+            object-fit: cover; /* 確保圖片顯示完整 */
+        }
 
     </style>
     <title>event details</title>
@@ -147,78 +165,87 @@
 <body>
 <!-- 導航 -->
 <div th:replace="~{/components/navbar_homepage::navbar}"></div>
+<main x-data="venuePage()" x-init="venueDetail()">
+    <!-- 統一父容器 -->
+    <div class="container">
+        <!-- 圖片輪播 -->
+        <div class="image-carousel" x-show="venue.imgUrls && venue.imgUrls.length > 0">
+            <template x-for="img in venue.imgUrls" :key="img">
+                <img :src="img" alt="場地圖片">
+            </template>
+        </div>
 
-<main x-data="venuePage()" x-init="init()">
-    <!-- 圖片輪播 -->
-    <div class="image-carousel" x-show="venue.imgUrls && venue.imgUrls.length > 0">
-        <template x-for="img in venue.imgUrls" :key="img">
-            <img :src="img" alt="場地圖片" style="width: 80%; height: auto;">
-        </template>
-    </div>
-    <!-- 場地資訊 -->
-    <section class="flex-3 info-card-outline">
-        <p>場地詳情 <span class="material-symbols-outlined">chevron_forward</span> <span x-text="venue.vneId"></span></p>
-        <h2 x-text="venue.vneName"></h2>
-        <p><strong>場地方：</strong><span x-text="venue.bizName"></span></p>
-        <p><strong>地址：</strong><span x-text="venue.vneAddress"></span></p>
-        <p><strong>類別：</strong><span x-text="venue.type"></span></p>
-        <p><strong>描述：</strong><span x-text="venue.description"></span></p>
-        <p><strong>狀態：</strong><span x-text="venue.status"></span></p>
-        <!-- 行事曆 -->
-        <div class="calendar-container">
-            <!-- 行事曆 Header -->
-            <div class="control">Time</div>
-            <div class="day-header">Mon</div>
-            <div class="day-header">Tue</div>
-            <div class="day-header">Wed</div>
-            <div class="day-header">Thu</div>
-            <div class="day-header">Fri</div>
-            <div class="day-header">Sat</div>
-            <div class="day-header">Sun</div>
+        <!-- 場地資訊 -->
+        <section class="flex-3 info-card-outline">
+            <p>場地詳情 <span class="material-symbols-outlined">chevron_forward</span> <span x-text="venue.vneId"></span></p>
+            <h2 x-text="venue.vneName"></h2>
+            <p><strong>場地方：</strong><span x-text="venue.bizName"></span></p>
+            <p><strong>地址：</strong><span x-text="venue.vneAddress"></span></p>
+            <p><strong>類別：</strong><span x-text="venue.type"></span></p>
+            <p><strong>描述：</strong><span x-text="venue.description"></span></p>
+            <p><strong>狀態：</strong><span x-text="venue.status"></span></p>
+            <!-- 行事曆 -->
+            <div class="calendar-container">
+                <!-- 行事曆 Header -->
+                <div class="control">Time</div>
+                <div class="day-header">Mon</div>
+                <div class="day-header">Tue</div>
+                <div class="day-header">Wed</div>
+                <div class="day-header">Thu</div>
+                <div class="day-header">Fri</div>
+                <div class="day-header">Sat</div>
+                <div class="day-header">Sun</div>
 
-            <!-- 行事曆內容 (使用 JS 動態生成) -->
-            <script>
-                function renderCalendar(startHour, endHour) {
-                    const calendarContainer = document.querySelector('.calendar-container');
-                    calendarContainer.innerHTML = ''; // 清空原本的內容
+                <!-- 行事曆內容 (使用 JS 動態生成) -->
+                <script>
+                    function renderCalendar(startHour, endHour) {
+                        const calendarContainer = document.querySelector('.calendar-container');
+                        calendarContainer.innerHTML = ''; // 清空原本的內容
 
-                    // 添加時間列和每一天的頭部
-                    calendarContainer.innerHTML += `<div class="control">Time</div>`;
-                    ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].forEach(day => {
-                        calendarContainer.innerHTML += `<div class="day-header">${day}</div>`;
-                    });
+                        // 添加時間列和每一天的頭部
+                        calendarContainer.innerHTML += `<div class="control">Time</div>`;
+                        ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].forEach(day => {
+                            calendarContainer.innerHTML += `<div class="day-header">${day}</div>`;
+                        });
 
-                    // 根據 startHour 和 endHour 動態生成行事曆
-                    for (let hour = startHour; hour <= endHour; hour++) {
-                        calendarContainer.innerHTML += `<div class="control">${hour}:00</div>`;
-                        for (let day = 0; day < 7; day++) {
-                            calendarContainer.innerHTML += `<div class="cell" data-day="${day}" data-hour="${hour}"></div>`;
+                        // 根據 startHour 和 endHour 動態生成行事曆
+                        for (let hour = startHour; hour <= endHour; hour++) {
+                            calendarContainer.innerHTML += `<div class="control">${hour}:00</div>`;
+                            for (let day = 0; day < 7; day++) {
+                                calendarContainer.innerHTML += `<div class="cell" data-day="${day}" data-hour="${hour}"></div>`;
+                            }
                         }
                     }
-                }
-            </script>
-        </div>
-    </section>
-    <!-- 按鈕操作區 -->
-    <aside class="info-card-outline flex-1" style="height:min-content;">
-        <div class="row">
-            <h3 x-text="venue.vneName"></h3>
-            <span></span>
-            <p x-text="venue.vneAddress"></p>
-            <!-- 預約按鈕 -->
-            <button th:if="${#session.getAttribute('member') != null}"
-                    id="openFormButton"
-                    class="btn btn-lg openFormButton button-big flex-auto"
-                    onclick="location.href=`/vneMem/booking/${venue.vneId}`">預約場地
-            </button>
-            <button th:unless="${#session.getAttribute('member') != null}" id="to-login" class="btn btn-secondary" onclick="location.href='/login'">請先登入</button>
+                </script>
+            </div>
+        </section>
+    </div>
+<!-- 按鈕操作區 -->
+<aside class="info-card-outline flex-1 container" style="height:min-content;">
+    <div class="row ">
+        <h3 x-text="venue.vneName"></h3>
+        <span></span>
+        <p x-text="venue.vneAddress"></p>
+        <!-- 預約按鈕 -->
+        <button th:if="${#session.getAttribute('member') != null}"
+                id="openFormButton"
+                class="btn btn-lg openFormButton button-big flex-auto"
+                @click="location.href='/vneMem/booking/' + vneId">
+            預約場地
+        </button>
+        <button th:unless="${#session.getAttribute('member') != null}"
+                id="to-login"
+                class="btn btn-secondary"
+                @click="location.href='/login'">
+            請先登入
+        </button>
 
-            <!-- 收藏按鈕 -->
-            <button class="button-icon-big" id="btn_track" @click="trackVenue">
-                <span class="material-symbols-outlined">bookmark</span>
-            </button>
-        </div>
-    </aside>
+        <!-- 收藏按鈕 -->
+        <button class="button-icon-big" id="btn_track" @click="trackVenue">
+            <span class="material-symbols-outlined">bookmark</span>
+        </button>
+    </div>
+</aside>
 </main>
 <!-- 場地詳情 -->
 <script>
@@ -258,11 +285,11 @@
             isMember: false,          // 是否登入
 
             // 初始化方法
-            init() {
+            venueDetail() {
                 const vneId = window.location.pathname.split('/').pop(); // 從 URL 提取 vneId
+
                 if (vneId) {
                     window.vneId = vneId;
-                    console.log(`提取 vneId: ${vneId}`);
 
                     // 加載場地數據
                     this.fetchVenueData(vneId);

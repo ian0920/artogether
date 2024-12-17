@@ -181,6 +181,62 @@
         }
 
 
+        /* Pagination Container */
+        #btn-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Pagination Buttons */
+        #btn-container button {
+            background-color: #f8f9fa; /* Light gray background */
+            border: 1px solid #ccc; /* Gray border */
+            color: #333; /* Dark gray text */
+            padding: 6px 12px;
+            font-size: 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        /* Hover Effect */
+        #btn-container button:hover {
+            background-color: #e2e6ea; /* Slightly darker gray */
+            border-color: #bdbdbd; /* Darker border */
+            color: #000;
+        }
+
+        /* Active Page */
+        #btn-container button.active {
+            background-color: #2c95c6; /* Blue background */
+            border-color: #2c95c6;
+            color: #fff; /* White text */
+            font-weight: bold;
+        }
+
+        /* Disabled Button */
+        #btn-container button[disabled] {
+            background-color: #f1f1f1; /* Light gray */
+            color: #999; /* Dim text color */
+            border-color: #ddd;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 600px) {
+            #btn-container button {
+                padding: 4px 8px;
+                font-size: 12px;
+            }
+        }
+
+
+
 
 
 
@@ -301,115 +357,12 @@
     });
 
 
-    //搜尋訂單
-
-    // $(document).ready(function () {
-    //
-    //     $('#searchBtn').on('click', function (){
-    //         // Default pagination settings
-    //         let currentPage = 0;
-    //         const pageSize = 10;
-    //
-    //         $('#dataTable td:nth-child(11), #dataTable th:nth-child(11)').hide();
-    //         $('#dataTable td:nth-child(12), #dataTable th:nth-child(12)').hide();
-    //         $('#dataTable td:nth-child(13), #dataTable th:nth-child(13)').hide();
-    //
-    //         // Function to fetch orders
-    //         function fetchOrders(page) {
-    //             const searchCriteria = {
-    //                 eventId: $("#eventId").val(),
-    //                 status: $("#status").val(),
-    //                 startDate: $("#startDate").val(),
-    //                 endDate: $("#endDate").val(),
-    //             };
-    //
-    //             $.ajax({
-    //                 url: "/business/event/searchOrders",
-    //                 type: "POST",
-    //                 contentType: "application/json",
-    //                 data: JSON.stringify({
-    //                     ...searchCriteria,
-    //                     page: page,
-    //                     size: pageSize
-    //                 }),
-    //                 success: function (response) {
-    //                     if (response.status) {
-    //                         populateTable(response.data.content);
-    //                         updatePagination(response.metadata);
-    //                     } else {
-    //                         alert("Error: " + response.message);
-    //                     }
-    //                 },
-    //                 error: function (response) {
-    //                     const tableBody = $("#orderTableBody");
-    //                     tableBody.empty();
-    //                     tableBody.append(`<tr><td colspan="10">${response.message}</td></tr>`);
-    //                 }
-    //             });
-    //         }
-    //
-    //         // Function to populate the table
-    //         function populateTable(data) {
-    //             const tableBody = $("#orderTableBody");
-    //             tableBody.empty(); // Clear existing data
-    //
-    //             data.forEach(order => {
-    //                 const row = `
-    //                 <tr>
-    //                     <td>${order.eventName || ""}</td>
-    //                     <td>${order.memberName || ""}</td>
-    //                     <td>${order.orderDate || ""}</td>
-    //                     <td>${order.qty || ""}</td>
-    //                     <td>${order.status == 0 ? '已付款' : '取消'}</td>
-    //                     <td>${order.paymentMethod == 0 ? '信用卡' : (order.paymentMethod == 1 ? '行動支付' : 'ATM轉帳')}</td>
-    //                     <td>${order.evtCoupName || "未使用優惠券"}</td>
-    //                     <td>${order.totalPrice || ""}</td>
-    //                     <td>${order.discount || "0"}</td>
-    //                     <td>${order.paid || ""}</td>
-    //                     <td>${order.refundApplyDate || "-"}</td>
-    //                     <td>${order.refundDate || "-"}</td>
-    //                     <td>${order.refund || "-"}</td>
-    //                 </tr>
-    //             `;
-    //                 tableBody.append(row);
-    //                 $('#dataTable td:nth-child(11), #dataTable th:nth-child(11)').hide();
-    //                 $('#dataTable td:nth-child(12), #dataTable th:nth-child(12)').hide();
-    //                 $('#dataTable td:nth-child(13), #dataTable th:nth-child(13)').hide();
-    //             });
-    //         }
-    //
-    //         // Function to update pagination controls
-    //         function updatePagination(metadata) {
-    //             // Display pagination controls or information
-    //             console.log(`Page: ${metadata.currentPage + 1}/${metadata.totalPages}`);
-    //             // Add logic for next/previous buttons if necessary
-    //         }
-    //
-    //         // Initial fetch
-    //         fetchOrders(currentPage);
-    //
-    //         // Example: Add event listener for pagination buttons
-    //         $("#nextPageButton").on("click", function () {
-    //             if (currentPage < metadata.totalPages - 1) {
-    //                 currentPage++;
-    //                 fetchOrders(currentPage);
-    //             }
-    //         });
-    //
-    //         $("#prevPageButton").on("click", function () {
-    //             if (currentPage > 0) {
-    //                 currentPage--;
-    //                 fetchOrders(currentPage);
-    //             }
-    //         });
-    //     });
-    // });
 
 
     $(document).ready(function () {
         // Default pagination settings
         let currentPage = 0;
-        const pageSize = 1;
+        const pageSize = 10;
 
         $('#searchBtn').on('click', function () {
             $('#dataTable td:nth-child(11), #dataTable th:nth-child(11)').hide();
@@ -426,14 +379,10 @@
                 };
 
                 $.ajax({
-                    url: "/business/event/searchOrders",
+                    url: `/business/event/searchOrders?page=${page}&size=${pageSize}`, // Pass page and size in query params
                     type: "POST",
                     contentType: "application/json",
-                    data: JSON.stringify({
-                        ...searchCriteria,
-                        page: page,
-                        size: pageSize
-                    }),
+                    data: JSON.stringify(searchCriteria), // Only searchCriteria is in the body
                     success: function (response) {
                         if (response.status) {
                             populateTable(response.data.content, response.data.totalElements);
@@ -448,6 +397,7 @@
                         tableBody.append(`<tr><td colspan="13">Error fetching data</td></tr>`);
                     }
                 });
+
             }
 
             // Function to populate the table

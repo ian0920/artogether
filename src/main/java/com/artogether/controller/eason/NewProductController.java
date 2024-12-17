@@ -4,6 +4,8 @@ import com.artogether.common.business_member.BusinessMember;
 import com.artogether.product.prd_catalog.PrdCatalog;
 import com.artogether.product.prd_catalog.PrdCatalogDaoImpl;
 import com.artogether.product.prd_catalog.PrdCatalogRepository;
+import com.artogether.product.prd_img.PrdImg;
+import com.artogether.product.prd_img.PrdImgRepository;
 import com.artogether.product.product.NewProductDto;
 import com.artogether.product.product.PrdWithImgService;
 import com.artogether.product.product.Product;
@@ -21,6 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
+
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -41,15 +45,19 @@ public class NewProductController {
     @Autowired
     private PrdWithImgService prdWithImgService;
 
-//    @GetMapping("/products")
-//    public String showProductsPage(Model model) {
-//        List<Product> products = productService.getAllProducts();
-//        List<ProductDto> productDtos = productService.toProductDtoList(products);
-//
-//
-//        model.addAttribute("products", productDtos);
-//        return "product/products";
-//    }
+    
+    @Autowired
+    private PrdImgRepository prdImgRepository;
+    
+    @GetMapping("/producthomepage")
+    public String showProductsPage(Model model) {
+        List<Product> products = productService.getAllProducts();
+            model.addAttribute("products", products);
+            return "product/producthomepage";
+
+        
+        
+    }
 
 
 
@@ -282,7 +290,7 @@ public class NewProductController {
 
 
 
-        return "product/products"; // 返回模板
+        return "product/producthomepage"; // 返回模板
     }
 
 
@@ -351,16 +359,29 @@ public class NewProductController {
         // 重定向回管理頁面
         return "redirect:/product/managelist";
     }
-
-
-
-    @GetMapping("/products")
-    public String getAllProducts(Model model) {
-        List<NewProductDto> products = prdWithImgService.getAllProductsWithImages();
-
-        model.addAttribute("products", products); // 傳遞 DTO 資料給前端模板
-        return "product/products"; // Thymeleaf 模板名稱
+  
+    
+    public void setProductsImg(Product products) {
+        // 获取图片列表并处理可能为空的情况
+        List<PrdImg> prdImgs = prdImgRepository.getPrdImgByProductId(products.getId());
+        if (prdImgs != null && !prdImgs.isEmpty()) {
+            byte[] prdImgData = prdImgs.get(0).getImageFile();
+            if (prdImgData != null) {
+                String base64Img = "data:image/jpeg;base64," + Base64.getEncoder().encodeToString(prdImgData);
+                products.setImg(base64Img); // 假设 `img` 字段已更改为 `String`
+            }
+        }
     }
+    
+    
+//    @GetMapping("/products")
+//    public String getAllProducts(Model model) {
+//        List<NewProductDto> products = prdWithImgService.getAllProductsWithImages();
+//        
+//        model.addAttribute("products", products); // 傳遞 DTO 資料給前端模板
+//        return "product/products"; // Thymeleaf 模板名稱
+//    }
+
 
 
 

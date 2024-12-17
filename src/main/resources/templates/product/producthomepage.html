@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>商品列表</title>
+    <style>
+        /* 通用樣式 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+            color: #333;
+        }
+
+        /* 返回首頁與操作區域 */
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px auto;
+            padding: 0 10%;
+        }
+
+        .back-button, .sort-button {
+            padding: 10px 15px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .back-button {
+            background-color: #3498db;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .back-button:hover {
+            background-color: #2980b9;
+        }
+
+        .sort-button {
+            background-color: #2ecc71;
+        }
+
+        .sort-button:hover {
+            background-color: #27ae60;
+        }
+
+        #search-box {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            width: 200px;
+        }
+
+        /* 商品列表容器 */
+        .product-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        /* 商品卡片 */
+        .product-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 250px;
+            overflow: hidden;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .product-card h3 {
+            margin: 10px 0;
+            color: #333;
+        }
+
+        .product-card p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .btn {
+            display: inline-block;
+            margin: 10px 0;
+            padding: 8px 12px;
+            background-color: #e74c3c;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .btn:hover {
+            background-color: #c0392b;
+        }
+
+        /* 分頁樣式 */
+        .pagination-wrapper {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .custom-pagination {
+            display: flex;
+            list-style: none;
+            padding: 0;
+        }
+
+        .custom-pagination .page-link {
+            margin: 0 5px;
+            padding: 8px 12px;
+            text-decoration: none;
+            color: #3498db;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .custom-pagination .page-link:hover {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .custom-pagination .page-link.active {
+            background-color: #2980b9;
+            color: white;
+            border-color: #2980b9;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar 區域 -->
+<div th:replace="~{/components/navbar_homepage::navbar}"></div>
+
+<!-- 返回首頁與操作功能 -->
+<div class="action-bar">
+    <a th:href="@{/}" class="back-button">返回首頁</a>
+    <div>
+        <button class="sort-button" onclick="sortProductsByPrice()">按價格排序</button>
+        <input type="text" id="search-box" placeholder="搜尋商品..." onkeyup="searchProducts()" />
+    </div>
+</div>
+
+<h1>商品列表</h1>
+
+<!-- 商品列表容器 -->
+<div id="product-container" class="product-container">
+    <div class="product-card" th:each="product : ${products}" 
+         data-price="${product.price}" 
+         data-name="${product.name}">
+        <!-- 商品圖片 -->
+        <img th:src="${product.img}" alt="商品圖片" />
+
+        <!-- 商品資訊 -->
+        <h3 th:text="${product.name}">商品名稱</h3>
+        <p th:text="'價格: ' + ${product.price} + ' 元'">價格</p>
+        <p th:text="${product.status == 1 ? '上架中' : '已下架'}">狀態</p>
+
+        <a href="#" class="btn">搶購</a>
+    </div>
+</div>
+
+<!-- 分頁 -->
+<div class="pagination-wrapper">
+    <ul class="custom-pagination">
+        <li th:classappend="${currentPage == 0} ? 'disabled'">
+            <a class="page-link" 
+               th:href="@{/product/productspage(page=${currentPage > 0 ? currentPage - 1 : 0}, size=${size ?: 5})}">上一頁</a>
+        </li>
+        <li th:each="pageNum : ${#numbers.sequence(0, (totalPages ?: 1) - 1)}"
+            th:classappend="${pageNum == currentPage} ? 'active'">
+            <a class="page-link"
+               th:href="@{/product/productspage(page=${pageNum}, size=${size ?: 5})}" 
+               th:text="${pageNum + 1}"></a>
+        </li>
+        <li th:classappend="${currentPage == ((totalPages ?: 1) - 1)} ? 'disabled'">
+            <a class="page-link" 
+               th:href="@{/product/productspage(page=${currentPage + 1}, size=${size ?: 5})}">下一頁</a>
+        </li>
+    </ul>
+</div>
+
+<!-- Footer 區域 -->
+<footer th:include="homepage::footer"></footer>
+
+<!-- JavaScript 功能 -->
+<script>
+    // 按價格排序
+    function sortProductsByPrice() {
+        let container = document.getElementById("product-container");
+        let cards = Array.from(container.getElementsByClassName("product-card"));
+
+        cards.sort((a, b) => {
+            let priceA = parseFloat(a.getAttribute("data-price"));
+            let priceB = parseFloat(b.getAttribute("data-price"));
+            return priceA - priceB;
+        });
+
+        container.innerHTML = "";
+        cards.forEach(card => container.appendChild(card));
+    }
+
+    // 搜尋商品
+    function searchProducts() {
+        let input = document.getElementById("search-box").value.toLowerCase();
+        let cards = document.getElementsByClassName("product-card");
+
+        for (let card of cards) {
+            let name = card.getAttribute("data-name").toLowerCase();
+            card.style.display = name.includes(input) ? "" : "none";
+        }
+    }
+</script>
+
+</body>
+</html>

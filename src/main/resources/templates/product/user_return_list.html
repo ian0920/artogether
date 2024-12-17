@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>退換貨列表</title>
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            text-align: center;
+        }
+        h1 {
+            color: #3498db; /* 標題藍色 */
+        }
+        a {
+            text-decoration: none;
+            color: #007BFF;
+        }
+        a:hover {
+            color: #0056b3;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px auto;
+            width: 90%;
+        }
+        .controls select, .controls button {
+            padding: 8px 10px;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 90%;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            font-size: 14px;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+            font-size: 16px;
+            text-transform: uppercase;
+        }
+        tr {
+            transition: background-color 0.3s;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        td a, td button {
+            padding: 8px 12px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        td a {
+            background-color: #3498db;
+        }
+        td button {
+            background-color: #e74c3c;
+        }
+        .return-button {
+            display: inline-block;
+            margin: 20px auto;
+            background-color: #95a5a6;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .return-button:hover {
+            background-color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <h1>退換貨列表</h1>
+
+    <!-- 控制區: 篩選與排序 -->
+    <div class="controls">
+        <div>
+            <label for="typeFilter">類型：</label>
+            <select id="typeFilter" onchange="filterTable()">
+                <option value="all">全部</option>
+                <option value="退貨">退貨</option>
+                <option value="換貨">換貨</option>
+            </select>
+
+            <label for="statusFilter">狀態：</label>
+            <select id="statusFilter" onchange="filterTable()">
+                <option value="all">全部</option>
+                <option value="處理中">處理中</option>
+                <option value="完成">完成</option>
+            </select>
+        </div>
+        <div>
+            <button onclick="sortTable(6, this)" data-order="asc">依申請時間排序</button>
+            <button onclick="sortTable(7, this)" data-order="asc">依退換時間排序</button>
+        </div>
+    </div>
+
+    <!-- 表格 -->
+    <table id="returnTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>訂單編號</th>
+                <th>商品名稱</th>
+                <th>退換貨原因</th>
+                <th>類型</th>
+                <th>狀態</th>
+                <th>申請日期</th>
+                <th>退換日期</th>
+                <th>退款金額</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="return : ${userReturns}">
+                <td th:text="${return.id}"></td>
+                <td th:text="${return.orderId}"></td>
+                <td th:text="${return.prdName}"></td>
+                <td th:text="${return.reason}"></td>
+                <td th:text="${return.type == 1 ? '換貨' : '退貨'}"></td>
+                <td th:text="${return.status == 1 ? '完成' : '處理中'}"></td>
+                <td th:text="${return.applyDate}"></td>
+                <td th:text="${return.returnDate}"></td>
+                <td th:text="${return.refund}"></td>
+                <td>
+                    <a th:href="@{'/product/edit/' + ${return.id}}">編輯</a>
+                    <form th:action="@{'/product/delete/' + ${return.id}}" method="post" style="display: inline;">
+                        <button type="submit">刪除</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- 返回按鈕 -->
+    <a href="javascript:history.back()" class="return-button">返回上一頁</a>
+
+    <script>
+        // 篩選表格資料
+        function filterTable() {
+            const typeFilter = document.getElementById("typeFilter").value;
+            const statusFilter = document.getElementById("statusFilter").value;
+            const rows = document.querySelectorAll("#returnTable tbody tr");
+
+            rows.forEach(row => {
+                const type = row.cells[4].innerText.trim();
+                const status = row.cells[5].innerText.trim();
+                const showType = typeFilter === "all" || type === typeFilter;
+                const showStatus = statusFilter === "all" || status === statusFilter;
+
+                row.style.display = showType && showStatus ? "" : "none";
+            });
+        }
+
+        // 排序表格
+        function sortTable(col, button) {
+            const table = document.getElementById("returnTable");
+            const rows = Array.from(table.querySelectorAll("tbody tr"));
+            const order = button.getAttribute("data-order");
+
+            rows.sort((a, b) => {
+                const valA = a.cells[col].innerText.trim();
+                const valB = b.cells[col].innerText.trim();
+
+                return order === "asc" ? valA.localeCompare(valB) : valB.localeCompare(valA);
+            });
+
+            rows.forEach(row => table.querySelector("tbody").appendChild(row));
+            button.setAttribute("data-order", order === "asc" ? "desc" : "asc");
+        }
+    </script>
+</body>
+</html>

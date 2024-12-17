@@ -13,5 +13,8 @@ public interface PrdOrderDetailRepository extends JpaRepository<PrdOrderDetail, 
 
     List<PrdOrderDetail> findByPrdOrder(PrdOrder prdOrder);
 
+
     List<PrdOrderDetail> findByProductId(Product product);
+
+  List<PrdOrderDetail> findByPrdOrderId(Integer orderId);
 }

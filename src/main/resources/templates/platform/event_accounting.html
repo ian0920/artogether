@@ -7,12 +7,22 @@
 <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 
 <link rel="stylesheet" th:href="@{/web_design/style/style_general.css}" />
+
 <link
 	href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
 	rel="stylesheet" />
 	
 
 <title>活動款項查核-平台</title>
+    <style>
+         table{
+             font-size: 12px;
+         }
+
+         thead{
+             font-size: 12px;
+         }
+    </style>
 </head>
 <body class="sb-nav-fixed">
 <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -129,7 +139,7 @@
 
                 <div class="container mt-5">
                     <!-- Form Section -->
-                    <form method="post" action="/platform/event/accounting/search" class="row g-3 bg-light p-4 rounded shadow-sm">
+                    <form id="search-form" method="post" action="/platform/event/accounting/search" class="row g-3 bg-light p-4 rounded shadow-sm">
                         <!-- Business Selection -->
                         <div class="col-md-3">
                             <label for="businessId" class="form-label fw-bold">選擇商家</label>
@@ -154,7 +164,7 @@
 
                         <!-- Submit Button -->
                         <div class="col-12 text-end mt-3">
-                            <button type="submit" class="btn btn-primary btn-md">送出查詢</button>
+                            <button id="form-submit" type="submit" class="btn btn-primary btn-md">送出查詢</button>
                         </div>
                     </form>
                 </div>
@@ -183,7 +193,14 @@
                             <tr th:if="${orders.size() > 0}" th:each="order : ${orders}">
                                 <td th:text="${order.eventName}"></td>
                                 <td th:text="${order.id}"></td>
-                                <td th:text="${order.status}"></td>
+                                <td th:switch="${order.status}">
+                                    <p th:case="0">待審核</p>
+                                    <p th:case="1">正常</p>
+                                    <p th:case="2">延期</p>
+                                    <p th:case="3">取消</p>
+                                    <p th:case="4">審核被拒</p>
+                                    <p th:case="5">活動結束</p>
+                                </td>
                                 <td th:text="${order.orderDate}"></td>
                                 <td th:text="${order.totalPrice}"></td>
                                 <td th:text="${order.discount}"></td>
@@ -191,7 +208,11 @@
                                 <td th:text="${order.refundApplyDate}"></td>
                                 <td th:text="${order.refundDate}"></td>
                                 <td th:text="${order.refund}"></td>
-                                <td th:text="${order.paymentMethod}"></td>
+                                <td th:switch="${order.paymentMethod}">
+                                    <p th:case="0">信用卡</p>
+                                    <p th:case="1">行動支付</p>
+                                    <p th:case="2">ATM轉帳</p>
+                                </td>
 
                             </tr>
 
@@ -224,6 +245,48 @@
 <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
 <script src="/platform_backend/js/datatables-simple-demo.js"></script>
 <script src="/platform_backend/js/scripts.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+
+    $('#search-form').on('submit', function (e) {
+        e.preventDefault();
+
+        const businessId = $('#businessId').val();
+        const startDate = $('#startDate').val();
+        const endDate = $('#endDate').val();
+
+        if(businessId === '-1'){
+            pupOutAlter("請選擇商家", 'warning');
+            return;
+        }
+        if(startDate === ''){
+            pupOutAlter("請選擇訂單起始日期", 'warning');
+            return;
+        }
+
+        if(endDate === ''){
+            pupOutAlter("請選擇訂單結束日期", 'warning');
+            return;
+        }
+
+        this.submit();
+
+    })
+
+
+    const pupOutAlter = function (title, status){
+
+        Swal.fire({
+            title: '',
+            text: title,
+            icon: status,
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#2c95c6',
+        });
+    };
+
+</script>
 
 </body>
 </html>

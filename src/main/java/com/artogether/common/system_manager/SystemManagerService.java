@@ -24,13 +24,10 @@ public class SystemManagerService {
     }
 
     // 修改平台管理員
-    public SystemManager update(SystemManager system_manager) {
-        // 確保該管理員存在，否則返回 null
-        if (system_managerRepo.existsById(system_manager.getId())) {
-            return system_managerRepo.save(system_manager);  // 更新管理員
-        } else {
-            return null; // 返回null，表示未找到該管理員
-        }
+    public void update(SystemManager system_manager) {
+        SystemManager sm = findById(system_manager.getId());
+        sm.setStatus(system_manager.getStatus());
+        system_managerRepo.save(sm);
     }
 
     // 更新管理員狀態

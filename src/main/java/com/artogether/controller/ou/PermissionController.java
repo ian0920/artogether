@@ -12,9 +12,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/permission")
@@ -109,23 +109,23 @@ public class PermissionController {
 
 
     /* 邏輯
-    *
-    * String message = null;
-    *   form -> managerId permId
-    *  findbyid(manager) -> List<perm>
-    *  list.foreach( list id == permId )
-    *  message = "此會員已有此權限"
-    *
-    * (list id != permId)
-    *  repo.save()
-    *  message = "新增成功"
-    *
-    *  model.addAttribute("message", message)
-    *  retrun:""
-    *
-    * <h2 th:if="${message != null}" th:text="${message}"></2>
-    *
-    * */
+     *
+     * String message = null;
+     *   form -> managerId permId
+     *  findbyid(manager) -> List<perm>
+     *  list.foreach( list id == permId )
+     *  message = "此會員已有此權限"
+     *
+     * (list id != permId)
+     *  repo.save()
+     *  message = "新增成功"
+     *
+     *  model.addAttribute("message", message)
+     *  retrun:""
+     *
+     * <h2 th:if="${message != null}" th:text="${message}"></2>
+     *
+     * */
 
 
     /* =================================================================================== */
@@ -136,12 +136,12 @@ public class PermissionController {
 
 //    @Transactional
 //    @GetMapping("/publish")
-////    修改活動狀態ㄉ按鈕
+
+    /// /    修改活動狀態ㄉ按鈕
 //    public String publish(@RequestParam Integer id, @RequestParam Integer status) {
 //        evtService.updateEvtStatus(id, status);
 //        return "redirect:/event/listall";
 //    }
-
     @PostMapping("/update")
     public String updatePermission(@ModelAttribute Permission permission, Model model) {
         Permission updatedPermission = permissionService.update(permission);
@@ -152,18 +152,20 @@ public class PermissionController {
         return "permission/all";  // Redirect to the list of all permissions
     }
 
-    // 刪除權限
-//    @GetMapping("/delete/{id}")
-//    public String deletePermission(@PathVariable Integer id, Model model) {
-//        Permission permission = permissionService.findAll().stream()
-//                .filter(p -> p.getPermissionId().getManagerId().equals(id))  // 假設您可以用 id 創建一個 PermissionId 實例
-//                .findFirst()
-//                .orElse(null);
-//        if (permission != null) {
-//            permissionService.delete(permission);
-//        } else {
-//            model.addAttribute("errorMessage", "權限未找到！");
-//        }
-//        return "redirect:/permission/all";  // Redirect to the list of all permissions
-//    }
+    /*======
+     刪除權限
+     =======*/
+    @GetMapping("/deletePm")
+    public String deletePermission(@RequestParam Integer managerId,Integer permDescId, Model model) {
+        // 查找該管理員擁有的所有權限
+        Optional<Permission> permission = permissionService.findById(managerId, permDescId);
+
+        // 刪除權限
+        permission.ifPresent(p -> permissionService.delete(p));
+
+        List<PermissionDTO> permissionDTOS = permissionService.findAllDTO();
+        model.addAttribute("permissions", permissionDTOS);
+
+        return "redirect:/permission/pm"; // 或者重定向到其他頁面，根據需求
+    }
 }

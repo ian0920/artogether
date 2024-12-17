@@ -179,6 +179,7 @@
                                     <th>ID</th>
 <!--                                    <th>權限ID</th>-->
                                     <th>權限</th>
+                                    <th>更新</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -188,6 +189,13 @@
                                     <td th:text="${permission.managerId}"></td> <!-- 顯示 ID -->
 <!--                                    <td th:text="${permission.descId}"></td> &lt;!&ndash; 顯示描述 &ndash;&gt;-->
                                     <td th:text="${permission.descName}"></td>
+                                    <!-- 刪除按鈕 -->
+                                    <td>
+                                        <!-- 使用 th:href 動態生成刪除鏈接 -->
+                                        <a th:href="@{/permission/deletePm(managerId=${permission.managerId}, permDescId=${permission.descId})}"
+                                           class="btn btn-danger"
+                                           onclick="return confirm('您確定要刪除該權限嗎?');">刪除</a>
+                                    </td>
                                 </tr>
                                 </tbody>
                             </table>

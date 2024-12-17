@@ -56,26 +56,18 @@ public class SystemManagerController {
     /* =================================================================================== */
 
     // 顯示更新系統管理員的表單頁面
-    @GetMapping("/update/{id}")
-    public String updateSystemManagerPage(@PathVariable int id, Model model) {
+    @GetMapping("smUpdate")
+    public String updateSystemManagerPage(@RequestParam Integer id, Model model) {
         SystemManager systemManager = systemManagerService.findById(id);
-        if (systemManager == null) {
-            model.addAttribute("errorMessage", "系統管理員未找到！");
-            return "redirect:/systemManager/all";  // Redirect to the list if not found
+        if(systemManager.getStatus() == 0){
+            systemManager.setStatus((byte) 1);
+        }else {
+            systemManager.setStatus((byte) 0);
         }
-        model.addAttribute("systemManager", systemManager);
-        return "redirect:system_manager/update";  // JSP/HTML file for updating a system manager
-    }
-
-    // 處理更新系統管理員的請求
-    @PostMapping("/update")
-    public String updateSystemManager(@ModelAttribute SystemManager systemManager, Model model) {
-        SystemManager updatedManager = systemManagerService.update(systemManager);
-        if (updatedManager == null) {
-            model.addAttribute("errorMessage", "系統管理員更新失敗！");
-            return "redirect:/systemManager/all";  // Redirect to the list if update fails
-        }
-        return "redirect:/systemManager/all";  // Redirect to the list after successful update
+        systemManagerService.update(systemManager);
+        List<SystemManager> systemManagers = systemManagerService.findAll();
+        model.addAttribute("systemManagers", systemManagers);
+        return "redirect:/systemManager/manager";
     }
 
     // 刪除系統管理員
