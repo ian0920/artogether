@@ -299,6 +299,7 @@ public class VenueService {
                     vneCardDTO.setDescription(e.getDescription());
                     vneCardDTO.setAvailableDays(e.getAvailableDays());
                     vneCardDTO.setImgUrls(vneImgService.getAllImgs(e.getId()));
+                    System.out.println(vneImgService.getAllImgs(e.getId()));
                     vneCardDTO.setStartHour(startHour);
                     vneCardDTO.setEndHour(endHour);
 

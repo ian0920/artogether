@@ -15,6 +15,9 @@ public interface VneOrderRepository extends JpaRepository<VneOrder, Integer> {
     @Query(value = "SELECT * FROM vne_order WHERE vne_id = ?1 AND end_date >  ?2 ", nativeQuery = true)
     List<VneOrder> findUnclosedOrders (Integer vneId, LocalDate today);
 
+    List<VneOrder> findByVenue_Id(Integer vneId);
+
+    List<VneOrder> findByMember_Id(Integer memberId);
     //@Modifying是指操作不會返回具體的實體集合
     @Modifying
     @Transactional
