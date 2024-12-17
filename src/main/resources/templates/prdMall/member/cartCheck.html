@@ -262,13 +262,29 @@
         const creditCardDetails = document.getElementById('creditCardDetails');
         const bankTransferDetails = document.getElementById('bankTransferDetails');
 
-        // 根據選擇顯示或隱藏區域
+        const cardType = document.getElementById('cardType');
+        const cardNumber = document.getElementById('cardNumber');
+        const expiryDate = document.getElementById('expiryDate');
+        const cvv = document.getElementById('cvv');
+
         if (paymentType === 'creditCard') {
             creditCardDetails.style.display = 'block';
             bankTransferDetails.style.display = 'none';
+
+            // 添加 required 屬性
+            cardType.setAttribute('required', 'required');
+            cardNumber.setAttribute('required', 'required');
+            expiryDate.setAttribute('required', 'required');
+            cvv.setAttribute('required', 'required');
         } else if (paymentType === 'bankTransfer') {
             creditCardDetails.style.display = 'none';
             bankTransferDetails.style.display = 'block';
+
+            // 移除 required 屬性
+            cardType.removeAttribute('required');
+            cardNumber.removeAttribute('required');
+            expiryDate.removeAttribute('required');
+            cvv.removeAttribute('required');
         }
     }
 </script>
