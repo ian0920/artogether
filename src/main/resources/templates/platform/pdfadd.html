@@ -72,16 +72,53 @@
             margin-top: 10px;
             font-size: 14px;
         }
+
+        /* 按鈕容器 */
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;  /* 按鈕之間的間距 */
+            margin-top: 20px;
+        }
+
+        /* 提交按鈕 */
+        .submit-btn {
+            background-color: #007bff;
+            color: #fff;
+            flex: 1;  /* 按鈕占據可用空間 */
+        }
+
+        .submit-btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* 取消按鈕 */
+        .cancel-btn {
+            background-color: #ccc;
+            color: #333;
+            flex: 1;  /* 按鈕占據可用空間 */
+        }
+
+        .cancel-btn:hover {
+            background-color: #999;
+        }
     </style>
 </head>
 <body>
 <form th:action="@{/permDesc/pdfadd}" th:object="${permDesc}" method="post">
     <h1>新增平台功能說明</h1>
-<!--    <label>權限 ID：</label>-->
-<!--    <input type="number" th:field="*{id}" required />-->
+
     <label>描述：</label>
     <input type="text" th:field="*{description}" required />
-    <button type="submit">新增</button>
+
+    <!-- 按鈕 -->
+    <div class="button-container">
+        <!-- 新增按鈕 -->
+        <button type="submit" class="submit-btn">新增</button>
+        <!-- 取消按鈕 -->
+        <button type="button" class="cancel-btn" onclick="window.location.href='/permDesc/page';">取消</button>
+    </div>
+
     <div class="description">請填寫完整資料後，點擊「新增」按鈕。</div>
 </form>
 

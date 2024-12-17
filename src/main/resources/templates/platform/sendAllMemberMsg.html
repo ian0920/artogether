@@ -72,21 +72,55 @@
             margin-top: 10px;
             font-size: 14px;
         }
+
+        /* 按鈕容器 */
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;  /* 按鈕之間的空間 */
+            margin-top: 20px;
+        }
+
+        /* 提交按鈕 */
+        .submit-btn {
+            background-color: #007bff;
+            color: #fff;
+            flex: 1;  /* 按鈕占據可用空間 */
+        }
+
+        .submit-btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* 取消按鈕 */
+        .cancel-btn {
+            background-color: #ccc;
+            color: #333;
+            flex: 1;  /* 按鈕占據可用空間 */
+        }
+
+        .cancel-btn:hover {
+            background-color: #999;
+        }
     </style>
 </head>
 <body>
 <form th:action="@{/platformMsg/sendAllMemberMsg}" th:object="${memberAllMsg}" method="post">
-    <div> <h1>新增管理員</h1>
-        <!--        <div class="text-center" style="color: red" th:text="${errors}"></div>-->
+    <div>
+        <h1>新增全部會員訊息</h1>
     </div>
-    <!--  自增主鍵  -->
-    <!--  <label>管理員編號：</label>-->
-    <!--  <input type="number" th:field="*{id}" required />-->
-    <!--    <label>會員編號：</label>-->
-    <!--    <input type="number" th:field="*{id}" required />-->
+
     <label>訊息內容：</label>
     <input type="text" th:field="*{message}" required />
-    <button type="submit">新增</button>
+
+    <!-- 按鈕容器 -->
+    <div class="button-container">
+        <!-- 提交按鈕 -->
+        <button type="submit" class="submit-btn">新增</button>
+        <!-- 取消按鈕 -->
+        <button type="button" class="cancel-btn" onclick="window.location.href='/profile/allMembers';">取消</button>
+    </div>
+
     <div class="description">請填寫完整資料後，點擊「新增」按鈕。</div>
 </form>
 

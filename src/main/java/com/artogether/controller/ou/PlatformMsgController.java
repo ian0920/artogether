@@ -1,5 +1,8 @@
 package com.artogether.controller.ou;
 
+import com.artogether.common.business_member.BusinessMember;
+import com.artogether.common.member.Member;
+import com.artogether.common.member.MemberService;
 import com.artogether.common.platform_msg.PlatformMsg;
 import com.artogether.common.platform_msg.PlatformMsgService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
@@ -18,6 +22,8 @@ public class PlatformMsgController {
 
     @Autowired
     private PlatformMsgService platformMsgService;
+    @Autowired
+    private MemberService memberService;
 
     // 查全部訊息
     @GetMapping("/allMessage")
@@ -33,18 +39,25 @@ public class PlatformMsgController {
 
     @GetMapping("/sendMemberMsg")
     public String sendOne(Model model) {
-        model.addAttribute("memberMsg", new PlatformMsg());
+        List<Member> memberList = memberService.findAll();
+        model.addAttribute("memberList", memberList);
+//        model.addAttribute("memberMsg", new PlatformMsg());
         return "/platform/sendMemberMsg";  // JSP/HTML file for adding a new system manager
     }
 
+    // @RequestParam 強制給屬性 sendMemberMsg.html中name="id"
     @PostMapping("/sendMemberMsg")
-    public String sendMessage(Integer id, String message) {
+    public String sendMessage(@RequestParam Integer id, @RequestParam String message) {
+        System.out.println("id: " + id);
+        System.out.println("message: " + message);
+
+        // 发送消息逻辑
         platformMsgService.sendToOne(message, id);
-//        platformMsgRepo.save(pms);
-//        List<PlatformMsg> memberMessage = platformMsgService.findAll();
-//        model.addAttribute("platformMsg", memberMessage);
+
+        // 重定向到其他页面
         return "redirect:/profile/allMembers";
     }
+
 
     /*========
      寄出全部會員
@@ -91,7 +104,7 @@ public class PlatformMsgController {
     public String memberMessage(HttpSession session, Model model) {
         Integer memberId = (Integer) session.getAttribute("member");
         List<PlatformMsg> mbMessage = platformMsgService.findByMember(memberId);
-        System.out.println(mbMessage.size());
+//        System.out.println(mbMessage.size());
         model.addAttribute("memberMessages", mbMessage);
         return "platform/memberMsg";
     }
@@ -99,9 +112,9 @@ public class PlatformMsgController {
     // 商家收件夾
     @GetMapping("/businessMessage")
     public String openBusinessMessage(HttpSession session, Model model) {
-        Integer businessId = (Integer) session.getAttribute("businessMember");
-        List<PlatformMsg> bnMessage = platformMsgService.findByBusinessMember(businessId);
-        model.addAttribute("businessMessage", bnMessage);
+        BusinessMember businessId = (BusinessMember) session.getAttribute("presentBusinessMember");
+        List<PlatformMsg> bnMessage = platformMsgService.findByBusinessMember(businessId.getId());
+        model.addAttribute("businessMessages", bnMessage);
         return "platform/businessMsg";
     }
 

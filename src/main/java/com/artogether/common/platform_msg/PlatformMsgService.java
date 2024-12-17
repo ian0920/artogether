@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.mail.Message;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -66,7 +67,7 @@ public class PlatformMsgService {
         Member member = memberRepo.findById(memberId).get();
         platformMsg.setMember(member);
         platformMsg.setMessage(message);
-        platformMsg.setMsgTime(new Timestamp(System.currentTimeMillis()));
+        platformMsg.setMsgTime(new Time(System.currentTimeMillis()));
         platformMsg.setStatus((byte) 0);
         return platformMsgRepo.save(platformMsg);
     }
@@ -82,7 +83,7 @@ public class PlatformMsgService {
                     PlatformMsg platformMsg = new PlatformMsg();
                     platformMsg.setMember(member);
                     platformMsg.setMessage(message);
-                    platformMsg.setMsgTime(new Timestamp(System.currentTimeMillis()));
+                    platformMsg.setMsgTime(new Time(System.currentTimeMillis()));
                     platformMsg.setStatus((byte) 0);
                     platformMsgRepo.save(platformMsg);
                 }
@@ -115,7 +116,7 @@ public class PlatformMsgService {
                     PlatformMsg platformMsg = new PlatformMsg();
                     platformMsg.setBusinessMember(businessMember);
                     platformMsg.setMessage(message);
-                    platformMsg.setMsgTime(new Timestamp(System.currentTimeMillis()));
+                    platformMsg.setMsgTime(new Time(System.currentTimeMillis()));
                     platformMsg.setStatus((byte) 0);
                     platformMsgRepo.save(platformMsg);
                 }

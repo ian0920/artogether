@@ -45,14 +45,14 @@
               <div clickable class="bs-navbar-header"
   	                th:classappend="${selectedItem == 'info' ? ' -open' : ''}">
                 <span class="material-symbols-outlined">settings</span
-                ><a href="#">基本資訊設定</a>
+                ><a href="/profile/memberProfiles">基本資訊設定</a>
               </div>
             </li>
             <li clickable class="bs-navbar-item">
               <div clickable class="bs-navbar-header"
               	   th:classappend="${selectedItem == 'inbox' ? ' -open' : ''}">
                 <span class="material-symbols-outlined">inbox</span
-                ><a href="#">收件匣</a>
+                ><a href="/platformMsg/memberMessage">收件匣</a>
               </div>
             </li>
           </ul>
