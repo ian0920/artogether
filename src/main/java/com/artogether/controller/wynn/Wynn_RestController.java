@@ -68,6 +68,7 @@ public class Wynn_RestController {
 	@Autowired
     private Jedis jedis;
 
+
 	//==========================================================
 	//         				活動相關
 	//==========================================================
@@ -222,6 +223,7 @@ public class Wynn_RestController {
 			Map<String, Object> response = new HashMap<>();
 			response.put("msgList", parsedMessages);
 			response.put("message", parsedMessages.isEmpty()?"查無歷史訊息":"成功取得歷史訊息");
+
 			return ResponseEntity.ok(response);			
 		}
 }

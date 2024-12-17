@@ -118,6 +118,7 @@ public class ChatHandler extends TextWebSocketHandler {
             	// 如果寄送者離線，先不發送，後續在離線消息中發送
 //            	String offlineKey = "offline_messages:" +chatRoomId+ ":" +senderKey;
 //            	jedis.lpush(offlineKey, objectMapper.writeValueAsString(chatMessage));
+
             }
     }
 

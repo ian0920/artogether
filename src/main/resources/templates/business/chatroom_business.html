@@ -12,6 +12,7 @@
 </head>
 <body onunload="disconnect();">
 <!-- 導航 -->
+<<<<<<< HEAD
 <div th:replace="~{/components/navbar_business::navbar('chat','')}"></div>
 <main class="row no-padding" style="gap: 0">
 	
@@ -149,6 +150,130 @@ function sendMessage() {
 		  "content": message, // 訊息內容
 		  "sendTime": timestampStr
 
+=======
+<div th:replace="~{/components/navbar_business::navbar('inbox','')}"></div>
+<main class="row">
+<!-- 	聊天室列表 -->
+	<section>
+		<div th:if="${chatrooms!=null}" th:each="c : ${chatrooms}">
+			<button th:text="${c.member.name}" th:onclick="openChat([[${c.id}]],[[${c.member.id}]],[[${c.member.name}]])"></button>
+		</div>
+	</section>
+	
+<!-- 	聊天室內容 -->
+	<section>
+		<div>
+			<h3 id="peer_name"></h3>
+		</div>
+		<div class="message-area" id="messageArea"></div>
+		<div class="panel input-area">
+		<input id="message" class="text-field" type="text" placeholder="Message" onkeydown="if (event.keyCode == 13) sendMessage();" /> 
+		<input type="submit" id="sendMessage" class="button" value="Send" onclick="sendMessage();" /> 
+
+	</div>
+	</section>
+</main>
+
+<script type="text/javascript" th:inline="javascript">
+const socket = new WebSocket("ws://"+window.location.host+"/chat");
+var currentChatroom = null;
+var currentPeer = null;
+var userId= [[${session.presentBusinessMember.id}]];
+
+socket.onopen = () => {
+    console.log("WebSocket 連接已建立");
+};
+
+socket.onmessage = (event) => {
+	var jsonObj = JSON.parse(event.data);
+    console.log("收到伺服器消息:", jsonObj);
+    renderMsg(jsonObj);
+};
+
+socket.onclose = () => {
+    console.log("WebSocket 連接已關閉");
+};
+
+socket.onerror = (error) => {
+    console.error("WebSocket 發生錯誤:", error);
+};
+
+function renderMsg(jsonObj){
+	var str = document.createElement('li');
+	// 先用 JS 寫好要增加的內容
+	str.textContent = jsonObj.content;
+	// 動態掛一個 class 屬性
+	str.setAttribute('class', jsonObj.sender? 'business':'member');
+	// 用 appendChild() 把上面寫好的子節點掛在既有的 h1 下面，新增的內容會依序排列在後面，不會被洗掉
+	document.querySelector('#messageArea').appendChild(str);
+}
+	
+//載入歷史訊息，顯示聊天對象名稱
+function openChat(chatroomId, peer, peerName) {
+	// 暫存當前聊天室資訊
+	currentChatroom=chatroomId;
+	currentPeer=peer;
+	//顯示名稱
+	var el_peerName = document.querySelector("#peer_name");
+	el_peerName.innerText = peerName;
+	
+	//清空messageArea中前一個對話紀錄
+	document.querySelector('#messageArea').innerText='';
+	
+	// 透過restful api取得歷史紀錄(redis or mysql)
+	 // 構造請求資料
+	    const payload = {
+	        chatroomId
+	    };
+	
+	fetch("/api/chat/getHistory", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("新增失敗，請檢查輸入或稍後再試。");
+        }
+        return response.json();
+    })
+    .then(data => {
+        data.msgList.forEach(m => {
+        	renderMsg(m)
+        });
+    })
+    .catch(error => {
+        alert(`操作失敗：${error.message}`);
+    });
+}
+
+function sendMessage() {
+	var inputMessage = document.getElementById("message");
+	var message = inputMessage.value.trim();
+
+	if (message === "") {
+		alert("請輸入文字");
+		inputMessage.focus();
+	} else if (currentChatroom === "") {
+		alert("請選擇一個對象");
+	} else {
+		console.log("已發送訊息")
+		var jsonObj = {
+		  "id": null,                   // 訊息的唯一識別碼，由後端生成，前端設為 null 或忽略
+		  "chatroom": {                 // 聊天室資訊
+		    "id": currentChatroom,                    // 聊天室的 ID，必須提供
+		  	"member":{
+		  		"id":currentPeer
+		  	},
+		  	"businessMember":{
+		  		"id":userId
+		  	},
+		  },
+		  "sender": true,               // 發送者類型：true 表示商家；false 表示會員
+		  "content": message // 訊息內容
+>>>>>>> branch 'wynn' of https://github.com/ian0920/artogether.git
 		};
 		socket.send(JSON.stringify(jsonObj));
 		inputMessage.value = "";
