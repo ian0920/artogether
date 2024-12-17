@@ -473,17 +473,37 @@ INSERT INTO vne_track (member_id, vne_id, track_date) VALUES
 (10, 10, '2023-10-20');
 
 -- Insert fake data into the vne_img table
--- INSERT INTO vne_img (vne_id, image_file) VALUES
--- (1, 'image_data_vne1'),
--- (2, 'image_data_vne2'),
--- (3, 'image_data_vne3'),
--- (4, 'image_data_vne4'),
--- (5, 'image_data_vne5'),
--- (6, 'image_data_vne6'),
--- (7, 'image_data_vne7'),
--- (8, 'image_data_vne8'),
--- (9, 'image_data_vne9'),
--- (10, 'image_data_vne10');
+ INSERT INTO vne_img (vne_id, image_url, position) VALUES
+(1, '/venue/images/1_1.jpg', 1),
+(1, '/venue/images/1_2.jpg', 2),
+(1, '/venue/images/1_3.jpg', 3),
+(2, '/venue/images/2_1.jpg', 1),
+(2, '/venue/images/2_2.jpg', 2),
+(2, '/venue/images/2_3.jpg', 3),
+(3, '/venue/images/3_1.jpg', 1),
+(3, '/venue/images/3_2.jpg', 2),
+(3, '/venue/images/3_3.jpg', 3),
+(4, '/venue/images/4_1.jpg', 1),
+(4, '/venue/images/4_2.jpg', 2),
+(4, '/venue/images/4_3.jpg', 3),
+(5, '/venue/images/5_1.jpg', 1),
+(5, '/venue/images/5_2.jpg', 2),
+(5, '/venue/images/5_3.jpg', 3),
+(6, '/venue/images/6_1.jpg', 1),
+(6, '/venue/images/6_2.jpg', 2),
+(6, '/venue/images/6_3.jpg', 3),
+(7, '/venue/images/7_1.jpg', 1),
+(7, '/venue/images/7_2.jpg', 2),
+(7, '/venue/images/7_3.jpg', 3),
+(8, '/venue/images/8_1.jpg', 1),
+(8, '/venue/images/8_2.jpg', 2),
+(8, '/venue/images/8_3.jpg', 3),
+(9, '/venue/images/9_1.jpg', 1),
+(9, '/venue/images/9_2.jpg', 2),
+(9, '/venue/images/9_3.jpg', 3),
+(10, '/venue/images/10_1.jpg', 1),
+(10, '/venue/images/10_2.jpg', 2),
+(10, '/venue/images/10_3.jpg', 3);
 
 -- Insert fake data into the vne_coup table
 INSERT INTO vne_coup (vne_id, vne_coup_name, status, type, threshold,deduction, ratio, start_date, end_date, duration,day_of_week,hour_of_day) VALUES
