@@ -64,7 +64,12 @@ public class VneOrderService {
             throw new VenueExceptions.DateAlreadyLockedException("訂單送出過程出了意外?!");
         }
     }
-
+    public boolean isCreated(Integer orderId) {
+        Optional<VneOrder> vneOrderOptional = vneOrderRepository.findById(orderId);
+        if (vneOrderOptional.isPresent()) {
+            return true;
+        }else {return false;}
+    }
     public Integer CreateSingleDayVneOrder (VneOrderDTO vneOrderDTO, LocalDateTime submissionTime) {
         VneOrder vneOrder = new VneOrder();
         Integer memId = vneOrderDTO.getMemId();

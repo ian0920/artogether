@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -135,14 +136,25 @@ public class VneRestController {
 
     // 最終保存階段：確認保存訂單
     @PostMapping("/order/payment/full/{vneId}")
-    public ResponseEntity<String> confirmOrder(@PathVariable("vneId") Integer vneId,
+    public ResponseEntity<Map<String, Object>> confirmOrder(@PathVariable("vneId") Integer vneId,
                                                @RequestBody VneOrderDTO vneOrderDTO) {
         LocalDateTime now = LocalDateTime.now();
         vneOrderDTO.setVneId(vneId);
         System.out.println(vneOrderDTO);
         System.out.println("confirmOrder");
-        vneOrderService.CreateSingleDayVneOrder(vneOrderDTO, now);
-        return ResponseEntity.badRequest().body("Insufficient payment!");
+        Integer orderId = vneOrderService.CreateSingleDayVneOrder(vneOrderDTO, now);
+        boolean created = vneOrderService.isCreated(orderId);
+        System.out.println("created"+created);
+        Map<String, Object> response = new HashMap<>();
+        if (created) {
+            response.put("success", true);
+            response.put("message", "Order successfully created!");
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } else {
+            response.put("success", false);
+            response.put("message", "Insufficient payment!");
+            return ResponseEntity.badRequest().body(response);
+        }
     }
 
 //    //付訂金

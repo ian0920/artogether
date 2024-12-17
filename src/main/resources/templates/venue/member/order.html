@@ -1,19 +1,93 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        /* 日期與時間選擇器樣式 */
+        label {
+            display: block;
+            font-weight: bold;
+            margin-top: 10px;
+            color: #333;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        /* 禁用狀態樣式 */
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* 按鈕樣式 */
+        button {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        button:not(:last-child) {
+            margin-right: 10px;
+        }
+
+        /* 提示訊息樣式 */
+        div[style*="color: red"] {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        div[style*="background-color: #f4f4f4"] {
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        p {
+            margin: 5px 0;
+        }
+
+    </style>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" th:href="@{/web_design/style/style_general.css}"/>
+    <link rel="stylesheet" th:href="@{/web_design/style/style_homepage.css}"/>
+    <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+            rel="stylesheet"
+    />
 </head>
 <body>
+<div th:replace="~{/components/navbar_homepage::navbar}"></div>
 <script>
     window.onbeforeunload = () => {
         if (previousDate) {
-            const payload = JSON.stringify({ date: previousDate });
+            const payload = JSON.stringify({date: previousDate});
             navigator.sendBeacon(`/vne/order/unlock/${vneId}`, payload);
         }
     };
@@ -28,60 +102,66 @@
 
     console.log(window.vneId); // 測試是否成功設置，打印出 vneId 的值
 </script>
-<div x-data="timeReservation()" x-init="initData()">
-    <!-- 日期選擇器 -->
-    <label for="datePicker">Select a Date:</label>
-    <input type="text" id="datePicker" placeholder="Choose a date" @change=" updateTotalPrice()">
+<main>
+    <div x-data="timeReservation()" x-init="initData()">
+        <!-- 日期選擇器 -->
+        <label for="datePicker">Select a Date:</label>
+        <input type="text" id="datePicker" placeholder="Choose a date" @change="updateTotalPrice()">
 
-    <!-- 開始時間選單 -->
-    <label for="startTime">Start Time:</label>
-    <select id="startTime" x-model="order.startTime" @change="updateEndTimeOptions()">
-        <option value="" disabled selected>Select Start Time</option>
-        <template x-for="hour in availableStartTimes" :key="hour">
-            <option :value="hour" x-text="hour"></option>
-        </template>
-    </select>
+        <!-- 開始時間選單 -->
+        <label for="startTime">Start Time:</label>
+        <select id="startTime" x-model="order.startTime" @change="updateEndTimeOptions()">
+            <option value="" disabled selected>Select Start Time</option>
+            <template x-for="hour in availableStartTimes" :key="hour">
+                <option :value="hour" x-text="hour"></option>
+            </template>
+        </select>
 
-    <!-- 結束時間選單 -->
-    <label for="endTime">End Time:</label>
-    <select id="endTime" x-model="order.endTime" @change="updateTotalPrice()">
-        <option value="" disabled selected>Select End Time</option>
-        <template x-for="hour in availableEndTimes" :key="hour">
-            <option :value="hour" x-text="hour"></option>
-        </template>
-    </select>
-    <p>Total Price: <span x-text="order.totalPrice !== null ? `$${order.totalPrice}` : 'N/A'"></span></p>
+        <!-- 結束時間選單 -->
+        <label for="endTime">End Time:</label>
+        <select id="endTime" x-model="order.endTime" @change="updateTotalPrice()">
+            <option value="" disabled selected>Select End Time</option>
+            <template x-for="hour in availableEndTimes" :key="hour">
+                <option :value="hour" x-text="hour"></option>
+            </template>
+        </select>
 
-    <!-- 提示信息 -->
-    <div style="color: red; margin-bottom: 10px;">
-        <p x-show="!order.startDate">請選擇日期</p>
-        <p x-show="!order.startTime">請選擇開始時間</p>
-        <p x-show="!order.endTime">請選擇結束時間</p>
+        <p>Total Price: <span x-text="order.totalPrice !== null ? `$${order.totalPrice}` : 'N/A'"></span></p>
+
+        <!-- 提示信息 -->
+        <div style="color: red; margin-bottom: 10px;">
+            <p x-show="!order.startDate">請選擇日期</p>
+            <p x-show="!order.startTime">請選擇開始時間</p>
+            <p x-show="!order.endTime">請選擇結束時間</p>
+        </div>
+
+        <!-- 提交按鈕與取消按鈕 -->
+        <div>
+            <button @click="submitReservation()" :disabled="!order.startTime || !order.endTime || !order.startDate">預約</button>
+            <button @click="resetReservation(); location.href='/vneMem/details/' + vneId" style="background-color: #DC3545;">取消</button>
+        </div>
+
+        <!-- 確認彈窗 -->
+        <div x-show="showConfirmation"
+             style="margin-top: 20px; background-color: #f4f4f4; padding: 20px; border-radius: 10px;">
+            <h3 x-text="`${card.vneName}預約訂單`"></h3>
+            <p>地址: <span x-text="card.vneAddress"></span></p>
+            <p>預約日期: <span x-text="order.startDate"></span></p>
+            <p><span x-text="`${order.startTime}:00`"></span>
+                到<span x-text="`${order.endTime}:00`"></span>
+            </p>
+            <p>總金額: <span x-text="order.totalPrice"></span></p>
+            <p>Should Paid: <span x-text="order.shouldPaid"></span></p>
+
+            <!-- 倒數計時 -->
+            <p style="color: red;">請於 <span x-text="countdown"></span> 秒內確認，否則訂單將自動取消。</p>
+            <!-- 確認送出 -->
+            <button @click="confirmReservation()">全額付清</button>
+            <!-- 取消 -->
+            <button @click="cancelReservation()">取消</button>
+        </div>
     </div>
-    <!-- 提交按鈕 -->
-    <button @click="submitReservation()" :disabled="!order.startTime || !order.endTime || !order.startDate">預約</button>
-
-    <!-- 確認彈窗 -->
-    <div x-show="showConfirmation" style="margin-top: 20px; background-color: #f4f4f4; padding: 20px; border-radius: 10px;">
-        <h3 x-text="`${card.vneName}預約訂單`"></h3>
-        <p>地址: <span x-text="card.vneAddress"></span></p>
-        <p>預約日期: <span x-text="order.startDate"></span></p>
-        <p> <span x-text="`${order.startTime}:00`"></span>
-            到<span x-text="`${order.endTime}:00`"></span>
-        </p>
-        <p>預約日期: <span x-text="order.startDate"></span></p>
-        <p>總金額: <span x-text="order.totalPrice"></span></p>
-
-        <p>Should Paid: <span x-text="order.shouldPaid"></span></p>
-        <!-- 倒數計時 -->
-        <p style="color: red;">請於 <span x-text="countdown"></span> 秒內確認，否則訂單將自動取消。</p>
-        <!-- 確認送出 -->
-        <button @click="confirmReservation()">全額付清</button>
-        <!-- 取消 -->
-        <button @click="cancelReservation()">取消</button>
-    </div>
-</div>
-
+</main>
 <script>
     let previousDate = null; // 記錄之前選擇的日期
 
@@ -113,12 +193,12 @@
             countdown: 300,
             timer: null,
 
-            initData(){
+            initData() {
                 this.fetchDates();
                 this.vneCard();
             },
 
-            vneCard(){
+            vneCard() {
                 $.ajax({
                     url: `/vne/card/${vneId}`,
                     type: 'GET',
@@ -169,7 +249,7 @@
                 $.ajax({
                     url: `/vne/order/availability/${vneId}`,
                     type: 'GET',
-                    data: { date: this.order.startDate },
+                    data: {date: this.order.startDate},
                     success: (data) => {
                         this.availableSegments = data.availableSegments;
                         this.hourlyPrice = data.hourlyPrice;
@@ -199,7 +279,7 @@
                     url: `/vne/order/unlock/${vneId}`,
                     type: 'POST',
                     contentType: 'application/json',
-                    data: JSON.stringify({ date: date }),
+                    data: JSON.stringify({date: date}),
                     success: () => {
                         console.log(`成功解鎖日期: ${date}`);
                     },
@@ -257,6 +337,11 @@
                 this.order.totalPrice = total;
             },
 
+            resetReservation() {
+                this.order = { startDate: '', startTime: '', endTime: '', totalPrice: null, shouldPaid: null };
+                this.showConfirmation = false;
+            },
+
             submitReservation() {
                 if (!this.order.startDate || !this.order.startTime || !this.order.endTime) return;
 
@@ -293,7 +378,7 @@
             cancelReservation() {
                 this.showConfirmation = false;
                 this.stopCountdown(); // 停止計時
-                this.unlockDate(previousDate);
+                this.unlockDate(this.order.startDate);
             },
 
             startCountdown() {
@@ -316,7 +401,7 @@
                 if (this.timer) {
                     clearInterval(this.timer); // 清除計時器
                     console.log("stopCountdown")
-                    this.unlockDate(previousDate);
+                    this.unlockDate(this.order.startDate);
                     console.log(previousDate)
                     this.timer = null;
                 }
@@ -331,12 +416,22 @@
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(this.order),
-                    success: (message) => {
-                        if (data.success) {
-                            alert(`支付成功！已支付金額：${this.order.paid}`);
+                    success: (response) => {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success', // 圖示類型：'success', 'error', 'warning', 'info', 'question'
+                                title: '支付成功！',
+                                text: `已支付金額：${this.order.paid}`,
+                                confirmButtonText: '確定' // 確認按鈕文字
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    // 用戶點擊了「確定」按鈕，執行跳轉
+                                    window.location.replace(`/vneMem/details/${vneId}`); // 將此處替換為目標網址
+                                }
+                            });
                             this.resetForm();
                         } else {
-                            alert(`支付失敗：${data.message}`);
+                            alert(`支付失敗：${response.message}`);
                         }
                     },
                     error: (xhr, status, error) => {
