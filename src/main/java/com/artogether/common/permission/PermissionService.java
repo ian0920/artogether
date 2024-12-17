@@ -100,4 +100,8 @@
             permissionRepo.save(permission);
         }
 
+        public Optional<Permission> findById(Integer managerId,Integer permDescId) {
+
+            return permissionRepo.findByManagerIdAndDescId(managerId, permDescId);
+        }
     }

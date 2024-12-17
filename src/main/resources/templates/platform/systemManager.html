@@ -189,6 +189,7 @@
                                     <th>註冊日期</th>
                                     <th>任命日期</th>
                                     <th>帳號狀態</th>
+                                    <th>狀態更新</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -201,6 +202,8 @@
                                     <td th:text="${systemManager.register_date}"></td>
                                     <td th:text="${systemManager.assign_date}"></td>
                                     <td th:text="${systemManager.status}"></td>
+                                    <td><a class="btn btn-primary" th:href="@{/systemManager/smUpdate(id=${systemManager.id})}"
+                                           th:text="${systemManager.status == 0} ? '啟用' : '停權'"><button></button></a></td>
                                     <!--                                        <button id="editButton">更新</button>-->
                                     <!--                                        &lt;!&ndash;                                        &lt;!&ndash; 刪除功能 &ndash;&gt;&ndash;&gt;-->
                                     <!--                                        &lt;!&ndash;                                        <form th:action="@{/platform/permDesc/delete/{id}(id=${permDesc.id})}" method="POST" onsubmit="return confirm('確定要刪除嗎?');">&ndash;&gt;-->
