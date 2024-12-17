@@ -29,4 +29,11 @@ public interface PrdReturnRepository extends JpaRepository<PrdReturn, Integer> {
      nativeQuery = true)
 	 List<PrdReturn> findReturnsByBusinessMemberId(@Param("businessMemberId") Integer businessMemberId);
 	
+	 //退換貨依據一般會員id顯示
+	 @Query(value = "SELECT r.* " +
+             "FROM prd_return r " +
+             "JOIN prd_order o ON r.order_id = o.id " +
+             "WHERE o.member_id = :memberId", 
+     nativeQuery = true)
+List<PrdReturn> findReturnsByMemberId(@Param("memberId") Integer memberId);
 }

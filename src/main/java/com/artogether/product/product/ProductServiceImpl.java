@@ -118,7 +118,20 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> getAllProducts() {
         // 查詢所有商品
-        return productRepository.findAll();
+    	List<Product> allProducts = productRepository.findAll();
+        // 如果商品存在，處理圖片
+        allProducts.forEach(product -> {
+            List<PrdImg> prdImgs = prdImgRepository.getPrdImgByProductId(product.getId());
+            if (prdImgs != null && !prdImgs.isEmpty()) {
+                byte[] prdImgData = prdImgs.get(0).getImageFile();
+                if (prdImgData != null) {
+                    // 將字節數組轉換為 Base64 編碼字串符
+                    String base64Img = "data:image/jpeg;base64," + Base64.getEncoder().encodeToString(prdImgData);
+                    product.setImg(base64Img); // 假設 `img` 字段為 `String`
+                }
+            }
+        });
+        return allProducts;
     }
 
     @Override
@@ -220,20 +233,31 @@ public class ProductServiceImpl implements ProductService {
     public List<PrdImg> getPrdImgsByProductId(Integer productId) {
         return prdImgRepository.getPrdImgByProductId(productId);
     }
-    
+    // 調用 Repository 方法獲取星數排名前幾名的商品
     @Override
     public List<Product> getTopRatedProducts(int count) {
-        // 調用 Repository 方法獲取星數排名前幾名的商品
+        
         return productRepository.findTopRatedProducts(3);
     }
     
-    //商品分頁
+    // 為每個分頁返回的商品處理圖片
     public Page<Product> getPaginatedProducts(int page, int size, String sortBy) {
-        // 創建包含排序條件的 Pageable 物件
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Product> productPage = productRepository.findAll(pageable);
 
-        // 使用 findAll(Pageable) 來獲取分頁和排序的資料
-        return productRepository.findAll(pageable);
+        
+        productPage.getContent().forEach(product -> {
+            List<PrdImg> prdImgs = prdImgRepository.getPrdImgByProductId(product.getId());
+            if (prdImgs != null && !prdImgs.isEmpty()) {
+                byte[] prdImgData = prdImgs.get(0).getImageFile();
+                if (prdImgData != null) {
+                    String base64Img = "data:image/jpeg;base64," + Base64.getEncoder().encodeToString(prdImgData);
+                    product.setImg(base64Img); // 設置圖片為 Base64 字符串
+                }
+            }
+        });
+
+        return productPage;
     }
 
     public Map<Integer, List<PrdCoupForCartDTO>> findAllBusinessMember(List<Integer> productIdInCart, Integer memberId) {

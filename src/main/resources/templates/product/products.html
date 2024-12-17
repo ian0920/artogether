@@ -71,14 +71,10 @@
     <h2>所有商品</h2>
     <div class="product-list">
       <!-- 使用 Thymeleaf 渲染商品資料 -->
-      <div class="product-card" th:each="prd : ${products ?: {}}">
+      <div class="product-card" th:each="prd : ${products}">
          <div class="product-image">
-                <img th:if="${prd.img != null}" 
-                     th:src="'data:image/jpg;base64,' + ${prd.img}" 
-                     alt="商品圖片" class="product-img" />
-                <img th:if="${prd.img == null}" 
-                     src="/images/placeholder.png" 
-                     alt="圖片未上傳" class="product-img" />
+                <img th:src="${prd?.img}" alt="商品圖片" class="product-image" />
+                
             </div>
 
         <!-- 商品資訊 -->

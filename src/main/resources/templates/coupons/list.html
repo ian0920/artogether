@@ -139,8 +139,16 @@
             transform: translateY(-2px);
         }
     </style>
+      <link rel="stylesheet" th:href="@{/web_design/style/style_business.css}" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+    rel="stylesheet"
+  />
 </head>
 <body>
+<!-- 導航 -->
+<div th:replace="~{/components/navbar_business::navbar('product','coupon')}"></div>
+<main>
     <h1>優惠券列表</h1>
 
     <!-- 篩選與新增按鈕控制區 -->
@@ -213,7 +221,9 @@
 
     <!-- 返回按鈕 -->
     <a href="javascript:history.back()" class="return-button">返回上一頁</a>
-
+        <img src="./asset/images/bgimg.png" alt="" />
+    
+</main>
     <script>
         // 篩選表格
         function filterTable() {
