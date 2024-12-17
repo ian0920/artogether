@@ -4,102 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>訂單查詢</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f8f8f8;
-            margin: 0;
-            padding: 0;
-        }
 
-        .center {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        h1 {
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        table {
-            width: 100%;
-            max-width: 1200px;
-            margin: 20px auto;
-            border-collapse: collapse;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-
-        thead {
-            background-color: #f4f4f4;
-        }
-
-        thead th {
-            padding: 15px;
-            font-size: 16px;
-            font-weight: bold;
-            color: #333;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        tbody tr {
-            border-bottom: 1px solid #ddd;
-            transition: background-color 0.3s;
-        }
-
-        tbody tr:hover {
-            background-color: #f9f9f9;
-        }
-
-        tbody td {
-            padding: 15px;
-            font-size: 14px;
-            color: #555;
-        }
-
-        tbody td:last-child {
-            text-align: left; /* 確保按鈕靠左 */
-            padding-left: 10px; /* 調整與「訂單狀態」的間距 */
-        }
-
-        button {
-            background-color: #8B4513;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 5px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        button:hover {
-            background-color: #A0522D;
-        }
-
-        @media screen and (max-width: 768px) {
-            table {
-                width: 100%;
-                font-size: 12px;
-            }
-
-            thead th, tbody td {
-                padding: 10px;
-            }
-
-            button {
-                padding: 6px 12px;
-                font-size: 12px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/web_design/style/style_business.css}" />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+            rel="stylesheet"
+    />
 </head>
 <body>
+<div th:replace="~{/components/navbar_member::navbar('product','order')}"></div>
+<main>
 <div class="center">
     <h1>訂單查詢</h1>
 </div>
@@ -127,5 +41,8 @@
     </tr>
     </tbody>
 </table>
+    <img src="./asset/images/bgimg.png" alt="" />
+
+</main>
 </body>
 </html>

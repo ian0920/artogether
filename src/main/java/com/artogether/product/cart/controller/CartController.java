@@ -15,8 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import com.artogether.product.prd_order.model.PrdOrder;
+import com.artogether.product.prd_order_detail.PrdOrderDetail;
+import java.sql.Timestamp;
 
 import javax.servlet.http.HttpSession;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -263,65 +267,65 @@ public class CartController {
         //從session取出購物車清單 後續方便存入購物明細
         List<Cart> cartItems = (List<Cart>) session.getAttribute("cartItems");
 
-//        Integer memberId = (Integer) session.getAttribute("member"); // 從 HttpSession 獲取 memberId
-//        if (memberId == null) {
-//            return "redirect:/login"; // 如果未登入，重定向到登入頁面
-//        }
-//        Member member = new Member();
-//        member.setId(memberId);
-//
-//        PrdOrder order = new PrdOrder();
-//        order.setMember(member);
-//        order.setOrderName(orderName);
-//        order.setOrderPhone(orderPhone);
-//        order.setOrderAddress(orderAddress);
-//        order.setPaymentMethod(paymentMethod);
-//        order.setOrderDate(Timestamp.valueOf(LocalDateTime.now()));
-//        order.setStatus("未付款");
-//
-//
-//
-//
+        Integer memberId = (Integer) session.getAttribute("member"); // 從 HttpSession 獲取 memberId
+        if (memberId == null) {
+            return "redirect:/login"; // 如果未登入，重定向到登入頁面
+        }
+        Member member = new Member();
+        member.setId(memberId);
+
+        PrdOrder order = new PrdOrder();
+        order.setMember(member);
+        order.setOrderName(orderName);
+        order.setOrderPhone(orderPhone);
+        order.setOrderAddress(orderAddress);
+        order.setPaymentMethod(paymentMethod);
+        order.setOrderDate(Timestamp.valueOf(LocalDateTime.now()));
+        order.setStatus("未付款");
+
+
+
+
 //        List<Cart> cartItems = cartService.getCartByMember(member);
 //        int totalPrice = cartItems.stream()
 //                .mapToInt(cart -> cart.getProduct().getPrice() * cart.getQty())
 //                .sum();
-//
-////        order.setTotalPrice(totalPrice);
-////        order.setDiscount();
-////        order.setPaid();
-//
-//
-//
-//
-//        try {
-//            // 保存訂單
-//            PrdOrder newOrder = prdOrderService.savePrdOrder(order);
-//
-//            cartItems.forEach(cart -> {
-//                PrdOrderDetail orderDetail = new PrdOrderDetail();
-//                orderDetail.setPrdOrder(newOrder);
-//                orderDetail.setProduct(cart.getProduct());
-//                orderDetail.setQty(cart.getQty());
-//                orderDetail.setPrice(cart.getProduct().getPrice());
-//
-//                prdOrderDetailRepository.save(orderDetail);
-//            });
-//
-//
-//
-//            // 清空購物車
-//            cartService.clearCart(member);
-//
-//            // 傳遞訂單信息到頁面
-//            model.addAttribute("order", order);
-//            return "/prdMall/member/orderSuccess";
-//        } catch (Exception e) {
-//            model.addAttribute("error", "訂單提交失敗，請稍後再試");
-//            return "/prdMall/member/cartCheck";
-//        }
 
-        return "Test_success";
+        order.setTotalPrice(totalPrice);
+        order.setDiscount(discount);
+        order.setPaid(paid);
+
+
+
+
+        try {
+            // 保存訂單
+            PrdOrder newOrder = prdOrderService.savePrdOrder(order);
+
+            cartItems.forEach(cart -> {
+                PrdOrderDetail orderDetail = new PrdOrderDetail();
+                orderDetail.setPrdOrder(newOrder);
+                orderDetail.setProduct(cart.getProduct());
+                orderDetail.setQty(cart.getQty());
+                orderDetail.setPrice(cart.getProduct().getPrice());
+
+                prdOrderDetailRepository.save(orderDetail);
+            });
+
+
+
+            // 清空購物車
+            cartService.clearCart(member);
+
+            // 傳遞訂單信息到頁面
+            model.addAttribute("order", order);
+            return "/prdMall/member/orderSuccess";
+        } catch (Exception e) {
+            model.addAttribute("error", "訂單提交失敗，請稍後再試");
+            return "/prdMall/member/cartCheck";
+        }
+
+//        return "Test_success";
     }
 
 }

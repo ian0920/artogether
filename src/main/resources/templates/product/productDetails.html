@@ -33,161 +33,145 @@
         }
     </style>
     <style>
+        /* 整體容器 */
+        .product-detail-container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
 
-        /* 主容器樣式 */
-    .product-detail-container {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 20px;
-        font-family: Arial, sans-serif;
-    }
+        /* 主要佈局 */
+        .product-layout {
+            display: flex;
+            gap: 50px;
+            align-items: flex-start;
+        }
 
-    .product-info {
-        display: flex;
-        gap: 20px;
-        align-items: flex-start;
-    }
+        /* 左側圖片樣式 */
+        .product-image-section {
+            flex: 1;
+            text-align: center;
+        }
 
-    .product-image {
-        max-width: 300px;
-        width: 100%;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
+        .product-image {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
 
-    /* 右側資訊 */
-    .product-meta {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
+        /* 右側資訊樣式 */
+        .product-info-section {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
-    .product-title {
-        font-size: 24px;
-        font-weight: bold;
-        margin-bottom: 5px;
-    }
+        .product-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
 
-    .product-price {
-        font-size: 20px;
-        color: #e74c3c;
-        margin-bottom: 5px;
-    }
+        .product-price {
+            font-size: 22px;
+            color: #000000;
+        }
 
-    .product-status {
-        font-size: 16px;
-        color: green;
-        font-weight: bold;
-        margin-bottom: 10px;
-    }
+        .product-status {
+            font-size: 16px;
+            color: green;
+        }
 
-    .product-id {
-        font-size: 14px;
-        color: #666;
-        margin-bottom: 10px;
-    }
+        .product-id {
+            font-size: 14px;
+            color: #666;
+        }
 
-    .divider {
-        border: none;
-        height: 1px;
-        background: #ddd;
-        margin: 10px 0;
-    }
+        .product-description {
+            font-size: 16px;
+            color: #333;
+            line-height: 1.5;
+        }
 
-    .product-description {
-        font-size: 16px;
-        color: #333;
-        margin-bottom: 10px;
-        line-height: 1.5;
-    }
+        /* 數量選擇器 */
+        .product-quantity {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
 
-    /* 數量選擇器 */
-    .product-quantity {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 15px;
-    }
+        .quantity-controls {
+            display: flex;
+            gap: 5px;
+        }
 
-    .quantity-controls {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
+        .quantity-btn {
+            padding: 5px 10px;
+            background-color: #f1f1f1;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
 
-    .quantity-btn {
-        padding: 5px 10px;
-        background-color: #f1f1f1;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        cursor: pointer;
-    }
+        .quantity-btn:hover {
+            background-color: #ddd;
+        }
 
-    .quantity-btn:hover {
-        background-color: #ddd;
-    }
+        #qty {
+            width: 60px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
 
-    input#quantity {
-        width: 50px;
-        text-align: center;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
+        /* 按鈕樣式 */
+        .btn-container {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
 
-    /* 按鈕樣式 */
-    .btn-container {
-        display: flex;
-        gap: 15px;
-    }
+        .btn {
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
+        }
 
-    .btn {
-        padding: 10px 20px;
-        border-radius: 5px;
-        font-size: 16px;
-        cursor: pointer;
-    }
+        .btn-primary {
+            background-color: #2c95c6;
+            color: white;
+            border: none;
+        }
 
-    .btn-primary {
-        background-color: #0085ea;
-        color: white;
-        border: none;
-    }
+        .btn-primary:hover {
+            background-color: #217aa3;
+        }
 
-    .btn-primary:hover {
-        background-color: #0085ea;
-    }
+        .btn-outline-secondary {
+            background-color: transparent;
+            color: #2c95c6;
+            border: 1px solid #2c95c6;
+        }
 
-    .btn-outline-secondary {
-        background-color: transparent;
-        color: #0085ea;
-        border: 1px solid #0085ea;
-    }
+        .btn-outline-secondary:hover {
+            background-color: #2c95c6;
+            color: white;
+        }
+        .status-available {
+            color: green;
+        }
 
-    .btn-outline-secondary:hover {
-        background-color: #0085ea;
-        color: white;
-    }
-
-    /* 社交圖示 */
-    .social-icons {
-        display: flex;
-        gap: 15px;
-        margin-top: 15px;
-    }
-
-    .social-icons i {
-        font-size: 24px;
-        color: #555;
-        cursor: pointer;
-    }
-
-    .social-icons i:hover {
-        color: #0085ea;
-    }
-
-
-
+        .status-unavailable {
+            color: red;
+        }
     </style>
 
 </head>
@@ -195,103 +179,87 @@
 <div th:replace="~{/components/navbar_homepage::navbar}"></div>
 
 <main>
-
     <div class="product-detail-container">
-<!--        <h1>商品詳情</h1>-->
+        <div class="product-layout">
+            <!-- 左側圖片區域 -->
+            <div class="product-image-section">
+                <img th:src="${product?.img}" alt="商品圖片" class="product-image" />
+            </div>
+            <!-- 右側產品資訊區域 -->
+            <div class="product-info-section">
+                <h2 class="product-title" th:text="${product.name}">商品名稱</h2>
+                <p class="product-price"><strong>價格:</strong> $<span th:text="${product.price}">300</span></p>
+                <p class="product-status"
+                   th:text="${product.status == 1 ? '供應中' : '無法供應，請聯絡商家'}"
+                   th:classappend="${product.status == 1 ? 'status-available' : 'status-unavailable'}">
+                    上架
+                </p>                <p class="product-description" th:text="${product.description}">輕鬆設定時間不斷電</p>
 
-        <!-- Product Information -->
-        <div class="product-info">
-            <img th:src="${product?.img}" alt="商品圖片" class="product-image" />
+                <!-- 數量選擇器 -->
+                <div class="product-quantity">
+                    <label for="qty"><strong>數量:</strong></label>
+                    <div class="quantity-controls">
+                        <input type="number" id="qty" name="qty" min="1" value="1" />
+                    </div>
+                </div>
 
-            <div class="product-meta">
-                <h2 th:text="${product.name}">商品名稱</h2>
-                <p><strong>價格:</strong> <span th:text="${product.price}">100</span> 元</p>
-                <p><strong>剩餘數量:</strong> <span th:text="${product.qty}">10</span> 件</p>
-                <p><strong>描述:</strong> <span th:text="${product.description}">描述文字</span></p>
-                <p><strong>狀態:</strong> <span th:text="${product.status == 1 ? '上架' : '下架'}">上架</span></p>
-                <p><strong>分類:</strong> <span th:text="${product.prdCatalog?.name}">分類名稱</span></p>
-                <!-- Buttons -->
+                <!-- 按鈕區域 -->
                 <div class="btn-container">
-                    <!-- 商品數量選擇器 -->
-                    <div class="product-quantity">
-                        <label for="qty"><strong>數量:</strong></label>
-                        <div class="quantity-controls">
-                            <input type="hidden" id="qtyStock" name="qtyStock" th:value="${product.qty}" />
-                        </div>
-                </div>
-                </div>
-                <div class="buttons">
                     <form action="/cart/add" method="post">
-                        <input  id="qty" name="qty" type="number" min="1" value="1" />
                         <input type="hidden" name="productId" th:value="${product.id}" />
                         <button type="submit" class="btn btn-primary">加入購物車</button>
                     </form>
-                    <button class="btn btn-outline-secondary">加入收藏</button>
+                    <form action="/prdTrack/addTrack" method="post">
+                        <input type="hidden" name="productId" th:value="${product.id}" />
+                        <button type="submit" class="btn btn-outline-secondary">加入收藏</button>
+                    </form>
                 </div>
-
-
-
-                <!-- Social Icons -->
-<!--                <div class="social-icons mt-4">-->
-<!--                    <i class="material-icons">facebook</i>-->
-<!--                    <i class="material-icons">instagram</i>-->
-<!--                    <i class="material-icons">linkedin</i>-->
-<!--                    <i class="material-icons">share</i>-->
-<!--                </div>-->
             </div>
         </div>
     </div>
-
-
-
-<!--        &lt;!&ndash; Review Section &ndash;&gt;-->
-<!--        <div class="product-reviews">-->
-<!--            <h3>評論 (共 <span th:text="${product?.allReviews}">0</span> 條)</h3>-->
-<!--            <ul>-->
-<!--                <li th:each="review : ${product?.prdReviews}">-->
-<!--                    <p><strong>評分:</strong> <span th:text="${review?.stars}">5</span> 星</p>-->
-<!--                    <p th:text="${review?.comment}">評論內容</p>-->
-<!--                </li>-->
-<!--            </ul>-->
-<!--        </div>-->
-
-
-
-
 </main>
+
+<footer th:fragment="footer">
+    <div class="footer-box" >
+        <div class="platform-info">
+            <div class="logo-box">
+                <img src="./asset/images/ARTOGETHER_white.svg" alt="" />
+            </div>
+            <div class="contact"></div>
+        </div>
+        <div class="features-box">
+            <div>
+                <h5 class="feature-title">關於</h5>
+                <ul>
+                    <li><a href="#">關於我們</a></li>
+                    <li><a href="#">隱私權政策</a></li>
+                    <li><a href="#">服務條款</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="feature-title">探索美好</h5>
+                <ul>
+                    <li><a href="#">找商家</a></li>
+                    <li><a href="/venue/recommend">找場地</a></li>
+                    <li><a href="#">找商品</a></li>
+                    <li><a href="#">找活動</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="feature-title">販售</h5>
+                <ul>
+                    <li><a href="#">我想成為商家</a></li>
+                    <li><a href="#">商家條款</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
 
 
 
 <script th:src="@{/web_design/components/web_components/navbar_hompage.js}"></script>
-<script>
-    var el_nav_item_discover = document.querySelector("div.navbar-item");
-    var el_div_nav_menu_box = document.querySelector("div.nav-menu-box");
-    var el_div_nav_user_box = document.querySelector("div.user_div");
-    var el_div_nav_menu = document.querySelector("div.nav-menu");
-    var el_eiv_user_menu = document.querySelector("div.user-menu-box");
 
-    //=====================觸發視窗========================
-    // 1. 探索
-    el_nav_item_discover.addEventListener("mouseenter", function () {
-        if (!el_div_nav_menu_box.classList.contains("open"))
-            el_div_nav_menu_box.classList.add("open");
-    });
-    console.log(el_div_nav_menu);
-    el_div_nav_menu.addEventListener("mouseleave", function () {
-        if (el_div_nav_menu_box.classList.contains("open"))
-            el_div_nav_menu_box.classList.remove("open");
-    });
-
-    // 2. 會員
-    el_div_nav_user_box.addEventListener("mouseenter", function () {
-        if (!el_eiv_user_menu.classList.contains("open"))
-            el_eiv_user_menu.classList.add("open");
-    });
-    el_eiv_user_menu.addEventListener("mouseleave", function () {
-        if (el_eiv_user_menu.classList.contains("open"))
-            el_eiv_user_menu.classList.remove("open");
-    });
-</script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         // Disable link clicks for disabled pagination controls

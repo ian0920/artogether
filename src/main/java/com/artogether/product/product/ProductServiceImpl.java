@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.*;
@@ -72,27 +73,28 @@ public class ProductServiceImpl implements ProductService {
         existingProduct.setBusinessMember(businessMember);
 
         // 處理圖片邏輯
-        List<PrdImg> existingImages = prdImgRepository.getPrdImgByProductId(existingProduct.getId());
-        if (images!= null && !images.isEmpty()) {
-            // 刪除舊圖片
-            for (PrdImg img : existingImages) {
-                prdImgRepository.deleteAllByProductId(img.getId());
-            }
-            prdImgRepository.deleteAll(existingImages);
+        if (images != null && !images.isEmpty() && images.get(0).getSize() > 0) {
+            // 若上傳新圖片，刪除舊圖片並保存新圖片
+            prdImgRepository.deleteAllByProductId(existingProduct.getId());
 
-            // 保存新圖片
             List<PrdImg> newPrdImgs = new ArrayList<>();
             for (MultipartFile image : images) {
+                System.out.println("image: " + image);
                 PrdImg prdImg = new PrdImg();
                 prdImg.setProduct(existingProduct);
                 prdImg.setImageFile(image.getBytes());
                 newPrdImgs.add(prdImg);
             }
             prdImgRepository.saveAll(newPrdImgs);
+        } else {
+            // 若沒有新圖片，保留原圖片，什麼都不做
+            System.out.println("未上傳新圖片，保留原圖片。");
         }
 
         // 保存商品
-        return productRepository.save(existingProduct);
+        productRepository.save(existingProduct);
+
+        return existingProduct;
     }
 
     @Override
@@ -169,7 +171,7 @@ public class ProductServiceImpl implements ProductService {
                 product.getStatus(),
                 product.getBusinessMember() != null ? product.getBusinessMember().getName() : null,
                 product.getBusinessMember() != null ? product.getBusinessMember().getId() : null
-                		
+
         );
     }
 
@@ -196,7 +198,7 @@ public class ProductServiceImpl implements ProductService {
             if (prdImgs != null && !prdImgs.isEmpty()) {
                 byte[] prdImgData = prdImgs.get(0).getImageFile();
                 if (prdImgData != null) {
-                	// 將字節數組轉換為 Base64 編碼字串符
+                    // 將字節數組轉換為 Base64 編碼字串符
                     String base64Img = "data:image/jpeg;base64," + Base64.getEncoder().encodeToString(prdImgData);
                     product.setImg(base64Img); // 假設 `img` 字段已更給為 `String`
                 }
@@ -233,14 +235,22 @@ public class ProductServiceImpl implements ProductService {
     public List<PrdImg> getPrdImgsByProductId(Integer productId) {
         return prdImgRepository.getPrdImgByProductId(productId);
     }
+
+
+
     // 調用 Repository 方法獲取星數排名前幾名的商品
+
     @Override
     public List<Product> getTopRatedProducts(int count) {
         
         return productRepository.findTopRatedProducts(3);
     }
-    
+
+
+    //商品分頁
+
     // 為每個分頁返回的商品處理圖片
+
     public Page<Product> getPaginatedProducts(int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Product> productPage = productRepository.findAll(pageable);
@@ -285,13 +295,13 @@ public class ProductServiceImpl implements ProductService {
 
         return map;
     }
-    
+
 
     //更新商品
     public ProductDto updatePrdStatus(ProductDto productDto) {
         // 查找產品
         Product product = productRepository.findById(productDto.getId())
-                .orElseThrow(() -> new RuntimeException("Product not found with ID: " +  productDto.getId()));
+                .orElseThrow(() -> new RuntimeException("Product not found with ID: " + productDto.getId()));
 
         // 更新狀態
         product.setStatus(productDto.getStatus());
@@ -302,7 +312,6 @@ public class ProductServiceImpl implements ProductService {
         // 返回更新後的 DTO
         return toProductDto(updatedProduct);
     }
-
 
 
 }

@@ -1,4 +1,4 @@
-<!-- 
+<!--
 使用時請填入兩個參數，分別對應預設選取的項目，與所選取的子項目
 1. 商家基本資訊->'info'
 	收件匣->'inbox'
@@ -14,9 +14,9 @@
 	活動管理->'event'
 	商品管理->'product'
  -->
- <!-- 
-	使用範例： 
-	<div th:replace="~{/components/navbar_business::navbar('event','event')}"></div>	
+ <!--
+	使用範例：
+	<div th:replace="~{/components/navbar_business::navbar('event','event')}"></div>
 -->
 <!-- 導航 -->
 <div class="bs-navbar" th:fragment="navbar(selectedItem,selectedSubItem)">
@@ -70,7 +70,7 @@
 						<li clickable class="bs-navbar-subitem"
 						    th:classappend="${selectedSubItem == 'order' ? ' -focus' : ''}">
 						
-						<a href="/product/businessOrder">訂單管理</a>
+						<a href="/order/businessOrder">訂單管理</a>
 						</li>
 						<li clickable class="bs-navbar-subitem"
 						    th:classappend="${selectedSubItem == 'coupon' ? ' -focus' : ''}">
@@ -80,7 +80,7 @@
 						<li clickable class="bs-navbar-subitem"
 						    th:classappend="${selectedSubItem == 'product' ? ' -focus' : ''}">
 						
-						<a href="product/businessProducts">商品管理</a>
+						<a href="/product/businessProducts">商品管理</a>
 						</li>
 					</ul>
 				</li>

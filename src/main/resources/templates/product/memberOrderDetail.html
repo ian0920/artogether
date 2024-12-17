@@ -1,37 +1,159 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>訂單詳情</title>
+    <link rel="stylesheet" th:href="@{/web_design/style/style_business.css}" />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+            rel="stylesheet"
+    />
+    <style>
+        /* 主內容區域美化 */
+        main {
+            max-width: 1000px;
+            max-height: 760px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+
+        /* 標題樣式 */
+        h1, h3 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        /* 表格美化 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fdfdfd;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        table th, table td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* 資訊區塊 (雙欄設計) */
+        .info, .paid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 15px;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .info h4, .paid h4 {
+            flex: 0 0 48%; /* 雙欄設計 */
+            font-size: 16px;
+            margin: 5px 0;
+            font-weight: normal;
+            color: #555;
+        }
+
+        .info span, .paid span {
+            font-weight: bold;
+            color: #000000;
+        }
+
+        /* 商品圖片 */
+        .img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 背景圖片美化 */
+        main img {
+            display: block;
+            margin: 20px auto;
+            max-width: 100%;
+            border-radius: 10px;
+        }
+
+    </style>
 </head>
 <body>
-<h1>訂單詳情</h1>
+<div th:replace="~{/components/navbar_member::navbar('product','order')}"></div>
 
-<!-- 錯誤提示 -->
-<div th:if="${message}">
-    <p th:text="${message}"></p>
-</div>
+<main>
+    <h1>訂單詳情</h1>
+    <h3>訂單編號：<span th:text="${orderId}"></span></h3>
 
-<!-- 訂單詳情 -->
-<div th:if="${orderDetail}">
-    <table>
-        <thead>
-        <tr>
-            <th>商品名稱</th>
-            <th>數量</th>
-            <th>價格</th>
-            <th>圖片</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="detail : ${orderDetail}">
-            <td th:text="${detail.product.name}"></td>
-            <td th:text="${detail.qty}"></td>
-            <td th:text="${detail.price}"></td>
-            <td><img th:src="${detail.product.img}" alt="商品圖片"/></td>
-        </tr>
-        </tbody>
-    </table>
-</div>
+    <!-- 訂單詳情 -->
+    <div th:if="${orderDetail}">
+        <table>
+            <thead>
+            <tr>
+                <th>商品名稱</th>
+                <th>數量</th>
+                <th>價格</th>
+                <th>圖片</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="detail : ${orderDetail}">
+                <td th:text="${detail.product.name}"></td>
+                <td th:text="${detail.qty}"></td>
+                <td th:text="${detail.price}"></td>
+                <td><img class="img" th:src="${detail.product.img}" alt="商品圖片"/></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 付款資訊 -->
+    <div class="paid">
+        <h4>付款金額：<span th:text="${order.paid}"></span></h4>
+        <h4>付款方式：
+            <span th:if="${order.paymentMethod == 'Cash'}">轉帳</span>
+            <span th:if="${order.paymentMethod == 'Credit Card'}">信用卡</span>
+        </h4>
+        <h4>付款狀態：<span th:text="${order.status}"></span></h4>
+    </div>
+
+    <!-- 收件人資訊 -->
+    <div class="info">
+        <h4>收件人：<span th:text="${order.orderName}"></span></h4>
+        <h4>地址：<span th:text="${order.orderAddress}"></span></h4>
+        <h4>電話：<span th:text="${order.orderPhone}"></span></h4>
+        <h4>出貨時間：<span th:text="${order.shipDate}"></span></h4>
+    </div>
+
+</main>
 
 </body>
 </html>

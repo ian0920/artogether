@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/web_design/style/style_business.css}"/>
+    <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+            rel="stylesheet"
+    />
+    <style>
+       /* Center alignment for button container */
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+/* Global button styles */
+.button, button {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    border-radius: 12px; /* Smaller rounded corners */
+    font-size: 16px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Continue shopping button */
+.button {
+    background-color: #3498db; /* Blue */
+    color: #fff;
+}
+
+.button:hover {
+    background-color: #2980b9; /* Dark blue */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Clear tracking button */
+#clear {
+    background-color: #e74c3c; /* Red */
+    color: #fff;
+}
+
+#clear:hover {
+    background-color: #c0392b; /* Dark red */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Delete button */
+#delete {
+    background-color: #e67e22; /* Orange */
+    color: #fff;
+}
+
+#delete:hover {
+    background-color: #d35400; /* Dark orange */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Table button spacing */
+table button {
+    margin: 5px;
+}
+
+/* Table styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 18px;
+    text-align: left;
+}
+
+table th, table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px; /* Smaller rounded corners */
+}
+
+table th {
+    background-color: #f2f2f2; /* Gray */
+    color: #333;
+}
+
+table tr:nth-child(even) {
+    background-color: #f9f9f9; /* Light gray */
+}
+
+table tr:hover {
+    background-color: #f1f1f1; /* Lighter gray */
+}
+
+/* Empty list message */
+.empty-list {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-size: 18px;
+    color: #888;
+}
+
+/* Center alignment */
+.center {
+    text-align: center;
+    margin: 20px 0;
+}
+    </style>
+</head>
+<body>
+<div th:replace="~{/components/navbar_member::navbar('product','product')}"></div>
+
+<main>
+    <div class="center">
+        <h1>追蹤清單</h1>
+    </div>
+    <div class="buttons">
+        <a href="/" class="button">繼續購物</a>
+
+        <form method="post" action="/prdTrack/clear" onsubmit="return confirmClear()">
+            <button type="submit" id="clear">清空追蹤</button>
+        </form>
+    </div>
+
+
+    <table>
+        <thead>
+        <tr>
+            <th>商家</th>
+            <th>圖片</th>
+            <th>商品名稱</th>
+            <th>價格</th>
+            <!--        <th>數量</th>-->
+            <!--        <th>小計</th>-->
+            <th>操作</th>
+            <th></th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${prdTrackList}" data-product-id="${item.product.id}">
+
+
+            <td th:text="${item.product.businessMember.getName()}">商家</td>
+            <td>
+                <input type="hidden" name="productId" th:value="${item.product.id}"/>
+                <img th:src="${item.product.getImg()}" alt="商品圖片" style="width:100px;height:100px;"/>
+            </td>
+            <td th:text="${item.product.name}">商品名稱</td>
+
+            <td th:text="${item.product.price}">價格</td>
+
+
+            <td>
+                <form method="post" action="/prdTrack/remove" onsubmit="return confirmDelete()">
+                    <input type="hidden" name="productId" th:value="${item.product.id}"/>
+                    <button type="submit" id="delete">刪除</button>
+                </form>
+            </td>
+            <td>
+                <form action="/cart/add" method="post">
+                    <input type="hidden" name="productId" th:value="${item.product.id}"/>
+                    <button type="submit" class="btn btn-primary">加入購物車</button>
+                </form>
+            </td>
+
+        </tr>
+        </tbody>
+    </table>
+    <!-- 判斷追蹤清單是否有商品 -->
+    <div th:if="${#lists.isEmpty(prdTrackList)}" class="empty-list">
+        <p>目前沒有追蹤中的商品。</p>
+    </div>
+    <img src="./asset/images/bgimg.png" alt=""/>
+
+</main>
+<script>
+    function confirmDelete() {
+        return confirm("確定要刪除此商品嗎？");
+    }
+
+    function confirmClear() {
+        return confirm("確定要清空追蹤清單嗎？");
+    }
+</script>
+</body>
+</html>

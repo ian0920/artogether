@@ -44,6 +44,7 @@ public class NewProductController {
     private ProductServiceImpl productServiceImpl;
     @Autowired
     private PrdWithImgService prdWithImgService;
+
     
     @Autowired
     private PrdImgRepository prdImgRepository;
@@ -59,7 +60,7 @@ public class NewProductController {
     }
 
 
-    
+
     
     @GetMapping("/vendorproducts/{businessId}")
     public String showVendorProductPage(@PathVariable("businessId") Integer businessId, Model model) {
@@ -115,7 +116,7 @@ public class NewProductController {
     }
 
     @PostMapping("/addProduct")
-    public ResponseEntity<String> addProduct(
+    public String addProduct(
             @RequestParam("name") String name,
             @RequestParam("price") Integer price,
             @RequestParam("qty") Integer qty,
@@ -144,10 +145,10 @@ public class NewProductController {
             // 使用 ProductService 處理商品和圖片保存
             productService.addProduct(product, images, session);
 
-            return ResponseEntity.ok("商品已成功新增");
+            return "redirect:/product/businessProducts";
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(500).body("新增商品失敗: " + e.getMessage());
+            return "redirect:/product/businessProducts";
         }
     }
 
@@ -176,7 +177,7 @@ public class NewProductController {
     }
 
     @PostMapping("/editProduct/{id}")
-    public ResponseEntity<String> updateProduct(
+    public String updateProduct(
             @PathVariable Integer id,
             @RequestParam("name") String name,
             @RequestParam("price") Integer price,
@@ -213,9 +214,9 @@ public class NewProductController {
             // 調用 Service 方法更新商品
             productService.updateProduct(id, updatedProduct, images, session);
 
-            return ResponseEntity.ok("商品已成功更新！");
+            return "redirect:/product/businessProducts";
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("更新失敗：" + e.getMessage());
+            return "redirect:/product/businessProducts";
         }
     }
 
@@ -254,7 +255,7 @@ public class NewProductController {
 
 
     }
-    
+
  // 商品分頁
     @GetMapping("/productspage")
     public String getProducts(
@@ -263,7 +264,7 @@ public class NewProductController {
             @RequestParam(defaultValue = "id") String sortBy, // 排序字段，默認為 id
             Model model) {
 
-       
+
 
         // 使用正確的分頁邏輯查詢商品
         Page<Product> productPage = productService.getPaginatedProducts(page, size, sortBy);
@@ -272,10 +273,10 @@ public class NewProductController {
         int totalPages = (productPage != null && productPage.getTotalPages() > 0)
                 ? productPage.getTotalPages()
                 : 1;
-        
-        
-        
-        
+
+
+
+
 
         // 設置模型數據供模板使用
         model.addAttribute("products", productPage.getContent()); // 商品列表
@@ -283,11 +284,11 @@ public class NewProductController {
         model.addAttribute("totalPages", totalPages); // 總頁數
         model.addAttribute("sortBy", sortBy); // 排序方式
         model.addAttribute("size", size); // 每頁大小
-        
-        
-        
-        
-        
+
+
+
+
+
 
         return "product/producthomepage"; // 返回模板
     }
@@ -300,16 +301,16 @@ public class NewProductController {
 //    public String viewProductDetails(@PathVariable("id") Integer id, Model model) {
 //        // 根據 ID 獲取產品詳細信息
 //    	 Optional<Product> product = productService.getProductById(id);
-//        
+//
 //
 //        // 添加產品信息到模型
 //        model.addAttribute("product", product);
 //        return "productDetails"; // 返回到 productDetails.html 頁面
 //    }
-    
-    
-    
-    
+
+
+
+
 
 
 
@@ -327,19 +328,19 @@ public class NewProductController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // 返回 404 狀態
         }
     }
-    
-   //    商城管理(商品下架) 
+
+   //    商城管理(商品下架)
     @GetMapping("/managelist")
     public String showProductsManagePage(Model model) {
         List<Product> products = productService.getAllProducts();
         List<ProductDto> productDtos = productService.toProductDtoList(products);
-        
-        
+
+
         model.addAttribute("products", productDtos);
         return "product/managelist";
     }
-    
-    
+
+
 
     @PostMapping("/update-status")
     public String updateProductStatus(@ModelAttribute ProductDto productDto, RedirectAttributes redirectAttributes) {
@@ -348,7 +349,7 @@ public class NewProductController {
             ProductDto updatedProduct = productServiceImpl.updatePrdStatus(productDto);
 
             // 添加成功訊息
-            redirectAttributes.addFlashAttribute("successMessage", 
+            redirectAttributes.addFlashAttribute("successMessage",
                 "Product status updated successfully for ID: " + updatedProduct.getId());
         } catch (Exception e) {
             // 添加錯誤訊息
@@ -358,6 +359,7 @@ public class NewProductController {
         // 重定向回管理頁面
         return "redirect:/product/managelist";
     }
+  
     
     public void setProductsImg(Product products) {
         // 获取图片列表并处理可能为空的情况
@@ -380,10 +382,10 @@ public class NewProductController {
 //        return "product/products"; // Thymeleaf 模板名稱
 //    }
 
-    
-    
-}
 
+
+
+}
 
 
 
@@ -398,12 +400,7 @@ public class NewProductController {
 
 //    }
 //
-//    // 根據 ID 刪除商品
-//    @DeleteMapping("/products/{id}")
-//    public ResponseEntity<Void> deleteProduct(@PathVariable Integer id) {
-//        productService.deleteProduct(id);
-//        return ResponseEntity.noContent().build();
-//    }
+
 //
 
 //    // 查詢所有上架商品

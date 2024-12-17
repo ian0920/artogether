@@ -15,7 +15,6 @@ public interface PrdOrderRepository extends JpaRepository<PrdOrder, Integer> {
 
     List<PrdOrder> findByMemberId(Integer memberId);
 
-//    List<PrdOrder> findByOrderDate(String start, String end);
 
     List<PrdOrder> findByPaymentMethod (String paymentMethod);
 
