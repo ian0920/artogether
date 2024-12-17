@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+    <link rel="stylesheet" th:href="@{/web_design/style/style_business.css}" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        body {
+            display: flex;
+            margin: 0;
+            font-family: 'Noto Sans TC', sans-serif;
+            height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px; /* 限制最大寬度 */
+            margin: 20px auto;
+            padding-bottom: 20px; /* 為了讓按鈕區域能有空間 */
+        }
+
+        .profile-card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            height: 50vh;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            overflow: hidden;
+        }
+
+        .profile-info {
+            font-size: 1rem;
+            line-height: 2;
+            letter-spacing: 1px;
+            padding: 10px;
+            width: calc(50% - 20px); /* 每個欄位佔據 50% 寬度，並扣掉間距 */
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column; /* 讓 p 標籤垂直排列 */
+            justify-content: space-between; /* 均勻分配項目間的空間 */
+        }
+
+        .profile-info p {
+            flex: 1; /* 讓每個 p 標籤佔據相同的高度 */
+            margin-bottom: 10px; /* 每個段落間加一點空隙 */
+            display: flex;
+            align-items: center; /* 讓文字在每個 p 標籤內垂直居中 */
+        }
+
+        .profile-info .label {
+            font-weight: bold;
+        }
+
+        .profile-info .input-field {
+            width: 100%;
+            padding: 5px;
+            margin-top: 5px;
+            font-size: 1rem;
+        }
+
+        /* 偏好欄位每10個字元換行 */
+        .profile-info .prefer {
+            word-wrap: break-word;
+            white-space: pre-wrap;  /* 保持空白符並允許換行 */
+            width: 100%;
+        }
+
+        .btn-warning {
+            background-color: #ffc107;
+            border: none;
+            color: white;
+            border-radius: 4px; /* 按鈕圓角 */
+            padding: 0.5rem 1rem;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-warning:hover {
+            background-color: #e0a800;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: space-between; /* 左右對齊 */
+            margin-top: 20px;
+            gap: 20px; /* 增加按鈕之間的間距 */
+        }
+
+        .btn-container .btn {
+            width: 48%; /* 讓兩個按鈕有相同的寬度，並且中間有間隙 */
+        }
+
+        /* 使用flexbox來確保表單區域自適應，並且不會太小 */
+        .form-footer {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center; /* 使按鈕居中 */
+            gap: 10px; /* 按鈕之間的間隔 */
+        }
+
+        /* 驗證電話號碼格式 */
+        .input-phone:invalid {
+            border: 1px solid red;
+        }
+    </style>
+</head>
+
+<body>
+<div th:replace="~{/components/navbar_member::navbar('info','inbox')}"></div>
+
+<!-- 會員資料區 -->
+<div class="container mt-4">
+    <h1>會員資料</h1>
+
+    <!-- 顯示登入會員資料 -->
+    <form action="/profile/memberProfiles1/" method="GET">
+        <div class="profile-card">
+            <div class="profile-info">
+                <p><span class="label">姓名:</span> <span th:text="${member.name}"></span></p>
+                <p><span class="label">性別:</span> <span th:text="${member.gender}"></span></p>
+                <p><span class="label">手機號碼:</span>
+                    <input class="input-field input-phone" contenteditable="true" type="tel" name="phone"
+                           pattern="^09\d{8}$" th:value="${member.phone}" placeholder="請輸入以09開頭的10位數字" required />
+                </p>
+                <p><span class="label">生日:</span> <span th:text="${#dates.format(member.birthday, 'yyyy-MM-dd')}"></span></p>
+            </div>
+            <div class="profile-info">
+                <p><span class="label">電子郵件:</span> <span th:text="${member.email}"></span></p>
+                <p><span class="label">偏好:</span>
+                    <span class="prefer" th:text="${member.prefer}"></span>
+                </p>
+                <p><span class="label">註冊日期:</span> <span th:text="${#dates.format(member.registerDate, 'yyyy-MM-dd HH:mm:ss')}"></span></p>
+            </div>
+        </div>
+
+        <!-- 按鈕區域 -->
+        <div class="btn-container">
+            <button type="submit" class="btn btn-warning btn-sm">儲存</button>
+            <a href="#" class="btn btn-warning btn-sm">取消</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    // 設定最下方的user control菜單收合
+    var el_nav_user_field = document.querySelector(".bs-navbar-user-field");
+    el_nav_user_field.addEventListener("click", function (e) {
+        e.stopPropagation();
+        let el_nav_user_menu = document.querySelector(".bs-navbar-user-menu");
+        el_nav_user_menu.classList.toggle("-hidden");
+        let el_field_icon = document.querySelector(
+            ".bs-navbar-user-field #icon_unfold"
+        );
+        if (el_field_icon.classList.contains("unfold")) {
+            el_field_icon.classList.remove("unfold");
+            el_field_icon.innerHTML = "unfold_less";
+        } else {
+            el_field_icon.classList.add("unfold");
+            el_field_icon.innerHTML = "unfold_more";
+        }
+    });
+
+    // 設定電話欄位驗證
+    document.querySelector('form').addEventListener('submit', function(event) {
+        var phoneInput = document.querySelector('.input-phone');
+        if (!phoneInput.checkValidity()) {
+            alert("請輸入有效的10位數字電話號碼！");
+            event.preventDefault();
+        }
+    });
+</script>
+
+<!-- SweetAlert2 Library -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+</html>

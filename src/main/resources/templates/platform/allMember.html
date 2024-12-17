@@ -217,7 +217,7 @@
 <!--                                    <td><a class="filter-btn" th:href="@{/profile/mbupdate}"-->
 <!--                                                th:classappend為判樣式 -->
 <!--                                           th:classappend="${member.status == 0} ? 'active'">停權</a></td>-->
-                                    <td><a class="btn btn-primary" th:href="@{/profile/mbupdate(id=${member.id})}"
+                                    <td><a class="btn btn-primary" th:href="@{/profile/mbUpdate(id=${member.id})}"
                                            th:text="${member.status == 0} ? '啟用' : '停權'"><button></button></a></td>
                                 </tr>
                                 </tbody>
