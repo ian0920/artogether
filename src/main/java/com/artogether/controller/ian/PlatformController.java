@@ -1,9 +1,13 @@
 package com.artogether.controller.ian;
 
+import com.artogether.common.business_member.BusinessMember;
+import com.artogether.common.business_member.BusinessService;
 import com.artogether.common.member.MemberService;
 import com.artogether.common.permission.PermissionService;
 import com.artogether.common.system_manager.SystemManager;
 import com.artogether.common.system_manager.SystemManagerService;
+import com.artogether.event.dto.EvtOrderDTO;
+import com.artogether.event.evt_order.EvtOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,7 +16,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpSession;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -27,6 +35,12 @@ public class PlatformController {
 
     @Autowired
     private PermissionService permissionService;
+
+
+    @Autowired
+    private BusinessService businessService;
+    @Autowired
+    private EvtOrderService evtOrderService;
 
     @GetMapping("home")
     public String index() {
@@ -87,8 +101,33 @@ public class PlatformController {
 
     //活動款項查核
     @GetMapping("event/accounting")
-    public String eventAccounting(HttpSession session){
+    public String eventAccounting(Model model){
 
+        List<BusinessMember> businessMember = businessService.findAll();
+        model.addAttribute("businessMember", businessMember);
+
+        return "platform/event_accounting";
+    }
+
+    @PostMapping("/event/accounting/search")
+    public String eventAccountingSearch(Integer businessId, String startDate, String endDate, Model model){
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date parseStartDate = null;
+        Date parsedEndDate = null;
+        try {
+            parseStartDate = dateFormat.parse(startDate);
+            parsedEndDate = dateFormat.parse(endDate);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        Timestamp formatedStartDate = new java.sql.Timestamp(parseStartDate.getTime());
+        Timestamp formatedEndDate = new java.sql.Timestamp(parsedEndDate.getTime());
+
+
+        List<EvtOrderDTO> orderDTO = evtOrderService.findOrdersForAccounting(businessId, formatedStartDate, formatedEndDate);
+
+        model.addAttribute("orders", orderDTO);
 
         return "platform/event_accounting";
     }

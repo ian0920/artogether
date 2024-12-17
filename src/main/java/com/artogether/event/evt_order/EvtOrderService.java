@@ -364,4 +364,19 @@ public class EvtOrderService {
 
 
     }
+
+    public List<EvtOrderDTO> findOrdersForAccounting(Integer businessId, Timestamp startDate, Timestamp endDate) {
+
+        List<Event> eventList = eventRepo.findByBusinessMember_Id(businessId);
+        List<Integer> eventIdToBusinessMember = new ArrayList<>();
+        eventList.forEach(e -> eventIdToBusinessMember.add(e.getId()));
+
+        List<EvtOrder> orders = evtOrderRepo.findAllByEvent_idInAndAndOrderDateBetween(eventIdToBusinessMember,startDate,endDate);
+        List<EvtOrderDTO> orderDTOList = orders.stream().map(EvtOrderDTO::EvtOrderDTOTransformer).toList();
+
+        System.out.println(orderDTOList.size());
+
+        return orderDTOList;
+
+    }
 }
