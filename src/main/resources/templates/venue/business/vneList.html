@@ -124,11 +124,10 @@
                                 <p x-text="vne.description"></p>
                             </div>
                             <div class="tags-box">
+                                <span class="material-icons" x-text="vne.vneAddress.substring(3,6)">location_on</span>
                                 <div class="tag plain-tag">
-                                    <span class="material-icons">location_on</span>台北市
+                                    <span class="material-icons" x-text="vne.startHour + ':00 - ' + vne.endHour + ':00'">schedule</span>
                                 </div>
-                                <div class="tag plain-tag">
-                                    <span class="material-icons">schedule</span><span x-text="vne.startTime-"></span>                                </div>
                             </div>
                         </div>
                     </div>

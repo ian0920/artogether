@@ -16,15 +16,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class VneMemController {
 
     @Autowired
-    private VneImgService vneImgService;
+    private VenueService venueService;
 
     @GetMapping("/details/{vneId}")
-    public String detail(@PathVariable("vneId") Integer vneId,
-                         Model model) {
-        vneImgService.getAllImgs(vneId);
-        model.addAttribute("vneImgs", vneImgService.getAllImgs(vneId));
-        return "venue/member/detail";}
+    public String detail(Model model, @PathVariable("vneId") Integer vneId){
+        venueService.setName(model, vneId);
+        return "venue/member/detail";
+    }
 
     @GetMapping("/booking/{vneId}")
-    public String order() {return "/venue/member/order";}
+    public String order(Model model, @PathVariable("vneId") Integer vneId) {
+        venueService.setName(model, vneId);
+        return "/venue/member/order";
+    }
 }

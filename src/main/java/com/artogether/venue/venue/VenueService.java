@@ -312,6 +312,16 @@ public class VenueService {
         VneCardDTO vneCardDTO = new VneCardDTO();
         Optional<Venue> venueOptional = venueRepository.findById(vneId);
         venueOptional.ifPresent(venue -> {
+            List<Integer> weeklyInteger = tslotService.getWeeklyTslots(venue.getId(), LocalDateTime.now());
+            Integer bizTime = 0;
+            for (Integer dailyHours : weeklyInteger) {
+                bizTime |= dailyHours;
+            }
+            List<Integer> dailyList = BinaryTools.toList(bizTime, 24);
+            Integer startHour = dailyList.get(0);
+            Integer endHour = dailyList.get(dailyList.size() - 1);
+            vneCardDTO.setStartHour(startHour);
+            vneCardDTO.setEndHour(endHour);
             vneCardDTO.setVneId(venue.getId());
             vneCardDTO.setVneName(venue.getName());
             vneCardDTO.setVneAddress(venue.getBusinessMember().getAddr());
