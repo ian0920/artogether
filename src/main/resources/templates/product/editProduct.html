@@ -2,7 +2,7 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>修改商��資訊</title>
+    <title>修改商品資訊</title>
     <link rel="stylesheet" th:href="@{/web_design/style/style_business.css}" />
     <link
             href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
@@ -241,21 +241,6 @@
         </div>
         </div>
 
-<script>
-    document.getElementById('images').addEventListener("change", function (event){
-        const file = event.target.files[0];
-        if (file){
-            const reader = new FileReader();
-
-            reader.onload = function(e){
-                const newImagePreview = document.getElementById('newImagePreview');
-                newImagePreview.src = e.target.result;
-                newImagePreview.style.display = "block";
-            }
-            reader.readAsDataURL(file);
-        }
-    })
-</script>
         <div class="form-group">
             <label for="description">描述：</label>
             <textarea id="description" th:field="*{description}" placeholder="商品描述"></textarea>
@@ -287,6 +272,7 @@
             <button type="submit">保存修改</button>
         </div>
     </form>
+</div>
 
 
 <script>

@@ -1,6 +1,7 @@
 package com.artogether.controller.GC;
 
 import com.artogether.common.member.Member;
+import com.artogether.product.prd_catalog.PrdCatalog;
 import com.artogether.product.prd_img.PrdImg;
 import com.artogether.product.prd_img.PrdImgRepository;
 import com.artogether.product.prd_order.model.PrdOrder;
@@ -12,15 +13,18 @@ import com.artogether.product.prd_order_detail.PrdOrderDetailService;
 import com.artogether.product.product.Product;
 import com.artogether.product.product.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Map;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -76,6 +80,7 @@ public class OrderController {
         orderDetail.forEach((item -> {
             setProductsImg(item.getProduct());
         }));
+        model.addAttribute("order", order);
         model.addAttribute("orderDetail", orderDetail);
         return "product/memberOrderDetail";
     }
@@ -91,6 +96,77 @@ public class OrderController {
             }
         }
     }
+
+
+    // 以下為測試
+    @GetMapping("/businessOrder")
+    public String businessOrder(Model model) {
+
+
+        List<PrdOrder> orderList = prdOrderService.getOrderByMemberId(5);
+        if (orderList == null) {
+            orderList = new ArrayList<>();
+        }
+
+
+        model.addAttribute("orderList", orderList);
+
+
+        return "product/businessOrder";
+    }
+
+    @GetMapping("/businessOrderDetail/{orderId}")
+    public String businessOrderDetail(@PathVariable Integer orderId, Model model, HttpSession session) {
+        PrdOrder order = prdOrderService.getOrderById(orderId);
+        if (order == null) {
+            // 如果订单不存在，重定向或返回错误页面
+            return "redirect:/error";
+        }
+        List<PrdOrderDetail> orderDetail = prdOrderDetailRepository.findByPrdOrder(order);
+        orderDetail.forEach((item -> {
+            setProductsImg(item.getProduct());
+        }));
+        model.addAttribute("order", order);
+        model.addAttribute("orderDetail", orderDetail);
+        return "product/businessOrderDetail";
+    }
+
+    @PostMapping("/editOrder/{id}")
+    public ResponseEntity<String> updateOrder(
+            @PathVariable Integer id,
+            @RequestParam("status") String status,
+            @RequestParam("shipDate") String shipDateStr,
+            HttpSession session) {
+        try {
+            // 解析前端的 datetime-local 格式字符串為 LocalDateTime
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+            LocalDateTime localDateTime = LocalDateTime.parse(shipDateStr, formatter);
+
+            // 轉換為 java.sql.Timestamp
+            Timestamp shipDate = Timestamp.valueOf(localDateTime);
+
+
+            // 從數據庫中查找現有的訂單
+            PrdOrder existingOrder = prdOrderService.getOrderById(id);
+            if (existingOrder == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("訂單不存在！");
+            }
+
+            // 更新訂單狀態和運送日期
+            existingOrder.setStatus(status);
+            existingOrder.setShipDate(shipDate);
+
+            // 保存更新的訂單
+            prdOrderService.savePrdOrder(existingOrder);
+
+            return ResponseEntity.ok("訂單已成功更新！");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("更新失敗：" + e.getMessage());
+        }
+    }
+
+
+
 
 //    @GetMapping("/detail/{orderId}")
 //    public String orderDetailPage(@PathVariable Integer orderId, Model model) {

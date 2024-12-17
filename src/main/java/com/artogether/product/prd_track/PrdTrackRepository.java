@@ -1,5 +1,7 @@
 package com.artogether.product.prd_track;
 
+import com.artogether.common.member.Member;
+import com.artogether.product.product.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -11,6 +13,8 @@ import java.util.List;
 public interface PrdTrackRepository extends JpaRepository<PrdTrack, PrdTrack.PrdTrackId> {
 
     List<PrdTrack> findByMemberId(Integer memberId);
+
+    PrdTrack findByProductAndMember(Product product, Member member);
 
     // 根據會員ID查詢其追蹤的所有上架商品
     @Query("SELECT pt FROM PrdTrack pt WHERE pt.member.id = :memberId AND pt.product.status = 1")

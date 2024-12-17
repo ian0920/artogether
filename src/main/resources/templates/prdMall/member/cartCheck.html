@@ -174,6 +174,8 @@
                     <input type="hidden" name="totalPrice" id="totalAmountH">
                     <p>折扣: <span id="discountAmount">$0</span></p>
                     <input type="hidden" name="discount" id="discountH">
+                    <p>運費: <span id="shippingFee">$80</span></p>
+                    <input type="hidden" name="shippingFee" id="shippingFeeH" value="80">
                     <p>付款金額: <span id="paidAmount" >$0</span></p>
                     <input type="hidden" name="paid" id="paidH">
                 </div>
@@ -198,8 +200,17 @@
 
                 <!-- 信用卡資訊 -->
                 <div id="creditCardDetails" style="display: none; margin-top: 10px;">
-                    <label for="cardNumber">信用卡號 </label>
-                    <input type="text" id="cardNumber" name="cardNumber" placeholder="1234-5678-9012-3456" pattern="^(\d{4}-){3}\d{4}$" maxlength="19">
+                    <label for="cardType">信用卡種類</label>
+                    <select id="cardType" name="cardType" required>
+                        <option value="">請選擇</option>
+                        <option value="Visa">Visa</option>
+                        <option value="MasterCard">MasterCard</option>
+                        <option value="JCB">JCB</option>
+                    </select>
+
+                    <label for="cardNumber">信用卡號</label>
+                    <input type="text" id="cardNumber" name="cardNumber" placeholder="請輸入16碼卡號" maxlength="19" required>
+                    <span id="cardNumberError" style="color: red; display: none;">信用卡號格式錯誤</span>
 
                     <label for="cardName">持卡人姓名</label>
                     <input type="text" id="cardName" name="cardName">
@@ -207,14 +218,14 @@
                     <label for="expiryDate">有效日期</label>
                     <input type="month" id="expiryDate" name="expiryDate">
 
-                    <label for="cvv">CVV (3碼)</label>
+                    <label for="cvv">CVC (3碼)</label>
                     <input type="text" id="cvv" name="cvv" pattern="\d{3}" maxlength="3">
                 </div>
 
                 <!-- 銀行匯款資訊 -->
                 <div id="bankTransferDetails" style="display: none; margin-top: 10px;">
                     <p>請匯款至以下帳戶：</p>
-                    <p>銀行名稱：XXXX銀行</p>
+                    <p>銀行名稱：緯育銀行（999）</p>
                     <p>帳號：1234-5678-9012-3456</p>
                 </div>
             </div>
@@ -276,6 +287,7 @@
         // Fetch the businessMembersInCart data from the model
         const businessMembersInCart = [[${businessMembersInCart}]];
 
+        const shippingFee = 80;
 
         function calculateAmounts() {
             let totalAmount = 0;
@@ -310,7 +322,7 @@
                 }
             });
 
-            const paidAmount = totalAmount - Math.round(totalDiscount);
+            const paidAmount = totalAmount - Math.round(totalDiscount) + shippingFee;
 
             totalAmountSpan.textContent = `$${totalAmount.toFixed(0)}`;
             totalAmountHidden.value = totalAmount;
@@ -327,6 +339,35 @@
         calculateAmounts();
     });
 
+</script>
+
+
+<script>
+    const cardNumberInput = document.getElementById('cardNumber');
+
+    cardNumberInput.addEventListener('input', function (e) {
+        let value = e.target.value;
+
+        // 移除所有非數字和破折號
+        value = value.replace(/[^0-9]/g, '').replace(/-/g, '');
+
+        // 按每四個數字添加一個 -
+        let formattedValue = '';
+        for (let i = 0; i < value.length; i++) {
+            if (i > 0 && i % 4 === 0) {
+                formattedValue += '-';
+            }
+            formattedValue += value[i];
+        }
+
+        // 更新輸入框的值
+        e.target.value = formattedValue;
+
+        // 限制總長度（19個字符，包含 -）
+        if (formattedValue.length > 19) {
+            e.target.value = formattedValue.slice(0, 19);
+        }
+    });
 </script>
 
 
