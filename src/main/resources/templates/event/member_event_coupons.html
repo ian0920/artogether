@@ -84,11 +84,12 @@
                     </span>
                 </div>
                 <div class="accordion-body">
-                    <div th:each="coupon:${entry.getValue()}"  clickable class="showcases-card card event" style="margin:10px 20px;">
+                    <div th:each="coupon:${entry.getValue()}" th:onclick="|location.href='/event/details/' + ${coupon.evtCoup.event.id}|"
+                         clickable class="showcases-card card event" style="margin:10px 20px;">
                         <div class="card-content">
                             <div class="card-title">
-                                <div class="tag event" th:text="${coupon.status == 0 ? '未使用' : '已使用'}"
-                                     th:style="${coupon.status == 1 ? 'background: #1AA355FF;' :''}"></div>
+                                <div class="tag event" th:text="${coupon.status == 0 ? '未使用' : (coupon.status == 1 ? '已使用' : '失效' )}"
+                                     th:style="${coupon.status != 0 ? 'background: #1AA355FF;' :''}"></div>
                                 <h3 class="card-title-text" th:text="${coupon.evtCoup.evtCoupName}">
                                 </h3>
                             </div>

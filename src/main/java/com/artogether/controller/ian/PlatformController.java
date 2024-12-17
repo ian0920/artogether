@@ -84,4 +84,14 @@ public class PlatformController {
     }
 
 
+
+    //活動款項查核
+    @GetMapping("event/accounting")
+    public String eventAccounting(HttpSession session){
+
+
+        return "platform/event_accounting";
+    }
+
+
 }

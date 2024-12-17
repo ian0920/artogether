@@ -7,7 +7,9 @@ import com.artogether.event.event.Event;
 import com.artogether.event.event.EventRepo;
 import com.artogether.event.my_evt_coup.MyEvtCoup;
 import com.artogether.event.my_evt_coup.MyEvtCoupRepo;
+import com.artogether.util.EvtCoupStatusChangeEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -33,6 +35,13 @@ public class EvtCoupRestService {
 
     @Autowired
     MyEvtCoupRepo myEvtCoupRepo;
+
+
+    private final ApplicationEventPublisher eventPublisher;
+
+    public EvtCoupRestService(ApplicationEventPublisher eventPublisher) {
+        this.eventPublisher = eventPublisher;
+    }
 
     public Map<Integer, String> getEventNameAndIdByBusinessId (Integer businessId) {
         Map<Integer, String> eventNameAndId = new HashMap<>();
@@ -62,7 +71,9 @@ public class EvtCoupRestService {
     public EvtCoup updateEvtCoup(EvtCoup evtCoup) {
 
         Optional<EvtCoup> origin = evtCoupRepo.findById(evtCoup.getId());
+        EvtCoup updateSuccess;
 
+        List<MyEvtCoup> list = myEvtCoupRepo.findAllByEvtCoup_Id(evtCoup.getId());
 
         if (origin.isPresent()) {
             EvtCoup update = origin.get();
@@ -75,10 +86,24 @@ public class EvtCoupRestService {
             update.setDuration(evtCoup.getDuration());
             update.setThreshold(evtCoup.getThreshold());
             update.setStatus(evtCoup.getStatus());
-            return evtCoupRepo.save(update);
+            updateSuccess = evtCoupRepo.save(update);
+
+            eventPublisher.publishEvent(new EvtCoupStatusChangeEvent(this, updateSuccess.getId()));
+
+        } else {
+            updateSuccess = null;
         }
 
-        return null;
+        //創建時直接是下架狀態，首次將優惠券更改為上架狀態，發送給會員
+        if (list.isEmpty()&& updateSuccess != null && updateSuccess.getStatus() == (byte) 1) {
+
+                new Thread(() -> deliverCoupon(updateSuccess)).start();
+
+        }
+
+
+
+        return updateSuccess;
     }
 
     public EvtCoup addNewEvtCoup(EvtCoup evtCoup, Integer eventId) {
@@ -94,6 +119,7 @@ public class EvtCoupRestService {
         evtCoup.setEvent(e);
 
         EvtCoup newEvtCoup = evtCoupRepo.save(evtCoup);
+
 
         //若優惠券狀態是上架則分發給所有會員(另建執行緒來執行)
         if(newEvtCoup.getStatus() == 1){

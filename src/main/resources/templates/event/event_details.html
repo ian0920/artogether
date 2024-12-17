@@ -321,7 +321,8 @@
         }
 
         // Calculate paid amount
-        const paidAmount = (totalAmount - discountAmount).toFixed(0);
+		//如果算出來折購小於0 則結帳金額為0
+        const paidAmount = ((totalAmount - discountAmount).toFixed(0) < 0) ? 0 : (totalAmount - discountAmount).toFixed(0);
 
         // Update the UI
         totalAmountElem.textContent = `$${totalAmount}`;
@@ -381,7 +382,7 @@
 				if(response.status === true){
 					Swal.fire({
 						title: '',
-						text: `${eventName}${massage}`,
+						text: `${eventName}${message}`,
 						icon: 'success',
 						confirmButtonText: 'OK'
 					}).then(() => {
@@ -394,7 +395,7 @@
 
 					Swal.fire({
 						title: '',
-						text: `${massage}`,
+						text: `${message}`,
 						icon: 'warning',
 						confirmButtonText: 'OK'
 					}).then(() => {

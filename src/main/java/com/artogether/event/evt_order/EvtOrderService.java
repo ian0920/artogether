@@ -44,6 +44,7 @@ public class EvtOrderService {
     private EvtCoupService evtCoupService;
     @Autowired
     private EvtCoupRepo evtCoupRepo;
+    @Autowired
     private EvtOrderRepo evtOrderRepo;
     @Autowired
     private MemberRepo memberRepo;
@@ -67,6 +68,8 @@ public class EvtOrderService {
         return repo.findAll();
     }
 
+
+    //(Deprecate)
     public EvtOrder saveEvtOrder(EvtOrder evtOrder, Integer memberId, Integer eventId) {
 
         EvtOrder evt = EvtOrder.builder()
@@ -180,34 +183,65 @@ public class EvtOrderService {
         return new PageImpl<>(paginatedEventList, pageable, myOrders.size());
     }
 
-    public boolean cancelOrder(Integer orderId) {
 
-        boolean success = false;
-        EvtOrder o = repo.findById(orderId).get();
+    //活動報名取消
+    @Transactional(rollbackFor = Exception.class)
+    public ApiResponse<EvtOrder> cancelOrder(Integer orderId) {
 
-        Event event = eventService.findById(o.getEvent().getId());
+
+        EvtOrder o = repo.findById(orderId).orElseThrow(() -> new RuntimeException("活動訂單不存在"));
+
+        Event event = eventRepo.findById(o.getEvent().getId()).orElseThrow(() -> new RuntimeException("活動不存在"));
         Timestamp today = new Timestamp(System.currentTimeMillis());
 
+        try{
 
-        // 確認訂單狀態為未取消
-        if(o.getStatus() == 0 ) {
+            // 確認訂單狀態為未取消
+            if(o.getStatus() == 0 ) {
 
-            //活動正常舉行 且取消時間在活動開始三天前
-            if (event.getStatus() == 1 && (today.getTime() + 86400000) <= event.getStartDate().getTime()){
-                o.setStatus((byte) 1);
-                repo.save(o);
-                success = true;
+                //活動正常舉行 且取消時間在活動開始三天前
+                if (event.getStatus() == 1 && (today.getTime() + 86400000*3) <= event.getStartDate().getTime()){
+
+
+                    //調整訂單狀態、調整活動報名人數
+                    o.setStatus((byte) 1);
+                    repo.save(o);
+
+                    event.setEnrolled(event.getEnrolled() -1);
+                    eventRepo.save(event);
+
+                    return new ApiResponse<EvtOrder>(true, "活動報名已取消", null, null);
+                }
+
+
+                //延期活動取消報名  且取消時間在活動開始三天前
+                if(event.getStatus() == 2 && (today.getTime() + 86400000*3) <= event.getDelayDate().getTime()){
+
+
+                    //調整訂單狀態、調整活動報名人數
+                    o.setStatus((byte) 1);
+                    repo.save(o);
+
+                    event.setEnrolled(event.getEnrolled() -1);
+                    eventRepo.save(event);
+
+                    return new ApiResponse<EvtOrder>(true, "活動報名已取消", null, null);
+                }
+
+                return new ApiResponse<EvtOrder>(false, "取消報名需在活動開始三天前", null, null);
+
+            } else {
+
+                return new ApiResponse<EvtOrder>(false, "報名已取消，請勿重複申請", null, null);
             }
 
-            if(event.getStatus() == 2 && (today.getTime() + 86400000) <= event.getDelayDate().getTime()){
-                o.setStatus((byte) 1);
-                repo.save(o);
-                success = true;
-            }
+        }catch (Exception e){
+
+            e.printStackTrace();
+            return new ApiResponse<EvtOrder>(false, "取消報名失敗，請稍後再試", null, null);
         }
 
 
-        return success;
     }
 
 
@@ -238,7 +272,7 @@ public class EvtOrderService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public ApiResponse<EvtOrder> eventEnroll(EvtOrderDTO evtOrderDTO) {
+    public ApiResponse<EvtOrderDTO> eventEnroll(EvtOrderDTO evtOrderDTO) {
 
 
         /*
@@ -260,7 +294,7 @@ public class EvtOrderService {
 
         if (event.getStatus() != 1 && event.getStatus() != 2) {
 
-            return new ApiResponse<EvtOrder>(false, "活動無法報名", null, null);
+            return new ApiResponse<EvtOrderDTO>(false, "活動無法報名", null, null);
         }
 
 
@@ -285,7 +319,7 @@ public class EvtOrderService {
                 newOrder.setTotalPrice(evtOrderDTO.getTotalPrice());
                 newOrder.setDiscount(evtOrderDTO.getDiscount());
                 newOrder.setPaid(evtOrderDTO.getPaid());
-                newOrder.setStatus((byte) 1);
+                newOrder.setStatus((byte) 0);
 
                 EvtOrder orderSaved = evtOrderRepo.save(newOrder);
 
@@ -312,7 +346,9 @@ public class EvtOrderService {
 
                 eventPublisher.publishEvent(new EnrollmentCompletedEvent(this, event.getId()));
 
-                return new ApiResponse<>(true, "報名成功", orderSaved, null);
+                EvtOrderDTO orderDTO = EvtOrderDTO.EvtOrderDTOTransformer(orderSaved);
+
+                return new ApiResponse<EvtOrderDTO>(true, "報名成功", orderDTO, null);
 
 
             }catch (Exception e){
@@ -323,7 +359,7 @@ public class EvtOrderService {
         } else {
             //報名人數超過超過活動人數上限
 
-            return new ApiResponse<EvtOrder>(false, "報名人數超過活動上限", null, null);
+            return new ApiResponse<EvtOrderDTO>(false, "報名人數超過活動上限", null, null);
         }
 
 
