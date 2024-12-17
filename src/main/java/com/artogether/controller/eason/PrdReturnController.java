@@ -8,6 +8,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.artogether.common.business_member.BusinessMember;
 import com.artogether.common.business_member.BusinessService;
+import com.artogether.product.prd_order_detail.PrdOrderDetailDto;
 import com.artogether.product.prd_return.NewPrdReturnService;
 import com.artogether.product.prd_return.PrdReturn;
 import com.artogether.product.prd_return.PrdReturnDto;
@@ -51,23 +52,19 @@ public class PrdReturnController {
     // 新增退換貨頁面
     // ==============================
     @GetMapping("/add")
-    public String showAddReturnForm(
-            @RequestParam(required = false) Integer testBusinessId,
-            HttpSession session,
-            Model model) {
-        BusinessMember presentBusinessMember = (BusinessMember) session.getAttribute("presentBusinessMember");
-        if (presentBusinessMember == null && testBusinessId != null) {
-            presentBusinessMember = businessService.findById(testBusinessId);
-            if (presentBusinessMember == null) {
-                throw new IllegalArgumentException("無效的商家 ID：" + testBusinessId);
-            }
-            session.setAttribute("presentBusinessMember", presentBusinessMember);
-        }
-        if (presentBusinessMember == null) {
-            throw new IllegalStateException("未登入且未提供測試商家 ID");
+    public String showAddReturnForm(HttpSession session, Model model) {
+    	Integer memberId = (Integer) session.getAttribute("member");
+    	
+    	if (memberId == null) {
+            throw new IllegalStateException("未登入");
         }
 
-        model.addAttribute("presentBusinessMember", presentBusinessMember);
+        // 檢查是否登入
+        if (memberId == null) {
+            throw new IllegalStateException("未登入一般會員");
+        }
+
+        model.addAttribute("member", memberId);
         model.addAttribute("prdReturn", new PrdReturn());
 
         return "product/add";
@@ -176,5 +173,72 @@ public class PrdReturnController {
         model.addAttribute("returns", returns);
         return "/product/search";
     }
+
+
+
+//一般會員查看退換貨列表
+@GetMapping("/user_return_list")
+public String getReturnsByGeneralMember(HttpSession session, Model model) {
+    // 從 session 取得登入中的一般會員資訊
+	Integer memberId = (Integer) session.getAttribute("member");
+	
+	if (memberId == null) {
+        throw new IllegalStateException("未登入");
+    }
+
+    // 檢查是否登入
+    if (memberId == null) {
+        throw new IllegalStateException("未登入一般會員");
+    }
+
+    // 調用 service 方法，根據一般會員 ID 獲取退換貨列表
+    List<PrdReturnDto> userReturns = newPrdReturnService.getReturnsForMember(memberId);
+    model.addAttribute("userReturns", userReturns);
+
+    // 返回視圖頁面 (例如 "returns/user_list.html")
+    return "product/user_return_list";
+	}
+
+
+	@GetMapping("/apply")
+	public String showAddReturnForm(@RequestParam("orderId") Integer orderId, Model model) {
+    // 透過 orderId 查詢訂單詳情
+    List<PrdOrderDetailDto> orderDetails = newPrdReturnService.getOrderDetailsByOrderId(orderId);
+
+    if (orderDetails == null || orderDetails.isEmpty()) {
+        model.addAttribute("error", "未找到訂單詳情，請確認訂單編號！");
+        return "error"; // 返回錯誤頁面
+    }
+
+    model.addAttribute("orderDetails", orderDetails); // 訂單詳情
+    model.addAttribute("prdReturn", new PrdReturn()); // 退換貨物件
+    model.addAttribute("orderId", orderId); // 傳遞 orderId
+
+    return "product/apply"; // 返回 Thymeleaf 頁面
 }
+
+// 提交退換貨申請
+@PostMapping("/apply")
+public String addPrdReturn(@ModelAttribute PrdReturn prdReturn,
+                           @RequestParam("orderId") Integer orderId,
+                           RedirectAttributes redirectAttributes) {
+    try {
+        // 設置當前時間為申請時間
+        if (prdReturn.getApplyDate() == null) {
+            prdReturn.setApplyDate(new Timestamp(System.currentTimeMillis()));
+        }
+        // 保存退換貨記錄
+        PrdReturnDto result = newPrdReturnService.addPrdReturn(prdReturn);
+
+        redirectAttributes.addFlashAttribute("message", "退換貨申請成功！ID: " + result.getId());
+    } catch (Exception e) {
+        redirectAttributes.addFlashAttribute("message", "退換貨申請失敗！" + e.getMessage());
+    }
+    return "redirect:/product/list";
+}
+
+
+
+}
+
 

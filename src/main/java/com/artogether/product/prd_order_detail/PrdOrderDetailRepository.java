@@ -11,4 +11,5 @@ import java.util.List;
 public interface PrdOrderDetailRepository extends JpaRepository<PrdOrderDetail, PrdOrderProductId> {
 
     List<PrdOrderDetail> findByPrdOrder(PrdOrder prdOrder);
+    List<PrdOrderDetail> findByPrdOrderId(Integer orderId);
 }

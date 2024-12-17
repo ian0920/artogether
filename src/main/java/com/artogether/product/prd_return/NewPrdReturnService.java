@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
+import com.artogether.product.prd_order_detail.PrdOrderDetail;
+import com.artogether.product.prd_order_detail.PrdOrderDetailDto;
+import com.artogether.product.prd_order_detail.PrdOrderDetailRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,6 +16,8 @@ public class NewPrdReturnService {
 
     @Autowired
     private PrdReturnRepository prdReturnRepository;
+    @Autowired
+    private PrdOrderDetailRepository prdOrderDetailRepository;
 
     // 新增退換貨
     @Transactional
@@ -114,8 +118,33 @@ public class NewPrdReturnService {
                       .map(this::toDto) 
                       .collect(Collectors.toList());
     }
-
-
-
     
+    
+    
+    @Transactional(readOnly = true)
+    public List<PrdReturnDto> getReturnsForMember(Integer memberId) {
+        List<PrdReturn> returns = prdReturnRepository.findReturnsByMemberId(memberId);
+        return returns.stream()
+                      .map(this::toDto) 
+                      .collect(Collectors.toList());
+    }
+    
+//    透過查詢訂單詳情來退換貨
+    @Transactional(readOnly = true)
+    public List<PrdOrderDetailDto> getOrderDetailsByOrderId(Integer orderId) {
+        List<PrdOrderDetail> orderDetails = prdOrderDetailRepository.findByPrdOrderId( orderId);
+
+        return orderDetails.stream().map(detail -> {
+            return new PrdOrderDetailDto(
+                detail.getProduct().getId(),
+                detail.getProduct().getName(),
+                detail.getQty(),
+                detail.getPrice()
+            );
+        }).collect(Collectors.toList());
+    
+    }
+        
 }
+    
+
