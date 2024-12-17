@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -48,14 +47,20 @@ public class EvtOrderDAO {
         cq.where(predicates.toArray(new Predicate[predicates.size()]));
 
         // Pagination
-        TypedQuery<EvtOrder> query = em.createQuery(cq);
-        query.setFirstResult(page * size); // Offset
-        query.setMaxResults(size); // Limit
+//        TypedQuery<EvtOrder> query = em.createQuery(cq);
+//        query.setFirstResult(page * size); // Offset
+//        query.setMaxResults(size); // Limit
+//
+//        List<EvtOrder> result = em.createQuery(cq).getResultList();
+//
+//
+//        return result;
 
-        List<EvtOrder> result = em.createQuery(cq).getResultList();
-
-
-        return result;
+        int firstResult = page * size; // Calculate offset
+        return em.createQuery(cq)
+                .setFirstResult(firstResult)
+                .setMaxResults(size)
+                .getResultList();
     }
 
     public long countEvtOrderByCriteria(Integer businessId, Integer eventId, Timestamp startDate, Timestamp endDate, Integer status) {
