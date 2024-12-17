@@ -363,7 +363,7 @@
   --pink-800: #8a226f;
   --pink-900: #57184a;
   --pink-1000: #3f1536;
-  --gray-100: #fefefe;
+  --gray-100: #f7f7f7;
   --gray-200: #e6e6e6;
   --gray-300: #d9d9d9;
   --gray-400: #b3b3b3;
@@ -1001,6 +1001,81 @@ table tbody tr:last-child {
 }
 table th,
 table td {
+  padding: 8px;
+}
+
+.chatroom-list {
+  border-left: 1px solid var(--border-default-default-sds-light);
+  height: 100%;
+  overflow-y: overlay;
+}
+.chatroom-list .chatroom-item {
+  margin: 2px;
+  padding: 16px;
+  background-color: var(--background-default-secondary-sds-light);
+}
+.chatroom-list .chatroom-title {
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border-default-default-sds-light);
+}
+
+.message-area-box {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.message-area-box .peer-info {
+  background-color: var(--brand-shop-tint);
+  padding: 12px;
+  border-bottom: 1px solid var(--border-default-default-sds-light);
+}
+.message-area-box .peer-info #peer_name {
+  margin: 0;
+}
+.message-area-box .message-area {
+  flex: auto;
+  overflow-y: overlay;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: stretch;
+  justify-content: flex-start;
+}
+.message-area-box .message-area li {
+  max-width: 80%;
+  width: -moz-fit-content;
+  width: fit-content;
+  list-style: none;
+  padding: 8px 16px;
+  border-radius: 16px;
+  word-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
+}
+.message-area-box .message-area li.business {
+  background-color: var(--brand-shop-tint);
+  align-self: flex-end; /* 靠右對齊 */
+}
+.message-area-box .message-area li.member {
+  align-self: flex-start; /* 靠左對齊 */
+  background-color: var(--background-default-secondary-sds-light);
+}
+.message-area-box .message-area.member li.business {
+  align-self: flex-start; /* 靠左對齊 */
+  background-color: var(--background-default-secondary-sds-light);
+}
+.message-area-box .message-area.member li.member {
+  background-color: var(--brand-shop-tint);
+  align-self: flex-end; /* 靠右對齊 */
+}
+
+.no-padding {
+  padding: 0;
+}
+
+.padding-8 {
   padding: 8px;
 }
 

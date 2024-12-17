@@ -62,20 +62,22 @@ public class ChatHandler extends TextWebSocketHandler {
         // 儲存session
        saveUserSession(session);
         
-        // 推送離線消息（如果有）
-        String offlineKey = "offline_messages:" + getUserKeyfromAttributes(attributes);
-        var offlineMessages = jedis.lrange(offlineKey, 0, -1);
-        for (String jsonMessage : offlineMessages) {
-            session.sendMessage(new TextMessage(jsonMessage));
-        }
-        // 清空離線消息
-        jedis.del(offlineKey);
+//        // 推送離線消息（如果有）
+//        String offlineKey = "offline_messages:" + getUserKeyfromAttributes(attributes);
+//        var offlineMessages = jedis.lrange(offlineKey, 0, -1);
+//        for (String jsonMessage : offlineMessages) {
+//            session.sendMessage(new TextMessage(jsonMessage));
+//        }
+//        // 清空離線消息
+//        jedis.del(offlineKey);
     }
     
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+    	System.out.println(message.getPayload());
     	// 處理發送的消息
         Message chatMessage = objectMapper.readValue(message.getPayload(), Message.class);
+        System.out.println(chatMessage);
         
         // 根據聊天室 id 儲存消息
         Integer chatRoomId = chatMessage.getChatroom().getId();
@@ -105,8 +107,8 @@ public class ChatHandler extends TextWebSocketHandler {
                 receiverSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(chatMessage)));
             } else {
             // 如果接收者離線，先不發送，後續在離線消息中發送
-            	String offlineKey = "offline_messages:" + receiverKey;
-            	jedis.lpush(offlineKey, objectMapper.writeValueAsString(chatMessage));
+//            	String offlineKey = "offline_messages:" +chatRoomId+ ":" +receiverKey;
+//            	jedis.lpush(offlineKey, objectMapper.writeValueAsString(chatMessage));
             }
             
             // 如果發送者在線，立即發送訊息
@@ -114,8 +116,8 @@ public class ChatHandler extends TextWebSocketHandler {
             	senderSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(chatMessage)));
             } else {
             	// 如果寄送者離線，先不發送，後續在離線消息中發送
-            	String offlineKey = "offline_messages:" + senderKey;
-            	jedis.lpush(offlineKey, objectMapper.writeValueAsString(chatMessage));
+//            	String offlineKey = "offline_messages:" +chatRoomId+ ":" +senderKey;
+//            	jedis.lpush(offlineKey, objectMapper.writeValueAsString(chatMessage));
             }
     }
 

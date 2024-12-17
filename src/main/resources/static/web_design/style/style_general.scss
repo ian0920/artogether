@@ -399,3 +399,80 @@ table {
     padding: 8px;
   }
 }
+
+//==============================
+//          聊天室
+//==============================
+.chatroom-list {
+  border-left: 1px solid var(--border-default-default-sds-light);
+  height: 100%;
+  overflow-y: overlay;
+  .chatroom-item {
+    margin: 2px;
+    padding: 16px;
+    background-color: var(--background-default-secondary-sds-light);
+  }
+  .chatroom-title {
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--border-default-default-sds-light);
+  }
+}
+.message-area-box {
+  height: 100%;
+  @include flexbox(column, 0);
+  .peer-info {
+    background-color: var(--brand-shop-tint);
+    padding: 12px;
+    border-bottom: 1px solid var(--border-default-default-sds-light);
+
+    #peer_name {
+      margin: 0;
+    }
+  }
+  .message-area {
+    flex: auto;
+    overflow-y: overlay;
+    padding: 8px;
+    @include flexbox(column, 8px);
+    @include flexbox-details(stretch, flex-start);
+    li {
+      max-width: 80%;
+      width: fit-content;
+      list-style: none;
+      padding: 8px 16px;
+      border-radius: 16px;
+      word-wrap: break-word;
+      word-break: break-word;
+      white-space: normal;
+
+      &.business {
+        background-color: var(--brand-shop-tint);
+        align-self: flex-end; /* 靠右對齊 */
+      }
+      &.member {
+        align-self: flex-start; /* 靠左對齊 */
+        background-color: var(--background-default-secondary-sds-light);
+      }
+    }
+    &.member {
+      // 會員端顯示
+      li {
+        &.business {
+          align-self: flex-start; /* 靠左對齊 */
+          background-color: var(--background-default-secondary-sds-light);
+        }
+        &.member {
+          background-color: var(--brand-shop-tint);
+          align-self: flex-end; /* 靠右對齊 */
+        }
+      }
+    }
+  }
+}
+
+.no-padding {
+  padding: 0;
+}
+.padding-8 {
+  padding: 8px;
+}

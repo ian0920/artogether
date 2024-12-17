@@ -41,7 +41,8 @@ public class Message {
 	
 	private String content;
 	
-	@Column(name="send_time",updatable = false, insertable = false)
+	// 因為會先存到redis，所以並沒設置insertable=false
+	@Column(name="send_time",updatable = false)
 	private Timestamp sendTime;
 
 }

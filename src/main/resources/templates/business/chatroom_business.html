@@ -13,26 +13,33 @@
 <body onunload="disconnect();">
 <!-- 導航 -->
 <div th:replace="~{/components/navbar_business::navbar('inbox','')}"></div>
-<main class="row">
-<!-- 	聊天室列表 -->
-	<section>
-		<div th:if="${chatrooms!=null}" th:each="c : ${chatrooms}">
-			<button th:text="${c.member.name}" th:onclick="openChat([[${c.id}]],[[${c.member.id}]],[[${c.member.name}]])"></button>
-		</div>
-	</section>
+<main class="row no-padding" style="gap: 0">
 	
 <!-- 	聊天室內容 -->
-	<section>
-		<div>
+      <section class="flex-3 message-area-box">
+		<div class="peer-info">
 			<h3 id="peer_name"></h3>
 		</div>
 		<div class="message-area" id="messageArea"></div>
-		<div class="panel input-area">
-		<input id="message" class="text-field" type="text" placeholder="Message" onkeydown="if (event.keyCode == 13) sendMessage();" /> 
-		<input type="submit" id="sendMessage" class="button" value="Send" onclick="sendMessage();" /> 
+        <div class="panel input-area row padding-8">
+		<input id="message" class="solo flex-1" type="text" placeholder="Message" onkeydown="if (event.keyCode == 13) sendMessage();" /> 
+		<button id="sendMessage" class="button-big-icon" value="Send" onclick="sendMessage();">
+			<span class="material-symbols-outlined">send</span>
+		</button> 
 
 	</div>
 	</section>
+<!-- 	聊天室列表 -->
+	<section class="flex-1 chatroom-list">
+		<div class="chatroom-title">
+          <h4>對話紀錄</h4>
+        </div>
+		<div clickable class="chatroom-item"
+		th:if="${chatrooms!=null}" th:each="c : ${chatrooms}" th:onclick="openChat([[${c.id}]],[[${c.member.id}]],[[${c.member.name}]])">
+			<p th:text="${c.member.name}"></p>
+		</div>
+	</section>
+
 </main>
 
 <script type="text/javascript" th:inline="javascript">
@@ -113,6 +120,12 @@ function openChat(chatroomId, peer, peerName) {
 function sendMessage() {
 	var inputMessage = document.getElementById("message");
 	var message = inputMessage.value.trim();
+	// 取得當前時間
+	const now = new Date();
+
+	// 格式化為符合 Java Timestamp 格式的字串
+	const timestampStr = now.toISOString().substring(0, 19);
+
 
 	if (message === "") {
 		alert("請輸入文字");
@@ -133,7 +146,9 @@ function sendMessage() {
 		  	},
 		  },
 		  "sender": true,               // 發送者類型：true 表示商家；false 表示會員
-		  "content": message // 訊息內容
+		  "content": message, // 訊息內容
+		  "sendTime": timestampStr
+
 		};
 		socket.send(JSON.stringify(jsonObj));
 		inputMessage.value = "";

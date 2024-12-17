@@ -17,7 +17,7 @@
 			</div>
 			<div clickable class="cart_div"
 				onclick="window.location.href='/cart/page'">
-				<span class="badge" id="cart_amount">3</span> <span
+				<span class="badge" id="cart_amount" th:if="${session.cartItem}"></span> <span
 					class="material-symbols-outlined">shopping_bag</span>
 			</div>
 			<div th:if="${#ctx.session.getOrDefault('islogin',false)}" clickable
