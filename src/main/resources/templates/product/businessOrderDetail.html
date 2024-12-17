@@ -4,16 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>訂單詳情</title>
-    <link rel="stylesheet" th:href="@{/web_design/style/style_business.css}" />
+    <link rel="stylesheet" th:href="@{/web_design/style/style_business.css}"/>
     <link
             href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
             rel="stylesheet"
     />
     <style>
-        .img{
+        .img {
             width: 100px;
             height: 100px;
         }
+
         .modal {
             display: none;
             position: fixed;
@@ -68,6 +69,7 @@
             margin-top: 5px;
             font-size: 16px;
         }
+
         /* 基本設定 */
         body {
             font-family: Arial, sans-serif;
@@ -210,7 +212,7 @@
 
 <main>
     <h1>訂單詳情</h1>
-    <h3>訂單編號：<span th:text="${orderId}"></span></h3>
+    <h3>訂單編號：<span th:text="${prdOrder.id}"></span></h3>
 
     <!-- 錯誤提示 -->
     <div th:if="${message}">
@@ -218,7 +220,7 @@
     </div>
 
     <!-- 訂單詳情 -->
-    <div th:if="${orderDetail}">
+    <div th:if="${prdOrder}">
         <table>
             <thead>
             <tr>
@@ -229,28 +231,28 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="detail : ${orderDetail}">
-                <td th:text="${detail.product.name}"></td>
-                <td th:text="${detail.qty}"></td>
-                <td th:text="${detail.price}"></td>
-                <td><img class="img" th:src="${detail.product.img}" alt="商品圖片"/></td>
+            <!-- 遍歷 prdOrder.prdOrderDetails -->
+            <tr th:each="prdOrderDetail : ${prdOrder.prdOrderDetails}">
+                <td th:text="${prdOrderDetail?.product?.name}">商品名稱</td>
+                <td th:text="${prdOrderDetail?.qty}">數量</td>
+                <td th:text="${prdOrderDetail?.price}">價格</td>
+                <td>
+                    <img class="img" th:src="${prdOrderDetail?.product?.img}" alt="商品圖片"
+                         style="width: 100px; height: 100px;"/>
+                </td>
             </tr>
             </tbody>
         </table>
     </div>
     <div class="paid">
-        <h4>付款金額：<span th:text="${order.paid}"></span></h4>
-        <h4>付款方式：
-            <span th:if="${order.paymentMethod == 'Cash'}">轉帳</span>
-            <span th:if="${order.paymentMethod == 'Credit Card'}">信用卡</span>
-        </h4>
-        <h4>付款狀態：<span th:text="${order.status}"></span></h4>
+        <h4>金額：<span th:text="'NT$ ' + ${prdOrder.totalPrice}"></span></h4>
+        <h4>付款狀態：<span th:text="${prdOrder.status}"></span></h4>
     </div>
     <div class="info">
-        <h4>收件人：<span th:text="${order.orderName}"></span></h4>
-        <h4>地址：<span th:text="${order.orderAddress}"></span></h4>
-        <h4>電話：<span th:text="${order.orderPhone}"></span></h4>
-        <h4>出貨時間：<span th:text="${order.shipDate}"></span></h4>
+        <h4>收件人：<span th:text="${prdOrder.orderName}"></span></h4>
+        <h4>地址：<span th:text="${prdOrder.orderAddress}"></span></h4>
+        <h4>電話：<span th:text="${prdOrder.orderPhone}"></span></h4>
+        <h4>出貨時間：<span th:text="${prdOrder.shipDate}"></span></h4>
     </div>
     <div>
         <!-- 訂單更新按鈕 -->
@@ -261,23 +263,24 @@
             <div class="modal-content">
                 <span class="close" onclick="closeModal()">&times;</span>
                 <h2>更新訂單資訊</h2>
-                <form  th:action="@{/order/editOrder/{id}(id=${order.id})}" method="post"  th:object="${order}">
-                    <input type="hidden" th:field="*{id}" />
+                <form th:action="@{/order/editOrder/{id}(id=${prdOrder.id})}" method="post">
                     <div>
                         <label for="status">付款狀態：</label>
-                        <select id="status" name="status" th:value="*{status}">
-                            <option value="未付款">未付款</option>
-                            <option value="已付款">已付款</option>
-                            <option value="已出貨">已出貨</option>
-                            <option value="退貨申請中">退貨申請中</option>
-                            <option value="退款中">退款中</option>
-                            <option value="已完成">已完成</option>
-
+                        <select id="status" name="status">
+                            <option value="未付款" th:selected="${prdOrder.status == '未付款'}">未付款</option>
+                            <option value="已付款" th:selected="${prdOrder.status == '已付款'}">已付款</option>
+                            <option value="已出貨" th:selected="${prdOrder.status == '已出貨'}">已出貨</option>
+                            <option value="退貨申請中" th:selected="${prdOrder.status == '退貨申請中'}">退貨申請中</option>
+                            <option value="退款中" th:selected="${prdOrder.status == '退款中'}">退款中</option>
+                            <option value="已完成" th:selected="${prdOrder.status == '已完成'}">已完成</option>
                         </select>
                     </div>
                     <div>
                         <label for="shipDate">出貨時間：</label>
-                        <input type="datetime-local" id="shipDate" name="shipDate" />
+                        <input type="datetime-local" id="shipDate" name="shipDate"
+                               th:if="${prdOrder.shipDate != null}"
+                               th:value="${#dates.format(prdOrder.shipDate, 'yyyy-MM-dd''T''HH:mm')}"/>
+<!--                        <input type="datetime-local" id="shipDate" name="shipDate" th:unless="${prdOrder.shipDate != null}"/>-->
                     </div>
                     <div>
                         <button type="submit">更新</button>
@@ -285,9 +288,10 @@
                     </div>
                 </form>
             </div>
-        </div>    </div>
+        </div>
+    </div>
 
-    <img src="./asset/images/bgimg.png" alt="" />
+    <img src="./asset/images/bgimg.png" alt=""/>
 
     <script>
         function openModal() {
@@ -306,25 +310,23 @@
             }
         };
 
-
-            async function submitUpdateForm(event) {
+        async function submitUpdateForm(event) {
             event.preventDefault();
             const form = event.target;
             const response = await fetch(form.action, {
-            method: form.method,
-            body: new FormData(form),
-        });
+                method: form.method,
+                body: new FormData(form),
+            });
 
             if (response.ok) {
-            alert("訂單已成功更新！");
-            closeModal();
-            window.location.reload(); // 重新加載頁面以刷新數據
-        } else {
-            const errorMessage = await response.text();
-            alert("更新失敗：" + errorMessage);
+                alert("訂單已成功更新！");
+                closeModal();
+                window.location.reload(); // 重新加載頁面以刷新數據
+            } else {
+                const errorMessage = await response.text();
+                alert("更新失敗：" + errorMessage);
+            }
         }
-        }
-
     </script>
 </main>
 </body>

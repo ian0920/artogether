@@ -8,6 +8,7 @@ import com.artogether.product.prd_img.PrdImgRepository;
 import com.artogether.product.prd_order_detail.PrdOrderDetail;
 import com.artogether.product.prd_review.PrdReview;
 import com.artogether.product.prd_track.PrdTrack;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -31,6 +32,7 @@ public class Product {
 	@Column(name = "id", updatable = false)
 	private Integer id;
 
+	@JsonIgnore
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "business_id", referencedColumnName = "id")
 	private BusinessMember businessMember;
@@ -38,6 +40,7 @@ public class Product {
 	@Column(name = "name")
 	private String name;
 
+	@JsonIgnore
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "catalog_id", referencedColumnName = "id")
 	private PrdCatalog prdCatalog;
@@ -60,19 +63,24 @@ public class Product {
 	@Column(name = "all_reviews")
 	private Integer allReviews;
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<PrdReview> prdReviews;
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<PrdOrderDetail> prdOrderDetail;
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<PrdTrack> prdTrack;
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Cart> cart;
 
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<PrdImg> prdImg;
 

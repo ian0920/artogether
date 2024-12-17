@@ -9,6 +9,7 @@ import org.glassfish.json.JsonUtil;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 
 @Entity
@@ -45,5 +46,10 @@ public class PrdReport {
 
 	@Column(name = "status")
 	private Integer status;
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
 
 }
