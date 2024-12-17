@@ -35,7 +35,7 @@
             color: #555;
         }
 
-        input {
+        select, input {
             width: calc(100% - 20px);
             padding: 10px;
             margin-bottom: 15px;
@@ -44,26 +44,53 @@
             font-size: 14px;
         }
 
-        input:focus {
+        select:focus, input:focus {
             border-color: #007bff;
             outline: none;
             box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
         }
 
         button {
-            display: block;
-            width: 100%;
             padding: 10px;
             font-size: 16px;
-            background-color: #007bff;
-            color: #fff;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            width: 100%;
         }
 
         button:hover {
             background-color: #0056b3;
+        }
+
+        /* 按鈕容器 */
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;  /* 在按鈕之間加入 20px 的空格 */
+            margin-top: 20px;
+        }
+
+        /* 提交按鈕 */
+        .submit-btn {
+            background-color: #007bff;
+            color: #fff;
+            flex: 1;  /* 按鈕占據可用的空間 */
+        }
+
+        .submit-btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* 取消按鈕 */
+        .cancel-btn {
+            background-color: #ccc;
+            color: #333;
+            flex: 1;  /* 按鈕占據可用的空間 */
+        }
+
+        .cancel-btn:hover {
+            background-color: #999;
         }
 
         .description {
@@ -75,35 +102,40 @@
     </style>
 </head>
 <body>
-<!--<form th:action="@{/permission/pmadd}"  method="post">-->
-<!--    <h1>新增管理員權限</h1>-->
-<!--    <label>管理員編號：</label>-->
-<!--    <select name="permDesc" >-->
-<!--        <option th:each="permDesc : ${permDescs}"-->
-<!--                th:text="${permDesc.description}"-->
-<!--                th:value="${permDesc.id}"></option>-->
-<!--    </select>-->
-<!--    <input type="number" required />-->
-<!--    <label>權限：</label>-->
-<!--    <input type="text" th:field="*{permDesc.description}" required />-->
-<!--    <label>-->
-<!--        <select name="permDesc" >-->
-<!--            <option th:each="permDesc : ${permDescs}"-->
-<!--                    th:text="${permDesc.description}"-->
-<!--                    th:value="${permDesc.id}"></option>-->
-<!--        </select>-->
-<!--    </label>-->
-<!--    <button type="submit">新增</button>-->
-<!--    <div class="description">請填寫完整資料後，點擊「新增」按鈕。</div>-->
-<!--</form>-->
 
-<form th:action="@{/permission/pmadd}" th:object="${permissionDTO}" method="post">
-    <h1>新增平台功能說明</h1>
-    <label>權限 ID：</label>
-    <input type="number" th:field="*{managerId}" required />
-    <label>描述：</label>
-    <input type="text" th:field="*{descName}" required />
-    <button type="submit">新增</button>
+<form th:action="@{/permission/pmadd}" th:object="${permissionList}" method="post">
+    <div> <h1>新增管理員權限</h1></div>
+
+    <div th:if="${message}" class="alert alert-info">
+        <p th:text="${message}"></p>
+    </div>
+
+    <!-- 會員選擇 -->
+    <label>選擇管理員：</label>
+    <select name="managerId" required>
+        <option value="" disabled selected>選擇管理員ID</option>
+        <option th:each="manager : ${managerList}"
+                th:value="${manager.Id}"
+                th:text="${manager.Id}">選擇管理員</option>
+    </select>
+
+    <!-- 訊息內容 -->
+    <label>選擇權限：</label>
+    <select name="permDescId" required>
+        <option value="" disabled selected>選擇權限</option>
+        <option th:each="permDesc : ${permDescList}"
+                th:value="${permDesc.id}"
+                th:text="${permDesc.description}">選擇權限</option>
+    </select>
+
+    <!-- 按鈕容器 -->
+    <div class="button-container">
+        <!-- 提交按鈕 -->
+        <button type="submit" class="submit-btn">新增</button>
+        <!-- 取消按鈕 -->
+        <button type="button" class="cancel-btn" onclick="window.location.href='/permission/pm';">取消</button>
+    </div>
+
     <div class="description">請填寫完整資料後，點擊「新增」按鈕。</div>
 </form>
 

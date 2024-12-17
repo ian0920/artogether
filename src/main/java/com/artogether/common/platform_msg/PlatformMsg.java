@@ -5,8 +5,10 @@ import com.artogether.common.member.Member;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.sql.Time;
 import java.sql.Timestamp;
 
 @Entity
@@ -33,7 +35,7 @@ public class PlatformMsg {
 	private String message;
 	
 	@Column(name = "msg_time")
-	private Timestamp msgTime;
+	private Time msgTime;
 	
 	@Column(name = "status")
 	private byte status;

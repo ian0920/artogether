@@ -23,6 +23,8 @@ public interface PermissionRepository extends JpaRepository<Permission, Integer>
 
     @Query("SELECT p FROM Permission p ORDER BY p.manager.id ASC")
     List<Permission> findAll();
+
+    List<Permission> findAllByManager_Id(Integer managerId);
 }
 
 

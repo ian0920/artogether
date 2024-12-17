@@ -101,21 +101,21 @@
     </style>
 
 <body>
-<div class="bs-navbar" th:include="member_page::member_navbar"></div>
+<div th:replace="~{/components/navbar_member::navbar('info','inbox')}"></div>
 
 <main>
     <div class="container">
         <h2 class="table-title">會員收件匣</h2>
         <div th:if="${memberMessages.size() != 0}" class="accordion">
-            <div th:each="message : ${memberMessages}" class="accordion-item">
+            <div th:each="platfromMsg : ${memberMessages}" class="accordion-item">
                 <div class="accordion-header" onclick="toggleAccordion(this)">
-                    <span th:text="'平台訊息!!!'+ ${#dates.format(message.msgTime, 'HH:mm')}">
+                    <span th:text="'平台訊息!!!'+ ${#dates.format(platfromMsg.msgTime, 'HH:mm')}">
                         Art Exhibition (2024-12-01)
                     </span>
                 </div>
                 <div class="accordion-body">
-                    <input type="hidden"  th:value="${message.member.name}" />
-                    <div><strong>訊息內容：</strong> <span th:text="${message.message}"></span></div>
+                    <input type="hidden"  th:value="${platfromMsg.member.name}" />
+                    <div><strong>訊息內容：</strong> <span th:text="${platfromMsg.message}"></span></div>
 
                 </div>
             </div>

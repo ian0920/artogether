@@ -32,8 +32,9 @@
 <body class="sb-nav-fixed">
 <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
     <!-- Navbar Brand-->
-    <a class="navbar-brand ps-3" th:href="@{/platform/home}"><img class="logo-img"
-                                                                  src="/platform_backend/assets/img/ARTOGETHER_white.svg"></a>
+    <a class="navbar-brand ps-3" th:href="@{/platform/home}">
+        <img class="logo-img" src="/platform_backend/assets/img/ARTOGETHER_white.svg">
+    </a>
 
     <!-- Sidebar Toggle-->
     <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i
@@ -197,6 +198,7 @@
                                     <th>手機號碼</th>
                                     <th>密碼</th>
                                     <th>帳號狀態</th>
+                                    <th>變更按鈕</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -212,6 +214,11 @@
                                     <td th:text="${member.phone}"></td>
                                     <td th:text="${member.password}"></td>
                                     <td th:text="${member.status}"></td>
+<!--                                    <td><a class="filter-btn" th:href="@{/profile/mbupdate}"-->
+<!--                                                th:classappend為判樣式 -->
+<!--                                           th:classappend="${member.status == 0} ? 'active'">停權</a></td>-->
+                                    <td><a class="btn btn-primary" th:href="@{/profile/mbupdate(id=${member.id})}"
+                                           th:text="${member.status == 0} ? '啟用' : '停權'"><button></button></a></td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -229,26 +236,26 @@
 <script src="/platform_backend/js/scripts.js"></script>
 <!-- 引入 jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
+<!--<script>-->
 
 
-    function showModalAndRedirect() {
-        console.log('wwwww')
-        // 延遲重定向，確保模態框有時間顯示
+<!--    function showModalAndRedirect() {-->
+<!--        console.log('wwwww')-->
+<!--        // 延遲重定向，確保模態框有時間顯示-->
 
-        // setTimeout(() => {
-        //     location.href = '/platform/permDesc';
-        // }, 1000);
+<!--        // setTimeout(() => {-->
+<!--        //     location.href = '/platform/permDesc';-->
+<!--        // }, 1000);-->
 
-        // 顯示模態框
-        $('#queryPermDescModal').modal('show');
+<!--        // 顯示模態框-->
+<!--        $('#queryPermDescModal').modal('show');-->
 
-    }
+<!--    }-->
 
-    function test() {
-        $('#testadd').modal('show');
-    }
-</script>
+<!--    function test() {-->
+<!--        $('#testadd').modal('show');-->
+<!--    }-->
+<!--</script>-->
 <!--<script>-->
 <!--    const contentDiv = document.getElementById("content");-->
 <!--    const editButton = document.getElementById("editButton");-->
