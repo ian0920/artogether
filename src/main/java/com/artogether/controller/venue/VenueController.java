@@ -41,9 +41,9 @@ public class VenueController {
     }
     //創建新場地
     @PostMapping("/createVenue")
-    public String createVenue(@ModelAttribute VneDetailDTO vneDetailDTO, HttpSession session) {
+    public String createVenue(@ModelAttribute VneCardDTO vneCardDTO, HttpSession session) {
         BusinessMember businessMember = (BusinessMember) session.getAttribute("presentBusinessMember");
-        Integer vneId = venueService.createVenue(vneDetailDTO, businessMember);
+        Integer vneId = venueService.createVenue(vneCardDTO, businessMember);
         return "redirect:/vneBiz/manageVenue/"+vneId;
     }
 

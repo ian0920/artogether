@@ -4,13 +4,13 @@
     <title>優惠券列表</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Roboto', Arial, sans-serif;
             background-color: #f4f4f4;
             color: #333;
             text-align: center;
         }
         h1 {
-            color: #4CAF50;
+            color: #3498db; /* 統一標題藍色 */
         }
         a {
             text-decoration: none;
@@ -19,40 +19,72 @@
         a:hover {
             color: #0056b3;
         }
-        .button-group {
+        .controls {
             display: flex;
-            justify-content: left;
-            width: 80%;
-            margin: 10px auto 20px auto; /* 與表格對齊 */
-            gap: 10px; /* 按鈕之間的間距 */
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin: 20px auto;
+            width: 90%;
         }
-        .button-group a {
-            background-color: #4CAF50;
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        select, button {
+            padding: 8px 12px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        a.add-coupon-button {
+            background-color: #3498db; /* 統一藍色 */
             color: white;
             padding: 10px 20px;
             text-decoration: none;
-            border-radius: 4px;
-            display: inline-block;
-            text-align: center;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        .button-group a:hover {
-            background-color: #45a049;
+        a.add-coupon-button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
         }
         table {
-            margin: 0 auto;
+            margin: 20px auto;
             border-collapse: collapse;
-            width: 80%;
+            width: 90%;
             background-color: #fff;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
         }
         th, td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: center;
+            padding: 12px 15px;
+            text-align: left; /* 左對齊文字 */
+            font-size: 14px;
         }
         th {
-            background-color: #4CAF50;
+            background-color: #3498db; /* 統一藍色背景 */
             color: white;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        tr {
+            transition: background-color 0.3s;
         }
         tr:nth-child(even) {
             background-color: #f9f9f9;
@@ -60,25 +92,84 @@
         tr:hover {
             background-color: #f1f1f1;
         }
-        button {
-            background-color: #ff4d4d;
+        td {
+            border-bottom: 1px solid #ddd;
+        }
+        td:last-child {
+            display: flex;
+            justify-content: flex-start;
+            gap: 10px;
+        }
+        td a, td button {
+            text-decoration: none;
             color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 12px;
             border: none;
-            padding: 5px 10px;
             cursor: pointer;
         }
-        button:hover {
-            background-color: #cc0000;
+        td a {
+            background-color: #3498db; /* 編輯按鈕藍色 */
+        }
+        td a:hover {
+            background-color: #2980b9;
+        }
+        td button {
+            background-color: #FF4D4D; /* 紅色按鈕 */
+        }
+        td button:hover {
+            background-color: #CC0000;
+        }
+        /* 返回按鈕樣式 */
+        .return-button {
+            display: inline-block;
+            margin: 20px auto;
+            background-color: #95a5a6; /* 灰色背景 */
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .return-button:hover {
+            background-color: #7f8c8d;
+            transform: translateY(-2px);
         }
     </style>
 </head>
 <body>
     <h1>優惠券列表</h1>
-    <div class="button-group">
-        <a href="/coupons/add">新增優惠券</a>
-        <a href="/coupons/search">搜尋優惠券</a>
+
+    <!-- 篩選與新增按鈕控制區 -->
+    <div class="controls">
+        <!-- 左側篩選組 -->
+        <div class="filter-group">
+            <label for="discountType">折扣類型：</label>
+            <select id="discountType" onchange="filterTable()">
+                <option value="all">全部</option>
+                <option value="金額折扣">金額折扣</option>
+                <option value="比例折扣">比例折扣</option>
+            </select>
+
+            <label for="statusFilter">狀態：</label>
+            <select id="statusFilter" onchange="filterTable()">
+                <option value="all">全部</option>
+                <option value="上架">上架</option>
+                <option value="下架">下架</option>
+            </select>
+
+            <button onclick="sortTable(10, this)" data-order="asc">依適用期間(起)排序</button>
+            <button onclick="sortTable(11, this)" data-order="asc">依適用期間(訖)排序</button>
+        </div>
+
+        <!-- 右側新增按鈕 -->
+        <a href="/coupons/add" class="add-coupon-button">新增優惠券</a>
     </div>
-    <table>
+
+    <table id="couponTable">
         <thead>
             <tr>
                 <th>ID</th>
@@ -86,6 +177,8 @@
                 <th>商家編號</th>
                 <th>名稱</th>             
                 <th>折扣類型</th>
+                <th>折扣金額</th>
+                <th>折扣比例</th>
                 <th>狀態</th>
                 <th>門檻</th>
                 <th>效期</th>
@@ -98,10 +191,12 @@
             <tr th:each="coupon : ${coupons}">
                 <td th:text="${coupon.id}"></td>
                 <td th:text="${coupon.businessMemberName}"></td>
-				<td th:text="${coupon.businessMemberId}"></td>    
+                <td th:text="${coupon.businessMemberId}"></td>    
                 <td th:text="${coupon.name}"></td>
-                <td th:text="${coupon.type == 1 ? '金額折扣' : '比例折扣'}">金額折扣</td>
-                <td th:text="${coupon.status==0 ?'下架' : '上架'}"></td>
+                <td th:text="${coupon.type == 1 ? '金額折扣' : '比例折扣'}"></td>              
+                <td th:text="${coupon.deduction}"></td>
+                <td th:text="${coupon.ratio}"></td>
+                <td th:text="${coupon.status==0 ? '下架' : '上架'}"></td>
                 <td th:text="${coupon.threshold}"></td>
                 <td th:text="${coupon.duration}"></td>
                 <td th:text="${coupon.startDate}"></td>
@@ -115,5 +210,54 @@
             </tr>
         </tbody>
     </table>
+
+    <!-- 返回按鈕 -->
+    <a href="javascript:history.back()" class="return-button">返回上一頁</a>
+
+    <script>
+        // 篩選表格
+        function filterTable() {
+            const discountType = document.getElementById("discountType").value;
+            const statusFilter = document.getElementById("statusFilter").value;
+            const table = document.getElementById("couponTable");
+            const rows = table.querySelectorAll("tbody tr");
+
+            rows.forEach(row => {
+                const discountCell = row.cells[4].innerText.trim();
+                const statusCell = row.cells[7].innerText.trim();
+                const matchesDiscount = (discountType === "all" || discountCell === discountType);
+                const matchesStatus = (statusFilter === "all" || statusCell === statusFilter);
+
+                if (matchesDiscount && matchesStatus) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        }
+
+        // 表格排序，升冪和降冪切換
+        function sortTable(columnIndex, button) {
+            const table = document.getElementById("couponTable");
+            const rows = Array.from(table.querySelectorAll("tbody tr"));
+            const order = button.getAttribute("data-order");
+
+            rows.sort((a, b) => {
+                const cellA = a.cells[columnIndex].innerText.trim();
+                const cellB = b.cells[columnIndex].innerText.trim();
+
+                if (order === "asc") {
+                    return cellA.localeCompare(cellB);
+                } else {
+                    return cellB.localeCompare(cellA);
+                }
+            });
+
+            rows.forEach(row => table.querySelector("tbody").appendChild(row));
+
+            // 切換排序順序
+            button.setAttribute("data-order", order === "asc" ? "desc" : "asc");
+        }
+    </script>
 </body>
 </html>

@@ -4,6 +4,8 @@ import com.artogether.common.business_member.BusinessMember;
 import com.artogether.product.prd_catalog.PrdCatalog;
 import com.artogether.product.prd_catalog.PrdCatalogDaoImpl;
 import com.artogether.product.prd_catalog.PrdCatalogRepository;
+import com.artogether.product.product.NewProductDto;
+import com.artogether.product.product.PrdWithImgService;
 import com.artogether.product.product.Product;
 import com.artogether.product.product.ProductDto;
 import com.artogether.product.product.ProductService;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
@@ -35,17 +38,18 @@ public class NewProductController {
     private PrdCatalogRepository prdCatalogRepository;
     @Autowired
     private ProductServiceImpl productServiceImpl;
-
+    @Autowired
+    private PrdWithImgService prdWithImgService;
     
-    @GetMapping("/products")
-    public String showProductsPage(Model model) {
-        List<Product> products = productService.getAllProducts();
-        List<ProductDto> productDtos = productService.toProductDtoList(products);
-        
-        
-        model.addAttribute("products", productDtos);
-        return "product/products";
-    }
+//    @GetMapping("/products")
+//    public String showProductsPage(Model model) {
+//        List<Product> products = productService.getAllProducts();
+//        List<ProductDto> productDtos = productService.toProductDtoList(products);
+//        
+//        
+//        model.addAttribute("products", productDtos);
+//        return "product/products";
+//    }
 
 
     
@@ -316,6 +320,50 @@ public class NewProductController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // 返回 404 狀態
         }
     }
+    
+   //    商城管理(商品下架) 
+    @GetMapping("/managelist")
+    public String showProductsManagePage(Model model) {
+        List<Product> products = productService.getAllProducts();
+        List<ProductDto> productDtos = productService.toProductDtoList(products);
+        
+        
+        model.addAttribute("products", productDtos);
+        return "product/managelist";
+    }
+    
+    
+
+    @PostMapping("/update-status")
+    public String updateProductStatus(@ModelAttribute ProductDto productDto, RedirectAttributes redirectAttributes) {
+        try {
+            // 調用 Service 更新商品狀態
+            ProductDto updatedProduct = productServiceImpl.updatePrdStatus(productDto);
+
+            // 添加成功訊息
+            redirectAttributes.addFlashAttribute("successMessage", 
+                "Product status updated successfully for ID: " + updatedProduct.getId());
+        } catch (Exception e) {
+            // 添加錯誤訊息
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+
+        // 重定向回管理頁面
+        return "redirect:/product/managelist";
+    }
+    
+    
+    
+    @GetMapping("/products")
+    public String getAllProducts(Model model) {
+        List<NewProductDto> products = prdWithImgService.getAllProductsWithImages();
+        
+        model.addAttribute("products", products); // 傳遞 DTO 資料給前端模板
+        return "product/products"; // Thymeleaf 模板名稱
+    }
+
+    
+    
 }
 
 

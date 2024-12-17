@@ -1,42 +1,119 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>會員優惠券</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <title>會員優惠券列表</title>
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            text-align: center;
+        }
+        h1 {
+            color: #3498db; /* 統一標題藍色 */
+        }
+        a {
+            text-decoration: none;
+            color: #007BFF;
+        }
+        a:hover {
+            color: #0056b3;
+        }
+        .button-group {
+            display: flex;
+            justify-content: flex-start; /* 按鈕置左 */
+            margin: 20px auto;
+            width: 90%;
+        }
+        a.view-coupon-button {
+            background-color: #3498db; /* 統一藍色 */
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        a.view-coupon-button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 90%;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: center; /* 文字居中對齊 */
+            font-size: 14px;
+        }
+        th {
+            background-color: #3498db; /* 統一藍色背景 */
+            color: white;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        tr {
+            transition: background-color 0.3s;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        td {
+            border-bottom: 1px solid #ddd;
+        }
+        .alert-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h1 class="text-center">會員優惠券列表</h1>
-        
-	<div class="text-center mb-4">
-    	<a th:href="@{/coupons/available(memberId=${memberId})}" class="btn btn-primary">查看可領取的優惠券</a>
-	</div>
-        
-        <table class="table table-bordered table-hover mt-4">
-            <thead class="thead-dark">
-                <tr>
-                    <th>優惠券編號</th>
-                    <th>優惠券名稱</th>
-                    <th>狀態</th>
-                    <th>接收日期</th>
-                    <th>使用日期</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- 使用 Thymeleaf 循環渲染優惠券資料 -->
-                <tr th:each="coupon : ${coupons}">
-                    <td th:text="${coupon.couponId}">1</td>
-                    <td th:text="${coupon.couponName}">折扣券</td>
-                    <td th:text="${coupon.status} == 1 ? '可使用' : '已使用'">可使用</td>
-                    <td th:text="${#dates.format(coupon.receiveDate, 'yyyy-MM-dd HH:mm:ss')}">2024-12-12 10:00:00</td>
-                    <td th:text="${#dates.format(coupon.useDate, 'yyyy-MM-dd HH:mm:ss') ?: '無'}">無</td>
-                </tr>
-            </tbody>
-        </table>
+    <h1>會員優惠券列表</h1>
 
-        <div th:if="${coupons.size() == 0}" class="alert alert-warning text-center">
-            此會員目前沒有可用的優惠券。
-        </div>
+    <!-- 按鈕置左 -->
+    <div class="button-group">
+        <a th:href="@{/coupons/available(memberId=${memberId})}" class="view-coupon-button">查看可領取的優惠券</a>
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>優惠券編號</th>
+                <th>優惠券名稱</th>
+                <th>狀態</th>
+                <th>領取日期</th>
+                <th>使用日期</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- 使用 Thymeleaf 循環渲染優惠券資料 -->
+            <tr th:each="coupon : ${coupons}">
+                <td th:text="${coupon.couponId}">1</td>
+                <td th:text="${coupon.couponName}">折扣券</td>
+                <td th:text="${coupon.status} == 0 ? '未使用' : '已使用'">未使用</td>
+                <td th:text="${#dates.format(coupon.receiveDate, 'yyyy-MM-dd HH:mm:ss')}">2024-12-12 10:00:00</td>
+                <td th:text="${#dates.format(coupon.useDate, 'yyyy-MM-dd HH:mm:ss') ?: '無'}">無</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div th:if="${coupons.size() == 0}" class="alert-warning">
+        此會員目前沒有可用的優惠券。
     </div>
 </body>
 </html>

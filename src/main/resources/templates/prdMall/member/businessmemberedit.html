@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>編輯優惠券</title>
+    <title>編輯會員</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -44,10 +44,10 @@
             font-size: 14px;
         }
 
-        input:focus, select:focus {
-            border-color: #007bff;
-            outline: none;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        input[readonly] {
+            background-color: #f5f5f5;
+            color: #666;
+            cursor: not-allowed;
         }
 
         button {
@@ -85,7 +85,7 @@
         <input type="text" th:field="*{taxId}" /><br/>
 
         <label>狀態：</label>
-        <input type="text" th:field="*{status}" /><br/>
+        <input type="text" th:value="${member.status == 0 ? '申請中' : (member.status == 1 ? '通過' : '停權')}" readonly /><br/>
 
         <button type="submit">更新</button>
     </form>

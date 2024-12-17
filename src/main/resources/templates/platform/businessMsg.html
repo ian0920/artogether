@@ -106,16 +106,16 @@
 <main>
     <div class="container">
         <h2 class="table-title">商家收件匣</h2>
-        <div th:if="${businessMessage.size() != 0}" class="accordion">
-            <div th:each="message : ${businessMessage}" class="accordion-item">
+        <div th:if="${businessMessages.size() != 0}" class="accordion">
+            <div th:each="businessMessage : ${businessMessages}" class="accordion-item">
                 <div class="accordion-header" onclick="toggleAccordion(this)">
-                    <span th:text="'平台訊息!!!'+ ${#dates.format(message.msgTime, 'HH:mm')}">
+                    <span th:text="'平台訊息!!!'+ ${#dates.format(businessMessage.msgTime, 'HH:mm')}">
                         Art Exhibition (2024-12-01)
                     </span>
                 </div>
                 <div class="accordion-body">
-                    <input type="hidden"  th:value="${message.id}" />
-                    <div><strong>訊息內容：</strong> <span th:text="${message.message}"></span></div>
+                    <input type="hidden"  th:value="${businessMessage.id}" />
+                    <div><strong>訊息內容：</strong> <span th:text="${businessMessage.message}"></span></div>
 
                 </div>
             </div>

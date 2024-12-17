@@ -17,25 +17,6 @@ public class SystemManagerService {
     // 新增平台管理員，返回新增的管理員
     public SystemManager add(SystemManager system_manager) {
 
-//        if (system_manager.getAccount().length() < 8 || system_manager.getAccount().length() > 20) {
-//            throw new IllegalArgumentException("Password must be between 8 and 20 characters.");
-//
-//        }
-//
-//        if (system_manager.getPassword().length() < 8 || system_manager.getPassword().length() > 20) {
-//            throw new IllegalArgumentException("Password must be between 8 and 20 characters.");
-//        }
-//
-//        // 驗證 phone 格式 (必須以 09 開頭，並且長度為 10 位)
-//        if (system_manager.getPhone() == null || !system_manager.getPhone().startsWith("09") || system_manager.getPhone().length() != 10) {
-//            throw new IllegalArgumentException("Phone number must start with '09' and be 10 digits long.");
-//        }
-
-
-
-        // 設置創建日期 (此處假設有 getCreatedDate 方法) 已有自動設置@CreationTimestamp
-//        system_manager.setRegister_date(new Date());
-
         // 設置狀態為 0 (預設)
         system_manager.setStatus((byte) 0);
 
@@ -63,6 +44,7 @@ public class SystemManagerService {
         return null; // 如果找不到管理員，返回null
     }
 
+    // 刪除管理員
     public void delete(int id) {
         SystemManager system_manager = findById(id);
     }
@@ -82,17 +64,64 @@ public class SystemManagerService {
         return system_managerRepo.findByAccount(account);
     }
 
-    public List<String> validateInput(SystemManager systemManager){
+    public List<String> validateInput(SystemManager systemManager) {
         List<String> errors = new ArrayList<>();
-        if (systemManager.getAccount().length() < 8 || systemManager.getAccount().length() > 20){
+
+        // 驗證帳號長度與格式（只能包含英文和數字）
+        String account = systemManager.getAccount();
+        if (account.length() < 8 || account.length() > 20) {
             errors.add("Account must be between 8 and 20 characters.");
+        } else if (!account.matches("[a-zA-Z0-9]+")) {  // 檢查帳號是否只包含英文和數字
+            errors.add("Account must contain only letters and digits.");
         }
-        if (systemManager.getPassword().length() < 8 || systemManager.getPassword().length() > 20) {
+
+        // 驗證密碼長度與格式（只能包含英文和數字）
+        String password = systemManager.getPassword();
+        if (password.length() < 8 || password.length() > 20) {
             errors.add("Password must be between 8 and 20 characters.");
+        } else if (!password.matches("[a-zA-Z0-9]+")) {  // 檢查密碼是否只包含英文和數字
+            errors.add("Password must contain only letters and digits.");
         }
-        if (systemManager.getPhone() == null || !systemManager.getPhone().startsWith("09") || systemManager.getPhone().length() != 10) {
+
+        // 驗證電話號碼格式
+        String phone = systemManager.getPhone();
+        if (phone == null || !phone.startsWith("09") || phone.length() != 10) {
             errors.add("Phone number must start with '09' and be 10 digits long.");
+        } else if (!phone.matches("[0-9]+")) {  // 檢查電話號碼是否只包含數字
+            errors.add("Phone number must contain only digits.");
         }
+
         return errors;
     }
+
 }
+
+//        if (system_manager.getAccount().length() < 8 || system_manager.getAccount().length() > 20) {
+//            throw new IllegalArgumentException("Password must be between 8 and 20 characters.");
+//
+//        }
+//
+//        if (system_manager.getPassword().length() < 8 || system_manager.getPassword().length() > 20) {
+//            throw new IllegalArgumentException("Password must be between 8 and 20 characters.");
+//        }
+//
+//        // 驗證 phone 格式 (必須以 09 開頭，並且長度為 10 位)
+//        if (system_manager.getPhone() == null || !system_manager.getPhone().startsWith("09") || system_manager.getPhone().length() != 10) {
+//            throw new IllegalArgumentException("Phone number must start with '09' and be 10 digits long.");
+//        }
+//        設置創建日期 (此處假設有 getCreatedDate 方法) 已有自動設置@CreationTimestamp
+//        system_manager.setRegister_date(new Date());
+//        =================================================================================
+//        public List<String> validateInput(SystemManager systemManager){
+//        List<String> errors = new ArrayList<>();
+//        if (systemManager.getAccount().length() < 8 || systemManager.getAccount().length() > 20){
+//            errors.add("Account must be between 8 and 20 characters.");
+//        }
+//        if (systemManager.getPassword().length() < 8 || systemManager.getPassword().length() > 20) {
+//            errors.add("Password must be between 8 and 20 characters.");
+//        }
+//        if (systemManager.getPhone() == null || !systemManager.getPhone().startsWith("09") || systemManager.getPhone().length() != 10) {
+//            errors.add("Phone number must start with '09' and be 10 digits long.");
+//        }
+//        return errors;
+//    }

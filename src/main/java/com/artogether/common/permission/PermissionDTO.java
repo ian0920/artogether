@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 @Data
 @AllArgsConstructor /*建構子*/
-@NoArgsConstructor
+@NoArgsConstructor /*空建構子*/
 @Builder
 public class PermissionDTO implements Serializable {
 

@@ -1,5 +1,7 @@
     package com.artogether.common.permission;
 
+    import com.artogether.common.member.MemberRepo;
+    import com.artogether.common.perm_desc.PermDescRepository;
     import com.artogether.common.system_manager.SystemManager;
     import com.artogether.common.system_manager.SystemManagerRepository;
     import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,10 @@
 
         @Autowired
         private SystemManagerRepository systemManagerRepo;
+
+        @Autowired
+        private PermDescRepository permDescRepo;
+
 
         // 新增權限編號
         public void add(Permission permission) {
@@ -40,7 +46,7 @@
         // FindALLDTO 創建集合取出所有
         public List<PermissionDTO> findAllDTO() {
             List<Permission> permissions = permissionRepo.findAll();
-            System.out.println(permissions);
+//            System.out.println(permissions);
             List<PermissionDTO> permissionDTOs = new ArrayList<>();
             for (Permission permission : permissions) {
                 PermissionDTO permissionDTO = PermissionDTO.builder()
@@ -50,7 +56,7 @@
                         .build();
                 permissionDTOs.add(permissionDTO);
             }
-            System.out.println(permissionDTOs);
+//            System.out.println(permissionDTOs);
             return permissionDTOs;
         }
 
@@ -76,6 +82,22 @@
                 memberHasPermission.add(permission.getPermDesc().getId());
             }
             return memberHasPermission;
+        }
+
+        // 找出管理員ID
+        public List<Permission> findByManagerId(Integer managerId) {
+
+            return permissionRepo.findAllByManager_Id(managerId);
+        }
+
+        // 放入所有管理員及所有權限 會在Controller下拉式選單使用
+        public void addNewPerm(Integer managerId, Integer permDescId) {
+
+            Permission permission = new Permission();
+            permission.setManager(systemManagerRepo.findById(managerId).get());
+            permission.setPermDesc(permDescRepo.findById(permDescId).get());
+
+            permissionRepo.save(permission);
         }
 
     }

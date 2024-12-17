@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content=""/>
+    <meta name="author" content=""/>
+    <title>主控台</title>
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet"/>
+    <link href="/platform_backend/css/styles.css" rel="stylesheet"/>
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <style>
+        /* 將所有按鈕放入一個容器中 */
+        .button-container {
+            display: flex; /* 使用 flexbox 排列按鈕 */
+            gap: 20px; /* 按鈕之間的間隙 */
+            /*justify-content: center; !* 讓按鈕居中顯示 *!*/
+            margin-top: 20px; /* 容器上方的間距 */
+        }
+
+        /* 也可以單獨設定每個按鈕的寬度和樣式 */
+        .button-container .btn {
+            padding: 10px 20px; /* 控制按鈕內部的間距 */
+            font-size: 16px; /* 按鈕文字大小 */
+            border-radius: 5px; /* 圓角按鈕 */
+        }
+    </style>
+</head>
+<body class="sb-nav-fixed">
+<nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+    <!-- Navbar Brand-->
+    <a class="navbar-brand ps-3" th:href="@{/platform/home}">
+        <img class="logo-img" src="/platform_backend/assets/img/ARTOGETHER_white.svg">
+    </a>
+
+    <!-- Sidebar Toggle-->
+    <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i
+            class="fas fa-bars"></i></button>
+    <!-- Navbar Search-->
+    <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+        <div class="input-group">
+            <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..."
+                   aria-describedby="btnNavbarSearch"/>
+            <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
+        </div>
+    </form>
+    <!-- Navbar-->
+    <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+               aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                <li>
+                    <button class="dropdown-item btn btn-lg" onclick="location.href='/platform/logout'"
+                            style="text-align: center">登出
+                    </button>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</nav>
+<div id="layoutSidenav">
+    <div id="layoutSidenav_nav">
+        <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+            <div class="sb-sidenav-menu">
+                <div class="nav">
+                    <div class="sb-sidenav-menu-heading">Core</div>
+                    <a class="nav-link" th:href="@{/platform/home}">
+                        <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                        主控台
+                    </a>
+                    <div class="sb-sidenav-menu-heading">平台項目</div>
+                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts"
+                       aria-expanded="false" aria-controls="collapseLayouts">
+                        <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+                        活動
+                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                    </a>
+                    <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne"
+                         data-bs-parent="#sidenavAccordion">
+                        <nav class="sb-sidenav-menu-nested nav">
+                            <a class="nav-link" href="#">活動管理</a>
+                            <a class="nav-link" href="">活動款項查核</a>
+                        </nav>
+                    </div>
+                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseProduct"
+                       aria-expanded="false" aria-controls="collapseProduct">
+                        <div class="sb-nav-link-icon"><i class="fas fa-shopping-bag"></i></div>
+                        商品
+                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                    </a>
+                    <div class="collapse" id="collapseProduct" aria-labelledby="headingTwo"
+                         data-bs-parent="#sidenavAccordion">
+                        <nav class="sb-sidenav-menu-nested nav">
+                            <a class="nav-link" href="#">商品管理</a>
+                            <a class="nav-link" href="#">商品款項查核</a>
+                        </nav>
+                    </div>
+                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseVenue"
+                       aria-expanded="false" aria-controls="collapseVenue">
+                        <div class="sb-nav-link-icon"><i class="fas fa-map-marker"></i></div>
+                        場地
+                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                    </a>
+                    <div class="collapse" id="collapseVenue" aria-labelledby="headingThree"
+                         data-bs-parent="#sidenavAccordion">
+                        <nav class="sb-sidenav-menu-nested nav">
+                            <a class="nav-link" href="#">場地管理</a>
+                            <a class="nav-link" href="#">場地款項查核</a>
+                        </nav>
+                    </div>
+
+                    <div class="sb-sidenav-menu-heading">管理</div>
+                    <a class="nav-link" href="/profile/allMembers">
+                        <div class="sb-nav-link-icon"><i class="fas fa-user"></i></div>
+                        一般會員管理
+                    </a>
+                    <a class="nav-link" href="#">
+                        <div class="sb-nav-link-icon"><i class="fas fa-user-circle"></i></div>
+                        商家會員管理
+                    </a>
+
+                    <div class="sb-sidenav-menu-heading">後台</div>
+                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePermDesc"
+                       aria-expanded="false" aria-controls="collapsePermDesc">
+                        <div class="sb-nav-link-icon"><i class="fas fa-address-book"></i></div>
+                        後台管理
+                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                    </a>
+                    <div class="collapse" id="collapsePermDesc" aria-labelledby="headingTwo"
+                         data-bs-parent="#sidenavAccordion">
+                        <nav class="sb-sidenav-menu-nested nav">
+                            <a class="nav-link" href="/systemManager/manager">後台員工管理</a>
+                            <a class="nav-link" href="/permission/pm">後台員工權限</a>
+                            <a class="nav-link" href="/permDesc/page">後台權限說明</a>
+                        </nav>
+                    </div>
+                    <a class="nav-link" href="/platformMsg/allMessage">
+                        <div class="sb-nav-link-icon"><i class="fas fa-comments"></i></div>
+                        訊息功能
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+
+    <!-- 主內容區域 -->
+    <div id="layoutSidenav_content">
+        <main>
+            <div class="container-fluid px-4">
+                <h1 class="mt-4">會員管理</h1>
+<!--                <ol class="breadcrumb mb-4">-->
+<!--                    <li class="breadcrumb-item active">管理平台</li>-->
+<!--                </ol>-->
+
+                <!-- 平台功能說明 -->
+                <section>
+                    <h2>會員</h2>
+
+                    <!--新增說明按鈕-->
+                    <div class="button-container">
+                        <a th:href="@{/platformMsg/sendMemberMsg}">
+                            <button type="button" class="btn btn-primary" id="BTNADD1">
+                                新增會員訊息
+                            </button>
+                        </a>
+                        <a th:href="@{/platformMsg/sendAllMemberMsg}">
+                            <button type="button" class="btn btn-primary" id="BTNADD2">
+                                新增全部會員訊息
+                            </button>
+                        </a>
+                        <a th:href="@{/platformMsg/sendAllBusinessMsg}">
+                            <button type="button" class="btn btn-primary" id="BTNADD3">
+                                新增全部商家訊息
+                            </button>
+                        </a>
+                    </div>
+
+
+                    <!--AllMembers-->
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <!-- 顯示所有功能說明 -->
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <!--                                    <th>ID</th>-->
+                                    <th>名稱</th>
+                                    <th>信箱</th>
+                                    <th>註冊日期</th>
+                                    <th>生日</th>
+                                    <th>性別</th>
+                                    <!--                                    <th>喜好</th>-->
+                                    <th>手機號碼</th>
+                                    <th>密碼</th>
+                                    <th>帳號狀態</th>
+                                    <th>變更按鈕</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <!-- 使用 Thymeleaf 顯示功能說明 -->
+                                <tr th:each="member : ${memberAll}" id="content" contenteditable="false">
+                                    <!--                                    <td th:text="${member.id}"></td> &lt;!&ndash; 顯示 ID &ndash;&gt;-->
+                                    <td th:text="${member.name}"></td> <!-- 顯示描述 -->
+                                    <td th:text="${member.email}"></td>
+                                    <td th:text="${member.registerDate}"></td>
+                                    <td th:text="${member.birthday}"></td>
+                                    <td th:text="${member.gender}"></td>
+                                    <!--                                    <td th:text="${member.prefer}"></td>-->
+                                    <td th:text="${member.phone}"></td>
+                                    <td th:text="${member.password}"></td>
+                                    <td th:text="${member.status}"></td>
+<!--                                    <td><a class="filter-btn" th:href="@{/profile/mbupdate}"-->
+<!--                                                th:classappend為判樣式 -->
+<!--                                           th:classappend="${member.status == 0} ? 'active'">停權</a></td>-->
+                                    <td><a class="btn btn-primary" th:href="@{/profile/mbupdate(id=${member.id})}"
+                                           th:text="${member.status == 0} ? '啟用' : '停權'"><button></button></a></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
+<script src="/platform_backend/js/scripts.js"></script>
+<!-- 引入 jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!--<script>-->
+
+
+<!--    function showModalAndRedirect() {-->
+<!--        console.log('wwwww')-->
+<!--        // 延遲重定向，確保模態框有時間顯示-->
+
+<!--        // setTimeout(() => {-->
+<!--        //     location.href = '/platform/permDesc';-->
+<!--        // }, 1000);-->
+
+<!--        // 顯示模態框-->
+<!--        $('#queryPermDescModal').modal('show');-->
+
+<!--    }-->
+
+<!--    function test() {-->
+<!--        $('#testadd').modal('show');-->
+<!--    }-->
+<!--</script>-->
+<!--<script>-->
+<!--    const contentDiv = document.getElementById("content");-->
+<!--    const editButton = document.getElementById("editButton");-->
+
+<!--    editButton.addEventListener("click", () => {-->
+<!--        // 切換 contenteditable 屬性-->
+<!--        const isEditable = contentDiv.getAttribute("contenteditable") === "true";-->
+<!--        contentDiv.setAttribute("contenteditable", !isEditable);-->
+<!--        editButton.textContent = isEditable ? "啟用編輯" : "關閉編輯";-->
+<!--    });-->
+<!--</script>-->
+</body>
+</html>

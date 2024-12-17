@@ -106,5 +106,16 @@ public class NewPrdReturnService {
                 .collect(Collectors.toList());
     }
 
+    //根據商家會員id顯示退換貨列表
+    @Transactional(readOnly = true)
+    public List<PrdReturnDto> getReturnsForBusiness(Integer businessMemberId) {
+        List<PrdReturn> returns = prdReturnRepository.findReturnsByBusinessMemberId(businessMemberId);
+        return returns.stream()
+                      .map(this::toDto) 
+                      .collect(Collectors.toList());
+    }
+
+
+
     
 }
