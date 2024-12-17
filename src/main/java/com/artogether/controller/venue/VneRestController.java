@@ -81,10 +81,8 @@ public class VneRestController {
     //取出該場地的可預約的日期
     @GetMapping("/order/dates/{vneId}")
     public FlatpickrDTO getFlatpickrDTO(@PathVariable("vneId") Integer vneId){
-        System.out.println(vneId);
         LocalDateTime now = LocalDateTime.now();
         FlatpickrDTO flatpickrDTO = tslotService.getFlatpickrDTO(vneId, now);
-        System.out.println(flatpickrDTO);
         return flatpickrDTO;
     }
     //取出該場地的可預約的時間細節

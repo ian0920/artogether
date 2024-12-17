@@ -36,6 +36,7 @@ public class VneOrderService {
     @Autowired
     private VneBookingSystem vneBookingSystem;
 
+    //驗證
     public VneOrderDTO previewOrder(VneOrderDTO vneOrderDTO, LocalDateTime submissionTime) {
         Integer vneId = vneOrderDTO.getVneId();
         LocalDate startDate = vneOrderDTO.getStartDate();

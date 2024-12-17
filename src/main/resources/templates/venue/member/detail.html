@@ -220,9 +220,33 @@
             </div>
         </section>
     </div>
+<!-- 按鈕操作區 -->
+<aside class="info-card-outline flex-1 container" style="height:min-content;">
+    <div class="row ">
+        <h3 x-text="venue.vneName"></h3>
+        <span></span>
+        <p x-text="venue.vneAddress"></p>
+        <!-- 預約按鈕 -->
+        <button th:if="${#session.getAttribute('member') != null}"
+                id="openFormButton"
+                class="btn btn-lg openFormButton button-big flex-auto"
+                @click="location.href='/vneMem/booking/' + vneId">
+            預約場地
+        </button>
+        <button th:unless="${#session.getAttribute('member') != null}"
+                id="to-login"
+                class="btn btn-secondary"
+                @click="location.href='/login'">
+            請先登入
+        </button>
+
+        <!-- 收藏按鈕 -->
+        <button class="button-icon-big" id="btn_track" @click="trackVenue">
+            <span class="material-symbols-outlined">bookmark</span>
+        </button>
+    </div>
+</aside>
 </main>
-
-
 <!-- 場地詳情 -->
 <script>
     function venuePage() {
