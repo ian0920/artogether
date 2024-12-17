@@ -1,6 +1,7 @@
 package com.artogether.venue.vnedto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,12 +11,14 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class VneOrderDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer vneId;
     private Integer memId;
     private String memName;
     private String memPhone;
+    private String bizAddress;
     private Integer orderId;
     // 總價格
     private Integer totalPrice;

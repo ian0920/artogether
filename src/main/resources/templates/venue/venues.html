@@ -147,7 +147,7 @@
 
     <div class="showcase-cards-box">
     <div th:each="vneCardDTO:${vneCardDTOs}" th:onclick="|location.href='/vneMem/details/' + ${vneCardDTO.vneId}|" clickable class="showcases-card card event">
-      <img th:src="@{vneCardDTO.setImgUrls(0)}" alt="" />
+      <img th:src="@{${vneCardDTO.imgUrls[0]}}" alt="" />
 
       <div class="card-content">
         <div class="card-title">

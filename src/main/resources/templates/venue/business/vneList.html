@@ -113,7 +113,7 @@
             <div class="event-card-container">
                 <div class="showcase-cards-box">
                     <div @click="location.href = '/vneBiz/manageVenue/' + vne.vneId" clickable class="showcase-card card venue">
-                        <img :src="vne.vneImgUrl" alt="" />
+                        <img :src="vne.imgUrls[0]" alt="" />
                         <div class="card-content">
                             <div class="card-title">
                                 <div class="tag venue">場地</div>
@@ -128,8 +128,7 @@
                                     <span class="material-icons">location_on</span>台北市
                                 </div>
                                 <div class="tag plain-tag">
-                                    <span class="material-icons">schedule</span>08:00-17:00
-                                </div>
+                                    <span class="material-icons">schedule</span><span x-text="vne.startTime-"></span>                                </div>
                             </div>
                         </div>
                     </div>
