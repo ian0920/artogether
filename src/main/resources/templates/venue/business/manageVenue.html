@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title th:text="${vneName} + ' 場地資料設置'">Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <link rel="stylesheet" th:href="@{/web_design/style/style_business.css}" />
@@ -169,6 +170,8 @@
             initialize() {
                 this.fetchData(); // 獲取場地詳細數據
             },
+
+            // 獲取詳細數據
             fetchData() {
                 const pathArray = window.location.pathname.split('/');
                 const vneId = pathArray[pathArray.length - 1]; // 獲取 URL 中的 vneId
@@ -182,13 +185,21 @@
                         this.setUrls(this.getUpdateImgUrl()); // 根據數據設置上傳 URL
                     },
                     error: (xhr, status, error) => {
-                        console.error('Error fetching data:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: '載入失敗',
+                            text: `Error fetching data: ${error}`,
+                        });
                     }
                 });
             },
+
+            // 取得圖片更新 URL
             getUpdateImgUrl() {
                 return `/vneBiz/updateImg/${this.Detail.vneId}`;
             },
+
+            // 提交表單
             submitForm() {
                 $.ajax({
                     url: `/vneBiz/updateVenue/${this.Detail.vneId}`,
@@ -196,19 +207,34 @@
                     contentType: 'application/json',
                     data: JSON.stringify(this.Detail),
                     success: (response) => {
-                        alert('提交成功');
+                        Swal.fire({
+                            icon: 'success',
+                            title: '提交成功',
+                            text: '場地資料已成功更新！',
+                        });
                     },
                     error: (error) => {
-                        console.error('提交失敗:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: '提交失敗',
+                            text: `提交過程中發生錯誤: ${error.statusText || error}`,
+                        });
                     }
                 });
             },
+
+            // 處理文件上傳
             handleUpload(index) {
                 const upload = this.uploads[index];
                 if (!upload.file) {
-                    alert('請選擇文件後再上傳！');
+                    Swal.fire({
+                        icon: 'warning',
+                        title: '未選擇文件',
+                        text: '請選擇文件後再上傳！',
+                    });
                     return;
                 }
+
                 const formData = new FormData();
                 formData.append('file', upload.file);
                 formData.append('position', upload.position);
@@ -221,13 +247,25 @@
                     contentType: false,
                     success: () => {
                         upload.status = '已上傳';
+                        Swal.fire({
+                            icon: 'success',
+                            title: '上傳成功',
+                            text: `文件 ${upload.position} 已成功上傳！`,
+                        });
                     },
                     error: (xhr, status, error) => {
                         console.error('Upload failed:', error);
                         upload.status = '上傳失敗';
+                        Swal.fire({
+                            icon: 'error',
+                            title: '上傳失敗',
+                            text: `文件 ${upload.position} 上傳失敗: ${error.statusText || error}`,
+                        });
                     }
                 });
             },
+
+            // 設置每個上傳的 URL
             setUrls(url) {
                 this.uploads.forEach((upload) => {
                     upload.url = url;
@@ -235,8 +273,8 @@
             }
         };
     }
-
 </script>
+
 <!-- 導航 -->
 <div th:replace="~{/components/navbar_business::navbar('venue','venue')}"></div>
 

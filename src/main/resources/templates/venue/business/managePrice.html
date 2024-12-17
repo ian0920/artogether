@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title th:text="${vneName} + ' 時段價位設置'">Document</title>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <link rel="stylesheet" th:href="@{/web_design/style/style_business.css}" />
     <link
@@ -394,6 +395,7 @@
         </div>
     </div>
     </div>
+</main>
     <!--行事曆視圖JS-->
     <script>
         function calendarData() {
@@ -415,7 +417,11 @@
                             this.updateCells();
                         },
                         error: (jqXHR, textStatus, errorThrown) => {
-                            console.error('Error loading data:', textStatus, errorThrown);
+                            Swal.fire({
+                                icon: 'error',
+                                title: '載入錯誤',
+                                text: `Error loading data: ${errorThrown}`,
+                            });
                         }
                     });
                 },
@@ -435,13 +441,12 @@
                 }
             };
         }
-
     </script>
     <!--價錢設定表JS-->
     <script>
         function formHandler() {
             return {
-                originalData: null, // 用於保存初始數據
+                originalData: null,
                 formData: {
                     defaultPrice: null,
                     price: null,
@@ -452,12 +457,8 @@
                 enableTimeSpecificPricing: false,
                 timeOptions: Array.from({ length: 24 }, (_, i) => i),
                 selectAll: false,
-                errors: {
-                    defaultPrice: false,
-                    price: false,
-                    time: false
-                },
-                submitInProgress: false, // 防止多次點擊
+                errors: {},
+                submitInProgress: false,
 
                 loadData() {
                     const vneId = window.location.pathname.split('/').pop();
@@ -478,7 +479,11 @@
                             this.applySpecialTags(); // 更新標籤
                         },
                         error: (xhr, status, error) => {
-                            alert('Error loading data: ' + error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: '載入錯誤',
+                                text: `Error loading data: ${error}`,
+                            });
                         }
                     });
                 },
@@ -487,20 +492,34 @@
                     // 比較當前資料與初始資料
                     return JSON.stringify(this.formData) !== JSON.stringify(this.originalData);
                 },
+                validateForm() {
+                    this.errors.defaultPrice = !(this.formData.defaultPrice > 0);
+                    this.errors.price = this.enableTimeSpecificPricing && !(this.formData.price > 0);
+                    this.errors.time = this.enableTimeSpecificPricing &&
+                        !(this.formData.startTime && this.formData.endTime && this.formData.endTime > this.formData.startTime);
+                },
 
                 submitForm() {
                     if (this.submitInProgress) return; // 防止多次提交
 
                     // 驗證表單
                     this.validateForm();
-                    if (Object.values(this.errors).some(error => error)) {
-                        alert('Please fix the errors before submitting.');
+                    if (Object.values(this.errors).some(e => e)) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: '表單驗證錯誤',
+                            text: '請修正錯誤後再提交。'
+                        });
                         return;
                     }
 
                     // 檢查是否有變動
-                    if (!this.hasChanges()) {
-                        alert('No changes detected.');
+                    if (JSON.stringify(this.formData) === JSON.stringify(this.originalData)) {
+                        Swal.fire({
+                            icon: 'info',
+                            title: '無變動',
+                            text: '未偵測到任何更改。'
+                        });
                         return;
                     }
 
@@ -516,12 +535,20 @@
                         method: 'POST',
                         contentType: 'application/json',
                         data: JSON.stringify(this.formData),
-                        success: (result) => {
-                            alert('Data submitted successfully: ' + JSON.stringify(result));
-                            this.originalData = JSON.parse(JSON.stringify(this.formData)); // 更新初始數據
+                        success: () => {
+                            Swal.fire({
+                                icon: 'success',
+                                title: '提交成功',
+                                text: '價錢資料已成功更新！'
+                            });
+                            this.originalData = JSON.parse(JSON.stringify(this.formData));
                         },
                         error: (xhr, status, error) => {
-                            alert('Error submitting data: ' + error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: '提交失敗',
+                                text: `Error submitting data: ${error}`
+                            });
                         },
                         complete: () => {
                             this.submitInProgress = false;
@@ -572,7 +599,7 @@
                             this.formData.endTime > this.formData.startTime);
                     this.applySpecialTags();
                 },
-                toggleAll() {
+                    toggleAll() {
                     if (this.selectAll) {
                         this.formData.dayOfWeek = [];
                         this.selectAll = false;
@@ -580,8 +607,9 @@
                         this.formData.dayOfWeek = ['0', '1', '2', '3', '4', '5', '6'];
                         this.selectAll = true;
                     }
-                    this.applySpecialTags(); // 更新標籤
+                    this.selectAll = !this.selectAll;
                 },
+
                 syncSelectAll() {
                     this.selectAll = this.formData.dayOfWeek.length === 7;
                     this.applySpecialTags();
@@ -606,9 +634,8 @@
                         });
                     }
                 }
-
             };
-        }F
+        }
     </script>
     <!--分頁JS-->
     <script>
@@ -668,6 +695,6 @@
             };
         }
     </script>
-</main>
+
 </body>
 </html>

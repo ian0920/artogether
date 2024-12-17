@@ -26,6 +26,7 @@ import com.artogether.venue.vneprice.VnePriceRepository;
 import com.artogether.venue.vneprice.VnePriceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -53,6 +54,15 @@ public class VenueService {
     @Autowired
     private VnePriceRepository priceRepository;
 
+    //這還不熟
+    public Model setName(Model model, Integer vneId) {
+        String name = venueRepository.findById(vneId)
+                .map(venue -> venue.getName())
+                .orElse(""); // 如果找不到，預設為空字串
+
+        model.addAttribute("vneName", name);
+        return model;
+    }
     //檢查是否上架
     public Boolean isVneStatusOne(Integer vneId) {
 

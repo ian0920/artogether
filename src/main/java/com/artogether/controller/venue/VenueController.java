@@ -9,6 +9,7 @@ import com.artogether.venue.vneimg.VneImgService;
 import com.artogether.venue.vneprice.VnePriceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,13 +31,19 @@ public class VenueController {
 
     //店家場地總覽
     @GetMapping("/vneList")
-    public String vneList() {
-        //交給Ajax->/vneBiz/vneList
+    public String vneList(Model model, HttpSession session) {
+        BusinessMember businessMember = (BusinessMember) session.getAttribute("presentBusinessMember");
+        String name = businessMember.getName();
+        model.addAttribute("bizName", name);
+        //交給Ajax->/vne/vneList
         return "venue/business/vneList";
     }
     //新增場地頁面
     @GetMapping("/addVenue")
-    public String addVenue() {
+    public String addVenue(Model model, HttpSession session) {
+        BusinessMember businessMember = (BusinessMember) session.getAttribute("presentBusinessMember");
+        String name = businessMember.getName();
+        model.addAttribute("bizName", name);
         return "/venue/business/addVenue";
     }
     //創建新場地
@@ -49,7 +56,8 @@ public class VenueController {
 
     //調整場地的頁面
     @GetMapping("/manageVenue/{vneId}")
-    public String getVenueAndImg () {
+    public String getVenueAndImg (Model model, @PathVariable Integer vneId) {
+        venueService.setName(model, vneId);
         return "venue/business/manageVenue";
     }
     //修改場地內容
@@ -82,7 +90,8 @@ public class VenueController {
     }
     //營業時間設置頁面
     @GetMapping("/manageTslot/{vneId}")
-    public String nearestTslot() {
+    public String nearestTslot(Model model, @PathVariable Integer vneId) {
+        venueService.setName(model, vneId);
         return "/venue/business/manageTslot";
     }
     //調整營業時間
@@ -97,7 +106,8 @@ public class VenueController {
     }
     //價錢設置頁面
     @GetMapping("/managePrice/{vneId}")
-    public String managePrice() {
+    public String managePrice(Model model, @PathVariable Integer vneId) {
+        venueService.setName(model, vneId);
         return "/venue/business/managePrice";
     }
     //調整價錢
@@ -111,7 +121,8 @@ public class VenueController {
     }
     //場地總覽，確認後可以上下架
     @GetMapping("/checkVenue/{vneId}")
-    public String checkVenue() {
+    public String checkVenue(Model model, @PathVariable Integer vneId) {
+        venueService.setName(model, vneId);
         return "/venue/business/checkVenue";
     }
     //調整上下架
