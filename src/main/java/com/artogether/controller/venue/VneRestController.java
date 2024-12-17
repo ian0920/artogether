@@ -135,8 +135,11 @@ public class VneRestController {
     // 最終保存階段：確認保存訂單
     @PostMapping("/order/payment/full/{vneId}")
     public ResponseEntity<Map<String, Object>> confirmOrder(@PathVariable("vneId") Integer vneId,
-                                               @RequestBody VneOrderDTO vneOrderDTO) {
+                                                            @RequestBody VneOrderDTO vneOrderDTO,
+                                                            HttpSession session) {
         LocalDateTime now = LocalDateTime.now();
+        Integer memId = (Integer) session.getAttribute("member");
+        vneOrderDTO.setMemId(memId);
         vneOrderDTO.setVneId(vneId);
         System.out.println(vneOrderDTO);
         System.out.println("confirmOrder");
