@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,11 +26,17 @@ import com.artogether.common.business_perm.BusinessPerm.BusinessPermComposite;
 import com.artogether.common.business_perm.BusinessPermService;
 import com.artogether.common.member.Member;
 import com.artogether.common.member.MemberService;
+import com.artogether.common.message.Message;
+import com.artogether.common.message.MessageService;
 import com.artogether.event.event.Event;
 import com.artogether.event.event.EventService;
 import com.artogether.event.evt_img.EvtImgService;
 import com.artogether.event.evt_track.EvtTrackService;
 import com.artogether.util.MailManager;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import redis.clients.jedis.Jedis;
 
 @RestController
 @RequestMapping("/api") 
@@ -54,6 +61,13 @@ public class Wynn_RestController {
 	
 	@Autowired
 	private MailManager mailManager;
+	
+	@Autowired
+	private MessageService messageService;
+	
+	@Autowired
+    private Jedis jedis;
+
 
 	//==========================================================
 	//         				活動相關
@@ -179,4 +193,37 @@ public class Wynn_RestController {
 		return ResponseEntity.ok(response);
 		
 	}
+	
+	//=========================================================
+	//                        聊天室
+	//=========================================================
+	// 取得歷史訊息
+		@PostMapping("/chat/getHistory")
+		public ResponseEntity<Map> getChatHistory(@RequestBody Map<String, Object> payload){
+			Integer chatroomId = (Integer) payload.get("chatroomId");
+			//TODO: 應該先取redis的資料?
+	        String chatroomKey = "chatroom:" + chatroomId;
+	        var chatroomMessages = jedis.lrange(chatroomKey, 0, -1);
+	        // 將 Redis 的 JSON 字串轉換為 Java 的 Map 或物件
+	        List<Map<String, Object>> parsedMessages = new ArrayList<>();
+	        for (String msg : chatroomMessages) {
+	            try {
+	                Map<String, Object> messageMap = new ObjectMapper().readValue(msg, Map.class);
+	                parsedMessages.add(messageMap);
+	            } catch (JsonProcessingException e) {
+	                e.printStackTrace();
+	            }
+	        }
+	        // 反轉順序
+	        Collections.reverse(parsedMessages);
+	        
+	        System.out.println(chatroomMessages);
+//			List<Message> msgList = messageService.getChatHistory(chatroomId);
+			
+			Map<String, Object> response = new HashMap<>();
+			response.put("msgList", parsedMessages);
+			response.put("message", parsedMessages.isEmpty()?"查無歷史訊息":"成功取得歷史訊息");
+
+			return ResponseEntity.ok(response);			
+		}
 }

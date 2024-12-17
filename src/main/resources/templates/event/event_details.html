@@ -118,14 +118,14 @@
 		<p>活動詳情 <span class="material-symbols-outlined">chevron_forward</span> <span th:text="${evt.id}"></span></p>
 		<h2 id="eventName" th:text="${evt.name}"></h2>
 		
-		<div class="info-card-outline row" style="margin:20px 0">
+		<div class="info-card-outline row" style="margin:20px 0" th:if="${evt.delayDate}">
 			<div class="info-card-horizontal flex-1" style="color:#e03f3f">
 				<div class="icon-box" style="color:#e03f3f;background-color:#fadcdc">
 					<span class="material-symbols-outlined">warning</span>
 				</div>
 				<div class="info-box">
 					<h6 class="info-name">延期日期</h6>
-					<p th:if="${evt.delayDate}" th:text="${#dates.format(evt.delayDate, 'yyyy-MM-dd HH:mm')}"></p>
+					<p th:text="${#dates.format(evt.delayDate, 'yyyy-MM-dd HH:mm')}"></p>
 				</div>
 			</div>
 		</div>
@@ -156,6 +156,7 @@
 	</section>
 	<aside class="info-card-outline flex-1" style="height:min-content;">
 		<h3 th:text="${evt.businessMember.name}"></h3>
+		<button class="button-icon-big" th:onclick="location.href='/member/sendMessage?bmId=[[${evt.businessMember.id}]]&mId=[[${session.member}]]'"><span class="material-symbols-outlined">chat</span></button>
 		<p th:text="${evt.businessMember.addr}"></p>
 
 		<div class="row" th:if="${evt.status == 1 || evt.status == 2}">

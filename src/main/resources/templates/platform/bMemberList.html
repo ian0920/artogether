@@ -159,29 +159,35 @@
 	<fieldset>
 		<div class="row">
 			<label class="label-input">ID
-			<input name="id" class="solo" type="number">
+			<input name="id" class="solo" type="number"  th:value="${searchParams != null and searchParams.id != null} ? ${searchParams.id} : ''">
 			</label>
 			<label class="label-input">名稱
-			<input name="name" class="solo">
+			<input name="name" class="solo" th:value="${searchParams != null and searchParams.name != null} ? ${searchParams.name} : ''">
 			</label>
 		</div>
 		<div class="row">
 			<label class="label-input">email
-			<input name="email" type="email" class="solo">
+				<input name="email" type="email" class="solo" th:value="${searchParams != null and searchParams.email != null} ? ${searchParams.email} : ''">
 			</label>
-			<label class="label-input">稅號
-			<input name="taxId" class="solo">
+			<label class="label-input">統一編號
+				<input name="taxId" class="solo" th:value="${searchParams != null and searchParams.taxId != null} ? ${searchParams.taxId} : ''">
 			</label>
 		</div>
 		<label class="label-input">地點
-		<input name="addr" class="solo">
+		<input name="addr" class="solo" th:value="${searchParams != null and searchParams.addr != null} ? ${searchParams.addr} : ''">
 		</label>
 		<div class="row">
 			<label class="label-input">申辦日期
-			<input name="startDate" type="datetime-local" class="solo">
+			<input name="startDate" type="datetime-local" class="solo" th:value="${searchParams != null and searchParams.startDate != null} ? ${searchParams.startDate} : ''">
 			</label>
 			<label class="label-input">狀態
-			<input name="status" type="number" class="solo">
+<!-- 			<input name="status" type="number" class="solo"> -->
+				<select class="solo" name="status">
+					<option >請選擇狀態</option>
+					<option value="0">待審核</option>
+					<option value="1">通過</option>
+					<option value="2">停權</option>
+				</select>
 			</label>
 		</div>
 		<button type="submit" class="button-big button-primary">查詢囉</button>
@@ -197,7 +203,7 @@
 				<th scope="col">ID</th>
 				<th scope="col">名稱</th>
 				<th scope="col">email</th>
-				<th scope="col">稅號</th>
+				<th scope="col">統一編號</th>
 				<th scope="col">地點</th>
 				<th scope="col">申辦日期</th>
 				<th scope="col">操作</th>

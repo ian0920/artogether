@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" th:href="@{/web_design/style/style_general.css}" />
+<link rel="stylesheet" th:href="@{/web_design/style/style_business.css}" />
+<link
+  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+  rel="stylesheet"
+/>
+<title>會員-聊天</title>
+<style type="text/css">
+	.message-space{
+	flex-grow:auto;
+	}
+</style>
+</head>
+<body onunload="disconnect();">
+<!-- 導航 -->
+<div th:replace="~{/components/navbar_member::navbar('chat','')}"></div>
+<main class="row no-padding" style="gap: 0">
+<!-- 	聊天室內容 -->
+      <section class="flex-3 message-area-box">
+		<div class="peer-info">
+			<h3 id="peer_name"></h3>
+		</div>
+		<div class="message-area member" id="messageArea"></div>
+        <div class="panel input-area row padding-8">
+		<input id="message" class="solo flex-1" type="text" placeholder="Message" onkeydown="if (event.keyCode == 13) sendMessage();" /> 
+		<button id="sendMessage" class="button-big-icon" value="Send" onclick="sendMessage();">
+			<span class="material-symbols-outlined">send</span>
+		</button>
+	</div>
+	</section>
+	
+<!-- 	聊天室列表 -->
+	<section class="flex-1 chatroom-list">
+		<div class="chatroom-title">
+          <h4>對話紀錄</h4>
+        </div>
+		<div clickable class="chatroom-item"
+		th:if="${chatrooms!=null}" th:each="c : ${chatrooms}" th:onclick="openChat([[${c.id}]],[[${c.businessMember.id}]],[[${c.businessMember.name}]])">
+			<p th:text="${c.businessMember.name}"></p>
+		</div>
+	</section>
+
+
+</main>
+
+<script type="text/javascript" th:inline="javascript">
+const socket = new WebSocket("ws://"+window.location.host+"/chat");
+var currentChatroom = null;
+var currentPeer = null;
+var userId= [[${session.member}]];
+
+socket.onopen = () => {
+    console.log("WebSocket 連接已建立");
+};
+
+socket.onmessage = (event) => {
+	var jsonObj = JSON.parse(event.data);
+    console.log("收到伺服器消息:", jsonObj);
+    renderMsg(jsonObj);
+};
+
+socket.onclose = () => {
+    console.log("WebSocket 連接已關閉");
+};
+
+socket.onerror = (error) => {
+    console.error("WebSocket 發生錯誤:", error);
+};
+
+function renderMsg(jsonObj){
+	console.log(jsonObj)
+	var str = document.createElement('li');
+	// 先用 JS 寫好要增加的內容
+	str.textContent = jsonObj.content;
+	// 動態掛一個 class 屬性
+	str.setAttribute('class', jsonObj.sender? 'business':'member');
+	// 用 appendChild() 把上面寫好的子節點掛在既有的 h1 下面，新增的內容會依序排列在後面，不會被洗掉
+	document.querySelector('#messageArea').appendChild(str);
+}
+	
+function scrollToBottom(){
+	var el_messageArea = document.querySelector('#messageArea');
+	el_messageArea.scrollTop = el_messageArea.scrollHeight;
+}
+
+//載入歷史訊息，顯示聊天對象名稱
+function openChat(chatroomId, peer, peerName) {
+	// 暫存當前聊天室資訊
+	currentChatroom=chatroomId;
+	currentPeer=peer;
+	//顯示名稱
+	var el_peerName = document.querySelector("#peer_name");
+	el_peerName.innerText = peerName;
+	
+	//清空messageArea中前一個對話紀錄
+	document.querySelector('#messageArea').innerText='';
+	
+	// 透過restful api取得歷史紀錄(redis or mysql)
+	 // 構造請求資料
+	    const payload = {
+	        chatroomId
+	    };
+	
+	fetch("/api/chat/getHistory", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("新增失敗，請檢查輸入或稍後再試。");
+        }
+        return response.json();
+    })
+    .then(data => {
+        data.msgList.forEach(m => {
+        	renderMsg(m)
+        });
+	scrollToBottom()
+    })
+    .catch(error => {
+        alert(`操作失敗：${error.message}`);
+    });
+}
+
+function sendMessage() {
+	var inputMessage = document.getElementById("message");
+	var message = inputMessage.value.trim();
+	// 取得當前時間
+	const now = new Date();
+
+	// 格式化為符合 Java Timestamp 格式的字串
+	const timestampStr = now.toISOString().substring(0, 19);
+
+	if (message === "") {
+		alert("請輸入文字");
+		inputMessage.focus();
+	} else if (currentChatroom === "") {
+		alert("請選擇一個對象");
+	} else {
+		console.log("已發送訊息")
+		var jsonObj = {
+		  "id": null,                   // 訊息的唯一識別碼，由後端生成，前端設為 null 或忽略
+		  "chatroom": {                 // 聊天室資訊
+		    "id": currentChatroom,                    // 聊天室的 ID，必須提供
+		  	"member":{
+		  		"id":userId
+		  	},
+		  	"businessMember":{
+		  		"id":currentPeer
+		  	},
+		  },
+		  "sender": false,               // 發送者類型：true 表示商家；false 表示會員
+		  "content": message, // 訊息內容
+		  "sendTime": timestampStr
+		};
+		console.log(JSON.stringify(jsonObj))
+		socket.send(JSON.stringify(jsonObj));
+		inputMessage.value = "";
+		inputMessage.focus();
+		scrollToBottom()
+
+	}
+}
+</script>
+</body>
+</html>

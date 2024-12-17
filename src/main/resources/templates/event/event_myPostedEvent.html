@@ -84,7 +84,7 @@
               <button clickable th:onclick="delayEvent([[${e.id}]])">延期</button>
             </td>
             <td>
-              <button clickable th:if="${e.status != 3}" th:onclick="updateStatus(3, [[${e.id}]])">取消</button>
+              <button clickable th:if="${e.status != 3}" th:onclick="cancelEvent([[${e.id}]])">取消</button>
             </td>
           </tr>
         </tbody>
@@ -102,7 +102,8 @@
       <button id="confirmDelay" class="button-primary flex-auto">確認</button>
       </div>
     </div>
-
+  <!-- SweetAlert2 Library -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript" th:inline="javascript">
       var updateStatus = async function (status, eid, delayDate) {
         const payload = {
@@ -120,6 +121,7 @@
         if (response.ok) {
           let data = await response.json(); // 解析 JSON 資料
           alert(data.message);
+      	window.location.reload();
         }
       };
 
@@ -151,6 +153,29 @@
           overlay.style.display = "none";
         };
       };
+
+  //取消報名活動
+    function cancelEvent(eventId) {
+
+        Swal.fire({
+            title: '',
+            text: `確定取消活動?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3546e8',
+            cancelButtonColor: '#2c95c6',
+            cancelButtonText: '保留',
+            confirmButtonText: '確定取消',
+            reverseButtons: true,
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+            	updateStatus(3, eventId);
+            }
+        });
+    };
+    
+    
     </script>
   </body>
 </html>
