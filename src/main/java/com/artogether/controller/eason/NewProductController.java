@@ -108,7 +108,7 @@ public class NewProductController {
     }
 
     @PostMapping("/addProduct")
-    public ResponseEntity<String> addProduct(
+    public String addProduct(
             @RequestParam("name") String name,
             @RequestParam("price") Integer price,
             @RequestParam("qty") Integer qty,
@@ -137,10 +137,10 @@ public class NewProductController {
             // 使用 ProductService 處理商品和圖片保存
             productService.addProduct(product, images, session);
 
-            return ResponseEntity.ok("商品已成功新增");
+            return "redirect:/product/businessProducts";
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(500).body("新增商品失敗: " + e.getMessage());
+            return "redirect:/product/businessProducts";
         }
     }
 
@@ -169,7 +169,7 @@ public class NewProductController {
     }
 
     @PostMapping("/editProduct/{id}")
-    public ResponseEntity<String> updateProduct(
+    public String updateProduct(
             @PathVariable Integer id,
             @RequestParam("name") String name,
             @RequestParam("price") Integer price,
@@ -206,9 +206,9 @@ public class NewProductController {
             // 調用 Service 方法更新商品
             productService.updateProduct(id, updatedProduct, images, session);
 
-            return ResponseEntity.ok("商品已成功更新！");
+            return "redirect:/product/businessProducts";
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("更新失敗：" + e.getMessage());
+            return "redirect:/product/businessProducts";
         }
     }
 

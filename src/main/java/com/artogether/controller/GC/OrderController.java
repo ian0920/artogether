@@ -103,7 +103,7 @@ public class OrderController {
     public String businessOrder(Model model) {
 
 
-        List<PrdOrder> orderList = prdOrderService.getOrderByMemberId(5);
+        List<PrdOrder> orderList = prdOrderService.getOrderByMemberId(8);
         if (orderList == null) {
             orderList = new ArrayList<>();
         }
@@ -132,7 +132,7 @@ public class OrderController {
     }
 
     @PostMapping("/editOrder/{id}")
-    public ResponseEntity<String> updateOrder(
+    public String updateOrder(
             @PathVariable Integer id,
             @RequestParam("status") String status,
             @RequestParam("shipDate") String shipDateStr,
@@ -149,7 +149,7 @@ public class OrderController {
             // 從數據庫中查找現有的訂單
             PrdOrder existingOrder = prdOrderService.getOrderById(id);
             if (existingOrder == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("訂單不存在！");
+                return "redirect:/error";
             }
 
             // 更新訂單狀態和運送日期
@@ -159,9 +159,9 @@ public class OrderController {
             // 保存更新的訂單
             prdOrderService.savePrdOrder(existingOrder);
 
-            return ResponseEntity.ok("訂單已成功更新！");
+            return "redirect:/order/businessOrder";
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("更新失敗：" + e.getMessage());
+            return "redirect:/error";
         }
     }
 
