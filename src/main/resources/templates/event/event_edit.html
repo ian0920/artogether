@@ -27,29 +27,29 @@
 			<!-- 			顯示欄位 -->
 			<fieldset>
 				<label class="label-input">活動名稱
-					<input type="text" th:field="*{name}" class="solo">
+					<input type="text" th:field="*{name}" class="solo" id="e_name">
 				</label>
 				<div class="row">
 					<label class="label-input flex-auto">票價
-						<input type="number" th:field="*{price}" class="solo">
+						<input type="number" th:field="*{price}" class="solo" id="e_price">
 					</label>
 					<label class="label-input flex-auto">活動類別
-						<input type="text" th:field="*{catalog}" class="solo">
+						<input type="text" th:field="*{catalog}" class="solo" id="e_catalog">
 					</label>
 				</div>
 			</fieldset>
 			
 			<fieldset>
 				<label class="label-input">活動地點
-					<input type="text"	th:field="*{location}" class="solo">
+					<input type="text"	th:field="*{location}" class="solo" id="e_location">
 				</label>
 				<div class="row">
 					<label class="label-input flex-auto">開始日期
-						<input type="datetime-local" th:field="*{startDate}" class="solo">
+						<input type="datetime-local" th:field="*{startDate}" class="solo" id="e_startDate">
 					</label>
 					
 					<label class="label-input flex-auto">結束日期
-						<input type="datetime-local" th:field="*{endDate}" class="solo">
+						<input type="datetime-local" th:field="*{endDate}" class="solo" id="e_endDate">
 					</label>
 				</div>
 			</fieldset>
@@ -194,6 +194,9 @@
 
 	//====================提交表單時更新evtImgList=========================
 	document.querySelector('form').addEventListener('submit', function (e) {
+		if(!validateData()){
+			e.preventDefault()
+			return}
 	    // 在提交前將 selectedFiles 動態加入表單
 	    const form = e.target;
 
@@ -219,6 +222,37 @@
 	    return dataTransfer.files;
 	}
 
+	//==================資料驗證=====================
+		function validateData(){
+		var isPassed=true;
+		var el_name=document.querySelector("#e_name");
+		var el_location=document.querySelector("#e_location");
+		var el_startDate=document.querySelector("#e_startDate");
+		var el_catalog=document.querySelector("#e_catalog");
+		
+		if(el_name.value===""){
+			alert("請給我去輸入活動名稱")
+			isPassed=false
+			return
+		}
+		if(el_catalog.value===""){
+			alert("請給我去輸入類別名稱")
+			isPassed=false
+			return
+		}
+		if(el_location.value===""){
+			alert("請給我去輸入地點名稱")
+			isPassed=false
+			return
+		}
+		if(el_startDate.value===null){
+			alert("請給我去輸入活動日期")
+			isPassed=false
+			return
+		}
+
+		return isPassed
+	}
 
 </script>
 </body>
