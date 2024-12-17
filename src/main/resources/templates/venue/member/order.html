@@ -337,7 +337,9 @@
                 this.order.totalPrice = total;
             },
 
+            //外層取消預約，會回到場地細節
             resetReservation() {
+                this.unlockDate(this.order.startDate);
                 this.order = { startDate: '', startTime: '', endTime: '', totalPrice: null, shouldPaid: null };
                 this.showConfirmation = false;
             },
@@ -401,7 +403,7 @@
                 if (this.timer) {
                     clearInterval(this.timer); // 清除計時器
                     console.log("stopCountdown")
-                    this.unlockDate(this.order.startDate);
+
                     console.log(previousDate)
                     this.timer = null;
                 }
@@ -410,6 +412,7 @@
             confirmReservation() {
                 this.order.paid = this.order.totalPrice; // 更新 order 中的 paid 屬性
                 this.stopCountdown(); // 確認後停止計時
+                this.unlockDate(this.order.startDate);
                 console.log('Payload:', JSON.stringify(this.order));
                 $.ajax({
                     url: `/vne/order/payment/full/${vneId}`,

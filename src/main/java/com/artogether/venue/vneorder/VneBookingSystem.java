@@ -29,7 +29,7 @@ public class VneBookingSystem {
     }
 
     public void unlockDate(Integer vneId, LocalDate date) {
-        System.out.println("unlockDate");
+        System.out.println("unlockDate"+date);
         vneLocks.get(vneId).remove(date);
     }
 
@@ -54,7 +54,9 @@ public class VneBookingSystem {
     public void lockedByBooking(Integer vneId, LocalDate date) {
         Long currentTime = (Long) System.currentTimeMillis();
         Long unLockTime = currentTime+LOCK_TIMEOUT;
+        System.out.println("lockedByBooking");
         ConcurrentHashMap<LocalDate,Long> lockedDates = vneLocks.get(vneId);
         lockedDates.putIfAbsent(date, unLockTime);
+        System.out.println("lockedByBooking"+lockedDates.get(date));
     }
 }
