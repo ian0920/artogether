@@ -43,8 +43,13 @@ public class PlatformController {
     private EvtOrderService evtOrderService;
 
     @GetMapping("home")
-    public String index() {
+    public String index(HttpSession session) {
         //先確認是否有登入
+
+        Integer managerId = (Integer) session.getAttribute("managerId");
+        if (managerId == null) {
+            return "redirect:/platform/login";
+        }
 
         return "platform/index";
     }
@@ -126,7 +131,8 @@ public class PlatformController {
 
 
         List<EvtOrderDTO> orderDTO = evtOrderService.findOrdersForAccounting(businessId, formatedStartDate, formatedEndDate);
-
+        List<BusinessMember> businessMember = businessService.findAll();
+        model.addAttribute("businessMember", businessMember);
         model.addAttribute("orders", orderDTO);
 
         return "platform/event_accounting";

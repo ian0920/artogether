@@ -147,7 +147,7 @@ public class RestEventBusinessController {
     public ResponseEntity<ApiResponse<Page<EvtOrderDTO>>> orderSearch (
             @RequestBody EvtOrderSearchCriteria searchCriteria,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "1") int size,
+            @RequestParam(defaultValue = "10") int size,
             HttpSession session)
     {
 
