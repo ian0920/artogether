@@ -178,6 +178,7 @@ public class TslotService {
             Integer startTime = vneOrder.getStartTime();
             LocalDate endDate = vneOrder.getEndDate();
             Integer endTime = vneOrder.getEndTime();
+            //檢查訂單是單日還是跨日
             long days = ChronoUnit.DAYS.between(startDate, endDate);
             Integer bookingTslot = 0;
             //若為單日訂單
@@ -206,7 +207,14 @@ public class TslotService {
             LocalDate date = entry.getKey();
             Integer bookingTslot = entry.getValue();
             Integer weekday = date.getDayOfWeek().getValue()-1;
-            if ((weeklyTslot.get(weekday) ^ bookingTslot)==0) {
+            //因為會緩衝一小時，所以如果預約滿會跟營業時間不同，
+            // 會多一個小時，導致無法抓出來，
+            // 目前調整方式是抓出營業時間的最後一小時並加上再做比對
+            Integer bizHours = weeklyTslot.get(weekday);
+            BitSet bitSet = BinaryTools.toBitSet(bizHours, 24);
+            int afterLastTrue = bitSet.previousSetBit(bitSet.length() - 1)+1;
+            Integer checkHour = bizHours | (1 << 24 - afterLastTrue - 1);
+            if ((checkHour ^ bookingTslot)==0) {
                 nonBizDays.add(date);
             }
         }
