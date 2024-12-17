@@ -19,4 +19,6 @@ public class VneCardDTO {
     private String description;
     private Integer availableDays;
     private List<String> imgUrls;
+    private Integer startHour;
+    private Integer endHour;
 }

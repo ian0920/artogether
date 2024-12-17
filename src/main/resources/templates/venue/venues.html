@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>All events</title>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link rel="stylesheet" th:href="@{/web_design/style/style_general.css}" />
+  <link rel="stylesheet" th:href="@{/web_design/style/style_homepage.css}" />
+  <link
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+          rel="stylesheet"
+  />
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <style>
+
+    main{
+      align-content: center;
+    }
+
+    .event-card-container{
+      width: 90%;
+      align-content: center;
+    }
+
+    .showcase-cards-box{
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .showcases-card{
+      margin: 20px;
+      width: 29%;
+    }
+
+    .event-card-search{
+      align-self: flex-start;
+      margin-left: 5%;
+      margin-top: 25px;
+    }
+
+
+
+    .custom-pagination {
+      display: flex;
+      justify-content: center;
+      list-style-type: none;
+      padding: 0;
+      margin: 10px;
+    }
+
+    .custom-pagination li {
+      margin: 0 5px;
+    }
+
+    .custom-pagination .page-link{
+      display: inline-block;
+      padding: 8px 16px;
+      text-decoration: none;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: #f8f9fa;
+      color: #333;
+      transition: all 0.3s;
+    }
+
+    .custom-pagination .page-link:hover{
+      background-color: #2c95c6;
+      color: white;
+      border-color: #2c95c6;
+    }
+
+    .custom-pagination .page-link.active {
+      background-color: #2c95c6;
+      color: white;
+      border-color: #2c95c6;
+      pointer-events: none;
+    }
+
+    .custom-pagination .page-link.disabled {
+      background-color: #e9ecef;
+      color: #6c757d;
+      border-color: #ddd;
+      pointer-events: none;
+    }
+
+    /* Form Styling */
+
+    .event-card-search-form{
+      margin-bottom: 20px;
+    }
+
+    .event-card-search-form label {
+      font-weight: bold;
+      color: #333;
+      margin-right: 10px;
+      margin-left: 10px;
+    }
+
+    .event-card-search-form select {
+      padding: 8px 10px;
+      font-size: 14px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: white;
+      transition: all 0.3s;
+    }
+
+    .event-card-search-form select:hover {
+      border-color: #2c95c6;
+    }
+
+    .event-card-search-form .btn {
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: bold;
+      color: white;
+      background-color: #2c95c6;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .event-card-search-form .btn:hover {
+      background-color: #2c95c6;
+    }
+
+    .event-card-search-form .btn:active {
+      background-color: #003d80;
+    }
+
+
+  </style>
+</head>
+<body>
+<div th:replace="~{/components/navbar_homepage::navbar}"></div>
+
+<main>
+  <div class="event-card-search">
+
+  </div>
+  <h3 th:unless="${vneCardDTOs.size() > 0}" style="color: darkred">無相關搜尋結果</h3>
+  <div th:if="${vneCardDTOs.size() > 0}" class="event-card-container">
+
+    <div class="showcase-cards-box">
+    <div th:each="vneCardDTO:${vneCardDTOs}" th:onclick="|location.href='/vneMem/details/' + ${vneCardDTO.vneId}|" clickable class="showcases-card card event">
+      <img th:src="@{vneCardDTO.setImgUrls(0)}" alt="" />
+
+      <div class="card-content">
+        <div class="card-title">
+          <div class="tag venue">場地</div>
+          <h3 class="card-title-text" th:text="${vneCardDTO.vneName}">
+          </h3>
+        </div>
+        <div class="card-info">
+          <p th:text="${vneCardDTO.description}">一段小小小小小小小小小小小小小小小小小小小小簡介</p>
+        </div>
+        <div class="tags-box">
+          <span class="material-symbols-outlined">location_on</span>
+          <span class="tag plain-tag" th:text="${vneCardDTO.vneAddress.substring(3,6)}"></span>
+          <span class="material-symbols-outlined">schedule</span>
+          <span th:text="${vneCardDTO.startHour} + ' - ' + ${vneCardDTO.endHour}"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+<!--  <div class="pagination-wrapper">-->
+<!--    <nav aria-label="Page navigation">-->
+<!--      <ul class="custom-pagination">-->
+<!--        &lt;!&ndash; Previous Button &ndash;&gt;-->
+<!--        <li>-->
+<!--          <a class="page-link"-->
+<!--             th:href="@{/event/all(sortBy=${sortBy}, page=${currentPage - 1}, size=${size})}"-->
+<!--             th:classappend="${currentPage == 0} ? 'disabled'">-->
+<!--            上一頁-->
+<!--          </a>-->
+<!--        </li>-->
+
+<!--        &lt;!&ndash; Page Numbers &ndash;&gt;-->
+<!--        <li th:if="${totalPages > 1}" th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}">-->
+<!--          <a class="page-link"-->
+<!--             th:href="@{/event/all(sortBy=${sortBy}, page=${pageNum}, size=${size})}"-->
+<!--             th:classappend="${pageNum == currentPage} ? 'active'"-->
+<!--             th:text="${pageNum + 1}">-->
+<!--          </a>-->
+<!--        </li>-->
+<!--        <li th:if="${totalPages == 1}">-->
+<!--          <span class="page-link active">1</span>-->
+<!--        </li>-->
+
+<!--        &lt;!&ndash; Next Button &ndash;&gt;-->
+<!--        <li>-->
+<!--          <a class="page-link"-->
+<!--             th:href="@{/event/all(sortBy=${sortBy}, page=${currentPage + 1}, size=${size})}"-->
+<!--             th:classappend="${currentPage == totalPages - 1} ? 'disabled'">-->
+<!--            下一頁-->
+<!--          </a>-->
+<!--        </li>-->
+<!--      </ul>-->
+<!--    </nav>-->
+<!--  </div>-->
+  </div>
+</main>
+
+
+
+<footer th:include="homepage::footer"></footer>
+
+
+<script>
+  var el_nav_item_discover = document.querySelector("div.navbar-item");
+  var el_div_nav_menu_box = document.querySelector("div.nav-menu-box");
+  var el_div_nav_user_box = document.querySelector("div.user_div");
+  var el_div_nav_menu = document.querySelector("div.nav-menu");
+  var el_eiv_user_menu = document.querySelector("div.user-menu-box");
+
+  //=====================觸發視窗========================
+  // 1. 探索
+  el_nav_item_discover.addEventListener("mouseenter", function () {
+    if (!el_div_nav_menu_box.classList.contains("open"))
+      el_div_nav_menu_box.classList.add("open");
+  });
+  console.log(el_div_nav_menu);
+  el_div_nav_menu.addEventListener("mouseleave", function () {
+    if (el_div_nav_menu_box.classList.contains("open"))
+      el_div_nav_menu_box.classList.remove("open");
+  });
+
+  // 2. 會員
+  el_div_nav_user_box.addEventListener("mouseenter", function () {
+    if (!el_eiv_user_menu.classList.contains("open"))
+      el_eiv_user_menu.classList.add("open");
+  });
+  el_eiv_user_menu.addEventListener("mouseleave", function () {
+    if (el_eiv_user_menu.classList.contains("open"))
+      el_eiv_user_menu.classList.remove("open");
+  });
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Disable link clicks for disabled pagination controls
+    document.querySelectorAll(".page-link.disabled").forEach(function (link) {
+      link.addEventListener("click", function (e) {
+        e.preventDefault(); // Prevent navigation
+      });
+    });
+  });
+</script>
+<script>
+  //活動狀態欄位文字替換
+  $(document).ready(function () {
+
+    $('.eventStatus').each(function () {
+      const $button = $(this); // The current button as a jQuery object
+      const statusText = $button.text().trim(); // Get and trim the text content
+
+      console.log('Original Status Text:', statusText); // Debugging log
+
+      // Replace the button's text based on its current value
+      switch (statusText) {
+        case '1':
+          $button.text('報名中');
+          $button.css('background-color','#A6DF20FF')
+          break;
+        case '2':
+          $button.text('延期');
+          $button.css('background-color', '#ffc107');
+          break;
+        case '3':
+          $button.text('取消');
+          $button.css('background-color', '#dc3545');
+          break;
+        case '4':
+          $button.text('審核被拒');
+          $button.css('background-color', '#c99e68');
+          break;
+        case '5':
+          $button.text('活動結束');
+          $button.css('background-color', '#808080FF');
+          break;
+        default: break;
+      }
+    });
+  });
+</script>
+</body>
+</html>

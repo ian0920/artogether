@@ -2,17 +2,16 @@ package com.artogether.venue.venue;
 
 import com.artogether.common.business_member.BusinessMember;
 import com.artogether.common.business_member.BusinessMemberRepo;
-import com.artogether.common.business_member.BusinessService;
+import com.artogether.util.BinaryTools;
 import com.artogether.venue.tslot.TslotService;
 import com.artogether.venue.vnedto.TslotDTO;
 import com.artogether.venue.vnedto.VneCardDTO;
 import com.artogether.venue.vnedto.VneDetailDTO;
 import com.artogether.venue.vnedto.VnePriceDTO;
-import com.artogether.venue.vneimg.*;
+import com.artogether.venue.vneimg.VneImgService;
 import com.artogether.venue.vneprice.VnePriceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -166,6 +165,42 @@ public class VenueService {
             vneCardDTO.setImgUrls(vneImgService.getAllImgs(vneId));
         });
     return vneCardDTO;
+    }
+
+    public List<VneCardDTO> getAllVneCard() {
+
+        List<Venue> list = venueRepository.findAll();
+
+
+        List<VneCardDTO> vneCardDTOs = list.stream()
+                .map(e ->{
+
+                    List<Integer> weeklyInteger = tslotService.getWeeklyTslots(e.getId(), LocalDateTime.now());
+                    Integer bizTime = 0;
+                    for (Integer dailyHours : weeklyInteger) {
+                        bizTime |= dailyHours;
+                    }
+                    List<Integer> dailyList = BinaryTools.toList(bizTime, 24);
+                    Integer startHour = dailyList.get(0);
+                    Integer endHour = dailyList.get(dailyList.size() - 1);
+
+                    VneCardDTO vneCardDTO =  new VneCardDTO();
+                    vneCardDTO.setVneId(e.getId());
+                    vneCardDTO.setVneName(e.getName());
+                    vneCardDTO.setType(e.getType());
+                    vneCardDTO.setVneAddress(e.getBusinessMember().getAddr());
+                    vneCardDTO.setDescription(e.getDescription());
+                    vneCardDTO.setAvailableDays(e.getAvailableDays());
+                    vneCardDTO.setImgUrls(vneImgService.getAllImgs(e.getId()));
+                    vneCardDTO.setStartHour(startHour);
+                    vneCardDTO.setEndHour(endHour);
+
+                    return vneCardDTO;
+
+                }).toList();
+
+        return vneCardDTOs;
+
     }
 // 水好深阿...lambda還沒看
 
