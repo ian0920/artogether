@@ -38,6 +38,36 @@ public class VneRestController {
     private VneBookingSystem vneBookingSystem;
     @Autowired
     private VneOrderService vneOrderService;
+    // 上架方法
+    @PostMapping("/publish/{vneId}")
+    public ResponseEntity<?> publishVenue(@PathVariable Integer vneId) {
+        try {
+            venueService.publishVenue(vneId, LocalDateTime.now());
+            return ResponseEntity.ok()
+                    .header("Content-Type", "application/json;charset=UTF-8") // 設置 JSON 和字符編碼
+                    .body("{\"message\": \"場地成功上架\"}");
+        } catch (VenueExceptions.InvalidListingException e) {
+            return ResponseEntity.badRequest().body(e.getErrorResponse());
+        }
+    }
+
+    // 下架方法
+    @PostMapping("/archive/{vneId}")
+    public ResponseEntity<?> archiveVenue(@PathVariable Integer vneId) {
+        try {
+            venueService.archiveVenue(vneId); // 調用下架方法
+            return ResponseEntity.ok()
+                    .header("Content-Type", "application/json;charset=UTF-8") // 確保 JSON 和 UTF-8 編碼
+                    .body("{\"message\": \"場地成功下架\"}");
+        } catch (VenueExceptions.InvalidListingException e) {
+            // 返回 JSON 格式的錯誤資訊
+            return ResponseEntity.badRequest().body(e.getErrorResponse());
+        } catch (Exception ex) {
+            // 其他未處理異常，統一返回 500
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"message\": \"發生未知錯誤，請稍後再試。\"}");
+        }
+    }
 
     //取出該商家所有場地
     @GetMapping("/vneList")
@@ -164,36 +194,7 @@ public class VneRestController {
         List<VneOrderDTO> memOrderList = vneOrderService.getMemOrderList(memId);
         return memOrderList;
     }
-    // 上架方法
-    @PostMapping("/publish/{vneId}")
-    public ResponseEntity<?> publishVenue(@PathVariable Integer vneId) {
-        try {
-            venueService.publishVenue(vneId, LocalDateTime.now());
-            return ResponseEntity.ok()
-                    .header("Content-Type", "application/json;charset=UTF-8") // 設置 JSON 和字符編碼
-                    .body("{\"message\": \"場地成功上架\"}");
-        } catch (VenueExceptions.InvalidListingException e) {
-            return ResponseEntity.badRequest().body(e.getErrorResponse());
-        }
-    }
 
-    // 下架方法
-    @PostMapping("/archive/{vneId}")
-    public ResponseEntity<?> archiveVenue(@PathVariable Integer vneId) {
-        try {
-            venueService.archiveVenue(vneId); // 調用下架方法
-            return ResponseEntity.ok()
-                    .header("Content-Type", "application/json;charset=UTF-8") // 確保 JSON 和 UTF-8 編碼
-                    .body("{\"message\": \"場地成功下架\"}");
-        } catch (VenueExceptions.InvalidListingException e) {
-            // 返回 JSON 格式的錯誤資訊
-            return ResponseEntity.badRequest().body(e.getErrorResponse());
-        } catch (Exception ex) {
-            // 其他未處理異常，統一返回 500
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("{\"message\": \"發生未知錯誤，請稍後再試。\"}");
-        }
-    }
 
 
     //付訂金

@@ -6,6 +6,7 @@ import com.artogether.venue.venue.VenueService;
 import com.artogether.venue.vnedto.*;
 import com.artogether.venue.tslot.TslotService;
 import com.artogether.venue.vneimg.VneImgService;
+import com.artogether.venue.vneorder.VneOrderService;
 import com.artogether.venue.vneprice.VnePriceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Controller
 @RequestMapping("/vneBiz")
@@ -28,6 +30,8 @@ public class VenueController {
     private VneImgService vneImgService;
     @Autowired
     private VenueService venueService;
+    @Autowired
+    private VneOrderService vneOrderService;
 
     //店家場地總覽
     @GetMapping("/vneList")
@@ -37,6 +41,22 @@ public class VenueController {
         model.addAttribute("bizName", name);
         //交給Ajax->/vne/vneList
         return "venue/business/vneList";
+    }
+    //去訂單列表的
+    @GetMapping("/vneList/toOrder")
+    public String vneListToOrder(Model model, HttpSession session) {
+        BusinessMember businessMember = (BusinessMember) session.getAttribute("presentBusinessMember");
+        String name = businessMember.getName();
+        model.addAttribute("bizName", name);
+        //交給Ajax->/vne/vneList
+        return "venue/business/vneListToOrder";
+    }
+    //場地訂單列表
+    @GetMapping("/orders/{vneId}")
+    public String orderMemList(Model model, @PathVariable Integer vneId) {
+        List<VneOrderDTO> memOrderList = vneOrderService.getVneOrderList(vneId);
+        model.addAttribute("orders", memOrderList);
+        return "/venue/member/orderList";
     }
     //新增場地頁面
     @GetMapping("/addVenue")
