@@ -24,6 +24,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class GeneralController {
@@ -56,10 +57,16 @@ public class GeneralController {
 	    model.addAttribute("vendors", randomVendors);
 	    
 	    //精選商品呈現
-	    
-	    List<Product> topProducts = productService.getTopRatedProducts(3);
+	    	   
+	    List<Product> products = productService.getAllProducts();
 
-	    model.addAttribute("topProducts", topProducts);
+	        
+	        List<Product> topThreeProducts = products.stream()
+	                                                 .sorted(Comparator.comparing(Product::getAllStars).reversed()) // 降序排序
+	                                                 .limit(4) 
+	                                                 .collect(Collectors.toList());
+
+	        model.addAttribute("topThreeProduct", topThreeProducts);
 
 	    return "homepage";
     }
