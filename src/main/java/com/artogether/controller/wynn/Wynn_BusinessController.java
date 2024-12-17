@@ -1,36 +1,24 @@
 package com.artogether.controller.wynn;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.hibernate.Hibernate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import com.artogether.common.business_member.BusinessMember;
 import com.artogether.common.business_member.BusinessService;
 import com.artogether.common.business_perm.BusinessPerm;
+import com.artogether.common.business_perm.BusinessPermAnn;
 import com.artogether.common.business_perm.BusinessPermService;
 import com.artogether.common.chatroom.Chatroom;
 import com.artogether.common.chatroom.ChatroomService;
 import com.artogether.common.member.Member;
 import com.artogether.common.member.MemberService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 @Controller
@@ -73,14 +61,15 @@ public class Wynn_BusinessController {
 	}
 	
 	// 導向: 員工管理
+	@BusinessPermAnn("ADMIN")
 	@GetMapping("/staff_management")
 	public String goManageStaff(HttpSession session, Model model) {
 		BusinessMember bm = (BusinessMember)session.getAttribute("presentBusinessMember");
 		Integer memberId = (Integer)session.getAttribute("member");
-		if(!businessPermService.findByPK(memberId, bm.getId()).isAdminPerm()) {
-			model.addAttribute("errors", "僅有具有管理員權限者方可查看");
-			return "/error";
-		};
+//		if(!businessPermService.findByPK(memberId, bm.getId()).isAdminPerm()) {
+//			model.addAttribute("errors", "僅有具有管理員權限者方可查看");
+//			return "/error";
+//		};
 		List<BusinessPerm> bPerms = businessPermService.getAllByBusinessMember(bm.getId());
 		model.addAttribute("bPerms", bPerms);
 		return "business/staff_management";

@@ -3,26 +3,167 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>藝起 Artogether</title>
     <link rel="stylesheet" th:href="@{/web_design/style/style_business.css}" />
     <link
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
       rel="stylesheet"
     />
   </head>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    main {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #8999e0 0%, #2c95c6 100%);
+      overflow: hidden;
+    }
+    .user-container {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 4rem 3rem;
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+      transform: rotateX(10deg);
+      transition: all 0.3s ease;
+      max-width: 800px;
+      width: 90%;
+      position: relative;
+      z-index: 10;
+    }
+    .user-container:hover {
+      transform: rotateX(0deg) scale(1.02);
+      box-shadow: 0 20px 45px rgba(0,0,0,0.15);
+    }
+    .user-name {
+      font-size: calc(2.5rem + 3vw);
+      background: linear-gradient(45deg, #ffffff 30%, #f0f0f0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: bold;
+      margin-bottom: 1rem;
+      line-height: 1.2;
+      word-break: break-word;
+    }
+    .welcome-message {
+      font-size: 1.5rem;
+      opacity: 0.8;
+      margin-bottom: 2rem;
+      color: white;
+    }
+    .user-details {
+      background: rgba(255,255,255,0.1);
+      padding: 1.5rem;
+      border-radius: 15px;
+      margin-top: 2rem;
+      color: white;
+    }
+    .detail-item {
+      margin: 0.5rem 0;
+      opacity: 0.9;
+    }
+
+    /* Animated Background Elements */
+    .bg-particles {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      overflow: hidden;
+      top: 0;
+      left: 0;
+    }
+    .particle {
+      position: absolute;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+      animation: float-particle linear infinite;
+    }
+    @keyframes float-particle {
+      0% { transform: translateY(0) rotate(0deg); }
+      100% { transform: translateY(100vh) rotate(360deg); }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 600px) {
+      .user-container {
+        padding: 2rem 1rem;
+      }
+      .user-name {
+        font-size: calc(2rem + 3vw);
+      }
+      .welcome-message {
+        font-size: 1.2rem;
+      }
+    }
+  </style>
   <body>
 <!--     導航 -->
 <div th:replace="~{/components/navbar_member::navbar('info','inbox')}"></div>
 
     <!-- main區塊 -->
     <main>
-      <h3>hiiiiiiiiii</h3>
-      <p>
-        ggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
-      </p>
-      <img src="./asset/images/bgimg.png" alt="" />
+      <div class="bg-particles" id="particles"></div>
+
+      <div class="user-container">
+        <h1 class="user-name" id="userName" th:text="${#session.getAttribute('memberName')}">John Doe</h1>
+        <p class="welcome-message">歡迎回來!</p>
+
+<!--        <div class="user-details">-->
+<!--          <p class="detail-item">Dashboard Access: Active</p>-->
+<!--          <p class="detail-item">Last Login: Just Now</p>-->
+<!--        </div>-->
+      </div>
     </main>
 
+<script>
+  // Create floating particles
+  function createParticles() {
+    const particlesContainer = document.getElementById('particles');
+    const particleCount = window.innerWidth < 600 ? 10 : 20;
+
+    for (let i = 0; i < particleCount; i++) {
+      const particle = document.createElement('div');
+      particle.classList.add('particle');
+
+      // Randomize particle properties
+      particle.style.width = `${Math.random() * 20 + 5}px`;
+      particle.style.height = particle.style.width;
+      particle.style.left = `${Math.random() * 100}%`;
+      particle.style.animationDuration = `${Math.random() * 20 + 10}s`;
+      particle.style.animationDelay = `${Math.random() * -20}s`;
+      particle.style.opacity = Math.random() * 0.5 + 0.1;
+
+      particlesContainer.appendChild(particle);
+    }
+  }
+
+  // Update username dynamically
+  function updateUserName() {
+    const userNameElement = document.getElementById('userName');
+    const urlParams = new URLSearchParams(window.location.search);
+    const nameParam = urlParams.get('name');
+
+    if (nameParam) {
+      userNameElement.textContent = nameParam;
+    }
+  }
+
+  // Initialize on page load
+  window.onload = () => {
+    createParticles();
+    updateUserName();
+  }
+</script>
 
   </body>
 </html>
