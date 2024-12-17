@@ -58,6 +58,45 @@
       border-radius: 5px;
       margin-bottom: 10px;
     }
+     /* 商品圖片 */
+        .product-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        /* 商品名稱與價格 */
+        .product-card h3, .product-card p {
+            margin: 10px;
+        }
+
+        .product-card h3 {
+            color: #333;
+            font-size: 18px;
+        }
+
+        .product-card p {
+            color: #27ae60;
+            font-size: 16px;
+        }
+
+        /* 返回按鈕 */
+        .back-button {
+            display: inline-block;
+            margin: 20px auto;
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .back-button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
   </style>
 </head>
 <body>

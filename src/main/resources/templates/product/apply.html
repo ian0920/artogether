@@ -3,13 +3,83 @@
 <head>
     <title>申請退換貨</title>
     <style>
-        button {
-            padding: 5px 10px;
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 20px;
+            margin: 10px 0;
+            color: #2c3e50;
+        }
+
+        .container {
+            margin: 20px auto;
+            width: 50%;
+            max-width: 600px;
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            border-radius: 8px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 14px;
+        }
+
+        th {
             background-color: #3498db;
             color: white;
+        }
+
+        .form-container {
+            padding: 5px;
+            background-color: #f9f9f9;
+        }
+
+        label {
+            display: block;
+            margin-top: 5px;
+            font-size: 12px;
+            text-align: left;
+        }
+
+        textarea, select {
+            width: 100%;
+            padding: 6px;
+            margin-top: 3px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        button {
+            margin-top: 5px;
+            width: 100%;
+            padding: 6px;
+            background-color: #8b4513;
+            color: white;
             border: none;
-            border-radius: 3px;
+            border-radius: 4px;
             cursor: pointer;
+            font-size: 12px;
+            transition: background-color 0.3s ease;
         }
 
         button:disabled {
@@ -17,65 +87,83 @@
             cursor: not-allowed;
         }
 
-        textarea {
-            width: 100%;
-            height: 50px;
+        button:hover:not(:disabled) {
+            background-color: #6e3810;
+        }
+
+        .success-message {
+            display: none;
+            color: #27ae60;
+            font-size: 12px;
+            margin-top: 5px;
         }
     </style>
 </head>
 <body>
-<h1>申請退換貨</h1>
+<div class="container">
+    <h1>申請退換貨</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>商品 ID</th>
+                <th>商品名稱</th>
+                <th>數量</th>
+                <th>價格</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="detail : ${orderDetails}">
+                <td th:text="${detail.productId}">商品ID</td>
+                <td th:text="${detail.productName}">商品名稱</td>
+                <td th:text="${detail.qty}">數量</td>
+                <td th:text="${detail.price}">價格</td>
+                <td>
+                    <div class="form-container">
+                        <form th:action="@{/product/return/add}" method="post" onsubmit="return validateForm(this)">
+                            <input type="hidden" name="orderId" th:value="${orderId}"/>
+                            <input type="hidden" name="prdName" th:value="${detail.productName}"/>
 
-<!-- 訂單詳情表格 -->
-<table border="1">
-    <thead>
-        <tr>
-            <th>商品 ID</th>
-            <th>商品名稱</th>
-            <th>數量</th>
-            <th>價格</th>
-            <th>操作</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr th:each="detail : ${orderDetails}">
-            <td th:text="${detail.productId}">商品ID</td>
-            <td th:text="${detail.productName}">商品名稱</td>
-            <td th:text="${detail.qty}">數量</td>
-            <td th:text="${detail.price}">價格</td>
-            <td>
-                <!-- 每個商品的退換貨申請表單 -->
-                <form th:action="@{/product/return/add}" method="post" onsubmit="disableButton(this)">
-                    <input type="hidden" name="orderId" th:value="${orderId}"/>
-                    <input type="hidden" name="prdName" th:value="${detail.productName}"/>
+                            <label>原因：</label>
+                            <textarea name="reason" placeholder="請輸入退換貨原因" rows="2" required></textarea>
 
-                    <label for="reason">原因：</label>
-                    <textarea name="reason" placeholder="輸入退換貨原因" rows="2" required></textarea>
+                            <label>類型：</label>
+                            <select name="type" required>
+                                <option value="" disabled selected>請選擇類型</option>
+                                <option value="1">退貨</option>
+                                <option value="2">換貨</option>
+                            </select>
 
-                    <label for="type">類型：</label>
-                    <select name="type" required>
-                        <option value="1">退貨</option>
-                        <option value="2">換貨</option>
-                    </select>
+                            <button type="submit" class="submit-btn">申請</button>
+                            <div class="success-message">申請已提交</div>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 
-                    <label for="refund">退款金額：</label>
-                    <input type="number" name="refund" min="0" required/>
-
-                    <!-- 按鈕 -->
-                    <button type="submit" class="submit-btn">申請</button>
-                </form>
-            </td>
-        </tr>
-    </tbody>
-</table>
-
-<!-- JavaScript -->
 <script>
-    function disableButton(form) {
-        // 找到當前表單內的按鈕，設置為禁用
+    // 表單驗證及按鈕禁用
+    function validateForm(form) {
+        const reason = form.querySelector('textarea[name="reason"]');
+        const type = form.querySelector('select[name="type"]');
         const button = form.querySelector('.submit-btn');
+        const successMessage = form.querySelector('.success-message');
+
+        // 驗證所有必填欄位
+        if (!reason.value.trim() || !type.value) {
+            alert("請填寫所有必填欄位。");
+            return false;
+        }
+
+        // 禁用按鈕並顯示成功訊息
         button.disabled = true;
-        button.textContent = '已申請';
+        button.textContent = "已申請";
+        successMessage.style.display = "block";
+
+        return true;
     }
 </script>
 </body>
