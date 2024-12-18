@@ -205,7 +205,7 @@ public class EventService {
 						.catalog(partialE.getCatalog())
 						.price(partialE.getPrice())
 						.description(partialE.getDescription())
-						.status(e.getStatus())
+						.status(e.getStatus()!=null?e.getStatus():Byte.valueOf((byte)0))
 						.maximum(partialE.getMaximum())
 						.minimum(partialE.getMinimum())
 						.enrolled(e.getEnrolled())
