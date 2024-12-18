@@ -132,27 +132,59 @@
         .cell[data-hour="8"] {
             height: 20px; /* 縮減的行高 */
         }
-        /* 統一外部容器寬度 */
-        .container {
-            max-width: 1200px; /* 或根據需求調整 */
-            margin: 0 auto; /* 水平置中 */
-        }
-
-        /* 圖片輪播樣式 */
+        /* 圖片容器樣式 */
         .image-carousel {
-            width: 100%; /* 讓輪播區塊填滿父容器 */
-            margin-bottom: 20px; /* 與下方資訊區域分隔 */
-            text-align: center; /* 圖片置中 */
+            display: flex;
+            justify-content: center; /* 水平置中 */
+            gap: 15px; /* 圖片間距 */
+            margin-top: 20px;
+            flex-wrap: wrap; /* 當圖片太多時自動換行 */
         }
 
-        .image-carousel img {
-            width: 100%; /* 確保圖片填滿容器寬度 */
-            height: auto; /* 保持圖片比例 */
-            object-fit: cover; /* 確保圖片顯示完整 */
+        /* 單張圖片樣式 */
+        .image-container {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            overflow: hidden; /* 超出部分隱藏 */
+            border-radius: 12px; /* 圓角邊框 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加陰影效果 */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* 圖片樣式 */
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 保持圖片比例，填滿容器 */
+            transition: transform 0.3s ease;
+        }
+
+        /* 懸停效果 */
+        .image-container:hover {
+            transform: translateY(-5px); /* 輕微向上浮動 */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* 懸停時陰影加深 */
+        }
+
+        .image-container:hover img {
+            transform: scale(1.1); /* 圖片放大 1.1 倍 */
+        }
+
+        /* 圖片標籤（可選文字標籤） */
+        .image-label {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.6); /* 半透明背景 */
+            color: #fff;
+            font-size: 14px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5); /* 增加文字陰影，提高可讀性 */
         }
 
     </style>
-    <title>event details</title>
+    <title th:text="${vneName} + ' 場地詳情'">details</title>
     <!-- Bootstrap JS and Popper (optional, for modal functionality) -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" ></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -171,10 +203,12 @@
         <!-- 圖片輪播 -->
         <div class="image-carousel" x-show="venue.imgUrls && venue.imgUrls.length > 0">
             <template x-for="img in venue.imgUrls" :key="img">
-                <img :src="img" alt="場地圖片">
+                <div class="image-container">
+                    <img :src="img" alt="場地圖片" class="image-item">
+                    <div class="image-label">場地圖片</div>
+                </div>
             </template>
         </div>
-<!--           	<div th:replace="~{/components/carousel::carousel(@{${venue.imgUrls[0]}}, '480' ,true)}"></div>-->
         <!-- 場地資訊 -->
         <section class="flex-3 info-card-outline">
             <p>場地詳情 <span class="material-symbols-outlined">chevron_forward</span> <span x-text="venue.vneId"></span></p>

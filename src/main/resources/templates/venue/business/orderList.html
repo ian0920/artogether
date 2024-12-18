@@ -10,7 +10,8 @@
             href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
             rel="stylesheet"
     />
-
+    <link rel="stylesheet" th:href="@{/web_design/style/style_general.css}" />
+    <link rel="stylesheet" th:href="@{/web_design/style/style_homepage.css}" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <style>
@@ -111,7 +112,7 @@
     </style>
 
 <body>
-<div th:replace="~{/components/navbar_member::navbar('venue','order')}"></div>
+<div th:replace="~{/components/navbar_business::navbar('venue','order')}"></div>
 
 
 
@@ -151,7 +152,7 @@
             </div>
         </div>
         <h3 th:unless="${orders.size() != 0}" style="color: red;">尚未有訂單</h3>
-
+    </div>
 </main>
 
 <script>

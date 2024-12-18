@@ -18,6 +18,7 @@ public class VneOrderDTO implements Serializable {
     private Integer memId;
     private String memName;
     private String memPhone;
+    private String vneName;
     private String bizAddress;
     private Integer orderId;
     // 總價格
