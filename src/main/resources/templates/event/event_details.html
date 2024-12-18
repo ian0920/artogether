@@ -116,7 +116,12 @@
 	
 	<section class="flex-3 info-card-outline" style="margin-right:20px">
 		<p>活動詳情 <span class="material-symbols-outlined">chevron_forward</span> <span th:text="${evt.id}"></span></p>
+		<div class="row">
+			<div class="tag event">活動</div>
+			<div class="tag event" th:text="${evt.catalog}"></div>
+		</div>
 		<h2 id="eventName" th:text="${evt.name}"></h2>
+		<h4 th:text="${evt.location}"></h4>
 		
 		<div class="info-card-outline row" style="margin:20px 0" th:if="${evt.delayDate}">
 			<div class="info-card-horizontal flex-1" style="color:#e03f3f">
