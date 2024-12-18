@@ -70,7 +70,8 @@
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             overflow: hidden;
-            text-align: left;
+            text-align: center;
+            padding-bottom: 10px;
         }
 
         .product-card img {
@@ -79,21 +80,55 @@
             object-fit: cover;
         }
 
-        .product-card h3, .product-card p {
-            margin: 10px;
-        }
-
         .product-card h3 {
             color: #333;
             font-size: 16px;
+            margin: 10px 0;
         }
 
-        .product-card p {
-            color: #27ae60;
+        /* 狀態與價格樣式 */
+        .product-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .product-actions p {
+            margin: 5px 0;
             font-size: 14px;
+            color: #3498db; /* 藍色字體 */
         }
 
-        /* 回到首頁與分頁按鈕容器樣式 */
+        /* 購買按鈕樣式 */
+        .btn {
+            display: inline-block;
+            padding: 8px 10px;
+            font-size: 12px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .disabled-link {
+            display: inline-block;
+            padding: 8px 10px;
+            font-size: 12px;
+            background-color: #ccc;
+            color: white;
+            border-radius: 5px;
+            pointer-events: none;
+        }
+
+        /* 分頁樣式 */
         .pagination-with-back {
             display: flex;
             justify-content: center;
@@ -169,32 +204,25 @@
     <div class="product-card" th:each="product : ${products}">
         <img th:src="${product.img}" alt="商品圖片">
         <h3 th:text="${product.name}">商品名稱</h3>
-        <p th:text="'價格: ' + ${product.price} + ' 元'">價格</p>
-        <p class="product-status" th:text="${product.status == 1 ? '上架中' : '已下架'}">狀態</p>
-        
-        <!-- 原始程式碼：狀態為上架時顯示按鈕 -->
-        <a th:href="@{/product/productDetails/{id}(id=${product.id})}" 
-           class="btn" 
-           th:if="${product.status == 1}">趕快買!</a>
-
-        <!-- 新增：狀態為下架時顯示不可點擊的按鈕 -->
-        <span class="btn disabled-link" th:if="${product.status != 1}">買不到了QQ</span>
+        <div class="product-actions">
+    		<p th:text="'價格: ' + ${product.price} + ' 元'">價格</p>
+    		<p th:text="${product.status == 1 ? '上架中' : '已下架'}">狀態</p>
+    		<a th:href="@{/product/productDetails/{id}(id=${product.id})}" 
+       		class="btn" 
+       th:text="${product.status == 1 ? '趕快買!' : '買不到QQ，不過還是進來看看!'}"></a>
+</div>
     </div>
 </div>
 
 <!-- 回到首頁與分頁按鈕 -->
 <div class="pagination-with-back">
-    <!-- 回到首頁按鈕 -->
     <a href="/" class="back-home-button">回到首頁</a>
-    <!-- 分頁按鈕 -->
     <div class="pagination-wrapper">
         <nav aria-label="Page navigation">
             <ul class="custom-pagination">
                 <li th:classappend="${currentPage == 0} ? 'disabled'">
                     <a class="page-link"
-                       th:href="@{/product/productspage(page=${currentPage > 0 ? currentPage - 1 : 0}, size=${size ?: 5})}">
-                        上一頁
-                    </a>
+                       th:href="@{/product/productspage(page=${currentPage > 0 ? currentPage - 1 : 0}, size=${size ?: 5})}">上一頁</a>
                 </li>
                 <li th:each="pageNum : ${#numbers.sequence(0, (totalPages ?: 1) - 1)}"
                     th:classappend="${pageNum == currentPage} ? 'active'">
@@ -204,9 +232,7 @@
                 </li>
                 <li th:classappend="${currentPage == ((totalPages ?: 1) - 1)} ? 'disabled'">
                     <a class="page-link"
-                       th:href="@{/product/productspage(page=${currentPage + 1}, size=${size ?: 5})}">
-                        下一頁
-                    </a>
+                       th:href="@{/product/productspage(page=${currentPage + 1}, size=${size ?: 5})}">下一頁</a>
                 </li>
             </ul>
         </nav>
@@ -217,36 +243,6 @@
 <footer th:include="homepage::footer"></footer>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var elNavItemDiscover = document.querySelector("div.navbar-item");
-        var elDivNavMenuBox = document.querySelector("div.nav-menu-box");
-        var elDivNavUserBox = document.querySelector("div.user_div");
-        var elDivNavMenu = document.querySelector("div.nav-menu");
-        var elDivUserMenu = document.querySelector("div.user-menu-box");
-
-        if (elNavItemDiscover && elDivNavMenuBox) {
-            elNavItemDiscover.addEventListener("mouseenter", function () {
-                if (!elDivNavMenuBox.classList.contains("open")) {
-                    elDivNavMenuBox.classList.add("open");
-                }
-            });
-            elDivNavMenu.addEventListener("mouseleave", function () {
-                elDivNavMenuBox.classList.remove("open");
-            });
-        }
-
-        if (elDivNavUserBox && elDivUserMenu) {
-            elDivNavUserBox.addEventListener("mouseenter", function () {
-                if (!elDivUserMenu.classList.contains("open")) {
-                    elDivUserMenu.classList.add("open");
-                }
-            });
-            elDivUserMenu.addEventListener("mouseleave", function () {
-                elDivUserMenu.classList.remove("open");
-            });
-        }
-    });
-
     function searchProducts() {
         const query = document.getElementById('searchBox').value.toLowerCase();
         const cards = document.querySelectorAll('.product-card');
