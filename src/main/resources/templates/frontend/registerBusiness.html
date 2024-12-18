@@ -18,16 +18,16 @@
 	<h2>註冊商家表單</h2>
 			<fieldset>
 				<label class="label-input">商家名稱
-					<input type="text" th:field="*{name}" class="solo">
+					<input type="text" th:field="*{name}" class="solo" id="bm_name">
 				</label>
 				<label class="label-input">商家email
-					<input type="email" th:field="*{email}" class="solo">
+					<input type="email" th:field="*{email}" class="solo" id="bm_email">
 				</label>
 				<label class="label-input">商家地址
-					<input type="text" th:field="*{addr}" class="solo">
+					<input type="text" th:field="*{addr}" class="solo" id="bm_addr">
 				</label>
 				<label class="label-input">統一編號
-					<input type="text" th:field="*{taxId}" class="solo">
+					<input type="text" th:field="*{taxId}" class="solo" id="bm_taxId">
 				</label>
 				<div class="row">
 					<button type="button" class="button-secondary button-big flex-1" onclick="history.back()">取消</button>
@@ -38,5 +38,47 @@
 		</form>
 	</main>
 
+
+<script type="text/javascript">
+
+document.querySelector('form').addEventListener('submit', function (e) {
+	if(!validateData()){
+		e.preventDefault()
+		return}
+
+});
+
+// ==================資料驗證=====================
+function validateData(){
+var isPassed=true;
+var el_name=document.querySelector("#bm_name");
+var el_addr=document.querySelector("#bm_addr");
+var el_email=document.querySelector("#bm_email");
+var el_taxId=document.querySelector("#bm_taxId");
+
+if(el_name.value===""){
+	alert("請給我去輸入名稱")
+	isPassed=false
+	return
+}
+if(el_email.value===""){
+	alert("請給我去輸入email")
+	isPassed=false
+	return
+}
+if(el_addr.value===""){
+	alert("請給我去輸入地址")
+	isPassed=false
+	return
+}
+if(el_taxId.value===null){
+	alert("請給我去輸入統一編號")
+	isPassed=false
+	return
+}
+
+return isPassed
+}
+</script>
 </body>
 </html>

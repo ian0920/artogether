@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 
 import javax.servlet.http.HttpSession;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -43,7 +45,7 @@ public class Wynn_PlatformController {
 	}
 	
 	@GetMapping("/search_events")
-	public String searchEvents(@RequestParam Map<String, String> searchParams, Model model) {
+	public String searchEvents(@RequestParam HashMap<String, String> searchParams, Model model) {
 		// 定義分頁與排序的參數名稱
 	    List<String> paginationAndSortingKeys = List.of("page", "size", "sortField", "sortDirection");
 
@@ -78,7 +80,7 @@ public class Wynn_PlatformController {
 //			model.addAttribute("errors", "權限不足");
 //			return "/error";
 //		}
-		return "redirect:/platform/search_bmemb?/status=1";
+		return "redirect:/platform/search_bmemb?status=0";
 	}
 	
 	@GetMapping("/search_bmemb")
@@ -105,7 +107,9 @@ public class Wynn_PlatformController {
 	    // 呼叫服務層處理
 		Page p = businessService.searchBMembs(searchCriteria,pageRequest);
 
+		System.out.println(searchParams);
 		model.addAttribute("searchParams", searchParams);
+		
 		model.addAttribute("page", p);
 		return "platform/bMemberList";
 	}
