@@ -118,6 +118,7 @@
 <main>
     <div class="container">
         <h2 class="table-title">場地訂單</h2>
+
         <div th:if="${orders.size() != 0}" class="accordion">
             <div th:each="order : ${orders}" class="accordion-item">
                 <div class="accordion-header" onclick="toggleAccordion(this)">
@@ -151,12 +152,14 @@
             </div>
         </div>
         <h3 th:unless="${orders.size() != 0}" style="color: red;">尚未有訂單</h3>
+
     </div>
 </main>
 
 
 <!-- SweetAlert2 Library -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
 <script>
 
     //手風琴開合

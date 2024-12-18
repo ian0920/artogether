@@ -56,7 +56,9 @@ public class VenueController {
     public String orderMemList(Model model, @PathVariable Integer vneId) {
         List<VneOrderDTO> memOrderList = vneOrderService.getVneOrderList(vneId);
         model.addAttribute("orders", memOrderList);
+
         return "/venue/business/orderList";
+
     }
     //新增場地頁面
     @GetMapping("/addVenue")

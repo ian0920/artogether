@@ -116,7 +116,12 @@
 	
 	<section class="flex-3 info-card-outline" style="margin-right:20px">
 		<p>活動詳情 <span class="material-symbols-outlined">chevron_forward</span> <span th:text="${evt.id}"></span></p>
+		<div class="row">
+			<div class="tag event">活動</div>
+			<div class="tag event" th:text="${evt.catalog}"></div>
+		</div>
 		<h2 id="eventName" th:text="${evt.name}"></h2>
+		<h4 th:text="${evt.location}"></h4>
 		
 		<div class="info-card-outline row" style="margin:20px 0" th:if="${evt.delayDate}">
 			<div class="info-card-horizontal flex-1" style="color:#e03f3f">
@@ -156,7 +161,7 @@
 	</section>
 	<aside class="info-card-outline flex-1" style="height:min-content;">
 		<h3 th:text="${evt.businessMember.name}"></h3>
-		<button class="button-icon-big" th:onclick="location.href='/member/sendMessage?bmId=[[${evt.businessMember.id}]]&mId=[[${session.member}]]'"><span class="material-symbols-outlined">chat</span></button>
+		<button class="button-icon-big" th:onclick="sendMessage()"><span class="material-symbols-outlined">chat</span></button>
 		<p th:text="${evt.businessMember.addr}"></p>
 
 		<div class="row" th:if="${evt.status == 1 || evt.status == 2}">
@@ -246,6 +251,10 @@
 		    memberId: memberId
 		};
 	var trackEvt = async function() {
+		if(![[${session.member}]]){
+			alert("請先登入")
+			return
+		}
 	    try {
 	        let response = await fetch("/api/event/toggleTrack", {
 	            method: "POST",
@@ -266,6 +275,14 @@
 	        console.error("Error:", error);
 	        alert("請求發送失敗，請稍後再試。");
 	    }
+	}
+	
+	function sendMessage(){
+		if(![[${session.member}]]){
+			alert("請先登入")
+			return
+		}
+		location.href='/member/sendMessage?bmId=[[${evt.businessMember.id}]]&mId=[[${session.member}]]'
 	}
 </script>
 
