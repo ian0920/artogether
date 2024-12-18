@@ -205,10 +205,14 @@
 
                 <!-- 按鈕區域 -->
                 <div class="btn-container">
-                    <form action="/cart/add" method="post">
+                    <!-- 判斷 product.status -->
+                    <form th:if="${product.status == 1}" action="/cart/add" method="post">
                         <input type="hidden" name="productId" th:value="${product.id}" />
                         <button type="submit" class="btn btn-primary">加入購物車</button>
                     </form>
+                    <button th:if="${product.status != 1}" type="button" class="btn btn-outline-secondary" disabled>
+                        無法供應
+                    </button>
                     <form action="/prdTrack/addTrack" method="post">
                         <input type="hidden" name="productId" th:value="${product.id}" />
                         <button type="submit" class="btn btn-outline-secondary">加入收藏</button>
