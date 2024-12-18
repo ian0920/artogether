@@ -73,6 +73,7 @@
           </div>
           <div class="card-info">
             <p th:text="${topThree.description.substring(0,35)}+ ' ...'" ></p>
+            <div style="font-size: 12px;font-style: italic; display: inline-block" th:text="'報名進度：' + ${#numbers.formatDecimal((topThree.getEnrolled()*100/topThree.getMaximum()) , 2, 1)}  + '%'">報名進度：</div>
             <div class="progress">
               <div
                       class="progress-bar bgcolor-event"
