@@ -90,15 +90,9 @@
         <input type="text" id="orderId" th:field="*{prdOrder.id}" required>
         <div id="orderIdError" class="error"></div>
 
-       <label for="productName">商品名稱：</label>
-		<select id="productName" name="productName">
-		    <option th:each="item : ${prdList}" 
-		            th:value="${item.id}" 
-		            th:text="${item.prdName}">
-		        商品名稱
-		    </option>
-		</select>
-
+        <label for="prdName">商品名稱</label>
+        <input type="text" id="prdName" name="prdName" required>
+        <div id="prdNameError" class="error"></div>
 
         <label for="reason">退換貨原因</label>
         <textarea id="reason" name="reason"></textarea>
