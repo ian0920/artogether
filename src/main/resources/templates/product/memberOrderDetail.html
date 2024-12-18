@@ -5,10 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>訂單詳情</title>
     <link rel="stylesheet" th:href="@{/web_design/style/style_business.css}" />
-    <link
-            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
-            rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
     <style>
         /* 主內容區域美化 */
         main {
@@ -61,32 +58,6 @@
             background-color: #f1f1f1;
         }
 
-        /* 資訊區塊 (雙欄設計) */
-        .info, .paid {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            gap: 15px;
-            background-color: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .info h4, .paid h4 {
-            flex: 0 0 48%; /* 雙欄設計 */
-            font-size: 16px;
-            margin: 5px 0;
-            font-weight: normal;
-            color: #555;
-        }
-
-        .info span, .paid span {
-            font-weight: bold;
-            color: #000000;
-        }
-
         /* 商品圖片 */
         .img {
             width: 100px;
@@ -96,14 +67,59 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
-        /* 背景圖片美化 */
-        main img {
-            display: block;
-            margin: 20px auto;
-            max-width: 100%;
-            border-radius: 10px;
+        /* 收件人資訊美化 */
+        .info {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 20px;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
+        .info h4 {
+            flex: 0 0 48%; /* 雙欄設計 */
+            margin: 0;
+            font-size: 16px;
+            color: #555;
+        }
+
+        .info span {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        /* 付款資訊 */
+        .paid {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .paid h4 {
+            margin: 10px 0;
+            color: #555;
+        }
+
+        /* 申請退換貨按鈕 */
+        .apply-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .apply-button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -112,6 +128,13 @@
 <main>
     <h1>訂單詳情</h1>
     <h3>訂單編號：<span th:text="${orderId}"></span></h3>
+
+    <!-- 新增跳轉至退換貨記錄頁面按鈕，放置於商品名稱表格上方 -->
+    <div style="text-align: right; margin-bottom: 10px;">
+        <form th:action="@{/product/user_return_list}" method="get">
+            <button type="submit" class="apply-button">查看退換貨記錄</button>
+        </form>
+    </div>
 
     <!-- 訂單詳情 -->
     <div th:if="${orderDetail}">
@@ -122,6 +145,7 @@
                 <th>數量</th>
                 <th>價格</th>
                 <th>圖片</th>
+                <th>操作</th> <!-- 新增操作欄 -->
             </tr>
             </thead>
             <tbody>
@@ -129,7 +153,17 @@
                 <td th:text="${detail.product.name}"></td>
                 <td th:text="${detail.qty}"></td>
                 <td th:text="${detail.price}"></td>
-                <td><img class="img" th:src="${detail.product.img}" alt="商品圖片"/></td>
+                <td>
+                    <img class="img" th:src="${detail.product.img}" alt="商品圖片"/>
+                </td>
+                <!-- 新增退換貨按鈕 -->
+                <td>
+                    <form th:action="@{/product/add}" method="get">
+                        <input type="hidden" name="productId" th:value="${detail.product.id}" />
+                        <input type="hidden" name="orderId" th:value="${orderId}" />
+                        <button type="submit" class="apply-button">申請退換貨</button>
+                    </form>
+                </td>
             </tr>
             </tbody>
         </table>
@@ -152,8 +186,6 @@
         <h4>電話：<span th:text="${order.orderPhone}"></span></h4>
         <h4>出貨時間：<span th:text="${order.shipDate}"></span></h4>
     </div>
-
 </main>
-
 </body>
 </html>

@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 
 public class PrdOrderDetailDto {
-	private Integer productId;    // 商品 ID
-    private String productName;   // 商品名稱
-    private Integer qty;          // 數量
-    private Integer price;        // 單價
-	
+	private Integer productId;    
+    private String productName;   
+    private Integer qty;          
+    private Integer price;       
+	private Integer orderId;
 
 }

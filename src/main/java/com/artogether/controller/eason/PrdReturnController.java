@@ -14,6 +14,7 @@ import com.artogether.product.prd_return.PrdReturn;
 import com.artogether.product.prd_return.PrdReturnDto;
 
 import java.sql.Timestamp;
+import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -52,7 +53,7 @@ public class PrdReturnController {
     // 新增退換貨頁面
     // ==============================
     @GetMapping("/add")
-    public String showAddReturnForm(HttpSession session, Model model) {
+    public String showAddReturnForm(@RequestParam("productId")  Integer productId ,HttpSession session, Model model) {
     	Integer memberId = (Integer) session.getAttribute("member");
     	
     	if (memberId == null) {
@@ -64,9 +65,13 @@ public class PrdReturnController {
             throw new IllegalStateException("未登入一般會員");
         }
 
+        PrdReturnDto prdReturnDto = newPrdReturnService.findPrdReturnById(productId);
+        List<PrdReturnDto> singleProductList = Collections.singletonList(prdReturnDto);
+        
         model.addAttribute("member", memberId);
         model.addAttribute("prdReturn", new PrdReturn());
-
+        model.addAttribute("prdList", singleProductList);
+        
         return "product/add";
     }
 
@@ -83,7 +88,7 @@ public class PrdReturnController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("message", "新增失敗！" + e.getMessage());
         }
-        return "redirect:/product/list";
+        return "redirect:/product/user_return_list";
     }
 
     // ==============================
@@ -234,7 +239,7 @@ public String addPrdReturn(@ModelAttribute PrdReturn prdReturn,
     } catch (Exception e) {
         redirectAttributes.addFlashAttribute("message", "退換貨申請失敗！" + e.getMessage());
     }
-    return "redirect:/product/list";
+    return "redirect:/product/user_return_list";
 }
 
 
