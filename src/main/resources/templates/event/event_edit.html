@@ -63,7 +63,7 @@
 				
 				<div class="row">
 					<label class="label-input flex-auto">人數上限
-						<input type="number" th:field="*{maximum}" class="solo">
+						<input type="number" th:field="*{maximum}" class="solo" id="e_maximum">
 					</label>
 					<label class="label-input flex-auto">人數下限
 						<input type="number" th:field="*{minimum}" class="solo">
@@ -229,6 +229,7 @@
 		var el_location=document.querySelector("#e_location");
 		var el_startDate=document.querySelector("#e_startDate");
 		var el_catalog=document.querySelector("#e_catalog");
+		var el_maximum=document.querySelector("#e_maximum");
 		
 		if(el_name.value===""){
 			alert("請給我去輸入活動名稱")
@@ -247,6 +248,11 @@
 		}
 		if(el_startDate.value===null){
 			alert("請給我去輸入活動日期")
+			isPassed=false
+			return
+		}
+		if(el_maximum.value===""){
+			alert("請給我去輸入人數上限")
 			isPassed=false
 			return
 		}
