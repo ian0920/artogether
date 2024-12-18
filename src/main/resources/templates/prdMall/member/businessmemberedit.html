@@ -50,6 +50,13 @@
             cursor: not-allowed;
         }
 
+        .error {
+            color: red;
+            font-size: 12px;
+            margin-top: -12px;
+            margin-bottom: 12px;
+        }
+
         button {
             display: block;
             width: 100%;
@@ -68,26 +75,81 @@
     </style>
 </head>
 <body>
-    <form th:action="@{/prdMall/member/businessmemberedit}" th:object="${member}" method="post">
+    <form id="editForm" th:action="@{/prdMall/member/businessmemberedit}" th:object="${member}" method="post">
         <h1>編輯會員</h1>
         <input type="hidden" th:field="*{id}"/>
 
         <label>名稱：</label>
-        <input type="text" th:field="*{name}" /><br/>
+        <input type="text" id="name" th:field="*{name}" />
+        <div id="nameError" class="error"></div>
 
         <label>Email：</label>
-        <input type="text" th:field="*{email}" /><br/>
+        <input type="text" id="email" th:field="*{email}" />
+        <div id="emailError" class="error"></div>
 
         <label>地址：</label>
-        <input type="text" th:field="*{addr}" /><br/>
+        <input type="text" id="addr" th:field="*{addr}" />
+        <div id="addrError" class="error"></div>
 
         <label>統編：</label>
-        <input type="text" th:field="*{taxId}" /><br/>
+        <input type="text" id="taxId" th:field="*{taxId}" />
+        <div id="taxIdError" class="error"></div>
 
         <label>狀態：</label>
         <input type="text" th:value="${member.status == 0 ? '申請中' : (member.status == 1 ? '通過' : '停權')}" readonly /><br/>
 
         <button type="submit">更新</button>
     </form>
+
+    <script>
+        document.getElementById("editForm").addEventListener("submit", function(event) {
+            let valid = true; // 標記是否驗證通過
+
+            // 檢查名稱
+            const name = document.getElementById("name");
+            const nameError = document.getElementById("nameError");
+            if (name.value.trim() === "") {
+                nameError.textContent = "名稱不得為空！";
+                valid = false;
+            } else {
+                nameError.textContent = "";
+            }
+
+            // 檢查 Email
+            const email = document.getElementById("email");
+            const emailError = document.getElementById("emailError");
+            if (email.value.trim() === "") {
+                emailError.textContent = "Email 不得為空！";
+                valid = false;
+            } else {
+                emailError.textContent = "";
+            }
+
+            // 檢查地址
+            const addr = document.getElementById("addr");
+            const addrError = document.getElementById("addrError");
+            if (addr.value.trim() === "") {
+                addrError.textContent = "地址不得為空！";
+                valid = false;
+            } else {
+                addrError.textContent = "";
+            }
+
+            // 檢查統編
+            const taxId = document.getElementById("taxId");
+            const taxIdError = document.getElementById("taxIdError");
+            if (taxId.value.trim() === "") {
+                taxIdError.textContent = "統編不得為空！";
+                valid = false;
+            } else {
+                taxIdError.textContent = "";
+            }
+
+            // 如果有錯誤，阻止表單提交
+            if (!valid) {
+                event.preventDefault();
+            }
+        });
+    </script>
 </body>
 </html>

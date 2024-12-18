@@ -214,6 +214,12 @@
     <h1>訂單詳情</h1>
     <h3>訂單編號：<span th:text="${prdOrder.id}"></span></h3>
 
+<div style="text-align: right; margin-bottom: 20px;">
+    <a href="/product/list" style="text-decoration: none;">
+        <button>查看訂單退換貨</button>
+    </a>
+</div>
+
     <!-- 錯誤提示 -->
     <div th:if="${message}">
         <p th:text="${message}"></p>
