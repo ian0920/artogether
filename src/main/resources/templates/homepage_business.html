@@ -3,24 +3,176 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Document</title>
+  <title>藝起 Artogether</title>
   <link rel="stylesheet" th:href="@{/web_design/style/style_business.css}" />
   <link
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
     rel="stylesheet"
   />
 </head>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    perspective: 1000px;
+  }
+  .landing-container {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 4rem 3rem;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+    backdrop-filter: blur(10px);
+    transform: rotateX(10deg);
+    transition: all 0.3s ease;
+  }
+  .landing-container:hover {
+    transform: rotateX(0deg) scale(1.05);
+    box-shadow: 0 20px 45px rgba(0,0,0,0.1);
+  }
+  .company-name {
+    font-size: calc(3rem + 3vw);
+    background: linear-gradient(45deg, #2c95c6 0%, #2575fc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  .tagline {
+    color: #6b7280;
+    font-size: 1.2rem;
+    max-width: 500px;
+    margin: 0 auto;
+    opacity: 0.7;
+  }
+
+  /* Animated Background Elements */
+  .bg-shape {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.2;
+    z-index: -1;
+    animation: float 8s ease-in-out infinite alternate;
+  }
+  .bg-shape-1 {
+    width: 300px;
+    height: 300px;
+    background: #6a11cb;
+    top: -10%;
+    left: -10%;
+  }
+  .bg-shape-2 {
+    width: 250px;
+    height: 250px;
+    background: #2575fc;
+    bottom: -10%;
+    right: -10%;
+    animation-delay: -4s;
+  }
+  @keyframes float {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(50px); }
+  }
+
+  /* Responsive Design */
+  @media (max-width: 600px) {
+    .landing-container {
+      width: 90%;
+      padding: 2rem 1rem;
+    }
+    .company-name {
+      font-size: calc(2rem + 3vw);
+    }
+    .tagline {
+      font-size: 1rem;
+    }
+  }
+</style>
+<!--<style>-->
+<!--  /* Reset default margins and paddings */-->
+<!--  * {-->
+<!--    margin: 0;-->
+<!--    padding: 0;-->
+<!--    box-sizing: border-box;-->
+<!--    font-family: Arial, sans-serif;-->
+<!--  }-->
+
+<!--  /* Full Page Styling */-->
+<!--  body {-->
+<!--    height: 100vh;-->
+<!--    display: flex;-->
+<!--    align-items: center;-->
+<!--    justify-content: center;-->
+<!--    color: #fff;-->
+<!--    overflow: hidden;-->
+<!--    text-align: center;-->
+<!--  }-->
+
+<!--  /* Company Name Styling */-->
+<!--  .company-name {-->
+<!--    font-size: 5vw; /* Responsive font size */-->
+<!--    color: #2c95c6;-->
+<!--    font-weight: 700;-->
+<!--    letter-spacing: 4px;-->
+<!--    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);-->
+<!--    animation: fadeInDown 2s ease;-->
+<!--  }-->
+
+<!--  /* Cool Subtle Animation */-->
+<!--  @keyframes fadeInDown {-->
+<!--    from {-->
+<!--      opacity: 0;-->
+<!--      transform: translateY(-50px);-->
+<!--    }-->
+<!--    to {-->
+<!--      opacity: 1;-->
+<!--      transform: translateY(0);-->
+<!--    }-->
+<!--  }-->
+<style>
+  /* Subtle Footer */
+  .footer {
+    position: absolute;
+    bottom: 10px;
+    font-size: 1rem;
+    opacity: 0.7;
+  }
+
+</style>
+
+
+<!--  /* Responsive Design for Small Screens */-->
+<!--  @media (max-width: 600px) {-->
+<!--    .company-name {-->
+<!--      font-size: 8vw;-->
+<!--    }-->
+<!--    .footer {-->
+<!--      font-size: 0.8rem;-->
+<!--    }-->
+<!--  }-->
+<!--</style>-->
 <body>
 
 <!-- 導航 -->
 <div th:replace="~{/components/navbar_business::navbar('info','')}"></div>
   <!-- main區塊 -->
   <main>
-    <h3>hiiiiiiiiii</h3>
-    <p>
-      ggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
-    </p>
-    <img src="./asset/images/bgimg.png" alt="" />
+    <div class="bg-shape bg-shape-1"></div>
+    <div class="bg-shape bg-shape-2"></div>
+    <div>
+      <div class="company-name" th:text="${#session.getAttribute('presentBusinessMember').name}">Awesome Company</div>
+      <div class="footer">藝起 Artogether | Since 2024</div>
+    </div>
   </main>
 
 

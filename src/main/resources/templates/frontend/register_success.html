@@ -6,16 +6,16 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script th:inline="javascript">
         document.addEventListener("DOMContentLoaded", function () {
-            const message = /*[[${message}]]*/ "連線異常";
-            const messageType = message.includes('順利啟用') || message.includes('完成驗證') ? 'success' : 'error'
+
 
             Swal.fire({
-                title: '會員驗證',
-                text: message,
-                icon: messageType,
+                title: '註冊成功',
+                text: '請至信箱收取驗證信件',
+                icon: icon,
                 confirmButtonText: 'OK',
                 confirmButtonColor: '#2c95c6',
             }).then(() => {
+                //預設返回上一頁，如有要設定可以自行調整
                 window.location.href = "/";
             });
         });
@@ -33,10 +33,7 @@
     </style>
 </head>
 <body>
-    <div>
-<!--        <p>背景之後再include設計好的版型進去</p>-->
-
-    </div>
-
+<div>
+</div>
 </body>
 </html>
