@@ -12,7 +12,48 @@
 	rel="stylesheet" />
 	
 <style type="text/css">
+.custom-pagination {
+      display: flex;
+      justify-content: center;
+      list-style-type: none;
+      padding: 0;
+      margin: 10px;
+    }
 
+    .custom-pagination li {
+      margin: 0 5px;
+    }
+
+    .custom-pagination .page-link{
+      display: inline-block;
+      padding: 8px 16px;
+      text-decoration: none;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: #f8f9fa;
+      color: #333;
+      transition: all 0.3s;
+    }
+
+    .custom-pagination .page-link:hover{
+      background-color: #2c95c6;
+      color: white;
+      border-color: #2c95c6;
+    }
+
+    .custom-pagination .page-link.active {
+      background-color: #2c95c6;
+      color: white;
+      border-color: #2c95c6;
+      pointer-events: none;
+    }
+
+    .custom-pagination .page-link.disabled {
+      background-color: #e9ecef;
+      color: #6c757d;
+      border-color: #ddd;
+      pointer-events: none;
+    }
 </style>
 <title>活動狀態管理-平台</title>
 </head>
@@ -113,6 +154,10 @@
                 </nav>
             </div>
             <div id="layoutSidenav_content">
+            
+       
+
+       
 <main>
 	<h4>搜尋欄</h4>
 	<form action="#" method="get">
@@ -129,7 +174,7 @@
 		<label class="label-input">狀態
 <!-- 			<input name="status" type="number" class="solo"> -->
 				<select class="solo" name="status">
-					<option >請選擇狀態</option>
+					<option value="">請選擇狀態</option>
 					<option value="0">待審核</option>
 					<option value="1">已上架</option>
 					<option value="2">延期</option>
@@ -179,7 +224,45 @@
 			</tr>
 		</tbody>
 	</table>
-	
+
+
+<!-- 	分頁 -->
+<div class="pagination-wrapper">
+    <nav aria-label="Page navigation">
+        <ul class="custom-pagination">
+            <!-- Previous Button -->
+            <li>
+                <a class="page-link"
+                   th:href="@{/platform/search_events(id=${id}, name=${name}, location=${location}, status=${status}, page=${page.number - 1}, size=${page.size})}"
+                   th:classappend="${page.number == 0} ? 'disabled'">
+                    上一頁
+                </a>
+            </li>
+
+            <!-- Page Numbers -->
+            <li th:if="${page.totalPages > 1}" th:each="pageNum : ${#numbers.sequence(0, page.totalPages - 1)}">
+                <a class="page-link"
+                   th:href="@{/platform/search_events(id=${id}, name=${name}, location=${location}, status=${status}, page=${pageNum}, size=${page.size})}"
+                   th:classappend="${pageNum == page.number} ? 'active'"
+                   th:text="${pageNum + 1}">
+                </a>
+            </li>
+            <li th:if="${page.totalPages == 1}">
+                <span class="page-link active">1</span>
+            </li>
+
+            <!-- Next Button -->
+            <li>
+                <a class="page-link"
+                   th:href="@{/platform/search_events(id=${id}, name=${name}, location=${location}, status=${status}, page=${page.number + 1}, size=${page.size})}"
+                   th:classappend="${page.number == page.totalPages - 1} ? 'disabled'">
+                    下一頁
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
 </main>	
 </div>
 	<script type="text/javascript" th:inline="javascript">
