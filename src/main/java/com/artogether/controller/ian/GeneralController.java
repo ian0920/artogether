@@ -6,11 +6,14 @@ import com.artogether.common.business_perm.BusinessPerm;
 import com.artogether.common.business_perm.BusinessPermService;
 import com.artogether.common.member.Member;
 import com.artogether.common.member.MemberService;
+import com.artogether.event.dto.EventDTO;
 import com.artogether.event.event.Event;
 import com.artogether.event.event.EventService;
+import com.artogether.event.evt_img.EvtImgRepo;
 import com.artogether.product.product.Product;
 import com.artogether.product.product.ProductService;
-
+import com.artogether.venue.venue.VenueService;
+import com.artogether.venue.vnedto.VneCardDTO;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -43,6 +46,11 @@ public class GeneralController {
     
     @Autowired
     private ProductService productService;
+    @Autowired
+    private EvtImgRepo evtImgRepo;
+
+    @Autowired
+    private VenueService venueService;
 
     //拜訪首頁
     @GetMapping("/")
@@ -50,11 +58,26 @@ public class GeneralController {
 
         //精選活動呈現
         List<Event> topThreeEvent = eventService.findAllEvents("enrolledR").subList(0,3);
-        model.addAttribute("topThreeEvents", topThreeEvent);
+        List<EventDTO> topThreeEventDTOs = new ArrayList<>();
+        topThreeEvent.forEach(event -> {
+            evtImgRepo.findAllByEvent_Id(event.getId()).stream().findFirst().ifPresent( img ->
+                    topThreeEventDTOs.add(EventDTO.eventToDTO(event,img))
+            );
+        });
+
+
+
+        model.addAttribute("topThreeEvents", topThreeEventDTOs);
         
         //精選商城呈現
         List<BusinessMember> randomVendors = businessService.getRandomBusinessMembers(); 
 	    model.addAttribute("vendors", randomVendors);
+
+        //精選場地呈現
+
+        List<VneCardDTO> vneCardDTOList =  venueService.getAllVneCard();
+
+        model.addAttribute("vneCardDTOs", vneCardDTOList.subList(0,3));
 	    
 	    //精選商品呈現
 	    	   
@@ -84,7 +107,10 @@ public class GeneralController {
     public String register (@Valid Member member, Model model) throws BindException {
 
         memberService.register(member);
-        return "Test_success";
+        Map<String, String> message = new HashMap<>();
+        message.put("ok", "註冊成功");
+        model.addAttribute("message", message);
+        return "frontend/register_success";
     }
 
     //帳號啟用

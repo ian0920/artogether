@@ -194,7 +194,7 @@
   <div th:if="${events.getTotalElements() > 0}" class="event-card-container">
   <div class="showcase-cards-box">
     <div th:each="event:${events}" th:onclick="|location.href='/event/details/' + ${event.id}|" clickable class="showcases-card card event">
-      <img src="./asset/images/bgimg.png" alt="" />
+      <img th:src="@{/event/DBImgReader/} + ${event.imgId}" alt="" />
       <div class="card-content">
         <div class="card-title">
           <div class="tag event" th:text="${event.catalog}">活動</div>

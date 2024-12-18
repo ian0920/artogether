@@ -1,13 +1,16 @@
 package com.artogether.event.event;
 
+import com.artogether.event.dto.EventDTO;
+import com.artogether.event.evt_img.EvtImgRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -18,11 +21,14 @@ public class EventService {
 	@Autowired
 	private EventRepo eventRepo;
 
+	@Autowired
+	private EvtImgRepo evtImgRepo;
+
 	public Event findById(int id) {
 		return eventRepo.findById(id).orElse(null);
 	}
 
-	public Page<Event> findAllEventsAndPagination(String sortBy, int page, int size, String location, String catalog, String status) {
+	public Page<EventDTO> findAllEventsAndPagination(String sortBy, int page, int size, String location, String catalog, String status) {
 
 		Comparator<Event> finalComparator = null;
 
@@ -96,10 +102,16 @@ public class EventService {
 
 		//篩選掉活動狀態為4 審核被拒、傳入comparator
 		List<Event> sortedEventList = rawEventList.stream().filter(e-> e.getStatus() != (byte) 4 ).sorted(finalComparator).toList();
+		List<EventDTO> eventDTOs = new ArrayList<>();
+		sortedEventList.forEach(event -> {
+			evtImgRepo.findAllByEvent_Id(event.getId()).stream().findFirst().ifPresent( img ->
+					eventDTOs.add(EventDTO.eventToDTO(event,img))
+			);
+		});
 
 		int start = page * size;
-		int end = Math.min(start + size, sortedEventList.size());
-		List<Event> paginatedEventList = sortedEventList.subList(start, end);
+		int end = Math.min(start + size, eventDTOs.size());
+		List<EventDTO> paginatedEventList = eventDTOs.subList(start, end);
 
 		Pageable pageable = PageRequest.of(page,size);
 		return new PageImpl<>(paginatedEventList, pageable, sortedEventList.size());

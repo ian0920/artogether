@@ -1,7 +1,8 @@
 package com.artogether.controller.GC;
 
-import com.artogether.common.member.Member;
-import com.artogether.product.prd_catalog.PrdCatalog;
+
+import com.artogether.common.business_member.BusinessMember;
+import com.artogether.controller.GC.model.BusinessDTO;
 import com.artogether.product.prd_img.PrdImg;
 import com.artogether.product.prd_img.PrdImgRepository;
 import com.artogether.product.prd_order.model.PrdOrder;
@@ -13,12 +14,10 @@ import com.artogether.product.prd_order_detail.PrdOrderDetailService;
 import com.artogether.product.product.Product;
 import com.artogether.product.product.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
 import java.sql.Timestamp;
@@ -28,24 +27,21 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping ("/order")
+@RequestMapping("/order")
 public class OrderController {
     private final PrdOrderService prdOrderService;
-    private  final PrdOrderDetailService prdOrderDetailService;
     private final PrdOrderDetailRepository prdOrderDetailRepository;
-    private final PrdOrderRepository prdOrderRepository;
-    private final ProductService productService;
 
     @Autowired
     private PrdImgRepository prdImgRepository;
 
     @Autowired
+    private BusinessWEIService businessService;
+
+    @Autowired
     public OrderController(PrdOrderService prdOrderService, PrdOrderDetailService prdOrderDetailService, PrdOrderDetailRepository prdOrderDetailRepository, PrdOrderRepository prdOrderRepository, ProductService productService) {
         this.prdOrderService = prdOrderService;
-        this.prdOrderDetailService = prdOrderDetailService;
         this.prdOrderDetailRepository = prdOrderDetailRepository;
-        this.prdOrderRepository = prdOrderRepository;
-        this.productService = productService;
     }
 
     @GetMapping("/page")
@@ -53,7 +49,7 @@ public class OrderController {
 
         Integer memberId = (Integer) session.getAttribute("member");
         System.out.println("Session memberId: " + memberId);
-        if(memberId == null) {
+        if (memberId == null) {
             return "redirect:/login";
         }
 
@@ -99,35 +95,52 @@ public class OrderController {
 
 
     // 以下為測試
+//    @GetMapping("/businessOrder")
+//    public String businessOrder(Model model) {
+//
+//
+//        List<PrdOrder> orderList = prdOrderService.getOrderByMemberId(8);
+//        if (orderList == null) {
+//            orderList = new ArrayList<>();
+//        }
+//
+//
+//        model.addAttribute("orderList", orderList);
+//
+//
+//        return "product/businessOrder";
+//    }
     @GetMapping("/businessOrder")
-    public String businessOrder(Model model) {
-
-
-        List<PrdOrder> orderList = prdOrderService.getOrderByMemberId(8);
-        if (orderList == null) {
-            orderList = new ArrayList<>();
+    public String getBusinessDTOListByBs(HttpSession session, Model model) {
+        BusinessMember businessId = (BusinessMember) session.getAttribute("presentBusinessMember");
+        System.out.println("Session businessId: " + businessId);
+        if (businessId != null && businessId.getId() != null) {
+            List<BusinessDTO> businessDTOList = businessService.getOrderByBusinessId(businessId.getId());
+            model.addAttribute("businessDTOList", businessDTOList);
+        } else {
+            System.out.println("businessId is null");
         }
 
-
-        model.addAttribute("orderList", orderList);
-
-
-        return "product/businessOrder";
+        return "/product/businessOrder";
     }
+
 
     @GetMapping("/businessOrderDetail/{orderId}")
     public String businessOrderDetail(@PathVariable Integer orderId, Model model, HttpSession session) {
-        PrdOrder order = prdOrderService.getOrderById(orderId);
-        if (order == null) {
-            // 如果订单不存在，重定向或返回错误页面
-            return "redirect:/error";
-        }
-        List<PrdOrderDetail> orderDetail = prdOrderDetailRepository.findByPrdOrder(order);
-        orderDetail.forEach((item -> {
-            setProductsImg(item.getProduct());
-        }));
-        model.addAttribute("order", order);
-        model.addAttribute("orderDetail", orderDetail);
+
+        BusinessMember businessId = (BusinessMember) session.getAttribute("presentBusinessMember");
+
+        List<BusinessDTO> businessDTOList = businessService.getOrderByBusinessId(businessId.getId());
+        PrdOrder order = businessDTOList.stream()
+                .flatMap(businessDTO -> businessDTO.getPrdOrderDetails().stream())
+                .map(PrdOrderDetail::getPrdOrder)
+                .filter(prdOrder -> prdOrder.getId().equals(orderId))
+                .findFirst()
+                .orElse(null);
+
+        model.addAttribute("prdOrder", order);
+        model.addAttribute("businessDTOList", businessDTOList);
+
         return "product/businessOrderDetail";
     }
 
@@ -166,8 +179,6 @@ public class OrderController {
     }
 
 
-
-
 //    @GetMapping("/detail/{orderId}")
 //    public String orderDetailPage(@PathVariable Integer orderId, Model model) {
 //        PrdOrder order = prdOrderService.getOrderById(orderId);
@@ -179,10 +190,6 @@ public class OrderController {
 //        model.addAttribute("orderDetailList", orderDetailList);
 //        return "product/orderDetail";
 //    }
-
-
-
-
 
 
 }

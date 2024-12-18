@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Artogether</title>
+  <title>藝起 Artogether</title>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <link rel="stylesheet" th:href="@{/web_design/style/style_general.css}" />
   <link rel="stylesheet" th:href="@{/web_design/style/style_homepage.css}" />
@@ -26,29 +26,29 @@
   </section>
 
 		<!-- 商家概覽 -->
-	<section class="sec-showcase showcase-business normal-width">
-		<div class="showcase-info-box">
-			<div class="showcase-info">
-				<h2 class="business">精選商家</h2>
-			</div>
-			<div class="showcase-browse-all link-button">
-				<a href="#">查看更多</a> <span class="material-symbols-outlined">chevron_right</span>
-			</div>
-		</div>
-		<div class="showcase-cards-box">
-			<div th:each="topProduct:${topThreeProduct}"th:onclick="|location.href='/product/productDetails/' + ${topProduct.id}|"
-				clickable class="showcase-card card business">
-				<img src="./asset/images/bgimg.png" alt="" />
-				<div class="card-content">
-					<div class="card-title">
-						<div class="tag product">商品</div>
-						<h3 class="card-title-text" th:text="${topProduct.name}"></h3>
-					</div>
-				</div>
-			</div>
+<!--	<section class="sec-showcase showcase-business normal-width">-->
+<!--		<div class="showcase-info-box">-->
+<!--			<div class="showcase-info">-->
+<!--				<h2 class="business">精選商家</h2>-->
+<!--			</div>-->
+<!--			<div class="showcase-browse-all link-button">-->
+<!--				<a href="#">查看更多</a> <span class="material-symbols-outlined">chevron_right</span>-->
+<!--			</div>-->
+<!--		</div>-->
+<!--		<div class="showcase-cards-box">-->
+<!--			<div th:each="topProduct:${topThreeProduct}"th:onclick="|location.href='/product/productDetails/' + ${topProduct.id}|"-->
+<!--				clickable class="showcase-card card business">-->
+<!--				<img src="./asset/images/bgimg.png" alt="" />-->
+<!--				<div class="card-content">-->
+<!--					<div class="card-title">-->
+<!--						<div class="tag product">商品</div>-->
+<!--						<h3 class="card-title-text" th:text="${topProduct.name}"></h3>-->
+<!--					</div>-->
+<!--				</div>-->
+<!--			</div>-->
 
-		</div>
-	</section>
+<!--		</div>-->
+<!--	</section>-->
 
   <!-- 活動概覽 -->
   <section class="sec-showcase showcase-event normal-width">
@@ -64,7 +64,7 @@
 
     <div class="showcase-cards-box">
       <div th:each="topThree:${topThreeEvents}" th:onclick="|location.href='/event/details/' + ${topThree.id}|" clickable class="showcase-card card event">
-        <img src="./asset/images/bgimg.png" alt="" />
+        <img th:src="@{/event/DBImgReader/} + ${topThree.imgId}" alt="" />
         <div class="card-content">
           <div class="card-title">
             <div class="tag event">活動</div>
@@ -104,69 +104,23 @@
       </div>
     </div>
     <div class="showcase-cards-box">
-      <div clickable class="showcase-card card venue">
-        <img src="./asset/images/bgimg.png" alt="" />
+      <div th:each="vneCardDTO:${vneCardDTOs}" th:onclick="|location.href='/vneMem/details/' + ${vneCardDTO.vneId}|" clickable class="showcase-card card venue">
+        <img th:src="@{${vneCardDTO.imgUrls[0]}}" alt="" />
         <div class="card-content">
           <div class="card-title">
             <div class="tag venue">場地</div>
-            <h3 class="card-title-text">
+            <h3 class="card-title-text" th:text="${vneCardDTO.vneName}">
               夭壽讚讚讚讚讚讚讚讚讚讚讚讚讚讚讚讚的場地
             </h3>
           </div>
-          <div class="card-info">
+          <div class="card-info" th:text="${vneCardDTO.description}">
             <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
           </div>
           <div class="tags-box">
-            <div class="tag plain-tag">
-              <span class="material-symbols-outlined">location_on</span>台北市
-            </div>
-            <div class="tag plain-tag">
-              <span class="material-symbols-outlined">schedule</span>08:00-17:00
-            </div>
-          </div>
-        </div>
-      </div>
-      <div clickable class="showcase-card card venue">
-        <img src="./asset/images/bgimg.png" alt="" />
-        <div class="card-content">
-          <div class="card-title">
-            <div class="tag venue">場地</div>
-            <h3 class="card-title-text">
-              夭壽讚讚讚讚讚讚讚讚讚讚讚讚讚讚讚讚的場地
-            </h3>
-          </div>
-          <div class="card-info">
-            <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
-          </div>
-          <div class="tags-box">
-            <div class="tag plain-tag">
-              <span class="material-symbols-outlined">location_on</span>台北市
-            </div>
-            <div class="tag plain-tag">
-              <span class="material-symbols-outlined">schedule</span>08:00-17:00
-            </div>
-          </div>
-        </div>
-      </div>
-      <div clickable class="showcase-card card venue">
-        <img src="./asset/images/placeholder.jpg" alt="" />
-        <div class="card-content">
-          <div class="card-title">
-            <div class="tag venue">場地</div>
-            <h3 class="card-title-text">
-              夭壽讚讚讚讚讚讚讚讚讚讚讚讚讚讚讚讚的場地
-            </h3>
-          </div>
-          <div class="card-info">
-            <p>一段小小小小小小小小小小小小小小小小小小小小簡介</p>
-          </div>
-          <div class="tags-box">
-            <div class="tag plain-tag">
-              <span class="material-symbols-outlined">location_on</span>台北市
-            </div>
-            <div class="tag plain-tag">
-              <span class="material-symbols-outlined">schedule</span>08:00-17:00
-            </div>
+            <span class="material-symbols-outlined">location_on</span>
+            <span class="tag plain-tag" th:text="${vneCardDTO.vneAddress.substring(3,6)}"></span>
+            <span class="material-symbols-outlined">schedule</span>
+            <span th:text="${vneCardDTO.startHour} + ' - ' + ${vneCardDTO.endHour}"></span>
           </div>
         </div>
       </div>

@@ -155,6 +155,16 @@ public class VneRestController {
         }
     }
 
-//    //付訂金
+    @GetMapping("/order/mem/list")
+    public List<VneOrderDTO> getMemOrderList(HttpSession session) {
+        Integer memId = (Integer) session.getAttribute("member");
+        List<VneOrderDTO> memOrderList = vneOrderService.getMemOrderList(memId);
+        return memOrderList;
+    }
+
+
+    //付訂金
 //    @PostMapping("/order/payment/deposit/{vneId}")
+
+
 }

@@ -28,20 +28,20 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="order : ${orderList}" data-product-id="${order.prdOrder.id}">
-            <td th:text="${order.id}">訂單編號</td>
-            <td th:text="${order.orderDate}">訂單日期</td>
-            <td th:text="'NT$ '+ ${order.paid}">金額</td>
-            <td th:text="${order.status}">訂單狀態</td>
+        <tr th:each="businessDTO : ${businessDTOList}" data-product-id="${businessDTO.prdOrderId}">
+            <td th:text="${businessDTO.prdOrderId}">訂單編號</td>
+            <td th:text="${businessDTO.prdOrderDetails.get(0).prdOrder.orderDate}">訂單日期</td>
+            <td th:text="'NT$ '+ ${businessDTO.prdOrderDetails.get(0).prdOrder.paid}">金額</td>
+            <td th:text="${businessDTO.prdOrderDetails.get(0).prdOrder.status}">訂單狀態</td>
             <td>
-                <a th:href="@{/order/businessOrderDetail/{id}(id=${order.id})}">
+                <a th:href="@{/order/businessOrderDetail/{id}(id=${businessDTO.prdOrderId})}">
                     <button>查閱</button>
                 </a>
             </td>
         </tr>
         </tbody>
     </table>
-    <img src="./asset/images/bgimg.png" alt="" />
+<!--    <img src="./asset/images/bgimg.png" alt="" />-->
 
 </main>
 </body>

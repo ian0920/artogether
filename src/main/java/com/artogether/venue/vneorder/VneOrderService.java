@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class VneOrderService {
@@ -75,7 +76,7 @@ public class VneOrderService {
         VneOrder vneOrder = new VneOrder();
         Integer memId = vneOrderDTO.getMemId();
         Integer vneId = vneOrderDTO.getVneId();
-        Member member = memberRepository.findById(1).get();
+        Member member = memberRepository.findById(memId).get();
         Venue venue = venueRepository.findById(vneId).get();
         vneOrder.setMember(member);
         vneOrder.setVenue(venue);
@@ -96,6 +97,35 @@ public class VneOrderService {
         return orderId;
     }
 
+    //裝DTO
+    public VneOrderDTO getOrderDTO(VneOrder vneOrder) {
+        Member member = vneOrder.getMember();
+        Venue venue = vneOrder.getVenue();
+        VneOrderDTO vneOrderDTO = VneOrderDTO.builder()
+                .vneId(venue.getId())
+                .memId(member.getId())
+                .memName(member.getName())
+                .memPhone(member.getPhone())
+                .bizAddress(venue.getBusinessMember().getAddr())
+                .orderId(vneOrder.getId())
+                .totalPrice(vneOrder.getTotalPrice())
+                .shouldPaid(vneOrder.getShouldPaid())
+                .paid(vneOrder.getPaid())
+                .startDate(vneOrder.getStartDate())
+                .startTime(vneOrder.getStartTime())
+                .endDate(vneOrder.getEndDate())
+                .endTime(vneOrder.getEndTime()).build();
+        return vneOrderDTO;
+    }
+
+    public List<VneOrderDTO> getMemOrderList(Integer memId) {
+        List<VneOrder> byMemberId = vneOrderRepository.findByMember_Id(memId);
+        List<VneOrderDTO> memList = byMemberId.stream()
+                .map(this::getOrderDTO)
+                .collect(Collectors.toList());
+
+        return memList;
+    }
 //    public Integer CreateCrossDayVneOrder (Integer memId, Integer vneId, VneOrderDTO vneOrderDTO, LocalDateTime submissionTime) {
 
 }

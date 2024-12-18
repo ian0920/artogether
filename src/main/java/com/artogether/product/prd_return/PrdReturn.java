@@ -9,6 +9,7 @@ import javax.persistence.*;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name="prd_return")
@@ -47,6 +48,11 @@ public class PrdReturn {
 	
 	@Column(name="status")
 	private Integer status;
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
 	
 	
 }

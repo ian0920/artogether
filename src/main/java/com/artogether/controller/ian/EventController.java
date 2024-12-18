@@ -1,6 +1,7 @@
 package com.artogether.controller.ian;
 
 import com.artogether.common.member.MemberService;
+import com.artogether.event.dto.EventDTO;
 import com.artogether.event.event.Event;
 import com.artogether.event.event.EventService;
 import com.artogether.event.evt_order.EvtOrder;
@@ -47,7 +48,7 @@ public class EventController {
 
 
 
-        Page<Event> paginatedEventList = eventService.findAllEventsAndPagination(sortBy,page, size, location, catalog, status);
+        Page<EventDTO> paginatedEventList = eventService.findAllEventsAndPagination(sortBy,page, size, location, catalog, status);
         model.addAttribute("events", paginatedEventList);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", paginatedEventList.getTotalPages());

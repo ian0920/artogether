@@ -146,4 +146,15 @@ public class Member {
         }
     }
 
+    @Override
+    public String toString() {
+        return "Member{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", registerDate=" + registerDate +
+                ", birthday=" + birthday + "}";
+
+    }
+
 }
