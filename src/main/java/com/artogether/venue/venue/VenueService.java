@@ -336,7 +336,7 @@ public class VenueService {
 
     public List<VneCardDTO> getAllVneCard() {
 
-        List<Venue> list = venueRepository.findAll();
+        List<Venue> list = venueRepository.findByStatus(VenueStatusEnum.ONLINE);
 
 
         List<VneCardDTO> vneCardDTOs = list.stream()
