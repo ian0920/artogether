@@ -19,7 +19,7 @@
 
         .content {
             width: 75%;
-            height: 720px;
+            height: auto;
             margin: 40px auto;
             padding: 20px;
             background: #ffffff;
@@ -116,7 +116,7 @@
 </head>
 <body>
 <div th:replace="~{/components/navbar_business::navbar('product','product')}"></div>
-
+<main>
 <div class="content">
     <h1>新增商品</h1>
 
@@ -179,7 +179,7 @@
         <button class="add" type="submit">新增商品</button>
     </form>
 </div>
-
+</main>
 <script>
     // 圖片預覽功能
     document.getElementById('images').addEventListener("change", function (event) {

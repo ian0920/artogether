@@ -111,6 +111,16 @@ table tr:hover {
     text-align: center;
     margin: 20px 0;
 }
+.btn-btn-primary{
+    background-color: #5e5a57;
+    color: #fff;
+}
+.btn-btn-outline-secondary{
+    background-color: #f8f8f8;
+    color: #ed3b3b;
+    border: #ed3b3b 1px solid;
+
+}
     </style>
 </head>
 <body>
@@ -137,7 +147,7 @@ table tr:hover {
             <th>商品名稱</th>
             <th>價格</th>
             <!--        <th>數量</th>-->
-            <!--        <th>小計</th>-->
+                    <th>供應狀態</th>
             <th>操作</th>
             <th></th>
 
@@ -150,11 +160,14 @@ table tr:hover {
             <td th:text="${item.product.businessMember.getName()}">商家</td>
             <td>
                 <input type="hidden" name="productId" th:value="${item.product.id}"/>
+                <a th:href="@{'/product/productDetails/' + ${item.product.id}}">
                 <img th:src="${item.product.getImg()}" alt="商品圖片" style="width:100px;height:100px;"/>
+                </a>
             </td>
             <td th:text="${item.product.name}">商品名稱</td>
 
             <td th:text="${item.product.price}">價格</td>
+            <td th:text="${item.product.status == 1 ? '供應中' : '無法供應'}">供應狀態</td>
 
 
             <td>
@@ -164,10 +177,14 @@ table tr:hover {
                 </form>
             </td>
             <td>
-                <form action="/cart/add" method="post">
-                    <input type="hidden" name="productId" th:value="${item.product.id}"/>
+                <!-- 判斷 product.status -->
+                <form th:if="${item.product.status == 1}" action="/cart/add" method="post">
+                    <input type="hidden" name="productId" th:value="${item.product.id}" />
                     <button type="submit" class="btn btn-primary">加入購物車</button>
                 </form>
+                <button th:if="${item.product.status != 1}" type="button" class="btn-btn-outline-secondary" disabled>
+                    無法供應
+                </button>
             </td>
 
         </tr>

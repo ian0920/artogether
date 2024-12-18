@@ -207,6 +207,7 @@
 <!--                <td th:text="${product.id}"></td>-->
                 <td th:text="${product.name}"></td>
                 <td>
+                    <a th:href="@{'/product/productDetails/' + ${product.id}}">
                     <img class="img" th:src="${product.img}" alt="商品圖片" style="width:100px;height:100px;" />
                 </td>
                 <td th:text="${product.price}"></td>
