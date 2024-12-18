@@ -5,12 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>訂單詳情</title>
     <link rel="stylesheet" th:href="@{/web_design/style/style_business.css}" />
-    <link
-            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
-            rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
     <style>
-        .img{
+        .img {
             width: 100px;
             height: 100px;
         }
@@ -25,7 +22,6 @@
             overflow: auto;
             background-color: rgba(0, 0, 0, 0.5);
         }
-
         .modal-content {
             background-color: #fefefe;
             margin: 15% auto;
@@ -36,30 +32,25 @@
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-
         .close {
             color: #aaa;
             float: right;
             font-size: 28px;
             font-weight: bold;
         }
-
         .close:hover,
         .close:focus {
             color: black;
             text-decoration: none;
             cursor: pointer;
         }
-
         form div {
             margin-bottom: 15px;
         }
-
         label {
             display: block;
             margin-bottom: 5px;
         }
-
         input,
         select,
         button {
@@ -76,7 +67,6 @@
             background-color: #f9f9f9;
             color: #333;
         }
-
         main {
             margin: 30px auto;
             padding: 20px;
@@ -86,50 +76,41 @@
             max-width: 900px;
             max-height: 720px;
         }
-
         /* 標題樣式 */
         h1, h3 {
             text-align: center;
             color: #555;
             margin-bottom: 20px;
         }
-
         h4 {
             margin: 10px 0;
             font-weight: normal;
         }
-
         /* 表格樣式 */
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
         }
-
         table th, table td {
             border: 1px solid #ddd;
             padding: 12px;
             text-align: center;
         }
-
         table th {
             background-color: #2c95c6;
             color: white;
             font-weight: bold;
         }
-
         table td img {
             border-radius: 8px;
         }
-
         table tr:nth-child(even) {
             background-color: #f2f2f2;
         }
-
         table tr:hover {
             background-color: #f9f9f9;
         }
-
         /* 資訊區域 */
         .paid, .info {
             background-color: #f9f9f9;
@@ -139,16 +120,14 @@
             margin-top: 20px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-
         .paid h4, .info h4 {
             margin: 5px 0;
             font-size: 16px;
         }
-
-        /* 訂單更新按鈕 */
+        /* 按鈕樣式 */
         button {
             padding: 10px 20px;
-            margin: 10px 0;
+            margin: 10px 5px;
             font-size: 16px;
             border-radius: 5px;
             border: none;
@@ -157,49 +136,27 @@
             background-color: #2c95c6;
             transition: background-color 0.3s ease;
         }
-
         button:hover {
             background-color: #005bb5;
         }
-
+        /* 小按鈕樣式 */
+        .small-btn {
+            padding: 8px 16px;
+            font-size: 14px;
+            background-color: #2c95c6;
+        }
+        .small-btn:hover {
+            background-color: #005bb5;
+        }
         button[type="button"] {
             background-color: #aaa;
         }
-
         button[type="button"]:hover {
             background-color: #888;
         }
-
-        /* 模態框美化 */
-        .modal-content {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
-        }
-
-        .modal-content h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #2c95c6;
-        }
-
-        form div label {
-            font-weight: bold;
-        }
-
-        input[type="datetime-local"], select {
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 8px;
-            font-size: 14px;
-        }
-
-        /* 訂單詳情更新按鈕 */
         button[type="submit"] {
             background-color: #10a61d;
         }
-
         button[type="submit"]:hover {
             background-color: #12871b;
         }
@@ -211,11 +168,6 @@
 <main>
     <h1>訂單詳情</h1>
     <h3>訂單編號：<span th:text="${orderId}"></span></h3>
-
-    <!-- 錯誤提示 -->
-    <div th:if="${message}">
-        <p th:text="${message}"></p>
-    </div>
 
     <!-- 訂單詳情 -->
     <div th:if="${orderDetail}">
@@ -255,77 +207,54 @@
     <div>
         <!-- 訂單更新按鈕 -->
         <button onclick="openModal()">訂單更新</button>
+        <!-- 查看退換貨按鈕 -->
+        <button onclick="location.href='/product/list'" class="small-btn">訂單退換貨管理</button>
+    </div>
 
-        <!-- 修改視窗 (模態框) -->
-        <div id="updateModal" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeModal()">&times;</span>
-                <h2>更新訂單資訊</h2>
-                <form  th:action="@{/order/editOrder/{id}(id=${order.id})}" method="post"  th:object="${order}">
-                    <input type="hidden" th:field="*{id}" />
-                    <div>
-                        <label for="status">付款狀態：</label>
-                        <select id="status" name="status" th:value="*{status}">
-                            <option value="未付款">未付款</option>
-                            <option value="已付款">已付款</option>
-                            <option value="已出貨">已出貨</option>
-                            <option value="退貨申請中">退貨申請中</option>
-                            <option value="退款中">退款中</option>
-                            <option value="已完成">已完成</option>
-
-                        </select>
-                    </div>
-                    <div>
-                        <label for="shipDate">出貨時間：</label>
-                        <input type="datetime-local" id="shipDate" name="shipDate" />
-                    </div>
-                    <div>
-                        <button type="submit">更新</button>
-                        <button type="button" onclick="closeModal()">取消</button>
-                    </div>
-                </form>
-            </div>
-        </div>    </div>
-
-    <img src="./asset/images/bgimg.png" alt="" />
-
-    <script>
-        function openModal() {
-            document.getElementById("updateModal").style.display = "block";
-        }
-
-        function closeModal() {
-            document.getElementById("updateModal").style.display = "none";
-        }
-
-        // 點擊模態框外部區域時關閉模態框
-        window.onclick = function (event) {
-            const modal = document.getElementById("updateModal");
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        };
-
-
-            async function submitUpdateForm(event) {
-            event.preventDefault();
-            const form = event.target;
-            const response = await fetch(form.action, {
-            method: form.method,
-            body: new FormData(form),
-        });
-
-            if (response.ok) {
-            alert("訂單已成功更新！");
-            closeModal();
-            window.location.reload(); // 重新加載頁面以刷新數據
-        } else {
-            const errorMessage = await response.text();
-            alert("更新失敗：" + errorMessage);
-        }
-        }
-
-    </script>
+    <!-- 修改視窗 (模態框) -->
+    <div id="updateModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>更新訂單資訊</h2>
+            <form th:action="@{/order/editOrder/{id}(id=${order.id})}" method="post" th:object="${order}">
+                <input type="hidden" th:field="*{id}" />
+                <div>
+                    <label for="status">付款狀態：</label>
+                    <select id="status" name="status" th:value="*{status}">
+                        <option value="未付款">未付款</option>
+                        <option value="已付款">已付款</option>
+                        <option value="已出貨">已出貨</option>
+                        <option value="退貨申請中">退貨申請中</option>
+                        <option value="退款中">退款中</option>
+                        <option value="已完成">已完成</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="shipDate">出貨時間：</label>
+                    <input type="datetime-local" id="shipDate" name="shipDate" />
+                </div>
+                <div>
+                    <button type="submit">更新</button>
+                    <button type="button" onclick="closeModal()">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </main>
+
+<script>
+    function openModal() {
+        document.getElementById("updateModal").style.display = "block";
+    }
+    function closeModal() {
+        document.getElementById("updateModal").style.display = "none";
+    }
+    window.onclick = function (event) {
+        const modal = document.getElementById("updateModal");
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    };
+</script>
 </body>
 </html>

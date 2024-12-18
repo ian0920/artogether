@@ -171,7 +171,14 @@
         <h3 th:text="${product.name}">商品名稱</h3>
         <p th:text="'價格: ' + ${product.price} + ' 元'">價格</p>
         <p class="product-status" th:text="${product.status == 1 ? '上架中' : '已下架'}">狀態</p>
-         <a th:href="@{/product/productDetails/{id}(id=${product.id})}" class="btn">搶購</a>
+        
+        <!-- 原始程式碼：狀態為上架時顯示按鈕 -->
+        <a th:href="@{/product/productDetails/{id}(id=${product.id})}" 
+           class="btn" 
+           th:if="${product.status == 1}">趕快買!</a>
+
+        <!-- 新增：狀態為下架時顯示不可點擊的按鈕 -->
+        <span class="btn disabled-link" th:if="${product.status != 1}">買不到了QQ</span>
     </div>
 </div>
 

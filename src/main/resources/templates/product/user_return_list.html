@@ -60,20 +60,6 @@
         tr:hover {
             background-color: #f1f1f1;
         }
-        td a, td button {
-            padding: 8px 12px;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        td a {
-            background-color: #3498db;
-        }
-        td button {
-            background-color: #e74c3c;
-        }
         .return-button {
             display: inline-block;
             margin: 20px auto;
@@ -129,7 +115,6 @@
                 <th>申請日期</th>
                 <th>退換日期</th>
                 <th>退款金額</th>
-                <th>操作</th>
             </tr>
         </thead>
         <tbody>
@@ -143,12 +128,6 @@
                 <td th:text="${return.applyDate}"></td>
                 <td th:text="${return.returnDate}"></td>
                 <td th:text="${return.refund}"></td>
-                <td>
-                    <a th:href="@{'/product/edit/' + ${return.id}}">編輯</a>
-                    <form th:action="@{'/product/delete/' + ${return.id}}" method="post" style="display: inline;">
-                        <button type="submit">刪除</button>
-                    </form>
-                </td>
             </tr>
         </tbody>
     </table>

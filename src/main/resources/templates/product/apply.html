@@ -120,8 +120,8 @@
                 <td th:text="${detail.price}">價格</td>
                 <td>
                     <div class="form-container">
-                        <form th:action="@{/product/return/add}" method="post" onsubmit="return validateForm(this)">
-                            <input type="hidden" name="orderId" th:value="${orderId}"/>
+                        <form th:action="@{/product/apply}" method="post" onsubmit="return validateForm(this)">
+                            <input type="hidden" name="orderId" th:value="${detail.orderId}"/>
                             <input type="hidden" name="prdName" th:value="${detail.productName}"/>
 
                             <label>原因：</label>

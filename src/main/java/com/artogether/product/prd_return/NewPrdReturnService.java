@@ -136,10 +136,11 @@ public class NewPrdReturnService {
 
         return orderDetails.stream().map(detail -> {
             return new PrdOrderDetailDto(
-                detail.getProduct().getId(),
+                detail.getProduct().getId(),               
                 detail.getProduct().getName(),
                 detail.getQty(),
-                detail.getPrice()
+                detail.getPrice(),
+                detail.getPrdOrder().getId()
             );
         }).collect(Collectors.toList());
     
