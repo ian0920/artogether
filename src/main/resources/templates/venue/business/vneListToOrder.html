@@ -112,7 +112,7 @@
         <template x-for="vne in vneList" :key="vne.vneId">
             <div class="event-card-container">
                 <div class="showcase-cards-box">
-                    <div @click="location.href = '/vneBiz/manageVenue/' + vne.vneId" clickable class="showcase-card card venue">
+                    <div @click="location.href = '/vneBiz/orders/' + vne.vneId" clickable class="showcase-card card venue">
                         <img :src="vne.imgUrls[0]" alt="" />
                         <div class="card-content">
                             <div class="card-title">
@@ -134,7 +134,6 @@
                 </div>
             </div>
         </template>
-    <a href="/vneBiz/addVenue">新增場地</a>
 </main>
 <script th:src="@{/platform_backend/js/bizpage-modle.js}"></script>
 </body>

@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title th:text="${vneName} + ' 營業時間設置'">Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <link rel="stylesheet" th:href="@{/web_design/style/style_business.css}" />
@@ -241,199 +242,220 @@
                 }
             </script>
         </div>
-
-        <script>
-            // 定義日曆資料與操作邏輯
-            const calendarData = {
-                days: {
-                    hourOfMon: [],
-                    hourOfTue: [],
-                    hourOfWed: [],
-                    hourOfThu: [],
-                    hourOfFri: [],
-                    hourOfSat: [],
-                    hourOfSun: [],
-                },
-                currentPage: '', // 當前頁面（'venue' 或 'timeslot'）
-                initialize() {
-                    this.detectCurrentPage();
-                    this.fetchData(); // 獲取場地詳細數據
-                },
-                // 檢測當前頁面
-                detectCurrentPage() {
-                    const path = window.location.pathname;
-                    if (path.includes('manageVenue')) {
-                        this.currentPage = 'venue';
-                    } else if (path.includes('manageTslot')) {
-                        this.currentPage = 'timeslot';
-                    }
-                },
-                // 載入之前的選擇設定
-                loadPreviousSelection() {
-                    const vneId = window.location.pathname.split('/').pop();
-                    $.ajax({
-                        url: `/vne/tslot/${vneId}`,
-                        type: 'GET',
-                        dataType: 'json',
-                        success: (data) => {
-                            this.days = {
-                                hourOfMon: data.hourOfMon || [],
-                                hourOfTue: data.hourOfTue || [],
-                                hourOfWed: data.hourOfWed || [],
-                                hourOfThu: data.hourOfThu || [],
-                                hourOfFri: data.hourOfFri || [],
-                                hourOfSat: data.hourOfSat || [],
-                                hourOfSun: data.hourOfSun || [],
-                            };
-                            this.originalDays = { ...this.days }; // 保存初始值
-                            this.updateCells();
-                        },
-                        error: (jqXHR, textStatus, errorThrown) => {
-                            console.error('Error loading data:', textStatus, errorThrown);
-                        }
-                    });
-                },
-                // 更新單元格的樣式
-                updateCells() {
-                    document.querySelectorAll('.cell').forEach(cell => {
-                        const day = parseInt(cell.dataset.day);
-                        const hour = parseInt(cell.dataset.hour);
-                        const dayKeys = ['hourOfMon', 'hourOfTue', 'hourOfWed', 'hourOfThu', 'hourOfFri', 'hourOfSat', 'hourOfSun'];
-
-                        if (this.days[dayKeys[day]].includes(hour)) {
-                            cell.classList.add('selected');
-                        } else {
-                            cell.classList.remove('selected');
-                        }
-                    });
-                },
-
-                // 切換一天的全選或全取消
-                toggleDay(day) {
-                    const dayKeys = ['hourOfMon', 'hourOfTue', 'hourOfWed', 'hourOfThu', 'hourOfFri', 'hourOfSat', 'hourOfSun'];
-                    const key = dayKeys[day];
-                    const allSelected = this.days[key].length === 24;
-
-                    if (allSelected) {
-                        this.days[key] = [];
-                    } else {
-                        this.days[key] = Array.from({ length: 24 }, (_, i) => i);
-                    }
-                    this.updateCells();
-                },
-
-                // 切換一小時的全選或全取消
-                toggleHour(hour) {
-                    const dayKeys = ['hourOfMon', 'hourOfTue', 'hourOfWed', 'hourOfThu', 'hourOfFri', 'hourOfSat', 'hourOfSun'];
-                    let allSelected = dayKeys.every(key => this.days[key].includes(hour));
-
-                    dayKeys.forEach(key => {
-                        if (allSelected) {
-                            this.days[key] = this.days[key].filter(h => h !== hour);
-                        } else if (!this.days[key].includes(hour)) {
-                            this.days[key].push(hour);
-                        }
-                    });
-                    this.updateCells();
-                },
-
-                // 確認選擇並上傳到後端
-                confirmSelection() {
-                    const vneId = window.location.pathname.split('/').pop();
-
-                    // 比較方法：檢查是否有改變
-                    const hasChanges = JSON.stringify(this.days) !== JSON.stringify(this.originalDays);
-                    if (!hasChanges) {
-                        alert('No changes detected.'); // 無變更則提示
-                        return;
-                    }
-
-                    const payload = {
-                        vneId: parseInt(vneId),
-                        ...this.days,
-                    };
-
-                    // 禁用按鈕
-                    const button = document.getElementById('confirm-selection');
-                    button.disabled = true;
-                    button.innerText = "Submitting...";
-
-                    $.ajax({
-                        url: `/vneBiz/updateTslot/${vneId}`,
-                        type: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify(payload),
-                        success: () => {
-                            alert('Selection saved successfully!');
-                            this.originalDays = { ...this.days }; // 更新初始值
-                        },
-                        error: (jqXHR, textStatus, errorThrown) => {
-                            console.error('Error saving data:', textStatus, errorThrown);
-                            alert('Failed to save selection.');
-                        },
-                        complete: () => {
-                            button.disabled = false;
-                            button.innerText = "Confirm Selection"; // 恢復按鈕狀態
-                        }
-                    });
-                }
-            };
-            // 滑動選擇的邏輯
-            let isDragging = false;
-            let currentAction = 'select';
-
-            document.querySelectorAll('.cell').forEach(cell => {
-                cell.addEventListener('mousedown', () => {
-                    isDragging = true;
-                    currentAction = cell.classList.contains('selected') ? 'deselect' : 'select';
-                    toggleCellSelection(cell);
-                });
-
-                cell.addEventListener('mousemove', () => {
-                    if (isDragging) {
-                        toggleCellSelection(cell);
-                    }
-                });
-            });
-
-            document.addEventListener('mouseup', () => {
-                isDragging = false;
-            });
-
-            function toggleCellSelection(cell) {
-                const day = parseInt(cell.dataset.day);
-                const hour = parseInt(cell.dataset.hour);
-                const dayKeys = ['hourOfMon', 'hourOfTue', 'hourOfWed', 'hourOfThu', 'hourOfFri', 'hourOfSat', 'hourOfSun'];
-
-                if (currentAction === 'select' && !calendarData.days[dayKeys[day]].includes(hour)) {
-                    calendarData.days[dayKeys[day]].push(hour);
-                    cell.classList.add('selected');
-                } else if (currentAction === 'deselect') {
-                    calendarData.days[dayKeys[day]] = calendarData.days[dayKeys[day]].filter(h => h !== hour);
-                    cell.classList.remove('selected');
-                }
-            }
-
-            // 綁定一天的全開關
-            document.querySelectorAll('.day-header').forEach(dayHeader => {
-                dayHeader.addEventListener('click', () => {
-                    const day = parseInt(dayHeader.dataset.day);
-                    calendarData.toggleDay(day);
-                });
-            });
-
-            // 綁定一小時的全開關
-            document.querySelectorAll('.control[data-hour]').forEach(control => {
-                control.addEventListener('click', () => {
-                    const hour = parseInt(control.dataset.hour);
-                    calendarData.toggleHour(hour);
-                });
-            });
-
-            // 初始化日曆
-            calendarData.loadPreviousSelection();
-        </script>
     </main>
+    <!-- 日曆顯示的邏輯 -->
+    <script>
+        // 定義日曆資料與操作邏輯
+        const calendarData = {
+            days: {
+                hourOfMon: [],
+                hourOfTue: [],
+                hourOfWed: [],
+                hourOfThu: [],
+                hourOfFri: [],
+                hourOfSat: [],
+                hourOfSun: [],
+            },
+            currentPage: '', // 當前頁面（'venue' 或 'timeslot'）
+
+            initialize() {
+                this.detectCurrentPage();
+                this.fetchData(); // 獲取場地詳細數據
+            },
+
+            // 檢測當前頁面
+            detectCurrentPage() {
+                const path = window.location.pathname;
+                if (path.includes('manageVenue')) {
+                    this.currentPage = 'venue';
+                } else if (path.includes('manageTslot')) {
+                    this.currentPage = 'timeslot';
+                }
+            },
+
+            // 載入之前的選擇設定
+            loadPreviousSelection() {
+                const vneId = window.location.pathname.split('/').pop();
+                $.ajax({
+                    url: `/vne/tslot/${vneId}`,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: (data) => {
+                        this.days = {
+                            hourOfMon: data.hourOfMon || [],
+                            hourOfTue: data.hourOfTue || [],
+                            hourOfWed: data.hourOfWed || [],
+                            hourOfThu: data.hourOfThu || [],
+                            hourOfFri: data.hourOfFri || [],
+                            hourOfSat: data.hourOfSat || [],
+                            hourOfSun: data.hourOfSun || [],
+                        };
+                        this.originalDays = { ...this.days }; // 保存初始值
+                        this.updateCells();
+                    },
+                    error: (jqXHR, textStatus, errorThrown) => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '資料載入失敗',
+                            text: `Error loading data: ${errorThrown}`,
+                        });
+                    }
+                });
+            },
+
+            // 更新單元格的樣式
+            updateCells() {
+                document.querySelectorAll('.cell').forEach(cell => {
+                    const day = parseInt(cell.dataset.day);
+                    const hour = parseInt(cell.dataset.hour);
+                    const dayKeys = ['hourOfMon', 'hourOfTue', 'hourOfWed', 'hourOfThu', 'hourOfFri', 'hourOfSat', 'hourOfSun'];
+
+                    if (this.days[dayKeys[day]].includes(hour)) {
+                        cell.classList.add('selected');
+                    } else {
+                        cell.classList.remove('selected');
+                    }
+                });
+            },
+
+            // 切換一天的全選或全取消
+            toggleDay(day) {
+                const dayKeys = ['hourOfMon', 'hourOfTue', 'hourOfWed', 'hourOfThu', 'hourOfFri', 'hourOfSat', 'hourOfSun'];
+                const key = dayKeys[day];
+                const allSelected = this.days[key].length === 24;
+
+                if (allSelected) {
+                    this.days[key] = [];
+                } else {
+                    this.days[key] = Array.from({ length: 24 }, (_, i) => i);
+                }
+                this.updateCells();
+            },
+
+            // 切換一小時的全選或全取消
+            toggleHour(hour) {
+                const dayKeys = ['hourOfMon', 'hourOfTue', 'hourOfWed', 'hourOfThu', 'hourOfFri', 'hourOfSat', 'hourOfSun'];
+                let allSelected = dayKeys.every(key => this.days[key].includes(hour));
+
+                dayKeys.forEach(key => {
+                    if (allSelected) {
+                        this.days[key] = this.days[key].filter(h => h !== hour);
+                    } else if (!this.days[key].includes(hour)) {
+                        this.days[key].push(hour);
+                    }
+                });
+                this.updateCells();
+            },
+
+            // 確認選擇並上傳到後端
+            confirmSelection() {
+                const vneId = window.location.pathname.split('/').pop();
+
+                // 比較方法：檢查是否有改變
+                const hasChanges = JSON.stringify(this.days) !== JSON.stringify(this.originalDays);
+                if (!hasChanges) {
+                    Swal.fire({
+                        icon: 'info',
+                        title: '無變動',
+                        text: '未偵測到任何更改。'
+                    });
+                    return;
+                }
+
+                const payload = {
+                    vneId: parseInt(vneId),
+                    ...this.days,
+                };
+
+                // 禁用按鈕
+                const button = document.getElementById('confirm-selection');
+                button.disabled = true;
+                button.innerText = "Submitting...";
+
+                $.ajax({
+                    url: `/vneBiz/updateTslot/${vneId}`,
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(payload),
+                    success: () => {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '保存成功',
+                            text: '選擇設定已成功儲存！'
+                        });
+                        this.originalDays = { ...this.days }; // 更新初始值
+                    },
+                    error: (jqXHR, textStatus, errorThrown) => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '保存失敗',
+                            text: `Error saving data: ${errorThrown}`,
+                        });
+                    },
+                    complete: () => {
+                        button.disabled = false;
+                        button.innerText = "Confirm Selection"; // 恢復按鈕狀態
+                    }
+                });
+            }
+        };
+
+        // 滑動選擇的邏輯
+        let isDragging = false;
+        let currentAction = 'select';
+
+        document.querySelectorAll('.cell').forEach(cell => {
+            cell.addEventListener('mousedown', () => {
+                isDragging = true;
+                currentAction = cell.classList.contains('selected') ? 'deselect' : 'select';
+                toggleCellSelection(cell);
+            });
+
+            cell.addEventListener('mousemove', () => {
+                if (isDragging) {
+                    toggleCellSelection(cell);
+                }
+            });
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        function toggleCellSelection(cell) {
+            const day = parseInt(cell.dataset.day);
+            const hour = parseInt(cell.dataset.hour);
+            const dayKeys = ['hourOfMon', 'hourOfTue', 'hourOfWed', 'hourOfThu', 'hourOfFri', 'hourOfSat', 'hourOfSun'];
+
+            if (currentAction === 'select' && !calendarData.days[dayKeys[day]].includes(hour)) {
+                calendarData.days[dayKeys[day]].push(hour);
+                cell.classList.add('selected');
+            } else if (currentAction === 'deselect') {
+                calendarData.days[dayKeys[day]] = calendarData.days[dayKeys[day]].filter(h => h !== hour);
+                cell.classList.remove('selected');
+            }
+        }
+
+        // 綁定一天的全開關
+        document.querySelectorAll('.day-header').forEach(dayHeader => {
+            dayHeader.addEventListener('click', () => {
+                const day = parseInt(dayHeader.dataset.day);
+                calendarData.toggleDay(day);
+            });
+        });
+
+        // 綁定一小時的全開關
+        document.querySelectorAll('.control[data-hour]').forEach(control => {
+            control.addEventListener('click', () => {
+                const hour = parseInt(control.dataset.hour);
+                calendarData.toggleHour(hour);
+            });
+        });
+
+        // 初始化日曆
+        calendarData.loadPreviousSelection();
+    </script>
+
     <!--分頁JS-->
     <script>
         function tabsController() {

@@ -106,6 +106,7 @@ public class VneOrderService {
                 .memId(member.getId())
                 .memName(member.getName())
                 .memPhone(member.getPhone())
+                .vneName(venue.getName())
                 .bizAddress(venue.getBusinessMember().getAddr())
                 .orderId(vneOrder.getId())
                 .totalPrice(vneOrder.getTotalPrice())
@@ -120,6 +121,14 @@ public class VneOrderService {
 
     public List<VneOrderDTO> getMemOrderList(Integer memId) {
         List<VneOrder> byMemberId = vneOrderRepository.findByMember_Id(memId);
+        List<VneOrderDTO> memList = byMemberId.stream()
+                .map(this::getOrderDTO)
+                .collect(Collectors.toList());
+
+        return memList;
+    }
+    public List<VneOrderDTO> getVneOrderList(Integer vneId) {
+        List<VneOrder> byMemberId = vneOrderRepository.findByVenue_Id(vneId);
         List<VneOrderDTO> memList = byMemberId.stream()
                 .map(this::getOrderDTO)
                 .collect(Collectors.toList());

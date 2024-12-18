@@ -1,234 +1,162 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bootstrap Carousel with Indicators</title>
-    <!-- Alpine.js -->
+    <title>場地訂單手風琴列表</title>
+
+    <!-- CSS 資源 -->
+    <link rel="stylesheet" th:href="@{/web_design/style/style_business.css}" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+
+    <!-- Bootstrap JS and Popper (optional) -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Flatpickr (日期選擇器，可選) -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <!-- Alpine.js 和 jQuery -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <!-- 引入 Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+            crossorigin="anonymous"></script>
+
     <style>
-        .carousel-inner img {
+        /* 自定義樣式 */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .accordion-container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .accordion-header {
+            background-color: #2c95c6;
+            color: #fff;
+            padding: 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 16px;
+        }
+
+        .accordion-header:hover {
+            background-color: #297a9b;
+        }
+
+        .accordion-header .material-symbols-outlined {
+            font-size: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-header.open .material-symbols-outlined {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            display: none;
+            padding: 15px;
+            border-top: 1px solid #ddd;
+        }
+
+        .accordion-content table {
             width: 100%;
-            height: 400px; /* 固定高度 */
-            object-fit: contain; /* 確保圖片完整顯示在幻燈片中 */
-            display: block;
-            margin: 0 auto; /* 置中圖片 */
+            border-collapse: collapse;
+            margin-top: 10px;
         }
 
-        .carousel-indicators {
-            position: absolute; /* 固定定位 */
-            bottom: 50px; /* 指標位置貼近幻燈片下緣 */
-            margin: 0 auto;
-            background-color: rgba(0, 0, 0, 0.5); /* 添加半透明背景，提升對比 */
-            padding: 5px 0; /* 添加一些上下空間 */
-            display: flex; /* 使用 Flexbox 居中 */
-            width: 100%; /* 確保指標寬度與幻燈片一致 */
-            text-align: center; /* 居中指標 */
-        }
-
-        .upload-button {
-            position: absolute; /* 絕對定位，避免推動其他元素 */
-            bottom: 20px; /* 距離幻燈片底部一些距離 */
-            right: 20px; /* 距離右邊緣 */
-            display: none; /* 默認隱藏 */
-        }
-
-        .carousel-item {
-            position: relative;
-            padding-bottom: 50px; /* 保留一些位置給按鈕 */
-        }
-
-        .custom-control-height {
-            height: 400px; /* 與幻燈片相同高度 */
-        }
-
-        .carousel-control-prev-icon,
-        .carousel-control-next-icon {
-            background-size: 100%, 100%;
+        .accordion-content th, .accordion-content td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
         }
     </style>
 </head>
-
 <body>
-<div x-data="images">
-    <div id="carouselExampleIndicators" class="carousel slide" style="max-width: 800px; margin: 0 auto;"
-         data-bs-ride="carousel">
-        <!-- 指標（Indicators） -->
-        <div class="carousel-indicators">
-            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"
-                    aria-current="true" aria-label="Slide 1"></button>
-            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"
-                    aria-label="Slide 2"></button>
-            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"
-                    aria-label="Slide 3"></button>
-        </div>
+<div th:replace="~{/components/navbar_member::navbar('venue','order')}"></div>
+<main>
+    <div x-data="vneOrderData" x-init="fetchData()">
+        <!-- Alpine.js 動態生成手風琴 -->
+        <template x-for="order in orders" :key="order.orderId">
+            <div class="accordion-container">
+                <!-- 收合時：顯示場地名稱與時間 -->
+                <div class="accordion-header" @click="toggle(order.orderId)">
+                    <span x-text="'場地名稱：' + order.memName"></span>
+                    <span x-text="order.startDate + ' ' + order.startTime + ':00 到 ' + order.endDate + ' ' + order.endTime + ':00'"></span>
+                    <span class="material-symbols-outlined"
+                          :class="{'open': openOrderId === order.orderId}">
+                    expand_more
+                </span>
+                </div>
 
-        <!-- 幻燈片內容（Slides） -->
-        <div class="carousel-inner">
-            <div class="carousel-item active" onclick="openFileUpload(this)" :data-id="`${images[0].vneId}/${images[0].position}`">
-                <img :src="`${images[0].vneId}/${images[0].position}`"
-                     onerror="this.src='https://via.placeholder.com/800x400'"
-                     class="d-block w-100" loading="lazy">
-                <button class="btn btn-primary upload-button" onclick="uploadFile()">確認上傳</button>
+                <!-- 展開時：顯示訂單詳細資訊 -->
+                <div class="accordion-content" x-show="openOrderId === order.orderId">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>訂單編號</th>
+                            <th>租借日期</th>
+                            <th>租借時段</th>
+                            <th>會員電話</th>
+                            <th>總金額</th>
+                            <th>付款狀態</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td x-text="order.orderId"></td>
+                            <td x-text="order.startDate + ' 到 ' + order.endDate"></td>
+                            <td x-text="order.startTime + ':00 到 ' + order.endTime + ':00'"></td>
+                            <td x-text="order.memPhone"></td>
+                            <td x-text="'$' + order.totalPrice"></td>
+                            <td x-text="order.paid ? '已付款' : '未付款'"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <div class="carousel-item" onclick="openFileUpload(this)" :data-id="`${images[1].vneId}/${images[1].position}`">
-                <img :src="`${images[1].vneId}/${images[1].position}`"
-                     onerror="this.src='https://via.placeholder.com/800x400'"
-                     class="d-block w-100" loading="lazy">
-                <button class="btn btn-primary upload-button" onclick="uploadFile()">確認上傳</button>
-            </div>
-            <div class="carousel-item" onclick="openFileUpload(this)" :data-id="`${images[2].vneId}/${images[2].position}`">
-                <img :src="`${images[2].vneId}/${images[2].position}`"
-                     onerror="this.src='https://via.placeholder.com/800x400'"
-                     class="d-block w-100" loading="lazy">
-                <button class="btn btn-primary upload-button" onclick="uploadFile()">確認上傳</button>
-            </div>
-        </div>
-
-        <!-- 控制按鈕（Controls） -->
-        <button class="carousel-control-prev custom-control-height" type="button" data-bs-target="#carouselExampleIndicators"
-                data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next custom-control-height" type="button" data-bs-target="#carouselExampleIndicators"
-                data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-        </button>
+        </template>
     </div>
-</div>
-
-<form id="uploadForm" style="display:none;">
-    <input type="file" id="fileInput" name="file" accept="image/jpeg, image/png, image/gif" onchange="previewImage()">
-</form>
+</main>
 <script>
-    // 打開檔案上傳
-    function openFileUpload(element) {
-        if (window.isUploading) {
-            return;
-        }
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('vneOrderData', () => ({
+            orders: [],
+            openOrderId: null,
 
-        // 獲取被點擊元素的 data-id 屬性，並拆分成 vneId 和 position
-        const dataId = element.getAttribute('data-id');
-        const [vneId, position] = dataId.split('/');
+            // 方法: 從後端獲取資料
+            fetchData() {
+                $.ajax({
+                    url: "/vne/order/mem/list", // 修改為你的後端API
+                    type: "GET",
+                    dataType: "json",
+                    success: (response) => {
+                        this.orders = response;
+                    },
+                    error: (xhr, status, error) => {
+                        console.error("獲取資料失敗：", error);
+                        alert("無法加載訂單資料，請稍後再試！");
+                    }
+                });
+            },
 
-        // 設定全域變數來追蹤是哪個區域
-        window.currentRegionId = { vneId, position };
-
-        // 保存當前被點擊的幻燈片元素
-        window.currentSlideElement = element;
-
-        // 觸發文件上傳的輸入框
-        document.getElementById('fileInput').click();
-    }
-
-    // 預覽選擇的圖片
-    function previewImage() {
-        const fileInput = document.getElementById("fileInput");
-        const file = fileInput.files[0];
-
-        if (file && window.currentSlideElement) {
-            // 檢查檔案格式是否正確
-            if (!isValidImageType(file.type)) {
-                alert("Only JPEG, PNG, and GIF files are allowed.");
-                return;
+            // 方法: 手風琴展開/收合
+            toggle(orderId) {
+                this.openOrderId = this.openOrderId === orderId ? null : orderId;
             }
-
-            // 使用 FileReader 來讀取圖片並顯示在對應的幻燈片中
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const imgElement = window.currentSlideElement.querySelector('img');
-                imgElement.src = e.target.result;
-
-                // 顯示 "確認上傳" 按鈕
-                const uploadButton = window.currentSlideElement.querySelector('.upload-button');
-                uploadButton.style.display = 'block';
-                uploadButton.disabled = false; // 確保按鈕是啟用狀態
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-
-    // 驗證圖片檔案類型
-    function isValidImageType(type) {
-        const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
-        return validImageTypes.includes(type);
-    }
-    // 上傳圖片的功能
-    function uploadFile() {
-        const fileInput = document.getElementById("fileInput");
-        const file = fileInput.files[0];
-
-        if (!file) {
-            alert("Please select a file to upload.");
-            return;
-        }
-
-        // 限制檔案類型
-        if (!isValidImageType(file.type)) {
-            alert("Only JPEG, PNG, and GIF files are allowed.");
-            return;
-        }
-
-        // 構建動態上傳的 URL
-        if (!window.currentRegionId) {
-            // alert("Upload region not specified.");
-            return;
-        }
-        const { vneId, position } = window.currentRegionId;
-        const baseUrl = window.location.origin;
-        const UPLOAD_URL = `${baseUrl}/manageImg`;
-
-        // 禁用上傳按鈕以防止重複提交
-        const uploadButton = window.currentSlideElement.querySelector('.upload-button');
-        uploadButton.disabled = true;
-
-        // 設置全域標記防止多次點擊
-        window.isUploading = true;
-
-        const formData = new FormData();
-        formData.append("vneId", vneId);         // 將 vneId 添加到 FormData
-        formData.append("position", position);   // 將 position 添加到 FormData
-        formData.append("imageFile", file);      // 將 imageFile 添加到 FormData
-
-        // 確認上傳狀態
-        document.getElementById("uploadStatus").innerText = "Uploading...";
-
-        fetch(UPLOAD_URL, {
-            method: "POST",
-            body: formData,
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`Upload failed with status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then((data) => {
-                document.getElementById("uploadStatus").innerText = "Upload Successful!";
-                // 隱藏 "確認上傳" 按鈕
-                uploadButton.style.display = 'none';
-                alert("Image uploaded successfully!");
-            })
-            .catch((error) => {
-                console.error("Error uploading file:", error);
-                document.getElementById("uploadStatus").innerText = "Upload Failed!";
-                // 重新啟用上傳按鈕，允許重新嘗試
-                uploadButton.disabled = false;
-                alert("Failed to upload image. Please try again.");
-            })
-            .finally(() => {
-                // 重置全域標記
-                window.isUploading = false;
-            });
-    }
-
+        }));
+    });
 </script>
 
-<!-- 引入 Bootstrap JavaScript -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
