@@ -208,7 +208,8 @@
                     <!-- 判斷 product.status -->
                     <form th:if="${product.status == 1}" action="/cart/add" method="post">
                         <input type="hidden" name="productId" th:value="${product.id}" />
-                        <button type="submit" class="btn btn-primary">加入購物車</button>
+                        <input type="hidden" name="qty" id="qty2" value="1" />
+                        <button type="submit" class="btn btn-primary" onclick="updateCartQuantity()">加入購物車</button>
                     </form>
                     <button th:if="${product.status != 1}" type="button" class="btn btn-outline-secondary" disabled>
                         無法供應
@@ -277,25 +278,24 @@
 
 
 <script>
-    function increaseQuantity() {
-        const qtyInput = document.getElementById("quantity");
-        qtyInput.value = parseInt(qtyInput.value) + 1;
+
+        function updateCartQuantity() {
+        // 獲取數量選擇器的值
+        const quantityInput = document.getElementById("qty");
+        const cartQuantityInput = document.getElementById("qty2");
+
+        // 更新表單中的隱藏數量欄位
+        cartQuantityInput.value = quantityInput.value;
     }
 
-    function decreaseQuantity() {
-        const qtyInput = document.getElementById("quantity");
-        if (parseInt(qtyInput.value) > 1) {
-            qtyInput.value = parseInt(qtyInput.value) - 1;
-        }
-    }
 
-        // 动态限制 qty 的最大值为 qtyStock
-        document.addEventListener("DOMContentLoaded", function () {
-        const qtyInput = document.getElementById("qty");
-        const qtyStock = document.getElementById("qtyStock").value;
+// 动态限制 qty 的最大值为 qtyStock
+document.addEventListener("DOMContentLoaded", function () {
+const qtyInput = document.getElementById("qty");
+const qtyStock = document.getElementById("qtyStock").value;
 
-        // 设置输入框的最大值
-        qtyInput.setAttribute("max", qtyStock);
+// 设置输入框的最大值
+qtyInput.setAttribute("max", qtyStock);
 
     });
 
