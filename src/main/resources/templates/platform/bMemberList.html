@@ -207,6 +207,7 @@
 				<th scope="col">地點</th>
 				<th scope="col">申辦日期</th>
 				<th scope="col">操作</th>
+				<th scope="col"></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -221,6 +222,9 @@
 					<button th:case="0" th:onclick="updateStatus(1,[[${bm.id}]])">通過</button>
 					<button th:case="1" th:onclick="updateStatus(2,[[${bm.id}]])">停權</button>
 					<button th:case="2" th:onclick="updateStatus(1,[[${bm.id}]])">啟用</button>
+				</td>
+				<td>
+					<button th:if="${bm.status eq 0}" th:onclick="updateStatus(4,[[${bm.id}]])">拒絕</button>
 				</td>
 			</tr>
 		</tbody>
@@ -285,6 +289,7 @@
 		        if (response.ok) {
 		            let data = await response.json(); // 解析 JSON 資料
 		            alert(data.message);
+		            window.location.reload();
 		        } else {
 		            alert("更新失敗，請稍後再試。");
 		        }
