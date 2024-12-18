@@ -104,7 +104,7 @@ public class PermissionController {
 
 //        List<Permission> permissions = permissionService.findAll();
 //        model.addAttribute("permissions", permissions);
-        return "/platform/permission"; // 重新導向至權限列表
+        return "redirect:/permission/pm"; // 重新導向至權限列表
     }
 
 

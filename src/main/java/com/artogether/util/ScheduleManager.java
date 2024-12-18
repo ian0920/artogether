@@ -37,7 +37,7 @@ public class ScheduleManager {
      */
 
     //每天 00:00:10執行
-    @Scheduled(cron =" 10 0 0 * * *", zone ="Asia/Taipei")
+    @Scheduled(cron =" 10 30 10 * * *", zone ="Asia/Taipei")
     public void eventStatusUpdate(){
         System.out.println("活動狀態更新排程器啟動");
         //撈出狀態為1 報名中 2 延期 的活動
@@ -72,7 +72,7 @@ public class ScheduleManager {
     /*   商家 - end date < 現在日期 -> 狀態更改 (過期)
          會員 - 過期優惠券 -> 狀態更改 (失效)            */
     //每天 00:00:10執行
-    @Scheduled(cron =" 10 0 0 * * *", zone ="Asia/Taipei")
+    @Scheduled(cron =" 10 30 10 * * *", zone ="Asia/Taipei")
     public void evtCoupStatusUpdate(){
 
         try{
@@ -108,7 +108,7 @@ public class ScheduleManager {
 
     /*   會員 - 收到日期 + 效期 > 現在日期 -> 狀態更改 (失效)   */
     //每天 00:00:10執行
-    @Scheduled(cron =" 10 0 0 * * *", zone ="Asia/Taipei")
+    @Scheduled(cron =" 10 30 10 * * *", zone ="Asia/Taipei")
     public void myEvtCoupStatusUpdate(){
 
         try{
