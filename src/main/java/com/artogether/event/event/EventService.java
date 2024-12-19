@@ -83,6 +83,7 @@ public class EventService {
 
 		List<Event> rawEventList = eventRepo.findAll();
 
+
 		//活動地點篩選
 		if (!"".equals(location)) {
 			rawEventList = rawEventList.stream()
@@ -101,7 +102,7 @@ public class EventService {
 		}
 
 		//篩選掉活動狀態為4 審核被拒、傳入comparator
-		List<Event> sortedEventList = rawEventList.stream().filter(e-> e.getStatus() != (byte) 4 ).sorted(finalComparator).toList();
+		List<Event> sortedEventList = rawEventList.stream().filter(e-> e.getStatus() != (byte) 4 ).filter(e ->e.getStatus() != (byte)0).sorted(finalComparator).toList();
 		List<EventDTO> eventDTOs = new ArrayList<>();
 		sortedEventList.forEach(event -> {
 			evtImgRepo.findAllByEvent_Id(event.getId()).stream().findFirst().ifPresent( img ->
@@ -109,12 +110,15 @@ public class EventService {
 			);
 		});
 
+		System.out.println(sortedEventList.size());
+		System.out.println(eventDTOs.size());
+
 		int start = page * size;
 		int end = Math.min(start + size, eventDTOs.size());
 		List<EventDTO> paginatedEventList = eventDTOs.subList(start, end);
 
 		Pageable pageable = PageRequest.of(page,size);
-		return new PageImpl<>(paginatedEventList, pageable, sortedEventList.size());
+		return new PageImpl<>(paginatedEventList, pageable, eventDTOs.size());
 	}
 
 	//For 首頁精選活動
@@ -179,7 +183,14 @@ public class EventService {
 
 	}
 
+	//活動創建時使用
 	public Event saveEvent(Event event) {
+		//預設狀態為0
+		event.setStatus((byte)0);
+
+		//預設報名人數為0
+		event.setEnrolled(0);
+
 		return eventRepo.save(event);
 	}
 
@@ -193,7 +204,7 @@ public class EventService {
 	}
 
 	// 部分更新，不包括id、商家id、delayDate、status、enrolled的更新
-	public void partialUpdate(Event partialE) {
+	public Event partialUpdate(Event partialE) {
 		Event e = findById(partialE.getId());
 		Event newE = Event.builder().id(partialE.getId())
 						.businessMember(e.getBusinessMember())
@@ -210,7 +221,7 @@ public class EventService {
 						.minimum(partialE.getMinimum())
 						.enrolled(e.getEnrolled())
 						.build();
-		eventRepo.save(newE);
+		return eventRepo.save(newE);
 	}
 	
 	 public Page<Event> searchEvents(Map<String, String> searchCriteria, Pageable pageable) {

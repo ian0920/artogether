@@ -211,6 +211,7 @@
             <div class="form-group text-start mt-3">
                 <label for="couponSelect" class="label-input">優惠券代碼:</label>
                 <select  id="couponSelect" name="evtCoupId" class="solo">
+					<option th:if="${myEvtCoups.size()>0}" value="">選擇優惠券</option>
                     <option th:if="${myEvtCoups.size()>0}"
                             th:each=" myEvtCoup :${myEvtCoups}"
                             th:value="${myEvtCoup.getEvtCoup().getId()}"

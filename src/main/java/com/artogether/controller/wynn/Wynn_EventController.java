@@ -1,41 +1,5 @@
 package com.artogether.controller.wynn;
 
-import java.io.IOException;
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.util.Base64Utils;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.artogether.common.business_member.BusinessMember;
 import com.artogether.common.business_member.BusinessService;
 import com.artogether.event.event.Event;
@@ -48,6 +12,31 @@ import com.artogether.event.evt_track.EvtTrack;
 import com.artogether.event.evt_track.EvtTrackService;
 import com.artogether.event.my_evt_coup.MyEvtCoup;
 import com.artogether.event.my_evt_coup.MyEvtCoupService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/event")
@@ -157,8 +146,8 @@ public class Wynn_EventController {
 //		BusinessMember businessMember = businessService.findById(event.getBusinessMember().getId());
 		BusinessMember businessMember = (BusinessMember) session.getAttribute("presentBusinessMember");
 	    event.setBusinessMember(businessMember); // 設置 businessMember
-		eventService.partialUpdate(event);
-		evtImgService.saveMultipartList(event, evtImgList);
+		Event e =eventService.partialUpdate(event);
+		evtImgService.saveMultipartList(e, evtImgList);
 
 		return "redirect:/event/details/" + event.getId();
 	}
@@ -202,8 +191,10 @@ public class Wynn_EventController {
 	}
 	// 新增頁面後，實際創建
 	@PostMapping("/create")
-	public String createEvent(@ModelAttribute Event event) {
+	public String createEvent(@ModelAttribute Event event,
+							  @RequestParam("evtImgList") List<MultipartFile> evtImgList) {
 		Event e = eventService.saveEvent(event);
+		evtImgService.saveMultipartList(e, evtImgList);
 		return "redirect:/event/details/"+ e.getId();
 	}
 	
