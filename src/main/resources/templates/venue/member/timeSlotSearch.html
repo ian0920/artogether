@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <style>
+        /* 整體頁面背景 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom right, #f0f9ff, #dff0ff); /* 淡藍背景漸層 */
+        }
+
+        /* 主分頁導航 */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px auto;
+            max-width: 800px;
+        }
+
+        .tabs > a {
+            padding: 12px 20px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            background-color: #f9f9f9;
+            border: 2px solid transparent;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .tabs > a:hover {
+            background-color: #2c95c6;
+            color: white;
+            border-color: #2c95c6;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 當前頁面的樣式 */
+        .active-tab {
+            background-color: #2c95c6; /* 亮藍色背景 */
+            color: #ffffff; /* 白色文字 */
+            border: 2px solid #1e6f9f; /* 深藍色邊框 */
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* 增加陰影效果 */
+            pointer-events: none; /* 禁止點擊 */
+            cursor: default;
+            transform: scale(1.05); /* 輕微放大，增加視覺效果 */
+            transition: all 0.3s ease-in-out;
+        }
+
+
+        /* 表單標籤與輸入框 */
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #2c95c6;
+            box-shadow: 0 0 8px rgba(44, 149, 198, 0.3);
+        }
+
+        /* 按鈕效果 */
+        button {
+            background-color: #007BFF;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        button:not(:last-child) {
+            margin-right: 10px;
+        }
+
+        /* 彈窗卡片樣式 */
+        div[style*="background-color: #f4f4f4"] {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+
+        div[style*="color: red"] p {
+            margin: 5px 0;
+            font-weight: bold;
+        }
+
+    </style>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="'預約'+${vneName}">Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" th:href="@{/web_design/style/style_general.css}"/>
+    <link rel="stylesheet" th:href="@{/web_design/style/style_homepage.css}"/>
+    <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+            rel="stylesheet"
+    />
+</head>
+<body>
+<div th:replace="~{/components/navbar_homepage::navbar}"></div>
+<script>
+    window.onbeforeunload = () => {
+        if (previousDate) {
+            const payload = JSON.stringify({date: previousDate});
+            navigator.sendBeacon(`/vne/order/unlock/${vneId}`, payload);
+        }
+    };
+</script>
+<script>
+    // // 提取 URL 中的 vneId
+    // const urlParams = new URLSearchParams(window.location.search); // 取得問號後的部分
+    // const vneId = urlParams.get("vneId"); // 獲取名為 'vneId' 的參數
+    const vneId = window.location.pathname.split('/').pop();
+    // 將 vneId 設為全局變量
+    window.vneId = vneId;
+
+    console.log(window.vneId); // 測試是否成功設置，打印出 vneId 的值
+</script>
+<script>
+    function tabsController() {
+        return {
+            Detail: {}, // 存放場地詳細數據
+            currentPage: '', // 當前主頁面（'dateSearch', 'timeSlotSearch'）
+
+            initialize() {
+                this.detectCurrentPage();
+                this.loadDetail();
+            },
+
+            // 檢測當前主頁面類型
+            detectCurrentPage() {
+                const path = window.location.pathname;
+                if (path.includes('dateSearch')) {
+                    this.currentPage = 'dateSearch';
+                } else if (path.includes('timeSlotSearch')) {
+                    this.currentPage = 'timeSlotSearch';
+                }
+            },
+
+            // 加載場地詳細數據
+            loadDetail() {
+                const pathArray = window.location.pathname.split('/');
+                const vneId = pathArray[pathArray.length - 1];
+
+                // 模擬 AJAX 請求獲取場地詳細數據
+                $.ajax({
+                    url: `/vne/card/${vneId}`,
+                    method: "GET",
+                    dataType: "json",
+                    success: (data) => {
+                        console.log(data);
+                        this.Detail = data; // 存入 Detail
+                    },
+                    error: (xhr, status, error) => {
+                        console.error('Error loading detail:', error);
+                    }
+                });
+            }
+        };
+    }
+</script>
+<main>
+    <div x-data="tabsController()" x-init="initialize()" class="tabs">
+        <!-- 主分頁：日期搜尋 -->
+        <a
+                :href="currentPage !== 'dateSearch' ? `/vneMem/dateSearch/${vneId}` : '#'"
+                :class="currentPage === 'dateSearch' ? 'active-tab' : 'inactive-tab'"
+                x-text="`${Detail.vneName}日期搜尋`">
+        </a>
+
+        <!-- 主分頁：時段查找 -->
+        <a
+                :href="currentPage !== 'timeSlotSearch' ? `/vneMem/timeSlotSearch/${vneId}` : '#'"
+                :class="currentPage === 'timeSlotSearch' ? 'active-tab' : 'inactive-tab'"
+                x-text="`${Detail.vneName}時段查找`">
+        </a>
+    </div>
+
+    <div x-data="timeReservation()" x-init="initData()">
+        <!-- 日期選擇器 -->
+        <label for="datePicker">Select a Date:</label>
+        <input type="text" id="datePicker" placeholder="Choose a date" @change="updateTotalPrice()">
+
+        <!-- 開始時間選單 -->
+        <label for="startTime">Start Time:</label>
+        <select id="startTime" x-model="order.startTime" @change="updateEndTimeOptions()">
+            <option value="" disabled selected>Select Start Time</option>
+            <template x-for="hour in availableStartTimes" :key="hour">
+                <option :value="hour" x-text="hour"></option>
+            </template>
+        </select>
+
+        <!-- 結束時間選單 -->
+        <label for="endTime">End Time:</label>
+        <select id="endTime" x-model="order.endTime" @change="updateTotalPrice()">
+            <option value="" disabled selected>Select End Time</option>
+            <template x-for="hour in availableEndTimes" :key="hour">
+                <option :value="hour" x-text="hour"></option>
+            </template>
+        </select>
+
+        <p>Total Price: <span x-text="order.totalPrice !== null ? `$${order.totalPrice}` : 'N/A'"></span></p>
+
+        <!-- 提示信息 -->
+        <div style="color: red; margin-bottom: 10px;">
+            <p x-show="!order.startDate">請選擇日期</p>
+            <p x-show="!order.startTime">請選擇開始時間</p>
+            <p x-show="!order.endTime">請選擇結束時間</p>
+        </div>
+
+        <!-- 提交按鈕與取消按鈕 -->
+        <div>
+            <button @click="fetchDates()" style="margin-top: 10px;">查詢</button>
+
+            <button @click="submitReservation()" :disabled="!order.startTime || !order.endTime || !order.startDate">預約</button>
+            <button @click="resetReservation(); location.href='/vneMem/details/' + vneId" style="background-color: #DC3545;">取消</button>
+        </div>
+
+        <!-- 確認彈窗 -->
+        <div x-show="showConfirmation"
+             style="margin-top: 20px; background-color: #f4f4f4; padding: 20px; border-radius: 10px;">
+            <h3 x-text="`${card.vneName}預約訂單`"></h3>
+            <p>地址: <span x-text="card.vneAddress"></span></p>
+            <p>預約日期: <span x-text="order.startDate"></span></p>
+            <p><span x-text="`${order.startTime}:00`"></span>
+                到<span x-text="`${order.endTime}:00`"></span>
+            </p>
+            <p>總金額: <span x-text="order.totalPrice"></span></p>
+            <p>Should Paid: <span x-text="order.shouldPaid"></span></p>
+
+            <!-- 倒數計時 -->
+            <p style="color: red;">請於 <span x-text="countdown"></span> 秒內確認，否則訂單將自動取消。</p>
+            <!-- 確認送出 -->
+            <button @click="confirmReservation()">全額付清</button>
+            <!-- 取消 -->
+            <button @click="cancelReservation()">取消</button>
+        </div>
+    </div>
+</main>
+<script>
+    let previousDate = null; // 記錄之前選擇的日期
+
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('timeReservation', () => ({
+            card: {
+                vneName: null,
+                vneAddress: null,
+                startHour: null,
+                endHour: null
+            },
+            minDate: null,
+            maxDate: null,
+            disableDates: [],
+            hourlyPrice: {},
+            availableEndTimes: [],
+            order: {
+                memName: null,
+                memPhone: null,
+                startDate: null,
+                startTime: null,
+                endTime: null,
+                totalPrice: null,
+                shouldPaid: null,
+                paid: 0, // 模擬初始已支付金額
+                vneCoupId: null
+            },
+            showConfirmation: false,
+            countdown: 300,
+            timer: null,
+
+            initData() {
+                this.vneCard();
+            },
+
+            vneCard() {
+                $.ajax({
+                    url: `/vne/card/${vneId}`,
+                    type: 'GET',
+                    success: (data) => {
+                        console.log(data);
+                        this.card.vneName = data.vneName;
+                        this.card.vneAddress = data.vneAddress;
+                        this.card.startHour = data.startHour;
+                        this.card.endHour = data.endHour;
+                        this.generateAvailableStartTimes(); // 生成可用的開始時間
+                    },
+                    error: (xhr, status, error) => {
+                        console.error('Failed to fetch dates:', error);
+                    }
+                });
+            },
+
+            fetchDates() {
+                if (!this.order.startTime || !this.order.endTime) {
+                    alert("請選擇開始時間和結束時間！");
+                    return;
+                }
+
+                const params = {
+                    startTime: this.order.startHour,
+                    endTime: this.order.endHour,
+                };
+
+                $.ajax({
+                    url: `/vne/order/timeSlotSearch/${vneId}`,
+                    type: 'POST',
+                    contentType: 'application/json', // JSON 格式
+                    data: JSON.stringify({
+                        startHour: this.order.startTime,
+                        endHour: this.order.endTime
+                    }),
+                    success: (data) => {
+                        this.minDate = data.minDate;
+                        this.maxDate = data.maxDate;
+                        this.disableDates = data.disableDates;
+
+                        flatpickr("#datePicker", {
+                            minDate: this.minDate,
+                            maxDate: this.maxDate,
+                            disable: this.disableDates,
+                            onChange: (selectedDates, dateStr) => {
+                                this.order.startDate = dateStr;
+
+                                // 當日期變更時，發送 Fetch 請求
+                                this.fetchAvailabilityForDate(dateStr);
+                            }
+                        });
+                    },
+                    error: (xhr, status, error) => {
+                        console.error('Failed to fetch dates:', error);
+                    }
+                });
+            },
+            fetchAvailabilityForDate(date) {
+                $.ajax({
+                    url: `/vne/order/availability/${vneId}`, // 使用 GET 方法傳遞參數
+                    type: 'GET',
+                    data: { date: date }, // 將日期作為查詢參數傳遞
+                    success: (data) => {
+                        console.log(`可用時段：`, data);
+                        // 根據返回的數據進一步處理
+                    },
+                    error: (xhr, status, error) => {
+                        if (xhr.status === 409) {
+                            // 檢查是否有後端返回的錯誤訊息
+                            const response = JSON.parse(xhr.responseText || "{}");
+                            const message = response.message || '該日期已被鎖定，請選擇其他日期。';
+
+                            // 使用 SweetAlert2 顯示錯誤訊息
+                            Swal.fire({
+                                icon: 'warning',
+                                title: '日期不可用',
+                                text: message,
+                                confirmButtonText: '確定'
+                            });
+                        } else {
+                            console.error('Failed to fetch availability:', error);
+
+                            // 使用 SweetAlert2 顯示通用錯誤訊息
+                            Swal.fire({
+                                icon: 'error',
+                                title: '發生錯誤',
+                                text: '無法獲取可用時段，請稍後再試。',
+                                confirmButtonText: '確定'
+                            });
+                        }
+                    }
+                });
+            },
+
+            generateAvailableStartTimes() {
+                const start = Number(this.card.startHour); // 從卡片獲取的 startTime
+                const end = Number(this.card.endHour);     // 從卡片獲取的 endTime
+                this.availableStartTimes = [];
+
+                // 根據 startTime 到 endTime 生成小時區間
+                for (let hour = start; hour < end; hour++) {
+                    this.availableStartTimes.push(hour);
+                }
+
+                console.log("Available Start Times:", this.availableStartTimes);
+            },
+
+            fetchAvailability() {
+                if (!this.order.startDate) return;
+
+                // 解鎖之前的日期
+                if (previousDate && previousDate !== this.order.startDate) {
+                    this.unlockDate(previousDate);
+                }
+                // 更新 previousDate
+                previousDate = this.order.startDate;
+
+            },
+            unlockDate(date) {
+                $.ajax({
+                    url: `/vne/order/unlock/${vneId}`,
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({date: date}),
+                    success: () => {
+                        console.log(`成功解鎖日期: ${date}`);
+                    },
+                    error: (xhr, status, error) => {
+                        console.error(`解鎖日期失敗: ${date}`, error);
+                    }
+                });
+            },
+
+            updateEndTimeOptions() {
+                if (!this.order.startTime) {
+                    this.availableEndTimes = [];
+                    this.order.endTime = null;
+                    return;
+                }
+
+                const start = Number(this.order.startTime);
+                const end = Number(this.card.endHour) + 1;
+
+                this.availableEndTimes = [];
+                for (let hour = start + 1; hour <= end; hour++) {
+                    this.availableEndTimes.push(hour);
+                }
+
+                // 自動綁定第一個可用結束時間
+                if (this.availableEndTimes.length > 0) {
+                    this.order.endTime = this.availableEndTimes[0];
+                } else {
+                    this.order.endTime = null;
+                }
+
+                console.log("Available End Times:", this.availableEndTimes);
+            },
+
+            updateTotalPrice() {
+                if (!this.order.startTime || !this.order.endTime) {
+                    this.order.totalPrice = null;
+                    return;
+                }
+                if (this.timer) {
+                    this.stopCountdown(); // 如果正在倒數，清除計時器
+                }
+
+                const start = Number(this.order.startTime);
+                const end = Number(this.order.endTime);
+
+                let total = 0;
+
+                for (let hour = start; hour < end; hour++) {
+                    if (this.hourlyPrice[hour]) {
+                        total += this.hourlyPrice[hour];
+                    }
+                }
+
+                this.order.totalPrice = total;
+            },
+
+            //外層取消預約，會回到場地細節
+            resetReservation() {
+                this.unlockDate(this.order.startDate);
+                this.order = { startDate: '', startTime: '', endTime: '', totalPrice: null, shouldPaid: null };
+                this.showConfirmation = false;
+            },
+
+            submitReservation() {
+                if (!this.order.startDate || !this.order.startTime || !this.order.endTime) return;
+
+                const postData = {
+                    startDate: this.order.startDate,
+                    startTime: this.order.startTime,
+                    endDate: this.order.startDate,
+                    endTime: this.order.endTime
+                };
+
+                $.ajax({
+                    url: `/vne/order/submit/${vneId}`,
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(postData),
+                    success: (data) => {
+                        this.order.memName = data.memName;
+                        this.order.memPhone = data.memPhone;
+                        this.order.totalPrice = data.totalPrice;
+                        this.order.shouldPaid = data.shouldPaid;
+                        this.showConfirmation = true;
+                    },
+                    error: (xhr, status, error) => {
+                        console.error('Failed to submit reservation:', error);
+                    }
+                });
+            },
+
+            openConfirmation() {
+                this.showConfirmation = true;
+                this.startCountdown(); // 啟動倒數計時
+            },
+            //取消
+            cancelReservation() {
+                this.showConfirmation = false;
+                this.stopCountdown(); // 停止計時
+                this.unlockDate(this.order.startDate);
+            },
+
+            startCountdown() {
+                this.countdown = 300; // 重置倒數時間為5分鐘
+                if (this.timer) clearInterval(this.timer); // 確保之前的計時器被清除
+
+                this.timer = setInterval(() => {
+                    if (this.countdown > 0) {
+                        this.countdown--;
+                        this.$nextTick(); // 確保畫面更新
+                    } else {
+                        this.cancelReservation(); // 倒數結束後自動關閉彈窗
+                        alert('訂單已自動取消！');
+                    }
+                }, 1000); // 每秒減1
+                console.log(this.countdown)
+            },
+
+            stopCountdown() {
+                if (this.timer) {
+                    clearInterval(this.timer); // 清除計時器
+                    console.log("stopCountdown")
+
+                    console.log(previousDate)
+                    this.timer = null;
+                }
+            },
+
+            confirmReservation() {
+                this.order.paid = this.order.totalPrice; // 更新 order 中的 paid 屬性
+                this.stopCountdown(); // 確認後停止計時
+                this.unlockDate(this.order.startDate);
+                console.log('Payload:', JSON.stringify(this.order));
+                $.ajax({
+                    url: `/vne/order/payment/full/${vneId}`,
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(this.order),
+                    success: (response) => {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success', // 圖示類型：'success', 'error', 'warning', 'info', 'question'
+                                title: '支付成功！',
+                                text: `已支付金額：${this.order.paid}`,
+                                confirmButtonText: '確定' // 確認按鈕文字
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    // 用戶點擊了「確定」按鈕，執行跳轉
+                                    window.location.replace(`/vneMem/details/${vneId}`); // 將此處替換為目標網址
+                                }
+                            });
+                            this.resetForm();
+                        } else {
+                            alert(`支付失敗：${response.message}`);
+                        }
+                    },
+                    error: (xhr, status, error) => {
+                        console.error('Failed to confirm reservation:', error);
+                    }
+                });
+            },
+
+            resetForm() {
+                this.order = {
+                    startDate: null,
+                    startTime: null,
+                    endTime: null,
+                    totalPrice: null,
+                    shouldPaid: null,
+                    paid: 0,
+                    vneCoupId: null
+                };
+                this.showConfirmation = false;
+                this.availableEndTimes = [];
+                previousDate = null; // 重置 previousDate
+            }
+        }));
+    });
+</script>
+
+
+</body>
+</html>

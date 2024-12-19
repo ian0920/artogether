@@ -5,10 +5,7 @@ import com.artogether.venue.PublishErrorResponse;
 import com.artogether.venue.VenueExceptions;
 import com.artogether.venue.venue.Venue;
 import com.artogether.venue.venue.VenueRepository;
-import com.artogether.venue.vnedto.AvailableDTO;
-import com.artogether.venue.vnedto.FlatpickrDTO;
-import com.artogether.venue.vnedto.TslotDTO;
-import com.artogether.venue.vnedto.VnePriceDTO;
+import com.artogether.venue.vnedto.*;
 import com.artogether.venue.vneorder.VneOrder;
 import com.artogether.venue.vneorder.VneOrderRepository;
 import com.artogether.venue.vneprice.VnePriceService;
@@ -167,7 +164,62 @@ public class TslotService {
         System.out.println("updateTslot");
         System.out.println(tslot);
     }
+    //TimeSlotSearch
+    public FlatpickrDTO timeSlotSearch (Integer vneId, LocalDateTime submissionTime, VneCardDTO vneCardDTO) {
+        Map<LocalDate, Integer> bookingTslot = getBookingTslot(vneId);
+        //使用者期待的時段
+        Integer startHour = vneCardDTO.getStartHour();
+        Integer endHour = vneCardDTO.getEndHour();
+        Integer wishTime = BinaryTools.toBinaryInteger(startHour, endHour);
+        //該場地營業狀態
+        List<Integer> weeklyTslot = getWeeklyTslots(vneId,submissionTime);
+        //檢查找出符合時段的星期
+        BitSet bizDay = new BitSet();
+        for (int i = 0; i < 7; i++) {
+            Integer daily = weeklyTslot.get(i);
+            Integer result = daily & wishTime;
+            if (result == wishTime) {
+                bizDay.set(i);
+            }
+        }
+        System.out.println("bizDay"+bizDay);
+        //最早可以預約及最晚可以預約的日期
+        Integer days = venueRepository.findById(vneId).get().getAvailableDays();
+        List<LocalDate> availableDates = getAvailableDates(days);
+        LocalDate first = availableDates.get(0);
+        LocalDate last = availableDates.get(availableDates.size()-1);
+        //遍歷可預約的日期，抓出不符合的日期
+        List<LocalDate> disableDate = new ArrayList<>();
+        for (LocalDate date : availableDates){
+            int dayOfWeek = date.getDayOfWeek().getValue()-1;
+            System.out.println(bizDay.get(dayOfWeek));
+            if (bizDay.get(dayOfWeek)) {
+                disableDate.add(date);
+            }else {
+                Integer bizHour = weeklyTslot.get(dayOfWeek);
+                Integer orderedHour = bookingTslot.get(date);
+                if (orderedHour != null) {
+                    int availableHour = bizHour & (~orderedHour);
+                    availableHour &= wishTime;
+                    if (availableHour != wishTime) {
+                        disableDate.add(date);
+                    }
+                }
+            }
+        }
+        System.out.println("disableDate"+disableDate);
+        List<LocalDate> disableList = new ArrayList<>();
+        List<LocalDate>orderedDates = getOrderedDates(vneId,submissionTime);
+        disableList.addAll(disableDate);
+        disableList.addAll(orderedDates);
 
+        FlatpickrDTO flatpickrDTO = FlatpickrDTO.builder()
+                .minDate(first)
+                .maxDate(last)
+                .disableDates(disableList)
+                .build();
+        return flatpickrDTO;
+    }
     //有個Multimap(Guava Library)可能可以用
     //取出訂單中所有預約的小時
     public Map<LocalDate, Integer> getBookingTslot (Integer vneId) {
