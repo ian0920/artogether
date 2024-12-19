@@ -264,7 +264,7 @@
         <button th:if="${#session.getAttribute('member') != null}"
                 id="openFormButton"
                 class="btn btn-lg openFormButton button-big flex-auto"
-                @click="location.href='/vneMem/booking/' + vneId">
+                @click="location.href='/vneMem/dateSearch/' + vneId">
             預約場地
         </button>
         <button th:unless="${#session.getAttribute('member') != null}"
