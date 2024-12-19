@@ -432,7 +432,7 @@
                         const hour = parseInt(cell.dataset.hour);
                         const dayKeys = ['hourOfMon', 'hourOfTue', 'hourOfWed', 'hourOfThu', 'hourOfFri', 'hourOfSat', 'hourOfSun'];
 
-                        if (this.days[dayKeys[day]]?.includes(hour)) {
+                        if (this.days[dayKeys[day-1]]?.includes(hour)) {
                             cell.classList.add('selected');
                         } else {
                             cell.classList.remove('selected');
@@ -626,7 +626,7 @@
                     if (this.enableTimeSpecificPricing && this.formData.startTime !== null && this.formData.endTime !== null) {
                         this.formData.dayOfWeek.forEach(day => {
                             for (let hour = this.formData.startTime; hour <= this.formData.endTime; hour++) {
-                                const cell = document.querySelector(`.cell[data-day="${parseInt(day)}"][data-hour="${hour}"]`);
+                                const cell = document.querySelector(`.cell[data-day="${parseInt(day)+1}"][data-hour="${hour}"]`);
                                 if (cell && cell.classList.contains('selected')) {
                                     cell.classList.add('special');
                                 }
