@@ -134,6 +134,8 @@ public class NewProductController {
             product.setQty(qty);
             product.setDescription(description);
             product.setStatus(status);
+            product.setAllReviews(0);
+            product.setAllStars(0);
 
             // 如果有商品分類，設置分類
             if (catalogId != null) {
