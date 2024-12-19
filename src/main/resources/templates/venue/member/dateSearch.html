@@ -2,66 +2,128 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
     <style>
-        /* 日期與時間選擇器樣式 */
+        /* 整體頁面背景 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom right, #f0f9ff, #dff0ff); /* 淡藍背景漸層 */
+        }
+
+        /* 主分頁導航 */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px auto;
+            max-width: 800px;
+        }
+
+        .tabs > a {
+            padding: 12px 20px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            background-color: #f9f9f9;
+            border: 2px solid transparent;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .tabs > a:hover {
+            background-color: #2c95c6;
+            color: white;
+            border-color: #2c95c6;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 當前頁面的樣式 */
+        .active-tab {
+            background-color: #2c95c6; /* 亮藍色背景 */
+            color: #ffffff; /* 白色文字 */
+            border: 2px solid #1e6f9f; /* 深藍色邊框 */
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* 增加陰影效果 */
+            pointer-events: none; /* 禁止點擊 */
+            cursor: default;
+            transform: scale(1.05); /* 輕微放大，增加視覺效果 */
+            transition: all 0.3s ease-in-out;
+        }
+
+
+        /* 表單標籤與輸入框 */
         label {
             display: block;
+            margin-top: 15px;
             font-weight: bold;
-            margin-top: 10px;
             color: #333;
         }
 
         input[type="text"], select {
             width: 100%;
-            padding: 8px;
+            padding: 10px;
             margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
             box-sizing: border-box;
             font-size: 16px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        /* 禁用狀態樣式 */
-        button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
+        input:focus, select:focus {
+            outline: none;
+            border-color: #2c95c6;
+            box-shadow: 0 0 8px rgba(44, 149, 198, 0.3);
         }
 
-        /* 按鈕樣式 */
+        /* 按鈕效果 */
         button {
             background-color: #007BFF;
             color: white;
-            padding: 10px 20px;
+            padding: 12px 20px;
             border: none;
-            border-radius: 5px;
-            margin-top: 10px;
+            border-radius: 8px;
             font-size: 16px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         button:hover {
             background-color: #0056b3;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
         }
 
         button:not(:last-child) {
             margin-right: 10px;
         }
 
-        /* 提示訊息樣式 */
-        div[style*="color: red"] {
-            margin-top: 10px;
-            font-size: 14px;
-        }
-
+        /* 彈窗卡片樣式 */
         div[style*="background-color: #f4f4f4"] {
+            background-color: white;
             border: 1px solid #ddd;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             margin-top: 20px;
-            font-size: 16px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
         }
 
-        p {
+        div[style*="color: red"] p {
             margin: 5px 0;
+            font-weight: bold;
         }
 
     </style>
@@ -102,7 +164,68 @@
 
     console.log(window.vneId); // 測試是否成功設置，打印出 vneId 的值
 </script>
+<script>
+    function tabsController() {
+        return {
+            Detail: {}, // 存放場地詳細數據
+            currentPage: '', // 當前主頁面（'dateSearch', 'timeSlotSearch'）
+
+            initialize() {
+                this.detectCurrentPage();
+                this.loadDetail();
+            },
+
+            // 檢測當前主頁面類型
+            detectCurrentPage() {
+                const path = window.location.pathname;
+                if (path.includes('dateSearch')) {
+                    this.currentPage = 'dateSearch';
+                } else if (path.includes('timeSlotSearch')) {
+                    this.currentPage = 'timeSlotSearch';
+                }
+            },
+
+            // 加載場地詳細數據
+            loadDetail() {
+                const pathArray = window.location.pathname.split('/');
+                const vneId = pathArray[pathArray.length - 1];
+
+                // 模擬 AJAX 請求獲取場地詳細數據
+                $.ajax({
+                    url: `/vne/card/${vneId}`,
+                    method: "GET",
+                    dataType: "json",
+                    success: (data) => {
+                        console.log(data);
+                        this.Detail = data; // 存入 Detail
+                    },
+                    error: (xhr, status, error) => {
+                        console.error('Error loading detail:', error);
+                    }
+                });
+            }
+        };
+    }
+</script>
 <main>
+    <div x-data="tabsController()" x-init="initialize()" class="tabs">
+        <!-- 主分頁：日期搜尋 -->
+        <a
+                :href="currentPage !== 'dateSearch' ? `/vneMem/dateSearch/${vneId}` : '#'"
+                :class="currentPage === 'dateSearch' ? 'active-tab ' : 'inactive-tab'"
+                x-text="`${Detail.vneName}日期搜尋`">
+        </a>
+
+        <!-- 主分頁：時段查找 -->
+        <a
+                :href="currentPage !== 'timeSlotSearch' ? `/vneMem/timeSlotSearch/${vneId}` : '#'"
+                :class="currentPage === 'timeSlotSearch' ? 'active-tab' : 'inactive-tab'"
+                x-text="`${Detail.vneName}時段查找`">
+        </a>
+    </div>
+
+
+
     <div x-data="timeReservation()" x-init="initData()">
         <!-- 日期選擇器 -->
         <label for="datePicker">Select a Date:</label>
@@ -266,10 +389,27 @@
                     },
                     error: (xhr, status, error) => {
                         if (xhr.status === 409) {
-                            alert('該日期已被鎖定，請選擇其他日期。');
+                            // 檢查是否有後端返回的錯誤訊息
+                            const response = JSON.parse(xhr.responseText || "{}");
+                            const message = response.message || '該日期已被鎖定，請選擇其他日期。';
+
+                            // 使用 SweetAlert2 顯示錯誤訊息
+                            Swal.fire({
+                                icon: 'warning',
+                                title: '日期不可用',
+                                text: message,
+                                confirmButtonText: '確定'
+                            });
                         } else {
                             console.error('Failed to fetch availability:', error);
-                            alert('發生錯誤，無法獲取可用時段，請稍後再試。');
+
+                            // 使用 SweetAlert2 顯示通用錯誤訊息
+                            Swal.fire({
+                                icon: 'error',
+                                title: '發生錯誤',
+                                text: '無法獲取可用時段，請稍後再試。',
+                                confirmButtonText: '確定'
+                            });
                         }
                     }
                 });

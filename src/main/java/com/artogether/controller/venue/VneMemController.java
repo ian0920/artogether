@@ -1,9 +1,7 @@
 package com.artogether.controller.venue;
 
 import com.artogether.venue.venue.VenueService;
-import com.artogether.venue.vnedto.VneDetailDTO;
 import com.artogether.venue.vnedto.VneOrderDTO;
-import com.artogether.venue.vneimg.VneImgService;
 import com.artogether.venue.vneorder.VneOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,7 +9,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
@@ -31,10 +28,15 @@ public class VneMemController {
         return "venue/member/detail";
     }
 
-    @GetMapping("/booking/{vneId}")
-    public String order(Model model, @PathVariable("vneId") Integer vneId) {
+    @GetMapping("/dateSearch/{vneId}")
+    public String dateSearch(Model model, @PathVariable("vneId") Integer vneId) {
         venueService.setName(model, vneId);
-        return "/venue/member/order";
+        return "/venue/member/dateSearch";
+    }
+    @GetMapping("/timeSlotSearch/{vneId}")
+    public String timeSlotSearch(Model model, @PathVariable("vneId") Integer vneId) {
+        venueService.setName(model, vneId);
+        return "/venue/member/timeSlotSearch";
     }
 
     @GetMapping("/order/mem/list")
