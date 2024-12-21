@@ -41,7 +41,7 @@
 
         /* 當前頁面的樣式 */
         .active-tab {
-            background-color: #2c95c6; /* 亮藍色背景 */
+            background-color: #2c95c6  !important; /* 亮藍色背景 */
             color: #ffffff; /* 白色文字 */
             border: 2px solid #1e6f9f; /* 深藍色邊框 */
             font-weight: bold;
@@ -419,14 +419,29 @@
             generateAvailableStartTimes() {
                 const start = Number(this.card.startHour); // 從卡片獲取的 startTime
                 const end = Number(this.card.endHour);     // 從卡片獲取的 endTime
-                this.availableStartTimes = [];
 
-                // 根據 startTime 到 endTime 生成小時區間
+                // 檢查輸入的範圍是否合法
+                if (start >= end || isNaN(start) || isNaN(end)) {
+                    console.error('Invalid start or end hour:', start, end);
+                    this.availableStartTimes = [];
+                    return;
+                }
+
+                // 生成時間段
+                this.availableStartTimes = [];
                 for (let hour = start; hour < end; hour++) {
                     this.availableStartTimes.push(hour);
                 }
 
                 console.log("Available Start Times:", this.availableStartTimes);
+
+                // 自動綁定第一個開始時間
+                if (this.availableStartTimes.length > 0) {
+                    this.order.startTime = this.availableStartTimes[0]; // 第一個開始時間
+                    this.updateEndTimeOptions(); // 更新結束時間選單
+                } else {
+                    this.order.startTime = null; // 若無可用時間則清空
+                }
             },
 
             fetchAvailability() {

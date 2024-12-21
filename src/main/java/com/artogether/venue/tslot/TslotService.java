@@ -171,18 +171,22 @@ public class TslotService {
         Integer startHour = vneCardDTO.getStartHour();
         Integer endHour = vneCardDTO.getEndHour();
         Integer wishTime = BinaryTools.toBinaryInteger(startHour, endHour);
+        System.out.println("wishTime:"+wishTime);
         //該場地營業狀態
         List<Integer> weeklyTslot = getWeeklyTslots(vneId,submissionTime);
+        System.out.println("weeklyTslot:"+weeklyTslot);
         //檢查找出符合時段的星期
         BitSet bizDay = new BitSet();
         for (int i = 0; i < 7; i++) {
             Integer daily = weeklyTslot.get(i);
             Integer result = daily & wishTime;
-            if (result == wishTime) {
+            System.out.println("result:"+result);
+            if (result.equals(wishTime)) {
                 bizDay.set(i);
             }
         }
         System.out.println("bizDay"+bizDay);
+        Integer binaryWeek = getBinaryWeek(vneId, submissionTime);
         //最早可以預約及最晚可以預約的日期
         Integer days = venueRepository.findById(vneId).get().getAvailableDays();
         List<LocalDate> availableDates = getAvailableDates(days);
@@ -192,21 +196,29 @@ public class TslotService {
         List<LocalDate> disableDate = new ArrayList<>();
         for (LocalDate date : availableDates){
             int dayOfWeek = date.getDayOfWeek().getValue()-1;
+            if((binaryWeek & (1<<dayOfWeek))==0){
+                disableDate.add(date);
+            }
             System.out.println(bizDay.get(dayOfWeek));
             if (bizDay.get(dayOfWeek)) {
-                disableDate.add(date);
-            }else {
                 Integer bizHour = weeklyTslot.get(dayOfWeek);
                 Integer orderedHour = bookingTslot.get(date);
                 if (orderedHour != null) {
-                    int availableHour = bizHour & (~orderedHour);
+                    System.out.println("orderedHour:"+orderedHour);
+                    int invertedHour = ~orderedHour & 0xFFFFFF;
+                    int availableHour = bizHour & invertedHour;
+                    System.out.println("availableHour:"+availableHour);
                     availableHour &= wishTime;
+                    System.out.println("availableHourWithWish:"+availableHour);
                     if (availableHour != wishTime) {
                         disableDate.add(date);
                     }
                 }
+            }else {
+                disableDate.add(date);
             }
         }
+
         System.out.println("disableDate"+disableDate);
         List<LocalDate> disableList = new ArrayList<>();
         List<LocalDate>orderedDates = getOrderedDates(vneId,submissionTime);

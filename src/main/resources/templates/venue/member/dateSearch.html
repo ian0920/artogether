@@ -40,19 +40,22 @@
         }
 
         /* 當前頁面的樣式 */
-        .active-tab {
-            background-color: #2c95c6; /* 亮藍色背景 */
-            color: #ffffff; /* 白色文字 */
-            border: 2px solid #1e6f9f; /* 深藍色邊框 */
-            font-weight: bold;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* 增加陰影效果 */
-            pointer-events: none; /* 禁止點擊 */
+        .activeSearch-tab {
+            background-color: #2c95c6  !important; /* 藍色背景 */
+            color: white;
+            pointer-events: none; /* 禁用連結行為 */
             cursor: default;
-            transform: scale(1.05); /* 輕微放大，增加視覺效果 */
-            transition: all 0.3s ease-in-out;
         }
-
-
+        /* 非當前頁面的樣式 */
+        .inactive-tab {
+            background-color: #f0f0f0; /* 淺灰背景 */
+            color: #333;
+            border: 1px solid #ccc;
+        }
+        .inactive-tab:hover {
+            background-color: #2c95c6;
+            color: white;
+        }
         /* 表單標籤與輸入框 */
         label {
             display: block;
@@ -164,6 +167,7 @@
 
     console.log(window.vneId); // 測試是否成功設置，打印出 vneId 的值
 </script>
+<!--分頁JS-->
 <script>
     function tabsController() {
         return {
@@ -212,14 +216,14 @@
         <!-- 主分頁：日期搜尋 -->
         <a
                 :href="currentPage !== 'dateSearch' ? `/vneMem/dateSearch/${vneId}` : '#'"
-                :class="currentPage === 'dateSearch' ? 'active-tab ' : 'inactive-tab'"
+                :class="currentPage === 'dateSearch' ? 'activeSearch-tab ' : 'inactive-tab'"
                 x-text="`${Detail.vneName}日期搜尋`">
         </a>
 
         <!-- 主分頁：時段查找 -->
         <a
                 :href="currentPage !== 'timeSlotSearch' ? `/vneMem/timeSlotSearch/${vneId}` : '#'"
-                :class="currentPage === 'timeSlotSearch' ? 'active-tab' : 'inactive-tab'"
+                :class="currentPage === 'timeSlotSearch' ? 'activeSearch-tab' : 'inactive-tab'"
                 x-text="`${Detail.vneName}時段查找`">
         </a>
     </div>
