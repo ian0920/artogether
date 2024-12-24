@@ -153,6 +153,19 @@
             background-color: #709b29; /* 保持綠色背景 */
             color: white; /* 保持白色文字 */
         }
+        .preview-container {
+            margin-top: 10px;
+            max-width: 200px;
+        }
+
+        .preview-image {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
     </style>
 
 </head>
@@ -222,6 +235,18 @@
                     }
                 });
             },
+            // 處理文件更改
+            handleFileChange(event, index) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        this.uploads[index].previewUrl = e.target.result; // 將預覽 URL 存儲
+                    };
+                    reader.readAsDataURL(file); // 讀取文件數據
+                    this.uploads[index].file = file; // 保存文件對象
+                }
+            },
 
             // 處理文件上傳
             handleUpload(index) {
@@ -287,7 +312,7 @@
             <a
                     :href="currentPage !== 'checkVenue' ? `/vneBiz/checkVenue/${Detail.vneId}` : '#'"
                     :class="currentPage === 'checkVenue' ? 'active-tab green-tab' : 'inactivegreen-tab'"
-                    x-text="`${Detail.vneName}場地檢查管理`">
+                    x-text="`${Detail.vneName}場地上下架管理`">
             </a>
 
             <!-- 主分頁：場地管理 -->
@@ -368,11 +393,15 @@
     </div>
     <div>
         <template x-for="(upload, index) in uploads" :key="index">
-            <div>
-                <label x-text="upload.position">上傳位置 </label>
-                <input type="file" @change="upload.file = $event.target.files[0]" />
+            <div class="upload-row">
+                <label x-text="'位置 ' + upload.position"></label>
+                <input type="file" @change="handleFileChange($event, index)" />
                 <button @click.prevent="handleUpload(index)">上傳</button>
                 <p x-text="upload.status"></p>
+                <!-- 預覽圖片 -->
+                <div x-show="upload.previewUrl" class="preview-container">
+                    <img :src="upload.previewUrl" alt="圖片預覽" class="preview-image" />
+                </div>
             </div>
         </template>
     </div>

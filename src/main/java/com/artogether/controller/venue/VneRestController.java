@@ -115,6 +115,18 @@ public class VneRestController {
         FlatpickrDTO flatpickrDTO = tslotService.getFlatpickrDTO(vneId, now);
         return flatpickrDTO;
     }
+    //TimeSlotSearch鎖日期用
+    @GetMapping("/order/lockDate/{vneId}")
+    public void lockDate(@PathVariable("vneId") Integer vneId,
+                         @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date){
+        Boolean islockDate = vneBookingSystem.islockDate(vneId, date);
+        System.out.println("islockDate"+islockDate);
+        if (islockDate) {
+            throw new VenueExceptions.DateAlreadyLockedException("The date " + date + " is already locked for venue ID " + vneId);
+        }
+        boolean lockDate = vneBookingSystem.lockDate(vneId, date);
+        System.out.println("lockDate"+lockDate);
+    }
     //取出該場地的可預約的時間細節
     @GetMapping("/order/availability/{vneId}")
     public AvailableDTO getAvailableDTO(@PathVariable("vneId") Integer vneId,
@@ -129,6 +141,13 @@ public class VneRestController {
         System.out.println("lockDate"+lockDate);
         AvailableDTO availableDTO = tslotService.getAvailableDTO(vneId, date, now);
         return availableDTO;
+    }
+    @PostMapping("/order/timeSlotSearch/{vneId}")
+    public FlatpickrDTO timeSlotSearch(@PathVariable("vneId") Integer vneId,
+                                       @RequestBody VneCardDTO vneCardDTO) {
+        LocalDateTime now = LocalDateTime.now();
+        FlatpickrDTO flatpickrDTO = tslotService.timeSlotSearch(vneId, now, vneCardDTO);
+        return flatpickrDTO;
     }
     //解鎖
     @PostMapping("/order/unlock/{vneId}")

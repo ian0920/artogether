@@ -10,7 +10,14 @@ import java.util.List;
 //這邊可以換成Stream呈現
 @Component
 public class BinaryTools {
-
+    //頭尾做Binary
+    public static Integer toBinaryInteger(Integer start, Integer end, Integer length) {
+        Integer result = 0;
+        for (int i = start; i < end; i++) {
+            result += (1<<(length-i-1));
+        }
+        return result;
+    }
     //String轉Integer
     public static Integer toBinaryInteger(String tslot) {
         // 確保字符串只包含合法二進位字符
@@ -19,7 +26,6 @@ public class BinaryTools {
         }
         return Integer.parseInt(tslot, 2);
     }
-
     //BitSet轉Integer
     public static Integer toBinaryInteger(BitSet tslot, int length) {
         int result = 0;
@@ -30,7 +36,6 @@ public class BinaryTools {
         }
         return result;
     }
-
     //String轉BitSet
     public static BitSet toBitSet(String binaryString) {
         BitSet bitSet = new BitSet();
@@ -43,7 +48,7 @@ public class BinaryTools {
         }
         return bitSet;
     }
-
+    //Integer轉BitSet
     public static BitSet toBitSet(int tslot,int bitLength) {
         BitSet bitSet = new BitSet();
         for (int i = 0; i < bitLength; i++) {
@@ -63,7 +68,6 @@ public class BinaryTools {
         }
         return bitSet;
     }
-
     //BitSet轉String
     public static String toBinaryString(BitSet tslot, int length) {
         StringBuilder stringBuilder = new StringBuilder(length);
@@ -73,7 +77,6 @@ public class BinaryTools {
         //.reverse() 是 Java 中 StringBuilder 類別的一個方法，用於反轉 StringBuilder 中的字元順序。
         return stringBuilder.toString(); // 從左到右還原
     }
-
     //List轉String
     public static String toBinaryString(List<Integer> tslot, int length) {
         StringBuilder stringBuilder = new StringBuilder(length);
@@ -82,8 +85,6 @@ public class BinaryTools {
         }
         return stringBuilder.toString();
     }
-
-
     //BitSet轉List
     public static List<Integer> toList(BitSet tslot) {
         List<Integer> list = new ArrayList<>();
@@ -93,7 +94,6 @@ public class BinaryTools {
         }
         return list;
     }
-
     //Integer轉List<Integer>
     public static List<Integer> toList(int tslot, int bitLength) {
         List<Integer> positions = new ArrayList<>();
@@ -106,7 +106,6 @@ public class BinaryTools {
         }
         return positions;
     }
-
     //String轉List
     public static List<Integer> toList(String tslot) {
         List<Integer> positions = new ArrayList<>();
@@ -118,7 +117,6 @@ public class BinaryTools {
         }
         return positions;
     }
-
     //String.first
     public static Integer first(String binaryString) {
         return toList(binaryString).get(0);

@@ -43,6 +43,7 @@ public class VneImgService {
         String uploadDir = "src/main/resources/public/venue/images/";//Dir=Directory（目錄）
         String fileName = getFileName(vneId, position);
         String filePath = uploadDir + fileName;
+        String imgUrl ="/venue/images/" + fileName;
 
         // 儲存圖片到指定路徑
         try {
@@ -63,7 +64,7 @@ public class VneImgService {
             // 新增新的圖片 URL
             VneImgUrl vneImgUrl = VneImgUrl.builder()
                                   .venue(Venue.id(vneId))
-                                  .imageUrl(filePath)
+                                  .imageUrl(imgUrl)
                                   .position(position)
                                   .build();
             vneImgUrlRepository.save(vneImgUrl);
