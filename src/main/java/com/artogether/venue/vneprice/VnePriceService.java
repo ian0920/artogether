@@ -30,6 +30,7 @@ public class VnePriceService {
         VnePriceDTO vnePriceDTO = new VnePriceDTO();
         if (vnePrice != null) {
             vnePriceDTO.setDefaultPrice(vnePrice.getDefaultPrice());
+            vnePriceDTO.setVneId(vneId);
             Integer price = vnePrice.getPrice();
             if (price != null) {
                 vnePriceDTO.setPrice(vnePrice.getPrice());

@@ -11,10 +11,10 @@ import java.util.List;
 @Component
 public class BinaryTools {
     //頭尾做Binary
-    public static Integer toBinaryInteger(Integer start, Integer end) {
+    public static Integer toBinaryInteger(Integer start, Integer end, Integer length) {
         Integer result = 0;
         for (int i = start; i < end; i++) {
-            result += (1<<(i-1));
+            result += (1<<(length-i-1));
         }
         return result;
     }

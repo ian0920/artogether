@@ -166,27 +166,25 @@ public class TslotService {
     }
     //TimeSlotSearch
     public FlatpickrDTO timeSlotSearch (Integer vneId, LocalDateTime submissionTime, VneCardDTO vneCardDTO) {
-        Map<LocalDate, Integer> bookingTslot = getBookingTslot(vneId);
         //使用者期待的時段
         Integer startHour = vneCardDTO.getStartHour();
+        //實際時間區段不包含"endHour"
         Integer endHour = vneCardDTO.getEndHour();
-        Integer wishTime = BinaryTools.toBinaryInteger(startHour, endHour);
-        System.out.println("wishTime:"+wishTime);
+        Integer wishTime = BinaryTools.toBinaryInteger(startHour, endHour,24);
         //該場地營業狀態
         List<Integer> weeklyTslot = getWeeklyTslots(vneId,submissionTime);
-        System.out.println("weeklyTslot:"+weeklyTslot);
         //檢查找出符合時段的星期
         BitSet bizDay = new BitSet();
+        //0-6為周一到周日，先檢查出符合設定時段的日期
         for (int i = 0; i < 7; i++) {
             Integer daily = weeklyTslot.get(i);
             Integer result = daily & wishTime;
-            System.out.println("result:"+result);
+            //包裝型別不能直接用"=="，因為那是比較其內存地址
             if (result.equals(wishTime)) {
                 bizDay.set(i);
             }
         }
         System.out.println("bizDay"+bizDay);
-        Integer binaryWeek = getBinaryWeek(vneId, submissionTime);
         //最早可以預約及最晚可以預約的日期
         Integer days = venueRepository.findById(vneId).get().getAvailableDays();
         List<LocalDate> availableDates = getAvailableDates(days);
@@ -194,17 +192,17 @@ public class TslotService {
         LocalDate last = availableDates.get(availableDates.size()-1);
         //遍歷可預約的日期，抓出不符合的日期
         List<LocalDate> disableDate = new ArrayList<>();
+        Map<LocalDate, Integer> bookingTslot = getBookingTslot(vneId);
         for (LocalDate date : availableDates){
             int dayOfWeek = date.getDayOfWeek().getValue()-1;
-            if((binaryWeek & (1<<dayOfWeek))==0){
-                disableDate.add(date);
-            }
-            System.out.println(bizDay.get(dayOfWeek));
-            if (bizDay.get(dayOfWeek)) {
+            boolean validOption = bizDay.get(dayOfWeek);
+            System.out.println(validOption);
+            if (validOption) {
                 Integer bizHour = weeklyTslot.get(dayOfWeek);
                 Integer orderedHour = bookingTslot.get(date);
                 if (orderedHour != null) {
                     System.out.println("orderedHour:"+orderedHour);
+                    //轉換後我需要24位數，取出扣除預約時間後的營業時間
                     int invertedHour = ~orderedHour & 0xFFFFFF;
                     int availableHour = bizHour & invertedHour;
                     System.out.println("availableHour:"+availableHour);
@@ -383,6 +381,7 @@ public class TslotService {
     public Map<Integer, Integer> getPriceMap (Integer vneId, LocalDate bookingDate,  LocalDateTime submissionTime) {
         Map<Integer, Integer> priceMap = new HashMap<>();
         VnePriceDTO vnePriceDTO = vnePriceService.getNearestVnePrice(vneId, LocalDateTime.now());
+        System.out.println(vnePriceDTO);
         List<Integer> dayOfWeek = vnePriceDTO.getDayOfWeek();
         int value = bookingDate.getDayOfWeek().getValue()-1;
         Integer defaultPrice = vnePriceDTO.getDefaultPrice();
